@@ -114,6 +114,44 @@
   .sidebar-search input:focus { border-color: var(--accent); }
   .sidebar-search input::placeholder { color: var(--text-dim); }
 
+  .sort-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg);
+  }
+  .sort-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.58rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-right: 2px;
+  }
+  .sort-btn {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.62rem;
+    padding: 4px 10px;
+    border-radius: 3px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.15s;
+    letter-spacing: 0.04em;
+  }
+  .sort-btn.active {
+    border-color: var(--accent3);
+    color: var(--accent3);
+    background: rgba(143,212,160,0.08);
+  }
+  .sort-btn:hover:not(.active) {
+    border-color: var(--text-muted);
+    color: var(--text);
+  }
+
   .sidebar-filters {
     padding: 12px 16px;
     border-bottom: 1px solid var(--border);
@@ -675,6 +713,12 @@
   <aside class="sidebar">
     <div class="sidebar-search">
       <input type="text" id="searchInput" placeholder="Search ticker or company…" oninput="filterCompanies(this.value)">
+    </div>
+    <div class="sort-row">
+      <span class="sort-label">Sort:</span>
+      <button class="sort-btn" id="sortRankBtn" onclick="setSort('rank',this)">Rank #</button>
+      <button class="sort-btn active" id="sortYieldBtn" onclick="setSort('yield',this)">Yield ↓</button>
+      <button class="sort-btn" id="sortAlphaBtn" onclick="setSort('alpha',this)">A–Z</button>
     </div>
     <div class="sidebar-filters">
       <button class="filter-btn active" onclick="filterSector('All',this)">All</button>
@@ -1851,6 +1895,7 @@ let chartInstances = {};
 let sectorFilter = 'All';
 let searchQuery = '';
 let activeCompareMetric = 'revenue';
+let sortMode = 'yield'; // 'yield' | 'rank' | 'alpha'
 
 // ============================
 // COMPARABLE METRICS CONFIG
@@ -1871,11 +1916,16 @@ const COMPARE_COLORS = ['#c8a96e','#7eb8d4','#8fd4a0','#e07a7a','#b07dd4','#d4a0
 function renderSidebar() {
   const list = document.getElementById('companyList');
   const maxYield = Math.max(...ALL_COMPANIES.map(c => c.yield));
-  const filtered = ALL_COMPANIES.filter(c => {
+  let filtered = ALL_COMPANIES.filter(c => {
     const matchSector = sectorFilter === 'All' || c.sector === sectorFilter;
     const matchSearch = !searchQuery || c.ticker.toLowerCase().includes(searchQuery.toLowerCase()) || c.name.toLowerCase().includes(searchQuery.toLowerCase());
     return matchSector && matchSearch;
   });
+
+  if (sortMode === 'yield') filtered = filtered.slice().sort((a,b) => b.yield - a.yield);
+  else if (sortMode === 'rank') filtered = filtered.slice().sort((a,b) => a.rank - b.rank);
+  else if (sortMode === 'alpha') filtered = filtered.slice().sort((a,b) => a.name.localeCompare(b.name));
+
   list.innerHTML = filtered.map(c => `
     <li class="company-item ${activeCompany?.ticker === c.ticker ? 'active' : ''}" onclick="selectCompany('${c.ticker}')">
       <div class="rank-badge">#${c.rank}</div>
@@ -2281,6 +2331,23 @@ function filterSector(sector, btn) {
 function filterCompanies(query) {
   searchQuery = query;
   renderSidebar();
+}
+
+function setSort(mode, btn) {
+  sortMode = mode;
+  document.querySelectorAll('.sort-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderSidebar();
+}
+
+function parseMktCap(str) {
+  if (!str) return 0;
+  const s = str.replace(/[^0-9.TBM]/gi, '');
+  const num = parseFloat(s);
+  if (/T$/i.test(str)) return num * 1000;
+  if (/B$/i.test(str)) return num;
+  if (/M$/i.test(str)) return num / 1000;
+  return num;
 }
 
 // ============================
