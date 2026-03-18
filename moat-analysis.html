@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fortress Profits — Global Tech Moat Analysis 2025</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=DM+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0a0a0f;--bg2:#12121a;--bg3:#1a1a26;--bg4:#222233;
+  --fg:#e8e6df;--fg2:#9c9a92;--fg3:#6a6862;
+  --accent:#c9a96e;--accent2:#e8d4a6;
+  --blue:#5b8def;--teal:#3dc9a5;--coral:#e86c4a;
+  --purple:#8b7bd4;--pink:#d4538e;--amber:#e8a832;
+  --green:#5dca75;--red:#e24b4a;
+  --font-display:'Playfair Display',Georgia,serif;
+  --font-body:'DM Sans','Helvetica Neue',sans-serif;
+  --font-mono:'JetBrains Mono',monospace;
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--fg);font-family:var(--font-body);line-height:1.7;overflow-x:hidden}
+
+.noise{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:9999;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  opacity:.4}
+
+.hero{position:relative;min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:4rem 2rem;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;
+  background:radial-gradient(ellipse at 30% 50%,rgba(201,169,110,0.06) 0%,transparent 50%),
+             radial-gradient(ellipse at 70% 30%,rgba(91,141,239,0.04) 0%,transparent 50%);
+  animation:drift 20s ease-in-out infinite alternate}
+@keyframes drift{0%{transform:translate(0,0) rotate(0)}100%{transform:translate(20px,-20px) rotate(2deg)}}
+
+.hero-tag{font-family:var(--font-mono);font-size:11px;text-transform:uppercase;letter-spacing:4px;color:var(--accent);margin-bottom:1.5rem;opacity:0;animation:fadeUp .8s .3s forwards}
+.hero h1{font-family:var(--font-display);font-size:clamp(2.8rem,6vw,5.5rem);font-weight:900;line-height:1.08;
+  background:linear-gradient(135deg,var(--fg) 0%,var(--accent) 50%,var(--fg) 100%);
+  background-size:200% 200%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  animation:shimmer 6s ease infinite,fadeUp .8s .5s forwards;opacity:0}
+@keyframes shimmer{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+.hero-sub{font-size:clamp(1rem,2vw,1.25rem);color:var(--fg2);max-width:640px;margin-top:1.5rem;font-weight:300;
+  opacity:0;animation:fadeUp .8s .7s forwards}
+@keyframes fadeUp{to{opacity:1;transform:translateY(0)}}
+.hero-tag,.hero h1,.hero-sub{transform:translateY(30px)}
+
+.hero-meta{display:flex;gap:2rem;margin-top:2.5rem;flex-wrap:wrap;opacity:0;animation:fadeUp .8s .9s forwards;transform:translateY(30px)}
+.hero-meta span{font-size:12px;color:var(--fg3);font-family:var(--font-mono);letter-spacing:1px}
+.hero-meta span strong{color:var(--fg2);font-weight:500}
+
+.scroll-cue{position:absolute;bottom:3rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:8px;
+  opacity:0;animation:fadeUp .8s 1.2s forwards,bounce 2s 2s infinite}
+.scroll-cue span{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--fg3)}
+.scroll-cue .arrow{width:1px;height:40px;background:linear-gradient(to bottom,var(--accent),transparent)}
+@keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(8px)}}
+
+.container{max-width:1100px;margin:0 auto;padding:0 2rem}
+
+section{padding:5rem 0;position:relative}
+section::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:40px;height:1px;background:var(--accent);opacity:.3}
+
+.section-num{font-family:var(--font-mono);font-size:11px;color:var(--accent);letter-spacing:4px;text-transform:uppercase;margin-bottom:.5rem}
+.section-title{font-family:var(--font-display);font-size:clamp(1.8rem,3.5vw,2.8rem);font-weight:700;margin-bottom:1rem;line-height:1.15}
+.section-lead{color:var(--fg2);font-size:1.05rem;max-width:700px;margin-bottom:3rem;font-weight:300}
+
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1px;background:var(--bg4);border-radius:12px;overflow:hidden;margin:3rem 0}
+.stat{background:var(--bg2);padding:2rem 1.5rem;position:relative}
+.stat::after{content:'';position:absolute;bottom:0;left:1.5rem;right:1.5rem;height:1px;
+  background:linear-gradient(90deg,transparent,var(--accent),transparent);opacity:.15}
+.stat-label{font-size:11px;text-transform:uppercase;letter-spacing:2px;color:var(--fg3);margin-bottom:.5rem;font-family:var(--font-mono)}
+.stat-val{font-size:2.2rem;font-weight:700;font-family:var(--font-display);color:var(--fg)}
+.stat-sub{font-size:12px;color:var(--fg3);margin-top:.25rem}
+
+.chart-wrap{background:var(--bg2);border:1px solid var(--bg4);border-radius:12px;padding:2rem;margin:2rem 0;position:relative}
+.chart-title{font-size:14px;font-weight:600;margin-bottom:.25rem}
+.chart-sub{font-size:12px;color:var(--fg3);margin-bottom:1.5rem}
+.chart-canvas{position:relative;width:100%;height:340px}
+
+.moat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:1.5rem;margin:2rem 0}
+.moat-card{background:var(--bg2);border:1px solid var(--bg4);border-radius:12px;padding:0;overflow:hidden;
+  transition:border-color .3s,transform .3s}
+.moat-card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.moat-header{padding:1.5rem 1.5rem 1rem;display:flex;justify-content:space-between;align-items:flex-start;border-bottom:1px solid var(--bg4)}
+.moat-name{font-family:var(--font-display);font-size:1.3rem;font-weight:700}
+.moat-ticker{font-family:var(--font-mono);font-size:11px;letter-spacing:1px;padding:4px 10px;border-radius:20px;border:1px solid var(--bg4);color:var(--fg3)}
+.moat-body{padding:1.25rem 1.5rem}
+.moat-type{display:inline-block;font-size:10px;text-transform:uppercase;letter-spacing:2px;padding:3px 10px;border-radius:4px;margin-bottom:1rem;font-family:var(--font-mono)}
+.moat-list{list-style:none;padding:0}
+.moat-list li{font-size:13px;color:var(--fg2);padding:6px 0 6px 16px;position:relative;line-height:1.5}
+.moat-list li::before{content:'';position:absolute;left:0;top:13px;width:6px;height:6px;border-radius:50%;opacity:.6}
+.moat-metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border-top:1px solid var(--bg4);margin-top:0}
+.moat-metric{padding:1rem 1.25rem;text-align:center;border-right:1px solid var(--bg4)}
+.moat-metric:last-child{border-right:none}
+.moat-metric-val{font-size:1.1rem;font-weight:700;font-family:var(--font-display)}
+.moat-metric-label{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--fg3);margin-top:2px;font-family:var(--font-mono)}
+
+.verdict{background:linear-gradient(135deg,var(--bg2) 0%,rgba(201,169,110,0.05) 100%);border:1px solid rgba(201,169,110,0.2);border-radius:16px;padding:3rem;margin:3rem 0;position:relative;overflow:hidden}
+.verdict::before{content:'';position:absolute;top:0;right:0;width:300px;height:300px;
+  background:radial-gradient(circle,rgba(201,169,110,0.06),transparent 70%);pointer-events:none}
+.verdict-badge{display:inline-block;font-family:var(--font-mono);font-size:10px;text-transform:uppercase;letter-spacing:3px;color:var(--accent);
+  background:rgba(201,169,110,0.1);padding:6px 16px;border-radius:4px;border:1px solid rgba(201,169,110,0.2);margin-bottom:1.5rem}
+.verdict h3{font-family:var(--font-display);font-size:1.8rem;font-weight:700;margin-bottom:1rem}
+.verdict p{color:var(--fg2);font-size:.95rem;line-height:1.8;margin-bottom:1rem}
+.verdict-picks{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:2rem}
+.pick{background:var(--bg);border:1px solid var(--bg4);border-radius:10px;padding:1.25rem 1.5rem;transition:border-color .3s}
+.pick:hover{border-color:var(--accent)}
+.pick-rank{font-family:var(--font-mono);font-size:10px;color:var(--accent);letter-spacing:2px;text-transform:uppercase;margin-bottom:.5rem}
+.pick-name{font-family:var(--font-display);font-size:1.15rem;font-weight:700;margin-bottom:.25rem}
+.pick-reason{font-size:12px;color:var(--fg3);line-height:1.6}
+
+.table-wrap{overflow-x:auto;margin:2rem 0}
+table{width:100%;border-collapse:collapse;font-size:13px}
+thead th{font-family:var(--font-mono);font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:var(--fg3);
+  padding:1rem 1rem;text-align:left;border-bottom:1px solid var(--bg4);font-weight:500}
+tbody td{padding:.85rem 1rem;border-bottom:1px solid rgba(255,255,255,0.04);color:var(--fg2);vertical-align:top}
+tbody tr:hover td{background:rgba(201,169,110,0.02)}
+td.num{text-align:right;font-family:var(--font-mono);font-weight:500;color:var(--fg)}
+.badge{display:inline-block;font-size:10px;padding:2px 8px;border-radius:4px;font-family:var(--font-mono);letter-spacing:.5px;font-weight:500}
+.badge-green{background:rgba(61,201,165,0.12);color:var(--teal)}
+.badge-amber{background:rgba(232,168,50,0.12);color:var(--amber)}
+.badge-red{background:rgba(226,75,74,0.12);color:var(--red)}
+
+footer{border-top:1px solid var(--bg4);padding:3rem 0;text-align:center}
+footer p{font-size:11px;color:var(--fg3);max-width:700px;margin:0 auto;line-height:1.8}
+
+.bar-inline{display:flex;align-items:center;gap:8px}
+.bar-track{flex:1;height:6px;background:var(--bg4);border-radius:3px;overflow:hidden;max-width:120px}
+.bar-fill{height:100%;border-radius:3px;transition:width 1s ease}
+
+@media(max-width:768px){
+  .hero{padding:3rem 1.5rem}.container{padding:0 1.5rem}
+  .moat-grid{grid-template-columns:1fr}.verdict-picks{grid-template-columns:1fr}
+  .moat-metrics{grid-template-columns:repeat(3,1fr)}
+  .stats-grid{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+<div class="noise"></div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-tag">Investment Research Report &mdash; March 2026</div>
+    <h1>Fortress Profits:<br>Mapping the Moats<br>of Global Tech Giants</h1>
+    <p class="hero-sub">A data-driven analysis of how Tencent, Alibaba, Microsoft, Apple, Alphabet, and Meta build competitive advantages that generate excess profits&mdash;and which offer the strongest investment thesis today.</p>
+    <div class="hero-meta">
+      <span>Data Sources: <strong>SEC 10-K, HKEX Annual Reports</strong></span>
+      <span>Period: <strong>FY / CY 2025</strong></span>
+      <span>Updated: <strong>March 18, 2026</strong></span>
+    </div>
+  </div>
+  <div class="scroll-cue"><span>Scroll</span><div class="arrow"></div></div>
+</section>
+
+<!-- SECTION 1: EXECUTIVE SUMMARY -->
+<section id="summary">
+<div class="container">
+  <div class="section-num">01 &mdash; Executive Summary</div>
+  <h2 class="section-title">Six Castles, One Question:<br>Whose Walls Are Thickest?</h2>
+  <p class="section-lead">These six companies collectively generated $1.54 trillion in revenue in 2025, earned average operating margins of 33%, and are investing ~$350 billion per year in AI infrastructure alone. But not all moats are created equal.</p>
+
+  <div class="stats-grid">
+    <div class="stat"><div class="stat-label">Combined Revenue</div><div class="stat-val">$1.54T</div><div class="stat-sub">FY/CY 2025</div></div>
+    <div class="stat"><div class="stat-label">Avg. Operating Margin</div><div class="stat-val">33%</div><div class="stat-sub">Weighted by revenue</div></div>
+    <div class="stat"><div class="stat-label">AI CapEx (Hyperscalers)</div><div class="stat-val">~$350B</div><div class="stat-sub">2025 combined spend</div></div>
+    <div class="stat"><div class="stat-label">Users Reached</div><div class="stat-val">~5B+</div><div class="stat-sub">Unique individuals monthly</div></div>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Company</th><th>Exchange</th><th style="text-align:right">Revenue</th><th style="text-align:right">Op. Margin</th><th style="text-align:right">Rev. Growth</th><th style="text-align:right">P/E (TTM)</th><th>Moat Rating</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Apple</strong></td><td>NASDAQ: AAPL</td><td class="num">$416B</td><td class="num">30%</td><td class="num">8%</td><td class="num">32x</td><td><span class="badge badge-green">&#9733;&#9733;&#9733;&#9733;&#9733;</span></td></tr>
+        <tr><td><strong>Alphabet</strong></td><td>NASDAQ: GOOGL</td><td class="num">$403B</td><td class="num">32%</td><td class="num">15%</td><td class="num">28x</td><td><span class="badge badge-green">&#9733;&#9733;&#9733;&#9733;</span></td></tr>
+        <tr><td><strong>Microsoft</strong></td><td>NASDAQ: MSFT</td><td class="num">$282B</td><td class="num">46%</td><td class="num">15%</td><td class="num">25x</td><td><span class="badge badge-green">&#9733;&#9733;&#9733;&#9733;&#9733;</span></td></tr>
+        <tr><td><strong>Meta</strong></td><td>NASDAQ: META</td><td class="num">$201B</td><td class="num">41%</td><td class="num">22%</td><td class="num">26x</td><td><span class="badge badge-green">&#9733;&#9733;&#9733;&#9733;</span></td></tr>
+        <tr><td><strong>Alibaba</strong></td><td>NYSE: BABA / 9988.HK</td><td class="num">$137B</td><td class="num">15%</td><td class="num">5%</td><td class="num">23x</td><td><span class="badge badge-amber">&#9733;&#9733;&#9733;</span></td></tr>
+        <tr><td><strong>Tencent</strong></td><td>HKEX: 0700</td><td class="num">$102B</td><td class="num">33%</td><td class="num">15%</td><td class="num">22x</td><td><span class="badge badge-green">&#9733;&#9733;&#9733;&#9733;</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p style="font-size:11px;color:var(--fg3);margin-top:8px">Sources: SEC 10-K/8-K filings (MSFT FY ending Jun 2025, AAPL FY ending Sep 2025, GOOGL/META CY 2025, BABA FY ending Mar 2025); HKEX interim reports (0700.HK, annualized Q1-Q3 2025). Tencent converted at ~7.25 CNY/USD. P/E ratios as of mid-March 2026.</p>
+</div>
+</section>
+
+<!-- SECTION 2: REVENUE & PROFITABILITY CHARTS -->
+<section id="financials">
+<div class="container">
+  <div class="section-num">02 &mdash; Financial Comparison</div>
+  <h2 class="section-title">Revenue Scale &amp; Profitability</h2>
+  <p class="section-lead">Revenue alone doesn&rsquo;t tell the story. The interplay between scale, margin, and growth rate reveals which companies are truly extracting excess profits from their competitive positions.</p>
+
+  <div class="chart-wrap">
+    <div class="chart-title">Annual revenue (2025, USD billions)</div>
+    <div class="chart-sub">Apple FY Sep 2025 | Microsoft FY Jun 2025 | Others CY 2025</div>
+    <div class="chart-canvas"><canvas id="c1"></canvas></div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem">
+    <div class="chart-wrap">
+      <div class="chart-title">Operating margin (%)</div>
+      <div class="chart-sub">Higher margin = stronger pricing power</div>
+      <div class="chart-canvas" style="height:280px"><canvas id="c2"></canvas></div>
+    </div>
+    <div class="chart-wrap">
+      <div class="chart-title">Revenue growth YoY (%)</div>
+      <div class="chart-sub">Growth signals moat expansion</div>
+      <div class="chart-canvas" style="height:280px"><canvas id="c3"></canvas></div>
+    </div>
+  </div>
+
+  <div class="chart-wrap">
+    <div class="chart-title">Moat quality map &mdash; operating margin vs. growth</div>
+    <div class="chart-sub">Bubble size = revenue. Top-right quadrant = strongest moat with fastest expansion.</div>
+    <div class="chart-canvas" style="height:380px"><canvas id="c4"></canvas></div>
+  </div>
+</div>
+</section>
+
+<!-- SECTION 3: MOAT DEEP DIVES -->
+<section id="moats">
+<div class="container">
+  <div class="section-num">03 &mdash; Moat Architecture</div>
+  <h2 class="section-title">Anatomy of Each Company&rsquo;s Competitive Fortress</h2>
+  <p class="section-lead">Every moat is different. Some rely on ecosystem lock-in, others on network effects, data advantages, or brand loyalty. Understanding the structural source of excess profits is critical to assessing durability.</p>
+
+  <div class="moat-grid" id="moatGrid"></div>
+</div>
+</section>
+
+<!-- SECTION 4: VALUATION -->
+<section id="valuation">
+<div class="container">
+  <div class="section-num">04 &mdash; Valuation Framework</div>
+  <h2 class="section-title">Price vs. Quality:<br>Where Is the Moat Underpriced?</h2>
+  <p class="section-lead">The best moat in the world is a poor investment if the market has already fully priced it in. We compare P/E ratios against growth and margin quality to identify mispricings.</p>
+
+  <div class="chart-wrap">
+    <div class="chart-title">P/E ratio (trailing) vs. revenue growth &mdash; March 2026</div>
+    <div class="chart-sub">Companies below the trendline offer more growth per unit of valuation.</div>
+    <div class="chart-canvas" style="height:350px"><canvas id="c5"></canvas></div>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Company</th><th style="text-align:right">P/E (TTM)</th><th style="text-align:right">Fwd P/E</th><th style="text-align:right">PEG Ratio</th><th>Valuation Signal</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Alphabet</strong></td><td class="num">28.5x</td><td class="num">~23x</td><td class="num">1.9</td><td><span class="badge badge-green">Fair to undervalued</span></td></tr>
+        <tr><td><strong>Tencent</strong></td><td class="num">22x</td><td class="num">~19x</td><td class="num">1.5</td><td><span class="badge badge-green">Undervalued (China discount)</span></td></tr>
+        <tr><td><strong>Microsoft</strong></td><td class="num">25x</td><td class="num">~27x</td><td class="num">1.7</td><td><span class="badge badge-green">Fair value</span></td></tr>
+        <tr><td><strong>Meta</strong></td><td class="num">26x</td><td class="num">~24x</td><td class="num">1.2</td><td><span class="badge badge-green">Fair&mdash;capex risk</span></td></tr>
+        <tr><td><strong>Apple</strong></td><td class="num">32x</td><td class="num">~32x</td><td class="num">4.0</td><td><span class="badge badge-amber">Premium valuation</span></td></tr>
+        <tr><td><strong>Alibaba</strong></td><td class="num">23x</td><td class="num">~17x</td><td class="num">4.6</td><td><span class="badge badge-red">Value trap risk</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p style="font-size:11px;color:var(--fg3);margin-top:8px">PEG ratio = P/E divided by expected EPS growth rate. Lower PEG (under 2.0) suggests better value relative to growth. Forward P/E based on consensus analyst estimates.</p>
+</div>
+</section>
+
+<!-- SECTION 5: VERDICT -->
+<section id="verdict">
+<div class="container">
+  <div class="section-num">05 &mdash; Investment Verdict</div>
+  <h2 class="section-title">Where Moat Quality Meets Market Mispricing</h2>
+
+  <div class="verdict">
+    <div class="verdict-badge">Data-Driven Conclusion</div>
+    <h3>Excess profits come from moats, but investability depends on whether the market has already priced them in.</h3>
+    <p>After analyzing revenue scale, operating margins, growth trajectories, moat architecture, and current valuations across all six companies, two stand out as offering the best gap between competitive quality and market pricing.</p>
+
+    <div class="verdict-picks">
+      <div class="pick">
+        <div class="pick-rank">Top Pick &mdash; Best Risk/Reward</div>
+        <div class="pick-name" style="color:var(--teal)">Alphabet (GOOGL)</div>
+        <p class="pick-reason">28.5x P/E for 15% growth with 32% margins. Search monopoly + fastest-growing cloud (48% Q4) + YouTube at $60B+ revenue + Gemini with 750M MAU. Antitrust overhang provides a valuation discount on what would otherwise command a much higher multiple. The widest diversification of AI monetization paths among the six.</p>
+      </div>
+      <div class="pick">
+        <div class="pick-rank">Top Pick &mdash; Best Value Play</div>
+        <div class="pick-name" style="color:var(--amber)">Tencent (0700.HK)</div>
+        <p class="pick-reason">22x P/E &mdash; well below its 10-year median of ~28x &mdash; for 15% growth and 33-38% non-IFRS operating margins. Unassailable super-app ecosystem (1.41B MAU), global gaming leader, and a hidden asset portfolio worth $150B+. Aggressive buybacks signal management confidence. The &ldquo;China discount&rdquo; is real but arguably overdone.</p>
+      </div>
+    </div>
+  </div>
+
+  <div style="background:var(--bg2);border:1px solid var(--bg4);border-radius:12px;padding:1.5rem 2rem;margin-top:2rem">
+    <p style="font-size:12px;color:var(--fg3);line-height:1.8"><strong style="color:var(--fg2)">Disclaimer:</strong> This report is for informational purposes only and does not constitute financial advice. The author is not a licensed financial advisor. All data is sourced from public SEC filings, HKEX disclosures, and financial databases. Past performance does not guarantee future results. Always conduct your own research and consult a qualified financial advisor before making investment decisions.</p>
+  </div>
+</div>
+</section>
+
+<footer>
+  <div class="container">
+    <p>Data sourced from SEC EDGAR (10-K, 8-K, 20-F filings for MSFT, AAPL, GOOGL, META, BABA), Hong Kong Exchange annual and interim reports (0700.HK), S&amp;P Global Market Intelligence, MacroTrends, and FactSet consensus estimates. Revenue periods vary by fiscal year: Apple FY ending Sep 2025, Microsoft FY ending Jun 2025, Alibaba FY ending Mar 2025, others calendar year 2025. Tencent financials converted at approximately 7.25 CNY/USD. P/E ratios reflect trailing twelve months as of mid-March 2026. All figures approximate.</p>
+    <p style="margin-top:1rem;color:var(--fg3)">&copy; 2026 Fortress Profits Research Report</p>
+  </div>
+</footer>
+
+<script>
+const C = ['#5b8def','#3dc9a5','#8b7bd4','#e86c4a','#d4538e','#c9a96e'];
+const labels = ['Apple','Alphabet','Microsoft','Meta','Alibaba','Tencent'];
+const rev = [416,403,282,201,137,102];
+const opM = [30,32,46,41,15,33];
+const grw = [8,15,15,22,5,15];
+const pe = [32,28.5,25,26,23,22];
+const gridC = 'rgba(255,255,255,0.06)';
+const tickC = '#6a6862';
+const fontF = "'DM Sans',sans-serif";
+
+function mkOpts(extras={}){
+  return Object.assign({responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{display:false},tooltip:{backgroundColor:'#1a1a26',borderColor:'#333',borderWidth:1,
+      titleFont:{family:fontF},bodyFont:{family:fontF},padding:12,cornerRadius:8}},
+    scales:{x:{grid:{color:gridC},ticks:{color:tickC,font:{family:fontF,size:11}}},
+            y:{grid:{color:gridC},ticks:{color:tickC,font:{family:fontF,size:11}}}}
+  },extras);
+}
+
+new Chart(document.getElementById('c1'),{type:'bar',
+  data:{labels,datasets:[{data:rev,backgroundColor:C,borderRadius:6,barPercentage:.65}]},
+  options:mkOpts({indexAxis:'y',scales:{x:{grid:{color:gridC},ticks:{color:tickC,callback:v=>'$'+v+'B',font:{family:fontF,size:11}}},y:{grid:{display:false},ticks:{color:'#e8e6df',font:{family:fontF,size:12,weight:500}}}}})
+});
+
+new Chart(document.getElementById('c2'),{type:'bar',
+  data:{labels,datasets:[{data:opM,backgroundColor:C,borderRadius:5,barPercentage:.6}]},
+  options:mkOpts({scales:{x:{grid:{display:false},ticks:{color:tickC,font:{family:fontF,size:10}}},y:{grid:{color:gridC},ticks:{color:tickC,callback:v=>v+'%',font:{family:fontF,size:10}}}}})
+});
+
+new Chart(document.getElementById('c3'),{type:'bar',
+  data:{labels,datasets:[{data:grw,backgroundColor:C,borderRadius:5,barPercentage:.6}]},
+  options:mkOpts({scales:{x:{grid:{display:false},ticks:{color:tickC,font:{family:fontF,size:10}}},y:{grid:{color:gridC},ticks:{color:tickC,callback:v=>v+'%',font:{family:fontF,size:10}}}}})
+});
+
+new Chart(document.getElementById('c4'),{type:'bubble',
+  data:{datasets:labels.map((l,i)=>({label:l,data:[{x:grw[i],y:opM[i],r:Math.sqrt(rev[i])*1.4}],backgroundColor:C[i]+'77',borderColor:C[i],borderWidth:2,hoverBorderWidth:3}))},
+  options:mkOpts({scales:{x:{title:{display:true,text:'Revenue growth YoY (%)',color:tickC,font:{family:fontF,size:11}},grid:{color:gridC},ticks:{color:tickC,font:{family:fontF,size:10}},min:0,max:28},
+    y:{title:{display:true,text:'Operating margin (%)',color:tickC,font:{family:fontF,size:11}},grid:{color:gridC},ticks:{color:tickC,font:{family:fontF,size:10}},min:8,max:52}},
+    plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.dataset.label+': '+c.raw.y+'% margin, '+c.raw.x+'% growth'}}}})
+});
+
+new Chart(document.getElementById('c5'),{type:'scatter',
+  data:{datasets:labels.map((l,i)=>({label:l,data:[{x:grw[i],y:pe[i]}],backgroundColor:C[i],borderColor:C[i],borderWidth:2,pointRadius:10,pointHoverRadius:14}))},
+  options:mkOpts({scales:{x:{title:{display:true,text:'Revenue growth (%)',color:tickC,font:{family:fontF,size:11}},grid:{color:gridC},ticks:{color:tickC,font:{family:fontF,size:10}},min:0,max:28},
+    y:{title:{display:true,text:'P/E ratio (TTM)',color:tickC,font:{family:fontF,size:11}},grid:{color:gridC},ticks:{color:tickC,font:{family:fontF,size:10}},min:18,max:36}},
+    plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.dataset.label+': P/E '+c.raw.y+'x, growth '+c.raw.x+'%'}}}})
+});
+
+const moats = [
+  {name:'Microsoft',ticker:'MSFT',color:'#8b7bd4',type:'Ecosystem Lock-in',rev:'$282B',margin:'46%',pe:'25x',
+   items:['Office 365 + Azure + Windows enterprise stack creates massive switching costs',
+          '400M+ commercial cloud seats with multi-year contracts',
+          'Azure OpenAI + Copilot embeds AI into every product layer',
+          'GitHub (100M+ developers) + LinkedIn (1B+ members) distribution moats']},
+  {name:'Apple',ticker:'AAPL',color:'#5b8def',type:'Hardware-Software Flywheel',rev:'$416B',margin:'30%',pe:'32x',
+   items:['Vertically integrated hardware-software-services ecosystem',
+          'Services segment at $100B+ run rate with 74% gross margins',
+          '1.8B+ active devices creating recurring revenue base',
+          'Privacy positioning as a competitive differentiator in AI era']},
+  {name:'Alphabet',ticker:'GOOGL',color:'#3dc9a5',type:'Data Network Effects',rev:'$403B',margin:'32%',pe:'28x',
+   items:['~90% global search market share with self-reinforcing data moat',
+          'YouTube crossed $60B annual revenue (ads + subscriptions)',
+          'Google Cloud growing 48% in Q4, fastest among hyperscalers',
+          'Gemini AI: 750M MAU, 10B+ tokens/minute via API']},
+  {name:'Meta',ticker:'META',color:'#e86c4a',type:'Social Graph Monopoly',rev:'$201B',margin:'41%',pe:'26x',
+   items:['3.6B daily active people across family of apps &mdash; nearly half the planet',
+          'AI-driven ad engine: price per ad up 9% YoY while impressions grew 12%',
+          'AI Reels recommendations drove 30% increase in Instagram time spent',
+          'WhatsApp: dominant global messaging platform, monetization just beginning']},
+  {name:'Tencent',ticker:'0700.HK',color:'#c9a96e',type:'Super-App Ecosystem',rev:'$102B',margin:'33%',pe:'22x',
+   items:['WeChat/Weixin: 1.41B MAU, integrates messaging, payments, commerce, gaming',
+          'World\'s largest gaming company by revenue (Honour of Kings, PUBG, Supercell)',
+          'Investment portfolio: $150B+ in listed + unlisted company stakes',
+          'HunYuan AI and cloud services growing rapidly with strong enterprise demand']},
+  {name:'Alibaba',ticker:'BABA',color:'#d4538e',type:'Commerce Platform',rev:'$137B',margin:'15%',pe:'23x',
+   items:['China\'s largest e-commerce platform (Taobao + Tmall)',
+          'Cloud market leader in Asia-Pacific with triple-digit AI revenue growth',
+          'Qwen3 AI: 300M+ global downloads, largest open-source model family',
+          'Cross-border commerce (AIDC) growing 29% but still loss-making']}
+];
+
+const grid = document.getElementById('moatGrid');
+moats.forEach(m => {
+  const card = document.createElement('div');
+  card.className = 'moat-card';
+  card.innerHTML = `
+    <div class="moat-header">
+      <div class="moat-name" style="color:${m.color}">${m.name}</div>
+      <div class="moat-ticker">${m.ticker}</div>
+    </div>
+    <div class="moat-body">
+      <div class="moat-type" style="background:${m.color}18;color:${m.color}">${m.type}</div>
+      <ul class="moat-list">${m.items.map(i=>`<li style="--dot:${m.color}"><span style="display:none">${m.color}</span>${i}</li>`).join('')}</ul>
+    </div>
+    <div class="moat-metrics">
+      <div class="moat-metric"><div class="moat-metric-val" style="color:${m.color}">${m.rev}</div><div class="moat-metric-label">Revenue</div></div>
+      <div class="moat-metric"><div class="moat-metric-val" style="color:${m.color}">${m.margin}</div><div class="moat-metric-label">Op. Margin</div></div>
+      <div class="moat-metric"><div class="moat-metric-val" style="color:${m.color}">${m.pe}</div><div class="moat-metric-label">P/E Ratio</div></div>
+    </div>`;
+  card.querySelectorAll('.moat-list li').forEach(li => {
+    const c = li.querySelector('span').textContent;
+    li.querySelector('span').remove();
+    li.style.setProperty('--c', c);
+    li.querySelector('::before') || (li.style.cssText += '');
+  });
+  grid.appendChild(card);
+});
+
+document.querySelectorAll('.moat-list li').forEach(li => {
+  const parent = li.closest('.moat-card');
+  const color = parent.querySelector('.moat-name').style.color;
+  const dot = li.querySelector('::before');
+  li.style.setProperty('--bullet-color', color);
+});
+
+const style = document.createElement('style');
+style.textContent = `.moat-list li::before{background:var(--bullet-color,var(--accent))}`;
+document.head.appendChild(style);
+
+document.querySelectorAll('.moat-card').forEach(card => {
+  const color = card.querySelector('.moat-name').style.color;
+  card.querySelectorAll('.moat-list li').forEach(li => {
+    li.style.setProperty('--bullet-color', color);
+  });
+});
+
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if(e.isIntersecting){e.target.style.opacity='1';e.target.style.transform='translateY(0)'}
+  });
+},{threshold:.1});
+document.querySelectorAll('.chart-wrap,.moat-card,.verdict,.stats-grid,.table-wrap').forEach(el => {
+  el.style.opacity='0';el.style.transform='translateY(20px)';el.style.transition='opacity .6s,transform .6s';
+  obs.observe(el);
+});
+</script>
+</body>
+</html>
