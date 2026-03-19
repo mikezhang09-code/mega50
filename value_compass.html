@@ -169,25 +169,25 @@ const D = {
       // Insurance funds portfolio: grew 21.4% to >RMB 5.73T; comprehensive yield 5.8%
       {t:"Ins Funds Portfolio (RMB T) 保险资金规模(万亿)",type:"line",l:["2020","2021","2022","2023","2024"],d:[3.74,4.05,4.37,4.72,5.73],c:"#f0a830"},
     ]},
-  // AIA: 2024 Annual Results (aia.com); VONB US$4,712M (+18%); OPAT US$6,605M (+12%/sh); EV Equity US$71.6B; TWPI ~US$40B+
+  // AIA: Yahoo Finance 1299.HK income stmt; 2024 Annual Results (aia.com); VONB US$4,712M; OPAT US$6,605M; Total Assets US$305B
   "1299": { name:"AIA Group", cn:"友邦保险", ex:"HKEX", sec:"Life Insurance",
-    pe:15,fpe:13,roe:15.3,roic:8,de:0.3,dy:1.9,mc:95,cash:12,rev:20.4,ni:7,beta:0.9,
-    // rev: companiesmarketcap shows TTM revenue US$20.35B; OPAT US$6.6B; operating ROEV 14.9%; operating ROE 15.3%
-    revH:{l:["2019","2020","2021","2022","2023","2024"],d:[18.5,17.3,19.8,14.2,20.0,20.4]},
-    // Source: companiesmarketcap.com/aia/revenue — IFRS revenue subject to IFRS17 restatement
-    seg:{l:["China (HK+ML)","Thailand","Singapore","Malaysia","Other Markets"],d:[7.1,3.0,2.6,1.6,6.1]},
-    // Approx TWPI split from AIA 2024 analyst presentation by market
+    pe:15,fpe:13,roe:15.3,roic:8,de:0.3,dy:1.9,mc:95,cash:12,rev:31.3,ni:6.8,beta:0.9,
+    // rev: Yahoo Finance 1299.HK total revenue 2024 = US$31,255M; net income = US$6,836M; total assets US$305B
+    revH:{l:["2022*","2023","2024"],d:[-15.2,30.1,31.3]},
+    // Source: Yahoo Finance 1299.HK — Total Revenue: 2022=-$15.2B (IFRS9/17 transition), 2023=$30.1B, 2024=$31.3B. *2022 restated under IFRS 9/17, negative due to mark-to-market; pre-2022 not comparable.
+    seg:{l:["China (HK+ML)","Thailand","Singapore","Malaysia","Other Markets"],d:[10.9,4.7,4.1,2.5,9.1]},
+    // Approx TWPI split by market from AIA 2024 analyst presentation, scaled to $31.3B total revenue
     moats:[
-      // VONB from AIA annual results: 2019=US$3.96B, 2020=US$2.79B, 2021=US$3.26B, 2022=US$3.16B, 2023=US$4.04B (restated), 2024=US$4.712B
+      // VONB from AIA annual results: record US$4,712M in 2024 (+18%); all segments double-digit
       {t:"VONB ($M) 新业务价值(百万美元)",type:"bar",l:["2019","2020","2021","2022","2023","2024"],d:[3958,2787,3259,3162,4040,4712],c:"#a855f7"},
-      // OPAT from annual results: grew 12% per share to US$6,605M record
+      // OPAT from annual results: US$6,605M record (+12%/share); target CAGR 9-11% through 2026
       {t:"OPAT ($M) 税后营运利润",type:"line",l:["2019","2020","2021","2022","2023","2024"],d:[5839,5926,6197,6044,5888,6605],c:"#34d399"},
-      // EV Equity from annual results: US$71.6B after $6.5B shareholder returns
+      // EV Equity from annual results: US$71.6B after $6.5B shareholder returns; up 9% per share
       {t:"EV Equity ($B) 内含价值",type:"line",l:["2019","2020","2021","2022","2023","2024"],d:[62.8,67.9,71.3,57.7,65.2,71.6],c:"#f0a830"},
       // Shareholder returns: dividends + buybacks totaling $6.5B in 2024; $18.2B cumulative 2022-2024
       {t:"Shareholder Returns ($B) 股东回报",type:"bar",l:["2020","2021","2022","2023","2024"],d:[2.0,2.0,4.4,5.7,6.5],c:"#4f8ff7"},
-      // Market revenue mix from analyst presentation
-      {t:"Revenue by Market (%) 各市场占比",type:"doughnut",l:["China HK/ML","Thailand","Singapore","Malaysia","Other Asia"],d:[35,15,13,8,29],c:PIES},
+      // Total assets from 2024 annual results: US$305B
+      {t:"Total Assets ($B) 总资产",type:"line",l:["2020","2021","2022","2023","2024"],d:[284,326,259,285,305],c:"#22d3ee"},
     ]},
 };
 
