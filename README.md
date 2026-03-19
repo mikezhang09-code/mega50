@@ -41,5 +41,9 @@ This project provides a comprehensive look at the "MegaCap 50," going beyond tra
 
 Simply open `index.html` in any modern web browser to explore the dashboard.
 
+## Deployed Github Pages
+
+- Access at: https://mikezhang09-code.github.io/megacap-50-beyond-the-balance-sheet/
+
 ---
 *Created with Perplexity Computer. Data sourced from SEC filings, company reports, and analyst estimates. March 2026.*
