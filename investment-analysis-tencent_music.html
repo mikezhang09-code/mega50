@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TME Investment Deep Dive — Tencent Music Entertainment</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg-primary: #0a0e17;
+  --bg-card: #111827;
+  --bg-card-alt: #151d2e;
+  --border: #1e293b;
+  --text-primary: #f1f5f9;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+  --accent-green: #10b981;
+  --accent-green-dim: rgba(16,185,129,0.15);
+  --accent-red: #ef4444;
+  --accent-red-dim: rgba(239,68,68,0.12);
+  --accent-blue: #3b82f6;
+  --accent-blue-dim: rgba(59,130,246,0.12);
+  --accent-amber: #f59e0b;
+  --accent-amber-dim: rgba(245,158,11,0.12);
+  --accent-purple: #a78bfa;
+  --accent-purple-dim: rgba(167,139,250,0.12);
+  --accent-cyan: #06b6d4;
+  --gradient-hero: linear-gradient(135deg, #0a0e17 0%, #111827 40%, #0f1729 100%);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+.container { max-width: 1320px; margin: 0 auto; padding: 0 24px; }
+
+/* HERO */
+.hero {
+  background: var(--gradient-hero);
+  border-bottom: 1px solid var(--border);
+  padding: 60px 0 48px;
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  top: -120px; right: -80px;
+  width: 500px; height: 500px;
+  background: radial-gradient(circle, rgba(16,185,129,0.06) 0%, transparent 70%);
+  pointer-events: none;
+}
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--accent-green-dim);
+  border: 1px solid rgba(16,185,129,0.25);
+  padding: 6px 16px; border-radius: 100px;
+  font-size: 12px; font-weight: 600; letter-spacing: 0.08em;
+  color: var(--accent-green); text-transform: uppercase;
+  margin-bottom: 20px;
+}
+.hero-badge .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent-green); animation: pulse 2s infinite; }
+@keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+.hero h1 {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(32px, 4.5vw, 56px);
+  line-height: 1.1;
+  margin-bottom: 12px;
+  background: linear-gradient(135deg, #f1f5f9 0%, #94a3b8 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+}
+.hero-sub { font-size: 18px; color: var(--text-secondary); max-width: 700px; margin-bottom: 28px; font-weight: 300; }
+.hero-stats {
+  display: flex; flex-wrap: wrap; gap: 32px;
+}
+.hero-stat .label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 4px; }
+.hero-stat .value { font-family: 'JetBrains Mono', monospace; font-size: 26px; font-weight: 600; }
+.hero-stat .change { font-size: 13px; font-weight: 600; margin-left: 6px; }
+.green { color: var(--accent-green); }
+.red { color: var(--accent-red); }
+.blue { color: var(--accent-blue); }
+.amber { color: var(--accent-amber); }
+.purple { color: var(--accent-purple); }
+
+/* SECTION */
+.section { padding: 48px 0; }
+.section-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: 28px; margin-bottom: 8px;
+}
+.section-desc { color: var(--text-secondary); font-size: 15px; margin-bottom: 32px; max-width: 700px; }
+
+/* GRID */
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 24px; }
+.grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+@media (max-width: 900px) {
+  .grid-2, .grid-3 { grid-template-columns: 1fr; }
+  .grid-4 { grid-template-columns: 1fr 1fr; }
+}
+
+/* CARD */
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 28px;
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.3s;
+}
+.card:hover { border-color: rgba(148,163,184,0.2); }
+.card-label { font-size: 12px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 10px; font-weight: 600; }
+.card-value { font-family: 'JetBrains Mono', monospace; font-size: 28px; font-weight: 700; line-height: 1.2; }
+.card-note { font-size: 13px; color: var(--text-secondary); margin-top: 6px; }
+.card.span-2 { grid-column: span 2; }
+
+/* CHART CARD */
+.chart-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 28px;
+}
+.chart-card h3 { font-size: 16px; font-weight: 600; margin-bottom: 4px; }
+.chart-card .chart-sub { font-size: 13px; color: var(--text-muted); margin-bottom: 20px; }
+.chart-wrap { position: relative; height: 320px; }
+.chart-wrap canvas { max-height: 320px; }
+
+/* TABLE */
+.fin-table {
+  width: 100%; border-collapse: collapse; font-size: 14px;
+}
+.fin-table thead th {
+  text-align: right; padding: 10px 14px; font-weight: 600;
+  color: var(--text-muted); font-size: 11px; text-transform: uppercase;
+  letter-spacing: 0.06em; border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+.fin-table thead th:first-child { text-align: left; }
+.fin-table tbody td {
+  text-align: right; padding: 12px 14px; border-bottom: 1px solid rgba(30,41,59,0.5);
+  font-family: 'JetBrains Mono', monospace; font-size: 13px;
+  color: var(--text-secondary);
+}
+.fin-table tbody td:first-child {
+  text-align: left; font-family: 'DM Sans', sans-serif;
+  color: var(--text-primary); font-weight: 500;
+}
+.fin-table tbody tr:hover td { background: rgba(59,130,246,0.04); }
+.fin-table .highlight { color: var(--accent-green); font-weight: 600; }
+.fin-table .neg { color: var(--accent-red); }
+
+/* VERDICT */
+.verdict-card {
+  background: linear-gradient(135deg, #111827 0%, #0f2318 100%);
+  border: 1px solid rgba(16,185,129,0.2);
+  border-radius: 20px; padding: 40px;
+  position: relative; overflow: hidden;
+}
+.verdict-card::after {
+  content: ''; position: absolute; top: 0; right: 0;
+  width: 300px; height: 300px;
+  background: radial-gradient(circle, rgba(16,185,129,0.08) 0%, transparent 70%);
+  pointer-events: none;
+}
+.verdict-tag {
+  display: inline-block; padding: 6px 18px; border-radius: 8px;
+  font-size: 13px; font-weight: 700; letter-spacing: 0.06em;
+  text-transform: uppercase; margin-bottom: 16px;
+}
+.verdict-tag.bullish { background: var(--accent-green-dim); color: var(--accent-green); border: 1px solid rgba(16,185,129,0.3); }
+.verdict-title { font-family: 'DM Serif Display', serif; font-size: 26px; margin-bottom: 16px; line-height: 1.3; }
+.verdict-text { color: var(--text-secondary); font-size: 15px; line-height: 1.7; max-width: 900px; }
+.verdict-text strong { color: var(--text-primary); }
+
+/* RISK/STRENGTH BARS */
+.bar-section { display: flex; flex-direction: column; gap: 14px; }
+.bar-item { }
+.bar-label { display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 13px; }
+.bar-label span:first-child { color: var(--text-primary); font-weight: 500; }
+.bar-label span:last-child { font-family: 'JetBrains Mono', monospace; font-weight: 600; }
+.bar-track { height: 8px; background: rgba(255,255,255,0.06); border-radius: 4px; overflow: hidden; }
+.bar-fill { height: 100%; border-radius: 4px; transition: width 1.2s cubic-bezier(0.22,1,0.36,1); }
+
+/* GAUGE */
+.gauge-container {
+  display: flex; align-items: center; justify-content: center;
+  flex-direction: column; padding: 20px;
+}
+
+/* DIVIDER */
+.divider {
+  height: 1px; background: var(--border); margin: 12px 0;
+}
+
+/* TABS */
+.tabs { display: flex; gap: 4px; margin-bottom: 24px; background: var(--bg-card-alt); border-radius: 10px; padding: 4px; width: fit-content; }
+.tab {
+  padding: 8px 20px; border-radius: 8px; font-size: 13px; font-weight: 500;
+  cursor: pointer; color: var(--text-muted); transition: all 0.2s;
+  border: none; background: transparent;
+}
+.tab.active { background: var(--accent-blue); color: white; }
+.tab:hover:not(.active) { color: var(--text-secondary); }
+
+/* FOOTER */
+.footer { padding: 40px 0; border-top: 1px solid var(--border); text-align: center; }
+.footer p { font-size: 12px; color: var(--text-muted); }
+
+/* ANIM */
+@keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+.fade-up { animation: fadeUp 0.6s ease-out forwards; }
+.delay-1 { animation-delay: 0.1s; opacity: 0; }
+.delay-2 { animation-delay: 0.2s; opacity: 0; }
+.delay-3 { animation-delay: 0.3s; opacity: 0; }
+.delay-4 { animation-delay: 0.4s; opacity: 0; }
+
+/* SWOT */
+.swot-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+@media (max-width: 700px) { .swot-grid { grid-template-columns: 1fr; } }
+.swot-cell { border-radius: 14px; padding: 24px; }
+.swot-cell h4 { font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 14px; }
+.swot-cell ul { list-style: none; }
+.swot-cell li { font-size: 13px; color: var(--text-secondary); padding: 6px 0; padding-left: 18px; position: relative; line-height: 1.5; }
+.swot-cell li::before { content: ''; position: absolute; left: 0; top: 13px; width: 6px; height: 6px; border-radius: 50%; }
+.swot-s { background: rgba(16,185,129,0.06); border: 1px solid rgba(16,185,129,0.15); }
+.swot-s h4 { color: var(--accent-green); }
+.swot-s li::before { background: var(--accent-green); }
+.swot-w { background: rgba(239,68,68,0.06); border: 1px solid rgba(239,68,68,0.15); }
+.swot-w h4 { color: var(--accent-red); }
+.swot-w li::before { background: var(--accent-red); }
+.swot-o { background: rgba(59,130,246,0.06); border: 1px solid rgba(59,130,246,0.15); }
+.swot-o h4 { color: var(--accent-blue); }
+.swot-o li::before { background: var(--accent-blue); }
+.swot-t { background: rgba(245,158,11,0.06); border: 1px solid rgba(245,158,11,0.15); }
+.swot-t h4 { color: var(--accent-amber); }
+.swot-t li::before { background: var(--accent-amber); }
+
+.insight-box {
+  background: var(--bg-card-alt); border-left: 3px solid var(--accent-blue);
+  padding: 16px 20px; border-radius: 0 10px 10px 0; margin: 20px 0;
+  font-size: 14px; color: var(--text-secondary); line-height: 1.7;
+}
+.insight-box strong { color: var(--accent-blue); }
+
+.metric-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 0; border-bottom: 1px solid rgba(30,41,59,0.4);
+}
+.metric-row:last-child { border-bottom: none; }
+.metric-row .m-label { font-size: 13px; color: var(--text-secondary); }
+.metric-row .m-value { font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 600; }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="container">
+    <div class="hero-badge"><span class="dot"></span> Live Analysis — March 21, 2026</div>
+    <h1>Tencent Music Entertainment<br>Investment Deep Dive</h1>
+    <p class="hero-sub">NYSE: TME — China's dominant music streaming platform. A value investor's analysis of whether the recent 25% post-earnings crash has created a compelling entry point.</p>
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <div class="label">Stock Price (ADS)</div>
+        <div class="value">$10.35 <span class="change red">▼ 31% YTD</span></div>
+      </div>
+      <div class="hero-stat">
+        <div class="label">Market Cap</div>
+        <div class="value">~$15.9B</div>
+      </div>
+      <div class="hero-stat">
+        <div class="label">Cash & Equivalents</div>
+        <div class="value green">$5.2B</div>
+      </div>
+      <div class="hero-stat">
+        <div class="label">FY2025 Net Profit</div>
+        <div class="value">$1.52B</div>
+      </div>
+      <div class="hero-stat">
+        <div class="label">52-Week Range</div>
+        <div class="value">$10.14 — $26.70</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- KEY METRICS -->
+<div class="section">
+  <div class="container">
+    <div class="section-title">Snapshot Metrics</div>
+    <div class="section-desc">Core valuation and operating metrics as of the latest FY2025 annual report.</div>
+    <div class="grid-4 fade-up">
+      <div class="card">
+        <div class="card-label">Trailing P/E</div>
+        <div class="card-value green">~10.5x</div>
+        <div class="card-note">Based on FY2025 GAAP earnings</div>
+      </div>
+      <div class="card">
+        <div class="card-label">Adj. P/E (ex one-time)</div>
+        <div class="card-value">~13.2x</div>
+        <div class="card-note">Excl. RMB 2.37B UMG gain</div>
+      </div>
+      <div class="card">
+        <div class="card-label">Cash / Market Cap</div>
+        <div class="card-value green">33%</div>
+        <div class="card-note">RMB 38.0B cash hoard</div>
+      </div>
+      <div class="card">
+        <div class="card-label">Dividend Yield</div>
+        <div class="card-value">2.3%</div>
+        <div class="card-note">$0.24/ADS + $1B buyback</div>
+      </div>
+    </div>
+    <div style="height:16px"></div>
+    <div class="grid-4 fade-up delay-1">
+      <div class="card">
+        <div class="card-label">Paying Subscribers</div>
+        <div class="card-value">127.4M</div>
+        <div class="card-note green">+5.3% YoY</div>
+      </div>
+      <div class="card">
+        <div class="card-label">Monthly ARPPU</div>
+        <div class="card-value">¥11.9</div>
+        <div class="card-note green">+7.2% YoY</div>
+      </div>
+      <div class="card">
+        <div class="card-label">Gross Margin</div>
+        <div class="card-value">44.4%</div>
+        <div class="card-note green">↑ from 35.3% in FY2023</div>
+      </div>
+      <div class="card">
+        <div class="card-label">Market Share (China)</div>
+        <div class="card-value">~62%</div>
+        <div class="card-note">QQ Music + Kugou + Kuwo</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 5-YEAR FINANCIAL TABLE -->
+<div class="section" style="padding-top: 12px;">
+  <div class="container">
+    <div class="section-title">5-Year Financial Trajectory</div>
+    <div class="section-desc">TME's transformation from a social entertainment company to a subscription-driven music platform — all figures in RMB billions unless noted.</div>
+
+    <div class="chart-card" style="overflow-x: auto;">
+      <table class="fin-table">
+        <thead>
+          <tr>
+            <th style="min-width:180px">Metric</th>
+            <th>FY2020</th>
+            <th>FY2021</th>
+            <th>FY2022</th>
+            <th>FY2023</th>
+            <th>FY2024</th>
+            <th>FY2025</th>
+            <th>Trend</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Total Revenue (¥B)</td>
+            <td>29.1</td>
+            <td>31.2</td>
+            <td>27.4</td>
+            <td>27.8</td>
+            <td>28.4</td>
+            <td class="highlight">32.9</td>
+            <td class="highlight">▲</td>
+          </tr>
+          <tr>
+            <td>  ↳ Online Music Rev</td>
+            <td>11.5</td>
+            <td>14.1</td>
+            <td>14.5</td>
+            <td>17.3</td>
+            <td>21.7</td>
+            <td class="highlight">26.4</td>
+            <td class="highlight">▲▲</td>
+          </tr>
+          <tr>
+            <td>  ↳ Social Ent. Rev</td>
+            <td>17.6</td>
+            <td>17.1</td>
+            <td>12.9</td>
+            <td>10.5</td>
+            <td>6.7</td>
+            <td class="neg">6.5</td>
+            <td class="neg">▼▼</td>
+          </tr>
+          <tr>
+            <td>Gross Profit (¥B)</td>
+            <td>8.2</td>
+            <td>8.8</td>
+            <td>7.7</td>
+            <td>8.4</td>
+            <td>12.0</td>
+            <td class="highlight">14.8</td>
+            <td class="highlight">▲▲</td>
+          </tr>
+          <tr>
+            <td>Gross Margin %</td>
+            <td>28.2%</td>
+            <td>28.2%</td>
+            <td>28.0%</td>
+            <td>30.3%</td>
+            <td>42.3%</td>
+            <td class="highlight">44.9%</td>
+            <td class="highlight">▲▲</td>
+          </tr>
+          <tr>
+            <td>Net Profit to Equity (¥B)</td>
+            <td>3.68</td>
+            <td>3.03</td>
+            <td>4.16</td>
+            <td>4.92</td>
+            <td>6.64</td>
+            <td class="highlight">11.06*</td>
+            <td class="highlight">▲▲</td>
+          </tr>
+          <tr>
+            <td>Paying Users (M)</td>
+            <td>56.2</td>
+            <td>76.2</td>
+            <td>88.5</td>
+            <td>106.7</td>
+            <td>121.0</td>
+            <td class="highlight">127.4</td>
+            <td class="highlight">▲</td>
+          </tr>
+          <tr>
+            <td>Online Music MAU (M)</td>
+            <td>622</td>
+            <td>615</td>
+            <td>593</td>
+            <td>567</td>
+            <td>559</td>
+            <td class="neg">528</td>
+            <td class="neg">▼</td>
+          </tr>
+          <tr>
+            <td>Cash + Deposits (¥B)</td>
+            <td>21.3</td>
+            <td>24.8</td>
+            <td>26.0</td>
+            <td>30.9</td>
+            <td>37.6</td>
+            <td class="highlight">38.0</td>
+            <td class="highlight">▲</td>
+          </tr>
+          <tr>
+            <td>Dividend / ADS (US$)</td>
+            <td>—</td>
+            <td>—</td>
+            <td>$0.08</td>
+            <td>$0.14</td>
+            <td>$0.18</td>
+            <td class="highlight">$0.24</td>
+            <td class="highlight">▲</td>
+          </tr>
+        </tbody>
+      </table>
+      <div style="margin-top: 12px; font-size: 12px; color: var(--text-muted);">
+        *FY2025 net profit includes a one-time RMB 2.37B gain from UMG stake disposal. Adjusted net profit ≈ RMB 8.69B.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CHARTS ROW -->
+<div class="section" style="padding-top: 12px;">
+  <div class="container">
+    <div class="grid-2">
+      <!-- Revenue Mix -->
+      <div class="chart-card fade-up delay-1">
+        <h3>Revenue Composition Shift (¥B)</h3>
+        <div class="chart-sub">The pivot from social entertainment to subscription-driven music revenue</div>
+        <div class="chart-wrap">
+          <canvas id="revMixChart"></canvas>
+        </div>
+      </div>
+      <!-- Profitability -->
+      <div class="chart-card fade-up delay-2">
+        <h3>Profitability Trajectory</h3>
+        <div class="chart-sub">Net profit (¥B) & gross margin (%) — margin expansion is the real story</div>
+        <div class="chart-wrap">
+          <canvas id="profitChart"></canvas>
+        </div>
+      </div>
+    </div>
+    <div style="height: 24px"></div>
+    <div class="grid-2">
+      <!-- Subscribers -->
+      <div class="chart-card fade-up delay-3">
+        <h3>Paying Users vs. MAU Divergence</h3>
+        <div class="chart-sub">The market's #1 worry: MAU declines even as paying users grow</div>
+        <div class="chart-wrap">
+          <canvas id="userChart"></canvas>
+        </div>
+      </div>
+      <!-- ARPPU + Subscription Revenue -->
+      <div class="chart-card fade-up delay-4">
+        <h3>Subscription Revenue & ARPPU Growth</h3>
+        <div class="chart-sub">Revenue per user rising alongside the subscriber base</div>
+        <div class="chart-wrap">
+          <canvas id="arppuChart"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- VALUATION ANALYSIS -->
+<div class="section" style="padding-top: 12px;">
+  <div class="container">
+    <div class="section-title">Intrinsic Value Assessment</div>
+    <div class="section-desc">Sum-of-the-parts and comparative valuation to estimate fair value.</div>
+
+    <div class="grid-2">
+      <div class="chart-card">
+        <h3>Sum-of-the-Parts Valuation</h3>
+        <div class="chart-sub">Conservative estimate using cash + operating business value</div>
+        <div style="margin-top: 16px;">
+          <div class="metric-row">
+            <span class="m-label">Cash, Deposits & Short-Term Investments</span>
+            <span class="m-value green">$5.24B</span>
+          </div>
+          <div class="metric-row">
+            <span class="m-label">FY2025 Adj. Operating Profit (~¥13.4B)</span>
+            <span class="m-value">$1.84B</span>
+          </div>
+          <div class="metric-row">
+            <span class="m-label">Apply 12x Operating Earnings (conservative)</span>
+            <span class="m-value">$22.1B</span>
+          </div>
+          <div class="metric-row">
+            <span class="m-label" style="font-weight:600; color: var(--text-primary);">SOTP Fair Value</span>
+            <span class="m-value green" style="font-size: 18px;">$27.3B</span>
+          </div>
+          <div class="divider"></div>
+          <div class="metric-row">
+            <span class="m-label">Current Market Cap</span>
+            <span class="m-value red">$15.9B</span>
+          </div>
+          <div class="metric-row">
+            <span class="m-label" style="font-weight:600; color: var(--accent-green);">Implied Upside</span>
+            <span class="m-value green" style="font-size: 18px;">+72%</span>
+          </div>
+        </div>
+        <div class="insight-box" style="margin-top: 16px;">
+          <strong>Key Insight:</strong> At $15.9B market cap, the market values TME's entire operating business (¥32.9B revenue, 44.9% gross margin, 62% market share) at only ~$10.7B after netting out cash. That implies an EV/Revenue of ~0.5x for a growing, dominant, profitable platform.
+        </div>
+      </div>
+
+      <div class="chart-card">
+        <h3>Peer Valuation Comparison</h3>
+        <div class="chart-sub">TME trades at a significant discount to global music peers</div>
+        <div class="chart-wrap" style="height: 280px;">
+          <canvas id="peerChart"></canvas>
+        </div>
+        <div style="margin-top: 12px;">
+          <div class="metric-row">
+            <span class="m-label">Spotify (SPOT)</span>
+            <span class="m-value">~65x P/E, ~4x P/S</span>
+          </div>
+          <div class="metric-row">
+            <span class="m-label">NetEase Cloud Music (9899.HK)</span>
+            <span class="m-value">~18x P/E</span>
+          </div>
+          <div class="metric-row">
+            <span class="m-label">TME (current)</span>
+            <span class="m-value green">~10.5x P/E, ~0.48x P/S</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SWOT -->
+<div class="section" style="padding-top: 12px;">
+  <div class="container">
+    <div class="section-title">SWOT Analysis</div>
+    <div class="section-desc">Comprehensive assessment of TME's competitive position and outlook.</div>
+    <div class="swot-grid">
+      <div class="swot-cell swot-s">
+        <h4>◆ Strengths</h4>
+        <ul>
+          <li>62%+ market share — dominant scale moat with 3 major apps (QQ Music, Kugou, Kuwo)</li>
+          <li>$5.2B cash war chest (~33% of market cap) provides massive margin of safety</li>
+          <li>Gross margin expanded from 28% → 45% in 3 years — remarkable operating leverage</li>
+          <li>127M paying subscribers with ARPPU still rising (+7.2% YoY to ¥11.9)</li>
+          <li>Tencent ecosystem advantage — WeChat, Mini Programs, and content integration</li>
+          <li>Deepening artist IP monetization: concerts, merch, physical albums, fan economy</li>
+          <li>10M+ users on AI music production tools — early AI integration</li>
+          <li>$1B buyback + increasing dividend ($0.24/ADS) shows shareholder alignment</li>
+        </ul>
+      </div>
+      <div class="swot-cell swot-w">
+        <h4>◆ Weaknesses</h4>
+        <ul>
+          <li>MAU declining 5% to 528M — free user funnel is narrowing</li>
+          <li>Social entertainment revenue in structural decline (down 36% in FY2024)</li>
+          <li>Stopped reporting quarterly subscriber metrics — reduced transparency</li>
+          <li>ADR structure adds VIE risk and geopolitical discount</li>
+          <li>Revenue still concentrated in China — limited international diversification</li>
+          <li>FY2025 profit boosted by ¥2.37B one-time UMG gain (flatters headline P/E)</li>
+        </ul>
+      </div>
+      <div class="swot-cell swot-o">
+        <h4>◆ Opportunities</h4>
+        <ul>
+          <li>China's music pay ratio (~24%) far below Western markets (30-40%) — long runway</li>
+          <li>SVIP tier surpassed 20M users — premium upsell unlocks higher ARPPU</li>
+          <li>AI-powered content creation and recommendation driving engagement</li>
+          <li>Offline-to-online flywheel: concerts, tours, and live events expanding TAM</li>
+          <li>Advertising revenue growing rapidly with new ad-supported membership tier</li>
+          <li>Long-form audio (audiobooks, podcasts) growing at 2x rate of music streaming</li>
+          <li>Share buyback can support EPS growth even if revenue plateaus</li>
+        </ul>
+      </div>
+      <div class="swot-cell swot-t">
+        <h4>◆ Threats</h4>
+        <ul>
+          <li>ByteDance's Soda Music (Qishui) reached 140M MAUs — algorithm-driven threat</li>
+          <li>Short-form video (Douyin, Kuaishou) siphoning user attention and time</li>
+          <li>Macquarie downgrade signals institutional concern about ARPPU growth ceiling</li>
+          <li>Chinese regulatory environment remains unpredictable for tech platforms</li>
+          <li>US-China tensions and potential delisting risk for ADRs</li>
+          <li>Management guiding flat-to-lower margins in 2026 as it invests in new areas</li>
+          <li>Currency risk (RMB depreciation) erodes USD-denominated returns</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- WHAT MARKET WORRIES VS REALITY -->
+<div class="section" style="padding-top: 12px;">
+  <div class="container">
+    <div class="section-title">Market Fears vs. Fundamental Reality</div>
+    <div class="section-desc">Assessing whether the fears driving the 25% crash are overdone.</div>
+
+    <div class="grid-2">
+      <div class="chart-card">
+        <h3 style="color: var(--accent-red);">🔴 What the Market Worries About</h3>
+        <div style="margin-top: 16px;">
+          <div class="bar-section">
+            <div class="bar-item">
+              <div class="bar-label"><span>MAU Decline (528M, -5% YoY)</span> <span class="red">HIGH</span></div>
+              <div class="bar-track"><div class="bar-fill" style="width: 85%; background: var(--accent-red);"></div></div>
+            </div>
+            <div class="bar-item">
+              <div class="bar-label"><span>Soda Music Competition</span> <span class="amber">MED-HIGH</span></div>
+              <div class="bar-track"><div class="bar-fill" style="width: 72%; background: var(--accent-amber);"></div></div>
+            </div>
+            <div class="bar-item">
+              <div class="bar-label"><span>Social Ent. Revenue Collapse</span> <span class="amber">MEDIUM</span></div>
+              <div class="bar-track"><div class="bar-fill" style="width: 60%; background: var(--accent-amber);"></div></div>
+            </div>
+            <div class="bar-item">
+              <div class="bar-label"><span>Subscriber Metric Opacity</span> <span class="amber">MEDIUM</span></div>
+              <div class="bar-track"><div class="bar-fill" style="width: 55%; background: var(--accent-amber);"></div></div>
+            </div>
+            <div class="bar-item">
+              <div class="bar-label"><span>2026 Margin Guidance (flat/lower)</span> <span class="amber">MEDIUM</span></div>
+              <div class="bar-track"><div class="bar-fill" style="width: 50%; background: var(--accent-amber);"></div></div>
+            </div>
+            <div class="bar-item">
+              <div class="bar-label"><span>China ADR / Geopolitical Risk</span> <span class="amber">MEDIUM</span></div>
+              <div class="bar-track"><div class="bar-fill" style="width: 50%; background: var(--accent-amber);"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="chart-card">
+        <h3 style="color: var(--accent-green);">🟢 The Counter-Argument (Bull Case)</h3>
+        <div style="margin-top: 16px;">
+          <div class="bar-section">
+            <div class="bar-item">
+              <div class="bar-label"><span>Cash = 33% of Market Cap (Margin of Safety)</span> <span class="green">STRONG</span></div>
+              <div class="bar-track"><div class="bar-fill" style="width: 95%; background: var(--accent-green);"></div></div>
+            </div>
+            <div class="bar-item">
+              <div class="bar-label"><span>Revenue Reacceleration (+15.8% FY25)</span> <span class="green">STRONG</span></div>
+              <div class="bar-track"><div class="bar-fill" style="width: 88%; background: var(--accent-green);"></div></div>
+            </div>
+            <div class="bar-item">
+              <div class="bar-label"><span>Margin Expansion (28% → 45% in 3yr)</span> <span class="green">STRONG</span></div>
+              <div class="bar-track"><div class="bar-fill" style="width: 85%; background: var(--accent-green);"></div></div>
+            </div>
+            <div class="bar-item">
+              <div class="bar-label"><span>ARPPU Rising (Quality > Quantity)</span> <span class="green">SOLID</span></div>
+              <div class="bar-track"><div class="bar-fill" style="width: 78%; background: var(--accent-green);"></div></div>
+            </div>
+            <div class="bar-item">
+              <div class="bar-label"><span>$1B Buyback + Growing Dividend</span> <span class="green">SOLID</span></div>
+              <div class="bar-track"><div class="bar-fill" style="width: 75%; background: var(--accent-green);"></div></div>
+            </div>
+            <div class="bar-item">
+              <div class="bar-label"><span>Low Penetration (24% vs 35% Western)</span> <span class="blue">MODERATE</span></div>
+              <div class="bar-track"><div class="bar-fill" style="width: 65%; background: var(--accent-blue);"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="insight-box" style="margin-top: 24px;">
+      <strong>The Core Debate:</strong> The market is treating TME's MAU decline as an existential threat, but the reality is more nuanced. TME is successfully converting free users into paying subscribers (24% penetration rate, up from 9% in 2020) and extracting more revenue from each subscriber. The total addressable "willingness to pay" is expanding. The question is whether the 528M MAU floor holds and whether Soda Music can meaningfully erode TME's paying subscriber moat. Historically, music streaming has proven to be a sticky subscription — churn is low once a user builds playlists and preferences.
+    </div>
+  </div>
+</div>
+
+<!-- CASH FORTRESS -->
+<div class="section" style="padding-top: 12px;">
+  <div class="container">
+    <div class="grid-2">
+      <div class="chart-card fade-up">
+        <h3>The Cash Fortress (¥B)</h3>
+        <div class="chart-sub">Cash, deposits & short-term investments — a value investor's dream</div>
+        <div class="chart-wrap">
+          <canvas id="cashChart"></canvas>
+        </div>
+      </div>
+      <div class="chart-card fade-up delay-1">
+        <h3>Enterprise Value Decomposition</h3>
+        <div class="chart-sub">What you're actually paying for the operating business</div>
+        <div class="chart-wrap" style="height: 280px;">
+          <canvas id="evChart"></canvas>
+        </div>
+        <div style="margin-top: 14px;">
+          <div class="metric-row">
+            <span class="m-label">Market Cap</span>
+            <span class="m-value">$15.9B</span>
+          </div>
+          <div class="metric-row">
+            <span class="m-label">Less: Cash & Equivalents</span>
+            <span class="m-value green">−$5.2B</span>
+          </div>
+          <div class="metric-row">
+            <span class="m-label" style="font-weight:700; color: var(--text-primary);">Enterprise Value</span>
+            <span class="m-value amber">$10.7B</span>
+          </div>
+          <div class="metric-row">
+            <span class="m-label">EV / FY2025 Revenue</span>
+            <span class="m-value green" style="font-size: 18px;">0.48x</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- FINAL VERDICT -->
+<div class="section">
+  <div class="container">
+    <div class="section-title">Investment Verdict</div>
+    <div class="section-desc">Synthesis of all factors for a value-oriented perspective.</div>
+
+    <div class="verdict-card">
+      <div class="verdict-tag bullish">Cautiously Bullish — Accumulate on Weakness</div>
+      <div class="verdict-title">A high-quality business trading at a fire-sale price,<br>but with real competitive headwinds worth monitoring.</div>
+      <div class="verdict-text">
+        <p style="margin-bottom: 16px;">
+          <strong>The Bull Case (60% probability):</strong> At ~$10.30 per ADS, TME is trading near its 52-week low, with <strong>$5.2B in cash (33% of market cap)</strong> and an enterprise value of just $10.7B for a company generating $4.5B in annual revenue with 45% gross margins and 62% market share. The adjusted P/E of ~13x is remarkably cheap for a dominant platform with accelerating revenue growth (+15.8%) and expanding margins. The subscription moat is deepening — 127M paying users spending ¥11.9/month, with SVIP at 20M users and China's pay penetration ratio still far below Western levels. The $1B buyback provides a floor. If Soda Music proves more bark than bite (as most Douyin spin-offs have), this is a $18-22 stock within 12-18 months.
+        </p>
+        <p style="margin-bottom: 16px;">
+          <strong>The Bear Case (40% probability):</strong> The MAU decline is <em>not</em> just noise — it's ByteDance's algorithm engine systematically diverting the next generation of music listeners. If Soda Music's 140M MAUs begin converting to paid, TME's subscriber growth could stall. The decision to stop reporting quarterly metrics is a red flag. 2026 guidance for flat margins suggests management is bracing for a competitive investment cycle. Add in ADR delisting risk and RMB depreciation, and the "cheap" stock could stay cheap — or get cheaper — for a long time (the "value trap" scenario).
+        </p>
+        <p>
+          <strong>Position Sizing:</strong> For a value investor with a 2-3 year horizon, TME at $10.30 offers an asymmetric risk/reward profile. The cash alone provides ~33% downside protection. A reasonable strategy would be to <strong>initiate a small position (2-3% of portfolio)</strong> at current levels and add on any further weakness toward $8-9. Set a stop-loss discipline if MAU decline accelerates beyond 10% or if subscriber growth turns negative. Target exit: $18-20, representing 75-95% upside over 18-24 months.
+        </p>
+      </div>
+    </div>
+
+    <div style="height: 24px;"></div>
+    <div class="chart-card" style="padding: 24px;">
+      <h3>Risk/Reward Scenario Matrix</h3>
+      <div style="overflow-x: auto; margin-top: 16px;">
+        <table class="fin-table">
+          <thead>
+            <tr>
+              <th style="min-width:140px">Scenario</th>
+              <th>Probability</th>
+              <th>Target Price</th>
+              <th>Return</th>
+              <th>Key Driver</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>🐻 Deep Bear</td>
+              <td>15%</td>
+              <td class="neg">$7.00</td>
+              <td class="neg">−32%</td>
+              <td style="font-family: 'DM Sans'; text-align: left;">ADR panic, MAU collapse, Soda Music surges</td>
+            </tr>
+            <tr>
+              <td>😐 Base Case</td>
+              <td>45%</td>
+              <td>$14.00</td>
+              <td class="highlight">+35%</td>
+              <td style="font-family: 'DM Sans'; text-align: left;">Stable subs growth, margins hold, buyback support</td>
+            </tr>
+            <tr>
+              <td>🐂 Bull Case</td>
+              <td>30%</td>
+              <td class="highlight">$20.00</td>
+              <td class="highlight">+94%</td>
+              <td style="font-family: 'DM Sans'; text-align: left;">ARPPU acceleration, ad revenue inflection, multiple expansion</td>
+            </tr>
+            <tr>
+              <td>🚀 Blue Sky</td>
+              <td>10%</td>
+              <td class="highlight">$26.00</td>
+              <td class="highlight">+152%</td>
+              <td style="font-family: 'DM Sans'; text-align: left;">Full rerating to global music peer multiples</td>
+            </tr>
+            <tr style="font-weight: 700;">
+              <td>📊 Weighted Expected</td>
+              <td>100%</td>
+              <td class="highlight">$15.35</td>
+              <td class="highlight">+49%</td>
+              <td style="font-family: 'DM Sans'; text-align: left;">Probability-weighted return</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="footer">
+  <div class="container">
+    <p>This analysis is for educational and research purposes only — not investment advice. Data sourced from TME SEC filings, press releases, and third-party financial data as of March 21, 2026. Always conduct your own due diligence.</p>
+  </div>
+</div>
+
+<script>
+// Chart defaults
+Chart.defaults.color = '#94a3b8';
+Chart.defaults.borderColor = 'rgba(30,41,59,0.6)';
+Chart.defaults.font.family = "'DM Sans', sans-serif";
+Chart.defaults.font.size = 12;
+
+const years = ['FY2020','FY2021','FY2022','FY2023','FY2024','FY2025'];
+
+// 1. Revenue Mix Stacked Bar
+new Chart(document.getElementById('revMixChart'), {
+  type: 'bar',
+  data: {
+    labels: years,
+    datasets: [
+      { label: 'Online Music', data: [11.5, 14.1, 14.5, 17.3, 21.7, 26.4], backgroundColor: '#10b981', borderRadius: 4 },
+      { label: 'Social Entertainment', data: [17.6, 17.1, 12.9, 10.5, 6.7, 6.5], backgroundColor: '#ef4444', borderRadius: 4 }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { position: 'top', labels: { padding: 16, usePointStyle: true, pointStyle: 'circle' } } },
+    scales: {
+      x: { stacked: true, grid: { display: false } },
+      y: { stacked: true, ticks: { callback: v => '¥' + v + 'B' } }
+    }
+  }
+});
+
+// 2. Profitability Chart
+new Chart(document.getElementById('profitChart'), {
+  type: 'bar',
+  data: {
+    labels: years,
+    datasets: [
+      { label: 'Net Profit (¥B)', data: [3.68, 3.03, 4.16, 4.92, 6.64, 11.06], backgroundColor: 'rgba(59,130,246,0.7)', borderRadius: 4, yAxisID: 'y' },
+      { label: 'Gross Margin %', data: [28.2, 28.2, 28.0, 30.3, 42.3, 44.9], type: 'line', borderColor: '#f59e0b', backgroundColor: 'rgba(245,158,11,0.1)', pointRadius: 5, pointBackgroundColor: '#f59e0b', borderWidth: 2.5, tension: 0.3, yAxisID: 'y1' }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { position: 'top', labels: { padding: 16, usePointStyle: true, pointStyle: 'circle' } } },
+    scales: {
+      x: { grid: { display: false } },
+      y: { position: 'left', ticks: { callback: v => '¥' + v + 'B' } },
+      y1: { position: 'right', min: 20, max: 55, ticks: { callback: v => v + '%' }, grid: { drawOnChartArea: false } }
+    }
+  }
+});
+
+// 3. User Divergence Chart
+new Chart(document.getElementById('userChart'), {
+  type: 'line',
+  data: {
+    labels: years,
+    datasets: [
+      { label: 'Online Music MAU (M)', data: [622, 615, 593, 567, 559, 528], borderColor: '#ef4444', backgroundColor: 'rgba(239,68,68,0.08)', fill: true, pointRadius: 5, pointBackgroundColor: '#ef4444', borderWidth: 2.5, tension: 0.3, yAxisID: 'y' },
+      { label: 'Paying Users (M)', data: [56.2, 76.2, 88.5, 106.7, 121.0, 127.4], borderColor: '#10b981', backgroundColor: 'rgba(16,185,129,0.08)', fill: true, pointRadius: 5, pointBackgroundColor: '#10b981', borderWidth: 2.5, tension: 0.3, yAxisID: 'y1' }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { position: 'top', labels: { padding: 16, usePointStyle: true, pointStyle: 'circle' } } },
+    scales: {
+      x: { grid: { display: false } },
+      y: { position: 'left', min: 450, max: 680, ticks: { callback: v => v + 'M' } },
+      y1: { position: 'right', min: 30, max: 150, ticks: { callback: v => v + 'M' }, grid: { drawOnChartArea: false } }
+    }
+  }
+});
+
+// 4. ARPPU + Sub Revenue
+new Chart(document.getElementById('arppuChart'), {
+  type: 'bar',
+  data: {
+    labels: years,
+    datasets: [
+      { label: 'Subscription Rev (¥B)', data: [3.6, 5.6, 7.3, 8.7, 12.1, 15.2], backgroundColor: 'rgba(167,139,250,0.7)', borderRadius: 4, yAxisID: 'y' },
+      { label: 'Monthly ARPPU (¥)', data: [5.3, 6.2, 7.3, 8.6, 10.5, 11.9], type: 'line', borderColor: '#06b6d4', pointRadius: 5, pointBackgroundColor: '#06b6d4', borderWidth: 2.5, tension: 0.3, yAxisID: 'y1' }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { position: 'top', labels: { padding: 16, usePointStyle: true, pointStyle: 'circle' } } },
+    scales: {
+      x: { grid: { display: false } },
+      y: { position: 'left', ticks: { callback: v => '¥' + v + 'B' } },
+      y1: { position: 'right', min: 3, max: 15, ticks: { callback: v => '¥' + v }, grid: { drawOnChartArea: false } }
+    }
+  }
+});
+
+// 5. Cash Chart
+new Chart(document.getElementById('cashChart'), {
+  type: 'bar',
+  data: {
+    labels: years,
+    datasets: [
+      { label: 'Cash + Deposits (¥B)', data: [21.3, 24.8, 26.0, 30.9, 37.6, 38.0], 
+        backgroundColor: ctx => {
+          const g = ctx.chart.ctx.createLinearGradient(0, 0, 0, 300);
+          g.addColorStop(0, 'rgba(16,185,129,0.7)');
+          g.addColorStop(1, 'rgba(16,185,129,0.2)');
+          return g;
+        },
+        borderRadius: 6 }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: {
+      x: { grid: { display: false } },
+      y: { ticks: { callback: v => '¥' + v + 'B' }, beginAtZero: true }
+    }
+  }
+});
+
+// 6. EV Decomposition Doughnut
+new Chart(document.getElementById('evChart'), {
+  type: 'doughnut',
+  data: {
+    labels: ['Cash & Investments', 'Enterprise Value (Operating Biz)'],
+    datasets: [{
+      data: [5.2, 10.7],
+      backgroundColor: ['#10b981', '#3b82f6'],
+      borderWidth: 0,
+      hoverOffset: 8
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    cutout: '60%',
+    plugins: {
+      legend: { position: 'bottom', labels: { padding: 20, usePointStyle: true, pointStyle: 'circle' } }
+    }
+  }
+});
+
+// 7. Peer Comparison
+new Chart(document.getElementById('peerChart'), {
+  type: 'bar',
+  data: {
+    labels: ['TME', 'NetEase Cloud', 'Spotify'],
+    datasets: [
+      { label: 'P/E Ratio', data: [10.5, 18, 65], backgroundColor: ['#10b981', '#3b82f6', '#a78bfa'], borderRadius: 6 }
+    ]
+  },
+  options: {
+    indexAxis: 'y',
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: {
+      x: { ticks: { callback: v => v + 'x' }, grid: { color: 'rgba(30,41,59,0.4)' } },
+      y: { grid: { display: false } }
+    }
+  }
+});
+</script>
+
+</body>
+</html>
