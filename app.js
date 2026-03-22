@@ -98,6 +98,18 @@ function init() {
   setupSearch();
   setupFilters();
   setupNavigation();
+  setupSidebar();
+}
+
+// ========== Sidebar ==========
+function setupSidebar() {
+  const toggleBtn = document.getElementById("sidebarToggleBtn");
+  const sidebar = document.getElementById("appSidebar");
+  if (toggleBtn && sidebar) {
+    toggleBtn.addEventListener("click", function () {
+      sidebar.classList.toggle("collapsed");
+    });
+  }
 }
 
 // ========== Navigation ==========

@@ -146,6 +146,12 @@ body { font-family:'Source Sans 3',sans-serif; background:var(--bg); color:var(-
 .fu { animation:fadeUp .5s ease-out forwards; }
 .d1{animation-delay:.1s;opacity:0} .d2{animation-delay:.2s;opacity:0} .d3{animation-delay:.3s;opacity:0} .d4{animation-delay:.4s;opacity:0}
 
+/* NAV */
+.back-link { display:inline-flex; align-items:center; gap:8px; color:var(--text-sec); text-decoration:none; font-size:13px; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:24px; transition:color 0.2s; }
+.back-link:hover { color:var(--text); }
+.back-link svg { width:16px; height:16px; transition:transform 0.2s; }
+.back-link:hover svg { transform:translateX(-4px); }
+
 .green{color:var(--green)} .red{color:var(--red)} .blue{color:var(--blue)} .amber{color:var(--amber)} .purple{color:var(--purple)} .cyan{color:var(--cyan)} .pink{color:var(--pink)}
 </style>
 </head>
@@ -154,6 +160,11 @@ body { font-family:'Source Sans 3',sans-serif; background:var(--bg); color:var(-
 <!-- ═══════ HERO ═══════ -->
 <div class="hero">
 <div class="wrap">
+  <a href="index.html" class="back-link">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+    Return to Home
+  </a>
+  <br>
   <div class="hero-eyebrow"><span class="dot"></span>Refined Analysis — March 22, 2026</div>
   <h1>Tencent Music Entertainment<br><span>Investment Deep Dive</span></h1>
   <p class="hero-sub">NYSE: TME — A comprehensive value analysis of China's dominant music streaming platform after its 25% post-earnings crash on March 17, incorporating corrected investment portfolio valuation and pending Ximalaya acquisition.</p>
