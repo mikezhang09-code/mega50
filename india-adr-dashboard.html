@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>India ADR Investment Dashboard — Dual-Listed Companies</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root {
+  --bg: #0a0e1a;
+  --bg-card: #111827;
+  --bg-card-hover: #1a2235;
+  --accent: #f59e0b;
+  --accent-dim: #d97706;
+  --green: #10b981;
+  --red: #ef4444;
+  --blue: #3b82f6;
+  --purple: #8b5cf6;
+  --cyan: #06b6d4;
+  --text: #f1f5f9;
+  --text-dim: #94a3b8;
+  --border: #1e293b;
+  --border-accent: #374151;
+  --gradient-gold: linear-gradient(135deg, #f59e0b, #d97706, #b45309);
+  --gradient-blue: linear-gradient(135deg, #3b82f6, #6366f1);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text);
+  min-height:100vh; overflow-x:hidden;
+}
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-dim);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 24px;
+  transition: color 0.2s;
+}
+.back-link:hover {
+  color: var(--accent);
+}
+.back-link svg {
+  width: 18px;
+  height: 18px;
+}
+.hero {
+  position:relative; padding:48px 32px 32px;
+  background: linear-gradient(180deg, #111827 0%, #0a0e1a 100%);
+  border-bottom:1px solid var(--border);
+  overflow:hidden;
+}
+.hero::before {
+  content:''; position:absolute; top:-60%; left:-20%; width:140%; height:200%;
+  background: radial-gradient(ellipse at 30% 50%, rgba(245,158,11,0.06) 0%, transparent 60%),
+              radial-gradient(ellipse at 70% 30%, rgba(59,130,246,0.04) 0%, transparent 50%);
+  pointer-events:none;
+}
+.hero-inner { max-width:1400px; margin:0 auto; position:relative; z-index:1; }
+.hero h1 {
+  font-family:'Playfair Display',serif; font-size:clamp(28px,4vw,48px); font-weight:800;
+  background: var(--gradient-gold); -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+  line-height:1.15; margin-bottom:8px;
+}
+.hero .subtitle { color:var(--text-dim); font-size:16px; max-width:800px; line-height:1.5; }
+.hero .subtitle span { color:var(--accent); font-weight:600; }
+.flag-strip {
+  display:flex; align-items:center; gap:12px; margin-top:16px; padding:10px 16px;
+  background:rgba(245,158,11,0.06); border:1px solid rgba(245,158,11,0.15);
+  border-radius:8px; width:fit-content; font-size:14px; color:var(--accent);
+}
+.flag-strip .flag { font-size:20px; }
+.kpi-row {
+  display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:16px;
+  max-width:1400px; margin:24px auto; padding:0 32px;
+}
+.kpi {
+  background:var(--bg-card); border:1px solid var(--border); border-radius:12px;
+  padding:20px; position:relative; overflow:hidden;
+}
+.kpi::after {
+  content:''; position:absolute; top:0; left:0; right:0; height:3px;
+  background:var(--gradient-gold); border-radius:12px 12px 0 0;
+}
+.kpi .label { font-size:12px; color:var(--text-dim); text-transform:uppercase; letter-spacing:1px; margin-bottom:6px; }
+.kpi .value { font-family:'Playfair Display',serif; font-size:28px; font-weight:700; color:var(--text); }
+.kpi .change { font-size:13px; margin-top:4px; }
+.kpi .change.up { color:var(--green); }
+.kpi .change.down { color:var(--red); }
+.main { max-width:1400px; margin:0 auto; padding:24px 32px; }
+.section-title {
+  font-family:'Playfair Display',serif; font-size:24px; font-weight:700;
+  margin-bottom:16px; color:var(--text);
+  display:flex; align-items:center; gap:10px;
+}
+.section-title .icon { font-size:22px; }
+.controls { display:flex; gap:12px; margin-bottom:20px; flex-wrap:wrap; }
+.btn {
+  padding:8px 18px; border-radius:8px; border:1px solid var(--border);
+  background:var(--bg-card); color:var(--text-dim); cursor:pointer; font-size:13px;
+  font-family:'DM Sans',sans-serif; transition:all .2s;
+}
+.btn:hover { border-color:var(--accent); color:var(--accent); }
+.btn.active { background:rgba(245,158,11,0.12); border-color:var(--accent); color:var(--accent); font-weight:600; }
+.stock-grid {
+  display:grid; grid-template-columns:1fr; gap:1px;
+  background:var(--border); border-radius:12px; overflow:hidden;
+  border:1px solid var(--border);
+}
+.stock-header, .stock-row {
+  display:grid;
+  grid-template-columns: 50px 2.2fr 1fr 1fr 1fr 1fr 1fr 1fr 1.2fr;
+  gap:0; align-items:center;
+}
+.stock-header {
+  background:#151c2e; padding:12px 16px; font-size:11px; font-weight:600;
+  text-transform:uppercase; letter-spacing:0.8px; color:var(--text-dim);
+}
+.stock-row {
+  background:var(--bg-card); padding:14px 16px; transition:background .2s; cursor:pointer;
+}
+.stock-row:hover { background:var(--bg-card-hover); }
+.stock-row .rank {
+  font-family:'Playfair Display',serif; font-size:18px; font-weight:700;
+  color:var(--accent-dim); opacity:0.6;
+}
+.stock-row .name-cell .company { font-weight:600; font-size:14px; color:var(--text); }
+.stock-row .name-cell .ticker {
+  display:inline-flex; align-items:center; gap:4px;
+  font-size:11px; font-weight:600; padding:2px 6px;
+  border-radius:4px; margin-top:3px;
+}
+.ticker-india { background:rgba(16,185,129,0.12); color:var(--green); }
+.ticker-us { background:rgba(59,130,246,0.12); color:var(--blue); margin-left:4px; }
+.stock-row .sector {
+  font-size:11px; padding:3px 8px; border-radius:4px;
+  background:rgba(139,92,246,0.1); color:var(--purple); width:fit-content;
+}
+.stock-row .mcap { font-weight:600; font-size:14px; }
+.stock-row .pe { font-size:14px; }
+.stock-row .div-yield { font-size:14px; color:var(--green); }
+.stock-row .return-cell { font-size:13px; font-weight:500; }
+.stock-row .return-cell.pos { color:var(--green); }
+.stock-row .return-cell.neg { color:var(--red); }
+.stock-row .potential-bar {
+  height:6px; border-radius:3px; background:rgba(255,255,255,0.05);
+  overflow:hidden; margin-top:4px;
+}
+.stock-row .potential-bar .fill {
+  height:100%; border-radius:3px;
+  transition:width .6s ease;
+}
+.potential-label { font-size:11px; font-weight:600; color:var(--accent); }
+.charts-section {
+  display:grid; grid-template-columns:1fr 1fr; gap:20px;
+  margin-top:32px;
+}
+.chart-card {
+  background:var(--bg-card); border:1px solid var(--border); border-radius:12px;
+  padding:24px; position:relative;
+}
+.chart-card h3 { font-family:'Playfair Display',serif; font-size:18px; margin-bottom:16px; }
+.chart-card canvas { max-height:300px; }
+.detail-panel {
+  margin-top:32px; background:var(--bg-card); border:1px solid var(--border);
+  border-radius:12px; padding:28px; display:none;
+}
+.detail-panel.visible { display:block; animation: slideIn .3s ease; }
+@keyframes slideIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+.detail-header {
+  display:flex; justify-content:space-between; align-items:flex-start;
+  padding-bottom:20px; border-bottom:1px solid var(--border); margin-bottom:20px;
+}
+.detail-header h2 { font-family:'Playfair Display',serif; font-size:28px; }
+.detail-close {
+  background:none; border:1px solid var(--border); color:var(--text-dim);
+  width:36px; height:36px; border-radius:8px; cursor:pointer; font-size:18px;
+  display:flex; align-items:center; justify-content:center; transition:all .2s;
+}
+.detail-close:hover { border-color:var(--red); color:var(--red); }
+.detail-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:16px; margin-bottom:20px; }
+.detail-stat { padding:16px; background:rgba(255,255,255,0.02); border-radius:8px; border:1px solid var(--border); }
+.detail-stat .label { font-size:11px; color:var(--text-dim); text-transform:uppercase; letter-spacing:0.8px; }
+.detail-stat .val { font-size:20px; font-weight:700; margin-top:4px; }
+.thesis { line-height:1.7; color:var(--text-dim); font-size:14px; }
+.thesis strong { color:var(--text); }
+.note-box {
+  margin-top:32px; padding:20px; background:rgba(245,158,11,0.04);
+  border:1px solid rgba(245,158,11,0.15); border-radius:10px;
+}
+.note-box .note-title { font-weight:700; color:var(--accent); font-size:14px; margin-bottom:8px; }
+.note-box p { font-size:13px; color:var(--text-dim); line-height:1.6; }
+@media(max-width:900px) {
+  .stock-header, .stock-row { grid-template-columns: 36px 2fr 1fr 1fr 1fr; font-size:12px; }
+  .stock-header > :nth-child(n+6), .stock-row > :nth-child(n+6) { display:none; }
+  .charts-section { grid-template-columns:1fr; }
+  .kpi-row { grid-template-columns:1fr 1fr; }
+  .hero { padding:24px 16px; }
+  .main { padding:16px; }
+}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-inner">
+    <a href="./index.html" class="back-link">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      Back to Home
+    </a>
+    <h1>India's Top Dual-Listed Companies</h1>
+    <p class="subtitle">
+      Indian companies trading on both <span>BSE/NSE</span> and <span>NYSE/NASDAQ</span> — ranked by market capitalization with investment potential analysis. Data as of March 2026.
+    </p>
+    <div class="flag-strip">
+      <span class="flag">🇮🇳</span>
+      <span>BSE · NSE</span>
+      <span style="opacity:0.3">⟷</span>
+      <span class="flag">🇺🇸</span>
+      <span>NYSE · NASDAQ</span>
+    </div>
+  </div>
+</div>
+
+<div class="kpi-row" id="kpiRow"></div>
+
+<div class="main">
+  <div class="section-title"><span class="icon">📊</span> Dual-Listed Indian ADRs — Ranked by Market Cap</div>
+  <div class="controls" id="sortControls"></div>
+  <div class="stock-grid" id="stockGrid"></div>
+
+  <div class="detail-panel" id="detailPanel">
+    <div class="detail-header">
+      <h2 id="detailTitle"></h2>
+      <button class="detail-close" onclick="closeDetail()">✕</button>
+    </div>
+    <div class="detail-grid" id="detailStats"></div>
+    <div class="thesis" id="detailThesis"></div>
+  </div>
+
+  <div class="charts-section">
+    <div class="chart-card">
+      <h3>Market Cap Comparison ($B)</h3>
+      <canvas id="mcapChart"></canvas>
+    </div>
+    <div class="chart-card">
+      <h3>Sector Allocation by Market Cap</h3>
+      <canvas id="sectorChart"></canvas>
+    </div>
+    <div class="chart-card">
+      <h3>Valuation: P/E Ratio</h3>
+      <canvas id="peChart"></canvas>
+    </div>
+    <div class="chart-card">
+      <h3>Dividend Yield (%)</h3>
+      <canvas id="divChart"></canvas>
+    </div>
+  </div>
+
+  <div class="note-box">
+    <div class="note-title">⚠️ Important for US-Based Investors</div>
+    <p>
+      Only ~9 Indian companies trade directly as ADRs on US exchanges. Major companies like Reliance Industries, TCS, Bharti Airtel, Bajaj Finance, and Asian Paints have <strong>no ADR/US listing</strong>. To access these, consider India-focused ETFs such as <strong>INDA</strong> (iShares MSCI India), <strong>SMIN</strong> (iShares MSCI India Small-Cap), or <strong>EPI</strong> (WisdomTree India Earnings). ADR returns trail INR returns by ~3-4% annually due to rupee depreciation — an important consideration for dollar-denominated portfolios. This dashboard is for informational purposes only and does not constitute investment advice.
+    </p>
+  </div>
+</div>
+
+<script>
+const stocks = [
+  {
+    rank:1, company:"HDFC Bank", tickerIN:"HDFCBANK", tickerUS:"HDB", exchange:"NYSE",
+    sector:"Banking", mcapB:129, priceUS:25.39, pe:17.6, pb:2.14, divYield:1.23,
+    ytdReturn:-12.5, y1Return:-10.5, y5Return:22, y10Return:85,
+    revenue:"$34.2B", netIncome:"$8.9B", roe:"14.0%", npa:"1.24%",
+    potential:88, potentialLabel:"Strong Buy",
+    thesis:"India's largest private bank with $129B market cap. Post-HDFC Ltd merger created a financial conglomerate spanning banking, housing finance, and insurance. <strong>9,600+ branches</strong> across 4,170 cities. Net profit grew 12% YoY to ₹19,807 Cr in Q3 FY26. NPAs at a low 1.24%. Trading at 15.5x P/E — well below its 5-year average of ~20x, offering a rare entry point after the chairman resignation-driven selloff. Analyst consensus target: $42 (66% upside)."
+  },
+  {
+    rank:2, company:"ICICI Bank", tickerIN:"ICICIBANK", tickerUS:"IBN", exchange:"NYSE",
+    sector:"Banking", mcapB:95, priceUS:26.08, pe:18.9, pb:3.21, divYield:0.75,
+    ytdReturn:-8.2, y1Return:10.1, y5Return:155, y10Return:320,
+    revenue:"$22.8B", netIncome:"$6.2B", roe:"17.8%", npa:"1.97%",
+    potential:85, potentialLabel:"Strong Buy",
+    thesis:"India's second-largest private bank with aggressive digital-first strategy. First Indian bank listed on NYSE (1999). <strong>Profit grew 15% CAGR over 5 years</strong>. ICICI's ROE of 17.8% leads private sector peers. Its subsidiaries (ICICI Prudential Life, ICICI Lombard, ICICI Securities) make it a diversified financial conglomerate. NPA ratio improved dramatically from 8.7% (2018) to 1.97%. Strong retail loan book with 45% home/auto loans."
+  },
+  {
+    rank:3, company:"Infosys", tickerIN:"INFY", tickerUS:"INFY", exchange:"NYSE",
+    sector:"IT Services", mcapB:53, priceUS:12.95, pe:18.8, pb:7.1, divYield:3.42,
+    ytdReturn:-35.1, y1Return:-28.1, y5Return:-31, y10Return:45,
+    revenue:"$19.4B", netIncome:"$3.2B", roe:"30.7%", npa:"N/A",
+    potential:72, potentialLabel:"Accumulate",
+    thesis:"India's #2 IT services company and a global AI/digital transformation leader. <strong>First Indian company on NASDAQ (1999)</strong>. Revenue guidance at 3.0-3.5% for FY26. Won landmark £1.2B NHS UK deal. Named among World's Most Ethical Companies 6 consecutive years. The 56% drop from 52-week high creates a deep-value entry for long-term investors. ROE of 30.7% and dividend yield of 3.4% provide downside protection. AI/Topaz platform positions it well for the GenAI services wave."
+  },
+  {
+    rank:4, company:"Vedanta", tickerIN:"VEDL", tickerUS:"VEDL", exchange:"NYSE",
+    sector:"Mining & Metals", mcapB:31, priceUS:17.2, pe:17.4, pb:4.84, divYield:9.37,
+    ytdReturn:63.6, y1Return:85.2, y5Return:340, y10Return:180,
+    revenue:"$14.4B", netIncome:"$2.5B", roe:"28.5%", npa:"N/A",
+    potential:70, potentialLabel:"Hold/Accumulate",
+    thesis:"World's largest integrated zinc producer and India's only private oil & gas producer. <strong>Dividend yield of 9.4%</strong> is the highest among all Indian ADRs. Net profit surged 61% YoY in Q3 FY26 to ₹5,710 Cr. Benefiting from India's infrastructure boom and energy transition demand for zinc, aluminum, copper. Key risk: Anil Agarwal promoter group's high leverage and complex corporate structure. Strong for income-focused investors."
+  },
+  {
+    rank:5, company:"Dr. Reddy's Labs", tickerIN:"DRREDDY", tickerUS:"RDY", exchange:"NYSE",
+    sector:"Pharmaceuticals", mcapB:11, priceUS:12.8, pe:17.2, pb:3.5, divYield:0.72,
+    ytdReturn:-18.5, y1Return:-12.3, y5Return:65, y10Return:120,
+    revenue:"$3.6B", netIncome:"$0.62B", roe:"18.2%", npa:"N/A",
+    potential:76, potentialLabel:"Buy",
+    thesis:"Leading Indian pharma company with strong US generics pipeline and growing biosimilars business. Listed on NYSE since 2001. <strong>Revenue grew 15% CAGR over 3 years</strong>. Strong R&D pipeline with 100+ generic filings with US FDA. ESG leader — targeting water-positive operations by 2025 and 100% renewable power by 2030. Benefits from aging demographics globally and India's pharma cost advantage. Trading below historical average P/E."
+  },
+  {
+    rank:6, company:"MakeMyTrip", tickerIN:"N/A (HQ: India)", tickerUS:"MMYT", exchange:"NASDAQ",
+    sector:"Travel/Tech", mcapB:10.5, priceUS:88.5, pe:62, pb:8.2, divYield:0,
+    ytdReturn:-15.2, y1Return:35, y5Return:320, y10Return:450,
+    revenue:"$0.82B", netIncome:"$0.13B", roe:"14.5%", npa:"N/A",
+    potential:74, potentialLabel:"Accumulate",
+    thesis:"India's dominant online travel platform with 47%+ market share. <strong>Only major Indian consumer internet play available on US exchanges.</strong> India's domestic air traffic grew 12% in 2025; hotel bookings surging with rising middle class. Revenue growing ~25% annually. First sustained profitability achieved. Pure play on India's $75B+ travel market growing at 15% CAGR. Premium valuation reflects scarcity value and growth."
+  },
+  {
+    rank:7, company:"Wipro", tickerIN:"WIPRO", tickerUS:"WIT", exchange:"NYSE",
+    sector:"IT Services", mcapB:26, priceUS:2.5, pe:19.5, pb:3.0, divYield:1.8,
+    ytdReturn:-22.0, y1Return:-18.5, y5Return:-10, y10Return:30,
+    revenue:"$11.1B", netIncome:"$1.5B", roe:"15.2%", npa:"N/A",
+    potential:58, potentialLabel:"Hold",
+    thesis:"India's #3 IT services company focused on cloud, cybersecurity, and digital transformation. Acquired Capco (financial consulting) for strategic positioning. <strong>Has underperformed peers TCS and Infosys</strong> on growth metrics. Revenue flat YoY with margin pressure. New CEO Srini Pallia driving turnaround with focus on large deals and AI services. At current valuation, risk-reward is balanced but growth needs to re-accelerate."
+  },
+  {
+    rank:8, company:"WNS Holdings", tickerIN:"N/A (HQ: India)", tickerUS:"WNS", exchange:"NYSE",
+    sector:"BPO/IT Services", mcapB:2.8, priceUS:58, pe:20.5, pb:4.6, divYield:0,
+    ytdReturn:-5.0, y1Return:8.5, y5Return:45, y10Return:195,
+    revenue:"$1.3B", netIncome:"$0.16B", roe:"22.8%", npa:"N/A",
+    potential:68, potentialLabel:"Accumulate",
+    thesis:"Premium business process management company serving BFSI, healthcare, and travel verticals. <strong>ROE of 22.8% with consistent free cash flow generation.</strong> Benefiting from global outsourcing expansion and AI-augmented services. Smaller cap provides higher growth potential but also higher volatility. Solid management with disciplined capital allocation. Good complement to large-cap IT ADRs."
+  },
+  {
+    rank:9, company:"Sify Technologies", tickerIN:"SIFY", tickerUS:"SIFY", exchange:"NASDAQ",
+    sector:"Data Centers/IT", mcapB:0.15, priceUS:0.65, pe:-1, pb:0.4, divYield:0,
+    ytdReturn:-55, y1Return:-62, y5Return:-80, y10Return:-75,
+    revenue:"$0.24B", netIncome:"-$0.03B", roe:"-8.5%", npa:"N/A",
+    potential:25, potentialLabel:"Speculative",
+    thesis:"India data center and cloud services player. Despite operating in a booming sector (Indian data center market growing 25% CAGR), Sify has consistently <strong>destroyed shareholder value</strong>. Negative earnings, declining revenue, stock down 80% over 5 years. Trading below book value at 0.4x P/B. Only suitable for highly speculative investors betting on a turnaround. India's digital infrastructure boom provides optionality but execution risk is severe."
+  }
+];
+
+// KPIs
+const kpiData = [
+  { label:"Total ADR Market Cap", value:"$358B", change:"Combined US-listed Indian cos", cls:"" },
+  { label:"Avg P/E Ratio", value:"18.5x", change:"vs S&P 500: 21x", cls:"up" },
+  { label:"Top Dividend Yield", value:"9.37%", change:"Vedanta (VEDL)", cls:"up" },
+  { label:"ADRs on NYSE/NASDAQ", value:"9", change:"~₹3-4% annual FX drag for USD investors", cls:"" },
+  { label:"India GDP Growth", value:"6.5%+", change:"Fastest growing major economy", cls:"up" },
+];
+const kpiRow = document.getElementById('kpiRow');
+kpiData.forEach(k => {
+  kpiRow.innerHTML += `<div class="kpi"><div class="label">${k.label}</div><div class="value">${k.value}</div><div class="change ${k.cls}">${k.change}</div></div>`;
+});
+
+// Sort controls
+let currentSort = 'mcap';
+const sortOptions = [
+  {key:'mcap', label:'Market Cap'},
+  {key:'pe', label:'P/E Ratio'},
+  {key:'divYield', label:'Dividend Yield'},
+  {key:'y1Return', label:'1Y Return'},
+  {key:'potential', label:'Potential Score'},
+];
+const sortDiv = document.getElementById('sortControls');
+sortOptions.forEach(s => {
+  const btn = document.createElement('button');
+  btn.className = 'btn' + (s.key === 'mcap' ? ' active' : '');
+  btn.textContent = 'Sort: ' + s.label;
+  btn.dataset.sort = s.key;
+  btn.onclick = () => {
+    currentSort = s.key;
+    document.querySelectorAll('.controls .btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderTable();
+  };
+  sortDiv.appendChild(btn);
+});
+
+function getSorted() {
+  let arr = [...stocks];
+  if (currentSort === 'pe') {
+    arr.sort((a,b) => {
+      if (a.pe < 0) return 1; if (b.pe < 0) return -1;
+      return a.pe - b.pe;
+    });
+  } else if (currentSort === 'divYield') {
+    arr.sort((a,b) => b.divYield - a.divYield);
+  } else if (currentSort === 'y1Return') {
+    arr.sort((a,b) => b.y1Return - a.y1Return);
+  } else if (currentSort === 'potential') {
+    arr.sort((a,b) => b.potential - a.potential);
+  } else {
+    arr.sort((a,b) => b.mcapB - a.mcapB);
+  }
+  return arr;
+}
+
+function getPotentialColor(p) {
+  if (p >= 80) return 'var(--green)';
+  if (p >= 65) return 'var(--blue)';
+  if (p >= 45) return 'var(--accent)';
+  return 'var(--red)';
+}
+
+function renderTable() {
+  const grid = document.getElementById('stockGrid');
+  const sorted = getSorted();
+  let html = `<div class="stock-header">
+    <div>#</div><div>Company</div><div>Mkt Cap</div><div>P/E</div>
+    <div>Div Yield</div><div>1Y Return</div><div>5Y Return</div><div>Sector</div><div>Potential</div>
+  </div>`;
+  sorted.forEach((s, i) => {
+    const y1cls = s.y1Return >= 0 ? 'pos' : 'neg';
+    const y5cls = s.y5Return >= 0 ? 'pos' : 'neg';
+    const peStr = s.pe < 0 ? 'N/M' : s.pe.toFixed(1) + 'x';
+    html += `<div class="stock-row" onclick="showDetail(${stocks.indexOf(s)})">
+      <div class="rank">${i+1}</div>
+      <div class="name-cell">
+        <div class="company">${s.company}</div>
+        <div>
+          <span class="ticker ticker-india">${s.tickerIN.split(' ')[0]}</span>
+          <span class="ticker ticker-us">${s.tickerUS} · ${s.exchange}</span>
+        </div>
+      </div>
+      <div class="mcap">$${s.mcapB >= 1 ? s.mcapB + 'B' : (s.mcapB*1000).toFixed(0)+'M'}</div>
+      <div class="pe">${peStr}</div>
+      <div class="div-yield">${s.divYield > 0 ? s.divYield.toFixed(2)+'%' : '—'}</div>
+      <div class="return-cell ${y1cls}">${s.y1Return > 0 ? '+' : ''}${s.y1Return.toFixed(1)}%</div>
+      <div class="return-cell ${y5cls}">${s.y5Return > 0 ? '+' : ''}${s.y5Return}%</div>
+      <div><span class="sector">${s.sector}</span></div>
+      <div>
+        <span class="potential-label" style="color:${getPotentialColor(s.potential)}">${s.potentialLabel} (${s.potential}/100)</span>
+        <div class="potential-bar"><div class="fill" style="width:${s.potential}%;background:${getPotentialColor(s.potential)}"></div></div>
+      </div>
+    </div>`;
+  });
+  grid.innerHTML = html;
+}
+
+function showDetail(idx) {
+  const s = stocks[idx];
+  const panel = document.getElementById('detailPanel');
+  document.getElementById('detailTitle').textContent = `${s.company} (${s.tickerUS} · ${s.exchange})`;
+  const stats = [
+    {l:'Market Cap', v:'$'+s.mcapB+'B'},
+    {l:'P/E Ratio', v:s.pe < 0 ? 'N/M' : s.pe+'x'},
+    {l:'P/B Ratio', v:s.pb+'x'},
+    {l:'Div Yield', v:s.divYield > 0 ? s.divYield+'%' : '—'},
+    {l:'Revenue', v:s.revenue},
+    {l:'Net Income', v:s.netIncome},
+    {l:'ROE', v:s.roe},
+    {l:s.sector==='Banking'?'Gross NPA':'Note', v:s.npa},
+    {l:'US ADR Price', v:'$'+s.priceUS},
+    {l:'YTD Return', v:(s.ytdReturn>0?'+':'')+s.ytdReturn+'%'},
+    {l:'1Y Return', v:(s.y1Return>0?'+':'')+s.y1Return+'%'},
+    {l:'5Y Return', v:(s.y5Return>0?'+':'')+s.y5Return+'%'},
+  ];
+  document.getElementById('detailStats').innerHTML = stats.map(st =>
+    `<div class="detail-stat"><div class="label">${st.l}</div><div class="val">${st.v}</div></div>`
+  ).join('');
+  document.getElementById('detailThesis').innerHTML = `<strong>Investment Thesis:</strong><br><br>${s.thesis}`;
+  panel.classList.add('visible');
+  panel.scrollIntoView({behavior:'smooth', block:'start'});
+}
+function closeDetail() {
+  document.getElementById('detailPanel').classList.remove('visible');
+}
+
+renderTable();
+
+// Charts
+const chartDefaults = {
+  color:'#94a3b8', borderColor:'#1e293b',
+  plugins:{ legend:{labels:{color:'#94a3b8',font:{family:'DM Sans'}}}}
+};
+Chart.defaults.color = '#94a3b8';
+Chart.defaults.borderColor = '#1e293b';
+
+// Market Cap Bar
+new Chart(document.getElementById('mcapChart'), {
+  type:'bar',
+  data:{
+    labels: stocks.filter(s=>s.mcapB>=1).map(s=>s.tickerUS),
+    datasets:[{
+      data: stocks.filter(s=>s.mcapB>=1).map(s=>s.mcapB),
+      backgroundColor: stocks.filter(s=>s.mcapB>=1).map((_,i)=>{
+        const colors = ['#f59e0b','#d97706','#3b82f6','#6366f1','#10b981','#06b6d4','#8b5cf6','#ec4899'];
+        return colors[i%colors.length];
+      }),
+      borderRadius:6
+    }]
+  },
+  options:{
+    indexAxis:'y', responsive:true, maintainAspectRatio:false,
+    plugins:{legend:{display:false}},
+    scales:{
+      x:{grid:{color:'rgba(255,255,255,0.04)'},ticks:{callback:v=>'$'+v+'B'}},
+      y:{grid:{display:false}}
+    }
+  }
+});
+
+// Sector Pie
+const sectorMap = {};
+stocks.forEach(s => { sectorMap[s.sector] = (sectorMap[s.sector]||0) + s.mcapB; });
+new Chart(document.getElementById('sectorChart'), {
+  type:'doughnut',
+  data:{
+    labels: Object.keys(sectorMap),
+    datasets:[{
+      data: Object.values(sectorMap),
+      backgroundColor:['#f59e0b','#3b82f6','#10b981','#8b5cf6','#06b6d4','#ec4899','#ef4444'],
+      borderWidth:0
+    }]
+  },
+  options:{
+    responsive:true, maintainAspectRatio:false,
+    plugins:{legend:{position:'right',labels:{padding:12,font:{size:12}}}}
+  }
+});
+
+// PE Ratio
+new Chart(document.getElementById('peChart'), {
+  type:'bar',
+  data:{
+    labels: stocks.filter(s=>s.pe>0).map(s=>s.tickerUS),
+    datasets:[{
+      label:'P/E',
+      data: stocks.filter(s=>s.pe>0).map(s=>s.pe),
+      backgroundColor: stocks.filter(s=>s.pe>0).map(s =>
+        s.pe < 18 ? '#10b981' : s.pe < 22 ? '#f59e0b' : '#ef4444'
+      ),
+      borderRadius:6
+    }]
+  },
+  options:{
+    responsive:true, maintainAspectRatio:false,
+    plugins:{legend:{display:false}},
+    scales:{
+      y:{grid:{color:'rgba(255,255,255,0.04)'},ticks:{callback:v=>v+'x'}},
+      x:{grid:{display:false}}
+    }
+  }
+});
+
+// Dividend Yield
+new Chart(document.getElementById('divChart'), {
+  type:'bar',
+  data:{
+    labels: stocks.filter(s=>s.divYield>0).sort((a,b)=>b.divYield-a.divYield).map(s=>s.tickerUS),
+    datasets:[{
+      label:'Yield %',
+      data: stocks.filter(s=>s.divYield>0).sort((a,b)=>b.divYield-a.divYield).map(s=>s.divYield),
+      backgroundColor: stocks.filter(s=>s.divYield>0).sort((a,b)=>b.divYield-a.divYield).map(s =>
+        s.divYield > 5 ? '#10b981' : s.divYield > 2 ? '#3b82f6' : '#f59e0b'
+      ),
+      borderRadius:6
+    }]
+  },
+  options:{
+    responsive:true, maintainAspectRatio:false,
+    plugins:{legend:{display:false}},
+    scales:{
+      y:{grid:{color:'rgba(255,255,255,0.04)'},ticks:{callback:v=>v+'%'}},
+      x:{grid:{display:false}}
+    }
+  }
+});
+</script>
+</body>
+</html>
