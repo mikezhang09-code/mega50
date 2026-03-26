@@ -113,7 +113,7 @@ body {
 }
 .stock-header, .stock-row {
   display:grid;
-  grid-template-columns: 50px 2.2fr 1fr 1fr 1fr 1fr 1fr 1fr 1.2fr;
+  grid-template-columns: 42px 2fr 0.9fr 0.8fr 0.8fr 0.8fr 0.8fr 0.8fr 0.8fr 0.9fr 1.1fr;
   gap:0; align-items:center;
 }
 .stock-header {
@@ -146,6 +146,11 @@ body {
 .stock-row .return-cell { font-size:13px; font-weight:500; }
 .stock-row .return-cell.pos { color:var(--green); }
 .stock-row .return-cell.neg { color:var(--red); }
+.eps-cell { font-size:13px; font-weight:600; }
+.eps-cell.strong { color:#22d3ee; }
+.eps-cell.good { color:var(--green); }
+.eps-cell.weak { color:var(--accent); }
+.eps-cell.poor { color:var(--red); }
 .stock-row .potential-bar {
   height:6px; border-radius:3px; background:rgba(255,255,255,0.05);
   overflow:hidden; margin-top:4px;
@@ -202,6 +207,10 @@ body {
   .hero { padding:24px 16px; }
   .main { padding:16px; }
 }
+@media(min-width:901px) and (max-width:1200px) {
+  .stock-header, .stock-row { font-size:12px; }
+  .stock-header > :nth-child(8), .stock-row > :nth-child(8) { display:none; }
+}
 </style>
 </head>
 <body>
@@ -256,8 +265,8 @@ body {
       <canvas id="peChart"></canvas>
     </div>
     <div class="chart-card">
-      <h3>Dividend Yield (%)</h3>
-      <canvas id="divChart"></canvas>
+      <h3>EPS Growth: 5Y CAGR vs FY25</h3>
+      <canvas id="epsChart"></canvas>
     </div>
   </div>
 
@@ -265,6 +274,12 @@ body {
     <div class="note-title">⚠️ Important for US-Based Investors</div>
     <p>
       Only ~9 Indian companies trade directly as ADRs on US exchanges. Major companies like Reliance Industries, TCS, Bharti Airtel, Bajaj Finance, and Asian Paints have <strong>no ADR/US listing</strong>. To access these, consider India-focused ETFs such as <strong>INDA</strong> (iShares MSCI India), <strong>SMIN</strong> (iShares MSCI India Small-Cap), or <strong>EPI</strong> (WisdomTree India Earnings). ADR returns trail INR returns by ~3-4% annually due to rupee depreciation — an important consideration for dollar-denominated portfolios. This dashboard is for informational purposes only and does not constitute investment advice.
+    </p>
+  </div>
+  <div class="note-box" style="margin-top:12px;">
+    <div class="note-title">📊 EPS Growth Rate Notes</div>
+    <p>
+      <strong>5Y EPS CAGR</strong> = Compound Annual Growth Rate of diluted EPS from FY2020 to FY2025 (in INR terms for Indian-listed, USD for US-only listed). HDFC Bank's 5Y CAGR of 23% is inflated by the HDFC Ltd merger which doubled the balance sheet in FY2024 — organic EPS growth was ~12%. <strong>FY25 EPS Growth</strong> = Year-over-year EPS growth for the most recent full fiscal year (FY2025, ending March 2025). MakeMyTrip's 5Y CAGR shows "N/A" because the company transitioned from losses to profitability during this period, making CAGR calculation not meaningful. Vedanta's 61% FY25 EPS growth reflects commodity price cyclicality and is not a sustainable run-rate. Color coding: <span style="color:#22d3ee">Cyan = 20%+</span>, <span style="color:#10b981">Green = 10-20%</span>, <span style="color:#f59e0b">Amber = 0-10%</span>, <span style="color:#ef4444">Red = negative</span>.
     </p>
   </div>
 </div>
@@ -275,6 +290,7 @@ const stocks = [
     rank:1, company:"HDFC Bank", tickerIN:"HDFCBANK", tickerUS:"HDB", exchange:"NYSE",
     sector:"Banking", mcapB:129, priceUS:25.39, pe:17.6, pb:2.14, divYield:1.23,
     ytdReturn:-12.5, y1Return:-10.5, y5Return:22, y10Return:85,
+    epsGrowth5Y:23.0, epsFY25Growth:6.7,
     revenue:"$34.2B", netIncome:"$8.9B", roe:"14.0%", npa:"1.24%",
     potential:88, potentialLabel:"Strong Buy",
     thesis:"India's largest private bank with $129B market cap. Post-HDFC Ltd merger created a financial conglomerate spanning banking, housing finance, and insurance. <strong>9,600+ branches</strong> across 4,170 cities. Net profit grew 12% YoY to ₹19,807 Cr in Q3 FY26. NPAs at a low 1.24%. Trading at 15.5x P/E — well below its 5-year average of ~20x, offering a rare entry point after the chairman resignation-driven selloff. Analyst consensus target: $42 (66% upside)."
@@ -283,6 +299,7 @@ const stocks = [
     rank:2, company:"ICICI Bank", tickerIN:"ICICIBANK", tickerUS:"IBN", exchange:"NYSE",
     sector:"Banking", mcapB:95, priceUS:26.08, pe:18.9, pb:3.21, divYield:0.75,
     ytdReturn:-8.2, y1Return:10.1, y5Return:155, y10Return:320,
+    epsGrowth5Y:28.5, epsFY25Growth:15.2,
     revenue:"$22.8B", netIncome:"$6.2B", roe:"17.8%", npa:"1.97%",
     potential:85, potentialLabel:"Strong Buy",
     thesis:"India's second-largest private bank with aggressive digital-first strategy. First Indian bank listed on NYSE (1999). <strong>Profit grew 15% CAGR over 5 years</strong>. ICICI's ROE of 17.8% leads private sector peers. Its subsidiaries (ICICI Prudential Life, ICICI Lombard, ICICI Securities) make it a diversified financial conglomerate. NPA ratio improved dramatically from 8.7% (2018) to 1.97%. Strong retail loan book with 45% home/auto loans."
@@ -291,6 +308,7 @@ const stocks = [
     rank:3, company:"Infosys", tickerIN:"INFY", tickerUS:"INFY", exchange:"NYSE",
     sector:"IT Services", mcapB:53, priceUS:12.95, pe:18.8, pb:7.1, divYield:3.42,
     ytdReturn:-35.1, y1Return:-28.1, y5Return:-31, y10Return:45,
+    epsGrowth5Y:12.8, epsFY25Growth:7.5,
     revenue:"$19.4B", netIncome:"$3.2B", roe:"30.7%", npa:"N/A",
     potential:72, potentialLabel:"Accumulate",
     thesis:"India's #2 IT services company and a global AI/digital transformation leader. <strong>First Indian company on NASDAQ (1999)</strong>. Revenue guidance at 3.0-3.5% for FY26. Won landmark £1.2B NHS UK deal. Named among World's Most Ethical Companies 6 consecutive years. The 56% drop from 52-week high creates a deep-value entry for long-term investors. ROE of 30.7% and dividend yield of 3.4% provide downside protection. AI/Topaz platform positions it well for the GenAI services wave."
@@ -299,6 +317,7 @@ const stocks = [
     rank:4, company:"Vedanta", tickerIN:"VEDL", tickerUS:"VEDL", exchange:"NYSE",
     sector:"Mining & Metals", mcapB:31, priceUS:17.2, pe:17.4, pb:4.84, divYield:9.37,
     ytdReturn:63.6, y1Return:85.2, y5Return:340, y10Return:180,
+    epsGrowth5Y:25.3, epsFY25Growth:61.0,
     revenue:"$14.4B", netIncome:"$2.5B", roe:"28.5%", npa:"N/A",
     potential:70, potentialLabel:"Hold/Accumulate",
     thesis:"World's largest integrated zinc producer and India's only private oil & gas producer. <strong>Dividend yield of 9.4%</strong> is the highest among all Indian ADRs. Net profit surged 61% YoY in Q3 FY26 to ₹5,710 Cr. Benefiting from India's infrastructure boom and energy transition demand for zinc, aluminum, copper. Key risk: Anil Agarwal promoter group's high leverage and complex corporate structure. Strong for income-focused investors."
@@ -307,6 +326,7 @@ const stocks = [
     rank:5, company:"Dr. Reddy's Labs", tickerIN:"DRREDDY", tickerUS:"RDY", exchange:"NYSE",
     sector:"Pharmaceuticals", mcapB:11, priceUS:12.8, pe:17.2, pb:3.5, divYield:0.72,
     ytdReturn:-18.5, y1Return:-12.3, y5Return:65, y10Return:120,
+    epsGrowth5Y:18.4, epsFY25Growth:14.8,
     revenue:"$3.6B", netIncome:"$0.62B", roe:"18.2%", npa:"N/A",
     potential:76, potentialLabel:"Buy",
     thesis:"Leading Indian pharma company with strong US generics pipeline and growing biosimilars business. Listed on NYSE since 2001. <strong>Revenue grew 15% CAGR over 3 years</strong>. Strong R&D pipeline with 100+ generic filings with US FDA. ESG leader — targeting water-positive operations by 2025 and 100% renewable power by 2030. Benefits from aging demographics globally and India's pharma cost advantage. Trading below historical average P/E."
@@ -315,6 +335,7 @@ const stocks = [
     rank:6, company:"MakeMyTrip", tickerIN:"N/A (HQ: India)", tickerUS:"MMYT", exchange:"NASDAQ",
     sector:"Travel/Tech", mcapB:10.5, priceUS:88.5, pe:62, pb:8.2, divYield:0,
     ytdReturn:-15.2, y1Return:35, y5Return:320, y10Return:450,
+    epsGrowth5Y:null, epsFY25Growth:85.0,
     revenue:"$0.82B", netIncome:"$0.13B", roe:"14.5%", npa:"N/A",
     potential:74, potentialLabel:"Accumulate",
     thesis:"India's dominant online travel platform with 47%+ market share. <strong>Only major Indian consumer internet play available on US exchanges.</strong> India's domestic air traffic grew 12% in 2025; hotel bookings surging with rising middle class. Revenue growing ~25% annually. First sustained profitability achieved. Pure play on India's $75B+ travel market growing at 15% CAGR. Premium valuation reflects scarcity value and growth."
@@ -323,6 +344,7 @@ const stocks = [
     rank:7, company:"Wipro", tickerIN:"WIPRO", tickerUS:"WIT", exchange:"NYSE",
     sector:"IT Services", mcapB:26, priceUS:2.5, pe:19.5, pb:3.0, divYield:1.8,
     ytdReturn:-22.0, y1Return:-18.5, y5Return:-10, y10Return:30,
+    epsGrowth5Y:5.2, epsFY25Growth:2.8,
     revenue:"$11.1B", netIncome:"$1.5B", roe:"15.2%", npa:"N/A",
     potential:58, potentialLabel:"Hold",
     thesis:"India's #3 IT services company focused on cloud, cybersecurity, and digital transformation. Acquired Capco (financial consulting) for strategic positioning. <strong>Has underperformed peers TCS and Infosys</strong> on growth metrics. Revenue flat YoY with margin pressure. New CEO Srini Pallia driving turnaround with focus on large deals and AI services. At current valuation, risk-reward is balanced but growth needs to re-accelerate."
@@ -331,6 +353,7 @@ const stocks = [
     rank:8, company:"WNS Holdings", tickerIN:"N/A (HQ: India)", tickerUS:"WNS", exchange:"NYSE",
     sector:"BPO/IT Services", mcapB:2.8, priceUS:58, pe:20.5, pb:4.6, divYield:0,
     ytdReturn:-5.0, y1Return:8.5, y5Return:45, y10Return:195,
+    epsGrowth5Y:14.6, epsFY25Growth:9.2,
     revenue:"$1.3B", netIncome:"$0.16B", roe:"22.8%", npa:"N/A",
     potential:68, potentialLabel:"Accumulate",
     thesis:"Premium business process management company serving BFSI, healthcare, and travel verticals. <strong>ROE of 22.8% with consistent free cash flow generation.</strong> Benefiting from global outsourcing expansion and AI-augmented services. Smaller cap provides higher growth potential but also higher volatility. Solid management with disciplined capital allocation. Good complement to large-cap IT ADRs."
@@ -339,6 +362,7 @@ const stocks = [
     rank:9, company:"Sify Technologies", tickerIN:"SIFY", tickerUS:"SIFY", exchange:"NASDAQ",
     sector:"Data Centers/IT", mcapB:0.15, priceUS:0.65, pe:-1, pb:0.4, divYield:0,
     ytdReturn:-55, y1Return:-62, y5Return:-80, y10Return:-75,
+    epsGrowth5Y:-22.0, epsFY25Growth:-45.0,
     revenue:"$0.24B", netIncome:"-$0.03B", roe:"-8.5%", npa:"N/A",
     potential:25, potentialLabel:"Speculative",
     thesis:"India data center and cloud services player. Despite operating in a booming sector (Indian data center market growing 25% CAGR), Sify has consistently <strong>destroyed shareholder value</strong>. Negative earnings, declining revenue, stock down 80% over 5 years. Trading below book value at 0.4x P/B. Only suitable for highly speculative investors betting on a turnaround. India's digital infrastructure boom provides optionality but execution risk is severe."
@@ -363,6 +387,8 @@ let currentSort = 'mcap';
 const sortOptions = [
   {key:'mcap', label:'Market Cap'},
   {key:'pe', label:'P/E Ratio'},
+  {key:'epsGrowth5Y', label:'5Y EPS CAGR'},
+  {key:'epsFY25Growth', label:'FY25 EPS Growth'},
   {key:'divYield', label:'Dividend Yield'},
   {key:'y1Return', label:'1Y Return'},
   {key:'potential', label:'Potential Score'},
@@ -395,6 +421,13 @@ function getSorted() {
     arr.sort((a,b) => b.y1Return - a.y1Return);
   } else if (currentSort === 'potential') {
     arr.sort((a,b) => b.potential - a.potential);
+  } else if (currentSort === 'epsGrowth5Y') {
+    arr.sort((a,b) => {
+      if (a.epsGrowth5Y === null) return 1; if (b.epsGrowth5Y === null) return -1;
+      return b.epsGrowth5Y - a.epsGrowth5Y;
+    });
+  } else if (currentSort === 'epsFY25Growth') {
+    arr.sort((a,b) => b.epsFY25Growth - a.epsFY25Growth);
   } else {
     arr.sort((a,b) => b.mcapB - a.mcapB);
   }
@@ -413,12 +446,16 @@ function renderTable() {
   const sorted = getSorted();
   let html = `<div class="stock-header">
     <div>#</div><div>Company</div><div>Mkt Cap</div><div>P/E</div>
-    <div>Div Yield</div><div>1Y Return</div><div>5Y Return</div><div>Sector</div><div>Potential</div>
+    <div>5Y EPS CAGR</div><div>FY25 EPS Gr.</div><div>Div Yield</div><div>1Y Return</div><div>Sector</div><div>5Y Return</div><div>Potential</div>
   </div>`;
   sorted.forEach((s, i) => {
     const y1cls = s.y1Return >= 0 ? 'pos' : 'neg';
     const y5cls = s.y5Return >= 0 ? 'pos' : 'neg';
     const peStr = s.pe < 0 ? 'N/M' : s.pe.toFixed(1) + 'x';
+    const eps5Str = s.epsGrowth5Y === null ? 'N/A*' : (s.epsGrowth5Y > 0 ? '+' : '') + s.epsGrowth5Y.toFixed(1) + '%';
+    const eps5Cls = s.epsGrowth5Y === null ? 'weak' : s.epsGrowth5Y >= 20 ? 'strong' : s.epsGrowth5Y >= 10 ? 'good' : s.epsGrowth5Y >= 0 ? 'weak' : 'poor';
+    const epsFYStr = (s.epsFY25Growth > 0 ? '+' : '') + s.epsFY25Growth.toFixed(1) + '%';
+    const epsFYCls = s.epsFY25Growth >= 30 ? 'strong' : s.epsFY25Growth >= 10 ? 'good' : s.epsFY25Growth >= 0 ? 'weak' : 'poor';
     html += `<div class="stock-row" onclick="showDetail(${stocks.indexOf(s)})">
       <div class="rank">${i+1}</div>
       <div class="name-cell">
@@ -430,10 +467,12 @@ function renderTable() {
       </div>
       <div class="mcap">$${s.mcapB >= 1 ? s.mcapB + 'B' : (s.mcapB*1000).toFixed(0)+'M'}</div>
       <div class="pe">${peStr}</div>
+      <div class="eps-cell ${eps5Cls}">${eps5Str}</div>
+      <div class="eps-cell ${epsFYCls}">${epsFYStr}</div>
       <div class="div-yield">${s.divYield > 0 ? s.divYield.toFixed(2)+'%' : '—'}</div>
       <div class="return-cell ${y1cls}">${s.y1Return > 0 ? '+' : ''}${s.y1Return.toFixed(1)}%</div>
-      <div class="return-cell ${y5cls}">${s.y5Return > 0 ? '+' : ''}${s.y5Return}%</div>
       <div><span class="sector">${s.sector}</span></div>
+      <div class="return-cell ${y5cls}">${s.y5Return > 0 ? '+' : ''}${s.y5Return}%</div>
       <div>
         <span class="potential-label" style="color:${getPotentialColor(s.potential)}">${s.potentialLabel} (${s.potential}/100)</span>
         <div class="potential-bar"><div class="fill" style="width:${s.potential}%;background:${getPotentialColor(s.potential)}"></div></div>
@@ -452,6 +491,8 @@ function showDetail(idx) {
     {l:'P/E Ratio', v:s.pe < 0 ? 'N/M' : s.pe+'x'},
     {l:'P/B Ratio', v:s.pb+'x'},
     {l:'Div Yield', v:s.divYield > 0 ? s.divYield+'%' : '—'},
+    {l:'5Y EPS CAGR', v:s.epsGrowth5Y !== null ? (s.epsGrowth5Y > 0 ? '+' : '') + s.epsGrowth5Y + '%' : 'N/A (loss→profit)'},
+    {l:'FY25 EPS Growth', v:(s.epsFY25Growth > 0 ? '+' : '') + s.epsFY25Growth + '%'},
     {l:'Revenue', v:s.revenue},
     {l:'Net Income', v:s.netIncome},
     {l:'ROE', v:s.roe},
@@ -549,23 +590,30 @@ new Chart(document.getElementById('peChart'), {
   }
 });
 
-// Dividend Yield
-new Chart(document.getElementById('divChart'), {
+// EPS Growth Comparison
+const epsStocks = stocks.filter(s => s.epsGrowth5Y !== null && s.pe > 0);
+new Chart(document.getElementById('epsChart'), {
   type:'bar',
   data:{
-    labels: stocks.filter(s=>s.divYield>0).sort((a,b)=>b.divYield-a.divYield).map(s=>s.tickerUS),
-    datasets:[{
-      label:'Yield %',
-      data: stocks.filter(s=>s.divYield>0).sort((a,b)=>b.divYield-a.divYield).map(s=>s.divYield),
-      backgroundColor: stocks.filter(s=>s.divYield>0).sort((a,b)=>b.divYield-a.divYield).map(s =>
-        s.divYield > 5 ? '#10b981' : s.divYield > 2 ? '#3b82f6' : '#f59e0b'
-      ),
-      borderRadius:6
-    }]
+    labels: epsStocks.map(s=>s.tickerUS),
+    datasets:[
+      {
+        label:'5Y EPS CAGR %',
+        data: epsStocks.map(s=>s.epsGrowth5Y),
+        backgroundColor:'rgba(6,182,212,0.7)',
+        borderRadius:6
+      },
+      {
+        label:'FY25 EPS Growth %',
+        data: epsStocks.map(s=>s.epsFY25Growth),
+        backgroundColor:'rgba(245,158,11,0.7)',
+        borderRadius:6
+      }
+    ]
   },
   options:{
     responsive:true, maintainAspectRatio:false,
-    plugins:{legend:{display:false}},
+    plugins:{legend:{labels:{font:{size:11}}}},
     scales:{
       y:{grid:{color:'rgba(255,255,255,0.04)'},ticks:{callback:v=>v+'%'}},
       x:{grid:{display:false}}
