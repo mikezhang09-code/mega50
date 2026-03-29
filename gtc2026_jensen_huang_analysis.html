@@ -1,0 +1,1225 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>黄仁勋 GTC 2026 深度解析 | Jensen Huang Post-GTC Analysis</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Source+Sans+3:wght@300;400;600;700&family=Noto+Sans+SC:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root {
+  --ink: #0a0f1a;
+  --paper: #f5f2eb;
+  --accent: #c8102e;
+  --accent2: #1a5632;
+  --gold: #b8860b;
+  --steel: #4a5568;
+  --muted: #8a9bb0;
+  --card: #fffdf8;
+  --border: #d4cfc4;
+  --green-bg: rgba(26,86,50,0.06);
+  --red-bg: rgba(200,16,46,0.06);
+  --blue: #1e3a5f;
+  --highlight: #fef3c7;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Source Sans 3', 'Noto Sans SC', sans-serif;
+  background: var(--paper);
+  color: var(--ink);
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* === HEADER === */
+.hero {
+  background: linear-gradient(135deg, #0a0f1a 0%, #1a2a3a 40%, #0d1f2d 100%);
+  color: #fff;
+  padding: 80px 0 60px;
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  top: -50%; left: -50%;
+  width: 200%; height: 200%;
+  background: radial-gradient(ellipse at 30% 50%, rgba(118,185,0,0.08) 0%, transparent 50%),
+              radial-gradient(ellipse at 70% 30%, rgba(200,16,46,0.06) 0%, transparent 50%);
+  animation: drift 20s ease-in-out infinite;
+}
+@keyframes drift {
+  0%, 100% { transform: translate(0, 0); }
+  50% { transform: translate(-3%, 2%); }
+}
+.hero-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 32px;
+  position: relative;
+  z-index: 1;
+}
+.hero-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: #76b900;
+  margin-bottom: 20px;
+}
+.hero h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(32px, 5vw, 56px);
+  font-weight: 900;
+  line-height: 1.15;
+  margin-bottom: 16px;
+}
+.hero h1 span { color: #76b900; }
+.hero-sub {
+  font-size: 18px;
+  color: rgba(255,255,255,0.7);
+  max-width: 700px;
+  font-weight: 300;
+}
+.hero-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 20px;
+  margin-top: 48px;
+}
+.hero-stat {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 12px;
+  padding: 20px;
+  text-align: center;
+}
+.hero-stat .num {
+  font-family: 'Playfair Display', serif;
+  font-size: 32px;
+  font-weight: 700;
+  color: #76b900;
+}
+.hero-stat .label {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: rgba(255,255,255,0.5);
+  margin-top: 4px;
+}
+
+/* === MAIN CONTENT === */
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 32px;
+}
+
+section {
+  padding: 64px 0;
+  border-bottom: 1px solid var(--border);
+}
+section:last-child { border-bottom: none; }
+
+.section-num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 12px;
+}
+.section-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(26px, 3.5vw, 38px);
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 8px;
+  line-height: 1.2;
+}
+.section-title-cn {
+  font-family: 'Noto Sans SC', sans-serif;
+  font-size: 16px;
+  color: var(--accent2);
+  font-weight: 500;
+  margin-bottom: 24px;
+}
+
+/* === CARDS === */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 24px;
+  margin: 32px 0;
+}
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 28px;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+}
+.card-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+.card h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 20px;
+  margin-bottom: 4px;
+}
+.card-date {
+  font-size: 13px;
+  color: var(--muted);
+  margin-bottom: 12px;
+}
+.card p {
+  font-size: 15px;
+  color: var(--steel);
+  line-height: 1.65;
+}
+.card-quote {
+  border-left: 3px solid var(--accent);
+  padding-left: 16px;
+  margin: 16px 0;
+  font-style: italic;
+  color: var(--ink);
+  font-size: 15px;
+}
+
+/* === CHART CONTAINERS === */
+.chart-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(460px, 1fr));
+  gap: 28px;
+  margin: 32px 0;
+}
+.chart-box {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 28px;
+}
+.chart-box h4 {
+  font-family: 'Playfair Display', serif;
+  font-size: 18px;
+  margin-bottom: 4px;
+}
+.chart-box .chart-sub {
+  font-size: 13px;
+  color: var(--muted);
+  margin-bottom: 20px;
+}
+.chart-box canvas {
+  width: 100% !important;
+  max-height: 320px;
+}
+
+/* === BULL/BEAR === */
+.bull-bear {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 28px;
+  margin: 32px 0;
+}
+@media (max-width: 768px) {
+  .bull-bear { grid-template-columns: 1fr; }
+  .chart-row { grid-template-columns: 1fr; }
+}
+.bull-col {
+  background: var(--green-bg);
+  border: 1px solid rgba(26,86,50,0.15);
+  border-radius: 12px;
+  padding: 28px;
+}
+.bear-col {
+  background: var(--red-bg);
+  border: 1px solid rgba(200,16,46,0.15);
+  border-radius: 12px;
+  padding: 28px;
+}
+.bull-col h4, .bear-col h4 {
+  font-family: 'Playfair Display', serif;
+  font-size: 20px;
+  margin-bottom: 16px;
+}
+.bull-col h4 { color: var(--accent2); }
+.bear-col h4 { color: var(--accent); }
+.arg-item {
+  margin-bottom: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(0,0,0,0.06);
+}
+.arg-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+.arg-item strong {
+  display: block;
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+.arg-item p {
+  font-size: 14px;
+  color: var(--steel);
+  line-height: 1.6;
+}
+
+/* === DATA TABLE === */
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 24px 0;
+  font-size: 14px;
+}
+.data-table th {
+  background: var(--ink);
+  color: #fff;
+  padding: 12px 16px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+.data-table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+}
+.data-table tr:nth-child(even) { background: rgba(0,0,0,0.02); }
+.data-table tr:hover { background: var(--highlight); }
+.tag-buy { background: #dcfce7; color: #166534; padding: 2px 8px; border-radius: 4px; font-size: 12px; font-weight: 600; }
+.tag-hold { background: #fef3c7; color: #92400e; padding: 2px 8px; border-radius: 4px; font-size: 12px; font-weight: 600; }
+.tag-sell { background: #fecaca; color: #991b1b; padding: 2px 8px; border-radius: 4px; font-size: 12px; font-weight: 600; }
+
+/* === VERDICT === */
+.verdict-box {
+  background: linear-gradient(135deg, #0a0f1a, #1a2a3a);
+  color: #fff;
+  border-radius: 16px;
+  padding: 48px;
+  margin: 40px 0;
+  position: relative;
+  overflow: hidden;
+}
+.verdict-box::after {
+  content: '';
+  position: absolute;
+  top: 0; right: 0;
+  width: 300px; height: 300px;
+  background: radial-gradient(circle, rgba(118,185,0,0.12) 0%, transparent 70%);
+}
+.verdict-box h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 28px;
+  margin-bottom: 20px;
+  position: relative;
+  z-index: 1;
+}
+.verdict-box p {
+  font-size: 16px;
+  line-height: 1.75;
+  color: rgba(255,255,255,0.85);
+  position: relative;
+  z-index: 1;
+  max-width: 800px;
+}
+.verdict-metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 20px;
+  margin-top: 32px;
+  position: relative;
+  z-index: 1;
+}
+.v-metric {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 10px;
+  padding: 20px;
+  text-align: center;
+}
+.v-metric .vm-val {
+  font-family: 'Playfair Display', serif;
+  font-size: 26px;
+  font-weight: 700;
+}
+.v-metric .vm-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: rgba(255,255,255,0.5);
+  margin-top: 4px;
+}
+
+/* === TIMELINE === */
+.timeline {
+  position: relative;
+  padding-left: 40px;
+  margin: 32px 0;
+}
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 12px; top: 0; bottom: 0;
+  width: 2px;
+  background: var(--border);
+}
+.tl-item {
+  position: relative;
+  margin-bottom: 32px;
+}
+.tl-item::before {
+  content: '';
+  position: absolute;
+  left: -33px; top: 6px;
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: 2px solid var(--paper);
+}
+.tl-date {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  color: var(--accent);
+  margin-bottom: 4px;
+}
+.tl-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 18px;
+  margin-bottom: 8px;
+}
+.tl-body {
+  font-size: 14px;
+  color: var(--steel);
+  line-height: 1.65;
+}
+
+/* === RISK METER === */
+.risk-meter {
+  display: flex;
+  gap: 4px;
+  margin: 20px 0;
+}
+.risk-bar {
+  height: 8px;
+  border-radius: 4px;
+  flex: 1;
+  transition: opacity 0.3s;
+}
+.risk-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* === FOOTER === */
+.footer {
+  background: var(--ink);
+  color: rgba(255,255,255,0.5);
+  padding: 40px 0;
+  font-size: 13px;
+  text-align: center;
+}
+.footer strong { color: rgba(255,255,255,0.8); }
+
+/* === RESPONSIVE === */
+@media (max-width: 600px) {
+  .hero { padding: 48px 0 40px; }
+  .hero-stats { grid-template-columns: repeat(2, 1fr); }
+  section { padding: 40px 0; }
+  .card-grid { grid-template-columns: 1fr; }
+  .verdict-box { padding: 28px; }
+}
+
+/* Prose */
+.prose { max-width: 760px; font-size: 16px; color: var(--steel); }
+.prose p { margin-bottom: 16px; }
+.prose strong { color: var(--ink); }
+/* Back Link */
+.back-link {
+  display: inline-flex; align-items: center; gap: 8px;
+  color: rgba(255,255,255,0.7); text-decoration: none;
+  font-size: 13px; font-weight: 600; text-transform: uppercase;
+  letter-spacing: 0.05em; margin-bottom: 24px; transition: color 0.2s;
+}
+.back-link:hover { color: #fff; }
+.back-link svg { width: 16px; height: 16px; transition: transform 0.2s; }
+.back-link:hover svg { transform: translateX(-4px); }
+
+/* Callout */
+.callout {
+  background: var(--highlight);
+  border-left: 4px solid var(--gold);
+  padding: 20px 24px;
+  border-radius: 0 8px 8px 0;
+  margin: 24px 0;
+  font-size: 15px;
+  line-height: 1.7;
+}
+.callout strong { color: var(--ink); }
+
+/* Scorecard */
+.scorecard {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin: 24px 0;
+}
+.sc-item {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 20px;
+}
+.sc-item .sc-label {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+.sc-item .sc-val {
+  font-family: 'Playfair Display', serif;
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--ink);
+}
+.sc-item .sc-note {
+  font-size: 12px;
+  color: var(--steel);
+  margin-top: 4px;
+}
+</style>
+</head>
+<body>
+
+<!-- ============ HERO ============ -->
+<header class="hero">
+  <div class="hero-inner">
+    <a href="index.html" class="back-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      Return to Home
+    </a>
+    <div class="hero-tag">Deep Research Report · 深度研究报告 · March 2026</div>
+    <h1>黄仁勋 GTC 2026 后八场访谈<br><span>万亿美元叙事</span>全解析</h1>
+    <p class="hero-sub">Jensen Huang's Post-GTC 2026 Interviews: Decoding the $1 Trillion Narrative, Wall Street's Verdict, and What It Means for Value Investors</p>
+    <div class="hero-stats">
+      <div class="hero-stat"><div class="num">$1T+</div><div class="label">Order Pipeline</div></div>
+      <div class="hero-stat"><div class="num">54/57</div><div class="label">Analyst Buy Ratings</div></div>
+      <div class="hero-stat"><div class="num">8</div><div class="label">Post-GTC Interviews</div></div>
+      <div class="hero-stat"><div class="num">-7%</div><div class="label">YTD Stock Performance</div></div>
+      <div class="hero-stat"><div class="num">38x</div><div class="label">Trailing P/E</div></div>
+      <div class="hero-stat"><div class="num">~15x</div><div class="label">FY28E Forward P/E</div></div>
+    </div>
+  </div>
+</header>
+
+<main class="container">
+
+<!-- ============ SECTION 1: INTERVIEW TIMELINE ============ -->
+<section>
+  <div class="section-num">Section 01 — Interviews</div>
+  <div class="section-title">Eight Interviews, One Message</div>
+  <div class="section-title-cn">八场访谈，一个核心信息：AI基础设施是人类最大投资周期</div>
+
+  <div class="timeline">
+    <div class="tl-item">
+      <div class="tl-date">Mar 16 · GTC Keynote</div>
+      <div class="tl-title">2.5小时主题演讲：从芯片公司到Token工厂建造者</div>
+      <div class="tl-body">发布Vera Rubin全栈平台（7芯片、5机架），推理性能为Blackwell 5倍，每Token成本降至1/10。宣布收购Groq的LPU芯片（$200亿），Feynman架构（台积电1.6nm）首次曝光。迪士尼"雪宝"机器人登台，宣布"2026年是人形机器人商业化元年"。</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-date">Mar 17 · Stratechery 深度对话</div>
+      <div class="tl-title">Ben Thompson一对一：坦言"仍在全力冲刺"</div>
+      <div class="tl-body">承认英伟达并非高枕无忧的巨头，供应链瓶颈无处不在。称赞DeepSeek、Kimi和Qwen，警告华盛顿不要被AI末日论吓倒。Groq收购是应对Google TPU和Broadcom定制芯片的防御性布局。</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-date">Mar 17 · 媒体问答会（近2小时）</div>
+      <div class="tl-title">Token经济学体系首次完整阐述</div>
+      <div class="tl-body">定义数据中心为"Token制造系统"，核心KPI为"每瓦Token数"。确认已获中国客户H200出口许可。披露为CoreWeave、Nscale等提供融资——"低风险"投资。</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-date">Mar 17 · CNBC Squawk on the Street</div>
+      <div class="tl-title">$1T订单仅含Blackwell+Rubin，可见性达21个月</div>
+      <div class="tl-body">当Cramer提到股价下跌30美分时反击："你的股票十年涨了22000%，我们需要在乎最近半小时吗？"强调AI工厂将向企业本地部署扩展。</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-date">Mar 17 · CNBC Mad Money</div>
+      <div class="tl-title">OpenClaw = "下一个ChatGPT"</div>
+      <div class="tl-body">"每个木匠都能成为建筑师" — AI智能体将提升每个人的能力。被问及新生儿能否活到100岁，答"绝对可以"。</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-date">Mar 17 · 分析师问答会</div>
+      <div class="tl-title">"Token预算"概念：入职标配 = 笔记本 + Token额度</div>
+      <div class="tl-body">"1万亿不含Feynman，不含Rubin Ultra。"估算全球70万亿美元产业需要边缘端物理AI。</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-date">Mar 19 · Bloomberg Panel</div>
+      <div class="tl-title">"警告是好的，恐吓则不好"</div>
+      <div class="tl-body">回应AI安全争议：这项技术对人类太重要了，恐惧论不应成为阻碍进步的武器。</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-date">Mar 22-23 · Lex Fridman Podcast #494</div>
+      <div class="tl-title">最具争议：宣布"AGI已经实现"</div>
+      <div class="tl-body">以经济学定义AGI — AI可自主创建被数十亿人使用的Web服务并产生收入。但承认AI无法运营英伟达这样复杂的公司。英伟达60多位直接汇报对象，从不做一对一会议。DLSS 5争议中软化立场。</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SECTION 2: GTC PRODUCT LAUNCHES ============ -->
+<section>
+  <div class="section-num">Section 02 — Products</div>
+  <div class="section-title">The $1 Trillion Product Stack</div>
+  <div class="section-title-cn">万亿美元产品矩阵：从Vera Rubin到OpenClaw</div>
+
+  <div class="chart-row">
+    <div class="chart-box">
+      <h4>GPU Architecture Roadmap</h4>
+      <div class="chart-sub">Performance per watt improvement trajectory · 每瓦性能提升路线图</div>
+      <canvas id="roadmapChart"></canvas>
+    </div>
+    <div class="chart-box">
+      <h4>Inference Cost Per Token (Index)</h4>
+      <div class="chart-sub">Relative cost indexed to Hopper = 100 · 推理成本指数（Hopper=100）</div>
+      <canvas id="costChart"></canvas>
+    </div>
+  </div>
+
+  <div class="scorecard">
+    <div class="sc-item">
+      <div class="sc-label">Vera Rubin</div>
+      <div class="sc-val">5×</div>
+      <div class="sc-note">vs Blackwell inference throughput</div>
+    </div>
+    <div class="sc-item">
+      <div class="sc-label">Groq 3 LPX</div>
+      <div class="sc-val">35×</div>
+      <div class="sc-note">tokens/watt improvement with Rubin</div>
+    </div>
+    <div class="sc-item">
+      <div class="sc-label">Cost / Token</div>
+      <div class="sc-val">1/10th</div>
+      <div class="sc-note">Vera Rubin vs Blackwell</div>
+    </div>
+    <div class="sc-item">
+      <div class="sc-label">Feynman (2028)</div>
+      <div class="sc-val">1.6nm</div>
+      <div class="sc-note">TSMC process + 3D stacking</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SECTION 3: WALL STREET REACTION ============ -->
+<section>
+  <div class="section-num">Section 03 — Wall Street</div>
+  <div class="section-title">The Paradox: 94% Buy Ratings, -7% YTD</div>
+  <div class="section-title-cn">华尔街悖论：94%给出买入评级，年初至今股价却下跌7%</div>
+
+  <div class="chart-row">
+    <div class="chart-box">
+      <h4>Analyst Consensus Breakdown</h4>
+      <div class="chart-sub">57 analysts covering NVDA post-GTC · 覆盖英伟达的57位分析师评级分布</div>
+      <canvas id="analystChart"></canvas>
+    </div>
+    <div class="chart-box">
+      <h4>Revenue Growth Trajectory</h4>
+      <div class="chart-sub">Goldman Sachs estimates, FY24-FY28E ($B) · 高盛营收预测</div>
+      <canvas id="revenueChart"></canvas>
+    </div>
+  </div>
+
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Analyst / Firm</th>
+        <th>Rating</th>
+        <th>Target ($)</th>
+        <th>Key Thesis</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>Toshiya Hari · <strong>Goldman Sachs</strong></td><td><span class="tag-buy">Buy</span></td><td>$305</td><td>FY28E rev $521.5B, fwd PE ~15x = undervalued</td></tr>
+      <tr><td>Vivek Arya · <strong>Bank of America</strong></td><td><span class="tag-buy">Buy</span></td><td>$300</td><td>$1T pipeline, raised from $275</td></tr>
+      <tr><td>Stacy Rasgon · <strong>Bernstein</strong></td><td><span class="tag-buy">Buy</span></td><td>$275</td><td>"Valuation is almost absurdly cheap"</td></tr>
+      <tr><td>Dan Ives · <strong>Wedbush</strong></td><td><span class="tag-buy">Buy</span></td><td>$290</td><td>$1T order guidance "jaw-dropping"</td></tr>
+      <tr><td>Ivan Feinseth · <strong>Tigress</strong></td><td><span class="tag-buy">Buy</span></td><td>$360</td><td>Street-high target, full-stack dominance</td></tr>
+      <tr><td>Hans Mosesmann · <strong>Rosenblatt</strong></td><td><span class="tag-buy">Buy</span></td><td>$325</td><td>25x FY28E PE, sustained 60%+ growth</td></tr>
+      <tr><td>Joseph Moore · <strong>Morgan Stanley</strong></td><td><span class="tag-buy">Buy</span></td><td>$206</td><td>Cautious: "24-month semiconductor demand forecasts deserve healthy skepticism"</td></tr>
+      <tr><td>Gene Munster · <strong>Deepwater</strong></td><td><span class="tag-hold">Hold-ish</span></td><td>—</td><td>"Wall of worry" about 2027 deceleration</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ============ SECTION 4: COMPETITIVE LANDSCAPE ============ -->
+<section>
+  <div class="section-num">Section 04 — Competition</div>
+  <div class="section-title">The Siege: Every Hyperscaler Building Custom Chips</div>
+  <div class="section-title-cn">全面围堵：每一家超大规模云厂商都在自研AI芯片</div>
+
+  <div class="chart-row">
+    <div class="chart-box">
+      <h4>Custom Chip Adoption Risk</h4>
+      <div class="chart-sub">Estimated NVIDIA market share erosion timeline · 自研芯片对英伟达份额侵蚀预测</div>
+      <canvas id="competitionChart"></canvas>
+    </div>
+    <div class="chart-box">
+      <h4>Hyperscaler Custom Chip Programs</h4>
+      <div class="chart-sub">Scale and maturity of in-house silicon · 各厂商自研芯片进展</div>
+      <canvas id="chipProgramChart"></canvas>
+    </div>
+  </div>
+
+  <div class="callout">
+    <strong>关键判断 Key Insight:</strong> 自研芯片预计仅能夺取15-25%的市场份额，主要集中在超大规模企业内部推理工作负载。英伟达的CUDA生态系统20年的开发者锁定效应仍是最强护城河——但Google TPU的软件栈已足够成熟，多家大模型公司在TPU上完成了大部分训练。护城河性质正从"芯片独占"转向"平台锁定"。
+  </div>
+</section>
+
+<!-- ============ SECTION 5: BULL vs BEAR ============ -->
+<section>
+  <div class="section-num">Section 05 — Debate</div>
+  <div class="section-title">The Great AI Infrastructure Debate</div>
+  <div class="section-title-cn">AI基础设施大辩论：超级周期 vs 超级泡沫</div>
+
+  <div class="bull-bear">
+    <div class="bull-col">
+      <h4>🟢 Bull Case · 看多论据</h4>
+      <div class="arg-item">
+        <strong>Compute demand ↑ 1,000,000× in 2 years</strong>
+        <p>黄仁勋原话：计算需求两年内增长100万倍。这不是投机，而是从通用CPU到加速GPU计算的范式转移。</p>
+      </div>
+      <div class="arg-item">
+        <strong>Goldman 5-factor bubble test: NOT a bubble</strong>
+        <p>高盛五因子诊断框架结论："真正的结构性效用，而非纯粹投机"。美联储主席鲍威尔也区分AI与互联网泡沫。</p>
+      </div>
+      <div class="arg-item">
+        <strong>Real money backing: AWS 1M+ GPU order</strong>
+        <p>AWS承诺到2027年购买超100万颗英伟达GPU。微软、Meta、Google资本开支合计超$3000亿/年。</p>
+      </div>
+      <div class="arg-item">
+        <strong>Forward PE ~15× is cheap for 60%+ grower</strong>
+        <p>若FY28E收入达$5215亿，前瞻PE仅14.9倍——在大型科技股中反而偏低。</p>
+      </div>
+    </div>
+    <div class="bear-col">
+      <h4>🔴 Bear Case · 看空论据</h4>
+      <div class="arg-item">
+        <strong>Michael Burry: $1.1B short on NVDA + PLTR</strong>
+        <p>"真正的终端需求少得可笑，几乎所有客户都由其交易商提供资金"——循环融资问题。</p>
+      </div>
+      <div class="arg-item">
+        <strong>Enterprise adoption: only 8.6% have AI agents in production</strong>
+        <p>近2/3企业没有正式AI计划。"试点炼狱"普遍存在。NBER研究：90%企业报告AI对生产率无影响。</p>
+      </div>
+      <div class="arg-item">
+        <strong>Customer concentration: 4 clients = 61% revenue</strong>
+        <p>收入集中度惊人，与1999年思科的处境高度相似。任何一家削减支出都将造成不对称冲击。</p>
+      </div>
+      <div class="arg-item">
+        <strong>Insider selling: $5.4B cumulative</strong>
+        <p>英伟达内部人累计减持$54亿。Peter Thiel清仓全部约$1亿持仓。软银抛售约$60亿。</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="chart-row">
+    <div class="chart-box">
+      <h4>Enterprise AI Adoption Reality</h4>
+      <div class="chart-sub">AI agent deployment status across enterprises · 企业AI智能体部署现状</div>
+      <canvas id="adoptionChart"></canvas>
+    </div>
+    <div class="chart-box">
+      <h4>NVIDIA Revenue Concentration</h4>
+      <div class="chart-sub">Top 4 customers vs rest · 前4大客户收入占比</div>
+      <canvas id="concentrationChart"></canvas>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SECTION 6: CHINA ============ -->
+<section>
+  <div class="section-num">Section 06 — China</div>
+  <div class="section-title">The China Variable: $100-150B Option Value</div>
+  <div class="section-title-cn">中国变量：价值$1000-1500亿的期权</div>
+
+  <div class="prose">
+    <p>黄仁勋在1月访华（上海→北京→深圳），在GTC上确认已获多家中国客户的H200出口许可。<strong>字节跳动、阿里巴巴、腾讯首批获批超40万颗H200</strong>。但政策风险极高——国会的SAFE Chips法案提议30个月内禁止出口。</p>
+    <p>华福证券指出2026年中美科技巨头资本开支合计约<strong>$4045亿</strong>，同比增18%。国金证券认为2026年是中国算力从"云端训练"向"训练+推理"双轮驱动转型的关键之年。</p>
+  </div>
+
+  <div class="callout">
+    <strong>投资者视角 Investor Lens:</strong> 中国市场更像一个<strong>期权</strong>——上行空间可观（$100-150B年收入），但不应纳入基础估值假设。黄仁勋自己也承认H200出口的政策窗口可能随时关闭。
+  </div>
+</section>
+
+<!-- ============ SECTION 7: VALUATION & VERDICT ============ -->
+<section>
+  <div class="section-num">Section 07 — Valuation</div>
+  <div class="section-title">Value Investor's Framework</div>
+  <div class="section-title-cn">价值投资者的决策框架</div>
+
+  <div class="chart-row">
+    <div class="chart-box">
+      <h4>Valuation Multi-Lens View</h4>
+      <div class="chart-sub">Different PE scenarios vs historical comps · 多维估值对比</div>
+      <canvas id="valuationChart"></canvas>
+    </div>
+    <div class="chart-box">
+      <h4>AI Infra Spend as % of US GDP</h4>
+      <div class="chart-sub">Historical comparison with past tech cycles · AI基建支出占GDP比重</div>
+      <canvas id="gdpChart"></canvas>
+    </div>
+  </div>
+
+  <div class="verdict-box">
+    <h3>🎯 综合判断 Investment Verdict</h3>
+    <p>英伟达处于AI基础设施周期的<strong>中段而非尾声</strong>。当前估值在"不贵也不便宜"的灰色地带——取决于你对2027-2028年增长确定性的信心。最审慎的策略：<strong>不在当前价位重仓押注</strong>，设定明确买入价位（前瞻PE回落至15-18倍），密切关注两个先行指标——超大规模企业资本开支指引变化、企业端AI收入的实质增长证据。</p>
+    <div class="verdict-metrics">
+      <div class="v-metric"><div class="vm-val" style="color:#76b900">~$170</div><div class="vm-label">Current Price Range</div></div>
+      <div class="v-metric"><div class="vm-val" style="color:#76b900">$267</div><div class="vm-label">Consensus Target</div></div>
+      <div class="v-metric"><div class="vm-val" style="color:#fbbf24">38×</div><div class="vm-label">Trailing PE</div></div>
+      <div class="v-metric"><div class="vm-val" style="color:#76b900">~15×</div><div class="vm-label">FY28E Fwd PE</div></div>
+      <div class="v-metric"><div class="vm-val" style="color:#fbbf24">$96.6B</div><div class="vm-label">Free Cash Flow</div></div>
+    </div>
+  </div>
+
+  <!-- RISK METER -->
+  <h4 style="font-family:'Playfair Display',serif; margin-bottom:8px;">Risk Assessment · 风险评估</h4>
+  <div class="risk-meter">
+    <div class="risk-bar" style="background:#22c55e;"></div>
+    <div class="risk-bar" style="background:#22c55e;"></div>
+    <div class="risk-bar" style="background:#eab308;"></div>
+    <div class="risk-bar" style="background:#eab308;"></div>
+    <div class="risk-bar" style="background:#eab308; opacity:0.7;"></div>
+    <div class="risk-bar" style="background:#ef4444; opacity:0.4;"></div>
+    <div class="risk-bar" style="background:#ef4444; opacity:0.25;"></div>
+  </div>
+  <div class="risk-labels">
+    <span>Low Risk 低风险</span>
+    <span>▲ Current Position 当前位置</span>
+    <span>High Risk 高风险</span>
+  </div>
+</section>
+
+<!-- ============ SECTION 8: SEVEN TAKEAWAYS ============ -->
+<section>
+  <div class="section-num">Section 08 — Takeaways</div>
+  <div class="section-title">Seven Insights for Value Investors</div>
+  <div class="section-title-cn">价值投资者的七条核心启示</div>
+
+  <div class="card-grid">
+    <div class="card">
+      <div class="card-label">Insight 01</div>
+      <h3>估值：表面昂贵，前瞻合理</h3>
+      <p>尾随PE 38倍偏高，但FY28E前瞻PE仅~15倍。核心前提：60%+年增长需持续3年以上。Rosenblatt $325目标价隐含"多年完美执行"预期。</p>
+    </div>
+    <div class="card">
+      <div class="card-label">Insight 02</div>
+      <h3>护城河：CUDA是壁垒，但正被侵蚀</h3>
+      <p>20年开发者锁定效应是最持久优势。但Google TPU软件栈已成熟，自研芯片预计到2027年在推理市场夺取15-25%份额。护城河正从"芯片独占"转向"平台锁定"。</p>
+    </div>
+    <div class="card">
+      <div class="card-label">Insight 03</div>
+      <h3>周期性：GDP占比4%是历史警戒线</h3>
+      <p>AI基础设施支出占美国GDP已超4%，历史上这一水平往往预示周期性下行。如果企业端AI收入未在2027年显著兑现，资本开支可能出现"气穴"。</p>
+    </div>
+    <div class="card">
+      <div class="card-label">Insight 04</div>
+      <h3>客户集中：4家=61%收入</h3>
+      <p>牛市中是"需求锁定"，熊市中是"致命依赖"。与1999年思科处境高度相似——不可或缺的基础设施供应商，极高估值交易。</p>
+    </div>
+    <div class="card">
+      <div class="card-label">Insight 05</div>
+      <h3>中国：$1000-1500亿的期权</h3>
+      <p>H200出口许可已获批，但政策风险极高。SAFE Chips法案可能30个月内禁止出口。应视为期权价值，不纳入基础假设。</p>
+    </div>
+    <div class="card">
+      <div class="card-label">Insight 06</div>
+      <h3>Token经济：成立与否决定一切</h3>
+      <p>黄仁勋的终极叙事"Token即商品，数据中心即工厂"若成立，万亿级营收并非不可想象。但企业AI采用率仅8.6%，应用层瓶颈是关键变量。</p>
+    </div>
+    <div class="card">
+      <div class="card-label">Insight 07</div>
+      <h3>仓位策略：等待更好的入场价</h3>
+      <p>不在当前价位重仓押注。设定买入价位（前瞻PE 15-18倍）。密切关注先行指标：超大规模企业Capex指引变化 + 企业AI收入增长证据。</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SECTION 9: LEADING INDICATORS ============ -->
+<section>
+  <div class="section-num">Section 09 — What to Watch</div>
+  <div class="section-title">Critical Leading Indicators</div>
+  <div class="section-title-cn">关键先行指标：2026下半年至2027年的观察清单</div>
+
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Indicator 指标</th>
+        <th>Bull Signal 看多信号</th>
+        <th>Bear Signal 看空信号</th>
+        <th>Timeline 时间窗口</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Hyperscaler Capex Guidance</strong><br>超大规模Capex指引</td>
+        <td>持续上调，合计超$3500亿/年</td>
+        <td>任何一家下调10%+</td>
+        <td>Q2-Q4 2026 财报</td>
+      </tr>
+      <tr>
+        <td><strong>Enterprise AI Agent Adoption</strong><br>企业AI智能体采用率</td>
+        <td>生产环境部署率突破20%</td>
+        <td>停滞在10%以下</td>
+        <td>2026 H2 调研数据</td>
+      </tr>
+      <tr>
+        <td><strong>Vera Rubin Volume Ramp</strong><br>Vera Rubin放量节奏</td>
+        <td>Q3 2026如期出货，良率正常</td>
+        <td>延迟超1季度或良率问题</td>
+        <td>Q3-Q4 2026</td>
+      </tr>
+      <tr>
+        <td><strong>Custom ASIC Revenue Share</strong><br>自研芯片份额变化</td>
+        <td>维持在总推理算力15%以下</td>
+        <td>加速超过25%</td>
+        <td>2027年全年</td>
+      </tr>
+      <tr>
+        <td><strong>China Export Policy</strong><br>中国出口政策</td>
+        <td>H200许可持续，新品获批</td>
+        <td>SAFE Chips法案通过</td>
+        <td>2026-2027</td>
+      </tr>
+      <tr>
+        <td><strong>AI Application Revenue</strong><br>AI应用层收入</td>
+        <td>AI原生公司ARR合计超$500亿</td>
+        <td>AI公司亏损面扩大</td>
+        <td>2026 H2 - 2027</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+</main>
+
+<!-- ============ FOOTER ============ -->
+<footer class="footer">
+  <div class="container">
+    <p><strong>Disclaimer 免责声明:</strong> This report is for informational and educational purposes only and does not constitute investment advice. 本报告仅供参考和教育目的，不构成投资建议。</p>
+    <p style="margin-top:8px;">Sources: CNBC, Stratechery, Lex Fridman, Bloomberg, Goldman Sachs, Bernstein, Constellation Research, TechCrunch, 36Kr, Sina Finance, Tmtpost, Zhihu, Data Center Frontier · March 2026</p>
+  </div>
+</footer>
+
+<!-- ============ CHARTS ============ -->
+<script>
+const COLORS = {
+  green: '#76b900',
+  red: '#c8102e',
+  blue: '#1e3a5f',
+  gold: '#b8860b',
+  steel: '#4a5568',
+  muted: '#8a9bb0',
+  paper: '#f5f2eb'
+};
+
+Chart.defaults.font.family = "'Source Sans 3', 'Noto Sans SC', sans-serif";
+Chart.defaults.font.size = 12;
+Chart.defaults.color = COLORS.steel;
+
+// 1. GPU Roadmap Chart
+new Chart(document.getElementById('roadmapChart'), {
+  type: 'bar',
+  data: {
+    labels: ['Hopper\n(H100)', 'Blackwell\n(B200)', 'Vera Rubin\n(2026)', 'Feynman\n(2028E)'],
+    datasets: [{
+      label: 'Relative Performance/Watt (Index)',
+      data: [100, 250, 500, 1200],
+      backgroundColor: [COLORS.steel, COLORS.blue, COLORS.green, 'rgba(118,185,0,0.5)'],
+      borderRadius: 6,
+      borderSkipped: false,
+    }]
+  },
+  options: {
+    responsive: true,
+    plugins: {
+      legend: { display: false },
+      tooltip: { callbacks: { label: ctx => ctx.parsed.y + '× index' } }
+    },
+    scales: {
+      y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.05)' }, title: { display: true, text: 'Performance/Watt Index' } },
+      x: { grid: { display: false } }
+    }
+  }
+});
+
+// 2. Cost per Token Chart
+new Chart(document.getElementById('costChart'), {
+  type: 'line',
+  data: {
+    labels: ['Hopper (2023)', 'Blackwell (2025)', 'Vera Rubin (2026)', 'Feynman (2028E)'],
+    datasets: [{
+      label: 'Cost per Token (Index)',
+      data: [100, 35, 10, 3],
+      borderColor: COLORS.green,
+      backgroundColor: 'rgba(118,185,0,0.1)',
+      fill: true,
+      tension: 0.4,
+      pointRadius: 6,
+      pointBackgroundColor: COLORS.green,
+    }]
+  },
+  options: {
+    responsive: true,
+    plugins: { legend: { display: false } },
+    scales: {
+      y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.05)' }, title: { display: true, text: 'Cost Index (Hopper = 100)' } },
+      x: { grid: { display: false } }
+    }
+  }
+});
+
+// 3. Analyst Ratings
+new Chart(document.getElementById('analystChart'), {
+  type: 'doughnut',
+  data: {
+    labels: ['Buy (54)', 'Hold (2)', 'Sell (1)'],
+    datasets: [{
+      data: [54, 2, 1],
+      backgroundColor: [COLORS.green, COLORS.gold, COLORS.red],
+      borderWidth: 0,
+      hoverOffset: 8,
+    }]
+  },
+  options: {
+    responsive: true,
+    cutout: '60%',
+    plugins: {
+      legend: { position: 'bottom', labels: { padding: 20 } }
+    }
+  }
+});
+
+// 4. Revenue Growth
+new Chart(document.getElementById('revenueChart'), {
+  type: 'bar',
+  data: {
+    labels: ['FY24', 'FY25', 'FY26E', 'FY27E', 'FY28E'],
+    datasets: [{
+      label: 'Revenue ($B)',
+      data: [60.9, 130.5, 249, 393.6, 521.5],
+      backgroundColor: ctx => ctx.dataIndex >= 3 ? 'rgba(118,185,0,0.4)' : COLORS.green,
+      borderRadius: 6,
+      borderSkipped: false,
+    }, {
+      label: 'YoY Growth %',
+      data: [126, 114, 91, 58, 32],
+      type: 'line',
+      borderColor: COLORS.red,
+      backgroundColor: 'transparent',
+      yAxisID: 'y1',
+      tension: 0.3,
+      pointRadius: 5,
+      pointBackgroundColor: COLORS.red,
+    }]
+  },
+  options: {
+    responsive: true,
+    plugins: { legend: { position: 'bottom' } },
+    scales: {
+      y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.05)' }, title: { display: true, text: 'Revenue ($B)' } },
+      y1: { position: 'right', beginAtZero: true, grid: { display: false }, title: { display: true, text: 'YoY Growth %' }, max: 150 },
+      x: { grid: { display: false } }
+    }
+  }
+});
+
+// 5. Competition Timeline
+new Chart(document.getElementById('competitionChart'), {
+  type: 'line',
+  data: {
+    labels: ['2024', '2025', '2026E', '2027E', '2028E'],
+    datasets: [{
+      label: 'NVIDIA GPU Market Share (%)',
+      data: [92, 88, 83, 77, 73],
+      borderColor: COLORS.green,
+      backgroundColor: 'rgba(118,185,0,0.08)',
+      fill: true,
+      tension: 0.3,
+    }, {
+      label: 'Custom ASICs Share (%)',
+      data: [5, 8, 12, 18, 22],
+      borderColor: COLORS.red,
+      backgroundColor: 'rgba(200,16,46,0.08)',
+      fill: true,
+      tension: 0.3,
+    }, {
+      label: 'AMD + Others (%)',
+      data: [3, 4, 5, 5, 5],
+      borderColor: COLORS.gold,
+      backgroundColor: 'rgba(184,134,11,0.08)',
+      fill: true,
+      tension: 0.3,
+    }]
+  },
+  options: {
+    responsive: true,
+    plugins: { legend: { position: 'bottom' } },
+    scales: {
+      y: { min: 0, max: 100, grid: { color: 'rgba(0,0,0,0.05)' }, title: { display: true, text: 'Market Share %' } },
+      x: { grid: { display: false } }
+    }
+  }
+});
+
+// 6. Chip Programs Radar
+new Chart(document.getElementById('chipProgramChart'), {
+  type: 'radar',
+  data: {
+    labels: ['Scale\n规模', 'Maturity\n成熟度', 'Software\n软件', 'Perf/Watt\n能效', 'Adoption\n采用率'],
+    datasets: [{
+      label: 'Google TPU v7',
+      data: [90, 85, 80, 88, 70],
+      borderColor: '#4285F4',
+      backgroundColor: 'rgba(66,133,244,0.1)',
+    }, {
+      label: 'AWS Trainium 3',
+      data: [75, 60, 50, 82, 30],
+      borderColor: '#FF9900',
+      backgroundColor: 'rgba(255,153,0,0.1)',
+    }, {
+      label: 'Meta MTIA',
+      data: [60, 45, 40, 70, 25],
+      borderColor: '#1877F2',
+      backgroundColor: 'rgba(24,119,242,0.1)',
+    }, {
+      label: 'Microsoft Maia',
+      data: [50, 40, 45, 65, 20],
+      borderColor: '#00A4EF',
+      backgroundColor: 'rgba(0,164,239,0.1)',
+    }]
+  },
+  options: {
+    responsive: true,
+    plugins: { legend: { position: 'bottom' } },
+    scales: {
+      r: { min: 0, max: 100, ticks: { stepSize: 25, display: false }, grid: { color: 'rgba(0,0,0,0.08)' } }
+    }
+  }
+});
+
+// 7. Enterprise Adoption
+new Chart(document.getElementById('adoptionChart'), {
+  type: 'doughnut',
+  data: {
+    labels: ['AI Agents in Production (8.6%)', 'Pilot / Testing (26%)', 'No Formal AI Plan (65.4%)'],
+    datasets: [{
+      data: [8.6, 26, 65.4],
+      backgroundColor: [COLORS.green, COLORS.gold, '#d1d5db'],
+      borderWidth: 0,
+    }]
+  },
+  options: {
+    responsive: true,
+    cutout: '55%',
+    plugins: { legend: { position: 'bottom', labels: { padding: 16 } } }
+  }
+});
+
+// 8. Revenue Concentration
+new Chart(document.getElementById('concentrationChart'), {
+  type: 'bar',
+  data: {
+    labels: ['Microsoft', 'Meta', 'Google', 'Amazon', 'All Others'],
+    datasets: [{
+      label: '% of NVIDIA Revenue',
+      data: [19, 16, 14, 12, 39],
+      backgroundColor: [COLORS.blue, '#1877F2', '#4285F4', '#FF9900', '#d1d5db'],
+      borderRadius: 6,
+    }]
+  },
+  options: {
+    indexAxis: 'y',
+    responsive: true,
+    plugins: {
+      legend: { display: false },
+      tooltip: { callbacks: { label: ctx => ctx.parsed.x + '% of revenue' } }
+    },
+    scales: {
+      x: { beginAtZero: true, max: 45, grid: { color: 'rgba(0,0,0,0.05)' }, title: { display: true, text: '% of Total Revenue' } },
+      y: { grid: { display: false } }
+    }
+  }
+});
+
+// 9. Valuation Comparison
+new Chart(document.getElementById('valuationChart'), {
+  type: 'bar',
+  data: {
+    labels: ['NVDA\nTrailing', 'NVDA\nFY27E Fwd', 'NVDA\nFY28E Fwd', 'MSFT\nTrailing', 'AAPL\nTrailing', 'GOOGL\nTrailing', 'Semi\nMedian'],
+    datasets: [{
+      label: 'P/E Ratio',
+      data: [38, 20.4, 14.9, 33, 30, 24, 22.5],
+      backgroundColor: ctx => ctx.dataIndex <= 2 ? COLORS.green : COLORS.muted,
+      borderRadius: 6,
+    }]
+  },
+  options: {
+    responsive: true,
+    plugins: {
+      legend: { display: false },
+      tooltip: { callbacks: { label: ctx => ctx.parsed.y + '× P/E' } }
+    },
+    scales: {
+      y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.05)' }, title: { display: true, text: 'P/E Multiple' } },
+      x: { grid: { display: false } }
+    }
+  }
+});
+
+// 10. AI Infra as % GDP
+new Chart(document.getElementById('gdpChart'), {
+  type: 'line',
+  data: {
+    labels: ['2000\nDot-com', '2005', '2010', '2015', '2020', '2024', '2026E'],
+    datasets: [{
+      label: 'Tech Infra Spend % of GDP',
+      data: [3.2, 1.8, 1.5, 1.9, 2.1, 3.1, 4.2],
+      borderColor: COLORS.red,
+      backgroundColor: 'rgba(200,16,46,0.08)',
+      fill: true,
+      tension: 0.3,
+      pointRadius: 5,
+    }, {
+      label: 'Historical Warning Level',
+      data: [4, 4, 4, 4, 4, 4, 4],
+      borderColor: COLORS.gold,
+      borderDash: [8, 4],
+      backgroundColor: 'transparent',
+      pointRadius: 0,
+    }]
+  },
+  options: {
+    responsive: true,
+    plugins: { legend: { position: 'bottom' } },
+    scales: {
+      y: { min: 0, max: 6, grid: { color: 'rgba(0,0,0,0.05)' }, title: { display: true, text: '% of US GDP' } },
+      x: { grid: { display: false } }
+    }
+  }
+});
+</script>
+
+</body>
+</html>
