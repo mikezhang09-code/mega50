@@ -1,0 +1,1115 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fosun International (0656.HK) — FY2025 Deep Value Analysis | 复星国际深度价值分析</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Source+Sans+3:wght@300;400;500;600;700&display=swap');
+
+  :root {
+    --en-color: #1B2A3D;
+    --zh-color: #4A6741;
+    --accent: #1a5276;
+    --accent-light: #2980b9;
+    --positive: #1e8449;
+    --negative: #c0392b;
+    --warning: #d4ac0d;
+    --neutral: #7f8c8d;
+    --bg: #F4F1EC;
+    --card-bg: #FFFFFF;
+    --border: #D5CFC5;
+    --text: #2C2C2C;
+    --text-muted: #6B6B6B;
+    --hero-bg: #0D1B2A;
+    --hero-accent: #E8C872;
+    --tab-active: #1a5276;
+    --tab-inactive: #B0A898;
+    --shadow: 0 2px 12px rgba(0,0,0,0.06);
+    --shadow-lg: 0 8px 32px rgba(0,0,0,0.10);
+    --radius: 10px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Source Sans 3', 'Microsoft YaHei', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .zh { color: var(--zh-color); font-size: 0.88em; }
+  .en { color: var(--en-color); font-weight: 600; }
+
+  /* === HERO === */
+  .hero {
+    background: var(--hero-bg);
+    background-image:
+      radial-gradient(ellipse at 20% 80%, rgba(26,82,118,0.35) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 20%, rgba(232,200,114,0.12) 0%, transparent 50%);
+    color: #F0EDE6;
+    padding: 56px 0 48px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--hero-accent), var(--accent-light), var(--hero-accent));
+  }
+  .hero-inner {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 0 28px;
+  }
+  .home-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(232,200,114,0.15);
+    border: 1px solid rgba(232,200,114,0.30);
+    color: var(--hero-accent);
+    font-size: 13px;
+    font-weight: 600;
+    padding: 6px 16px;
+    border-radius: 20px;
+    text-decoration: none;
+    margin-bottom: 18px;
+    transition: background 0.2s;
+  }
+  .home-btn:hover {
+    background: rgba(232,200,114,0.28);
+  }
+  .hero-badge {
+    display: inline-block;
+    background: rgba(232,200,114,0.15);
+    border: 1px solid rgba(232,200,114,0.30);
+    color: var(--hero-accent);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 4px 14px;
+    border-radius: 20px;
+    margin-bottom: 18px;
+  }
+  .hero h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(28px, 4.5vw, 46px);
+    font-weight: 400;
+    line-height: 1.15;
+    margin-bottom: 8px;
+    color: #fff;
+  }
+  .hero h1 .gold { color: var(--hero-accent); }
+  .hero-sub {
+    font-size: 15px;
+    color: #94A3B8;
+    margin-bottom: 28px;
+    max-width: 620px;
+  }
+  .hero-sub .zh { color: #7A9A6E; }
+
+  /* Hero KPI row */
+  .hero-kpis {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  .hero-kpi {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 8px;
+    padding: 16px 22px;
+    min-width: 145px;
+    backdrop-filter: blur(6px);
+  }
+  .hero-kpi-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    color: #94A3B8;
+    margin-bottom: 4px;
+  }
+  .hero-kpi-val {
+    font-family: 'DM Serif Display', serif;
+    font-size: 26px;
+    color: #fff;
+  }
+  .hero-kpi-val.neg { color: #EF6B6B; }
+  .hero-kpi-val.pos { color: #6BCB77; }
+  .hero-kpi-val.gold { color: var(--hero-accent); }
+  .hero-kpi-change {
+    font-size: 11px;
+    margin-top: 2px;
+    color: #94A3B8;
+  }
+
+  /* === TABS === */
+  .tab-bar {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 0 28px;
+    display: flex;
+    gap: 2px;
+    position: relative;
+    top: -1px;
+  }
+  .tab-btn {
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 13.5px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    padding: 12px 22px;
+    border: none;
+    background: transparent;
+    color: var(--tab-inactive);
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    transition: all 0.25s ease;
+  }
+  .tab-btn:hover { color: var(--accent); }
+  .tab-btn.active {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+    background: var(--bg);
+    border-radius: 6px 6px 0 0;
+  }
+
+  /* === MAIN === */
+  .main {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 28px;
+  }
+  .tab-content { display: none; animation: fadeUp 0.35s ease; }
+  .tab-content.active { display: block; }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* === CARDS === */
+  .card {
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+    padding: 28px;
+    margin-bottom: 24px;
+  }
+  .card-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 20px;
+    color: var(--accent);
+    margin-bottom: 4px;
+  }
+  .card-subtitle {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-bottom: 20px;
+  }
+
+  /* === GRID === */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 24px; }
+
+  @media (max-width: 768px) {
+    .grid-2, .grid-3 { grid-template-columns: 1fr; }
+    .hero-kpis { flex-direction: column; }
+  }
+
+  /* === TABLES === */
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+  .data-table th {
+    text-align: left;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    padding: 8px 12px;
+    border-bottom: 2px solid var(--border);
+  }
+  .data-table td {
+    padding: 10px 12px;
+    border-bottom: 1px solid #EDEBE6;
+  }
+  .data-table tr:last-child td { border-bottom: none; }
+  .data-table tr:hover td { background: #FAFAF5; }
+  .data-table .num { text-align: right; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .data-table .pos { color: var(--positive); }
+  .data-table .neg { color: var(--negative); }
+  .data-table .bold { font-weight: 700; }
+
+  /* === VERDICT BOX === */
+  .verdict-box {
+    border-left: 4px solid var(--hero-accent);
+    background: linear-gradient(135deg, #FDF8EC, #FFF9E6);
+    padding: 24px 28px;
+    border-radius: 0 var(--radius) var(--radius) 0;
+    margin-bottom: 24px;
+  }
+  .verdict-box h3 {
+    font-family: 'DM Serif Display', serif;
+    color: var(--accent);
+    font-size: 18px;
+    margin-bottom: 8px;
+  }
+
+  /* === NAV GAUGE === */
+  .gauge-row {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding: 20px 0;
+  }
+  .gauge-wrap {
+    width: 220px;
+    height: 130px;
+    position: relative;
+  }
+  .gauge-label {
+    text-align: center;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-muted);
+    margin-top: 8px;
+  }
+  .gauge-big {
+    text-align: center;
+    font-family: 'DM Serif Display', serif;
+    font-size: 42px;
+    color: var(--negative);
+  }
+  .gauge-desc {
+    text-align: center;
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-top: 2px;
+  }
+
+  /* === RISK ITEM === */
+  .risk-item {
+    display: flex;
+    gap: 14px;
+    padding: 14px 0;
+    border-bottom: 1px solid #EDEBE6;
+  }
+  .risk-item:last-child { border-bottom: none; }
+  .risk-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+  .risk-icon.high { background: #FDEDEC; color: var(--negative); }
+  .risk-icon.med  { background: #FEF9E7; color: var(--warning); }
+  .risk-icon.low  { background: #EAFAF1; color: var(--positive); }
+  .risk-title { font-weight: 600; font-size: 14px; }
+  .risk-desc { font-size: 13px; color: var(--text-muted); margin-top: 2px; }
+
+  /* === CATALYST ITEM === */
+  .catalyst-item {
+    display: flex;
+    gap: 14px;
+    padding: 14px 0;
+    border-bottom: 1px solid #EDEBE6;
+  }
+  .catalyst-item:last-child { border-bottom: none; }
+  .cat-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    margin-top: 5px;
+    flex-shrink: 0;
+  }
+  .cat-dot.hot { background: var(--hero-accent); }
+  .cat-dot.warm { background: var(--accent-light); }
+  .cat-dot.cool { background: #95a5a6; }
+
+  /* === CHART CONTAINER === */
+  .chart-box { position: relative; height: 280px; margin-top: 10px; }
+
+  /* === POSITION MGMT === */
+  .action-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+  }
+  .action-card {
+    border-radius: var(--radius);
+    padding: 22px;
+    border: 1px solid;
+  }
+  .action-card.hold {
+    background: #EAF2F8;
+    border-color: #AED6F1;
+  }
+  .action-card.add {
+    background: #EAFAF1;
+    border-color: #A9DFBF;
+  }
+  .action-card.wait {
+    background: #FEF9E7;
+    border-color: #F9E79F;
+  }
+  .action-card h4 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 17px;
+    margin-bottom: 8px;
+    color: var(--accent);
+  }
+  .action-card p { font-size: 13.5px; color: var(--text); line-height: 1.6; }
+
+  /* === FOOTER === */
+  .footer {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 24px 28px 40px;
+    font-size: 11px;
+    color: var(--text-muted);
+    border-top: 1px solid var(--border);
+  }
+
+  /* === PILL === */
+  .pill {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+  .pill.green { background: #D5F5E3; color: #1e8449; }
+  .pill.red { background: #FADBD8; color: #c0392b; }
+  .pill.yellow { background: #FEF9E7; color: #9A7D0A; }
+  .pill.blue { background: #D6EAF8; color: #1a5276; }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-inner">
+    <a href="./index.html" class="home-btn">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      Return to Home
+    </a>
+    <div class="hero-badge">Graham-Buffett Deep Value Analysis</div>
+    <h1>Fosun International <span class="gold">0656.HK</span></h1>
+    <p class="hero-sub">
+      FY2025 Annual Results — March 30, 2026 
+      <span class="zh">| 复星国际2025年度业绩深度分析</span>
+    </p>
+    <div class="hero-kpis">
+      <div class="hero-kpi">
+        <div class="hero-kpi-label">Share Price 股价</div>
+        <div class="hero-kpi-val gold">HK$4.14</div>
+        <div class="hero-kpi-change">52W: $3.26 – $5.96</div>
+      </div>
+      <div class="hero-kpi">
+        <div class="hero-kpi-label">NAV / Share 每股净值</div>
+        <div class="hero-kpi-val pos">HK$18.1</div>
+        <div class="hero-kpi-change">77% discount 折让</div>
+      </div>
+      <div class="hero-kpi">
+        <div class="hero-kpi-label">Net Loss 净亏损</div>
+        <div class="hero-kpi-val neg">-¥23.4B</div>
+        <div class="hero-kpi-change">Non-cash impairments 非现金减值</div>
+      </div>
+      <div class="hero-kpi">
+        <div class="hero-kpi-label">Adj. Op. Profit 调整后经营利润</div>
+        <div class="hero-kpi-val pos">¥4.0B</div>
+        <div class="hero-kpi-change">-18.4% YoY</div>
+      </div>
+      <div class="hero-kpi">
+        <div class="hero-kpi-label">P/B Ratio 市净率</div>
+        <div class="hero-kpi-val gold">0.24x</div>
+        <div class="hero-kpi-change">Deep value territory 深度价值</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TABS -->
+<div style="background: var(--bg); border-bottom: 1px solid var(--border);">
+  <div class="tab-bar">
+    <button class="tab-btn active" onclick="switchTab('overview')">Overview 概览</button>
+    <button class="tab-btn" onclick="switchTab('segments')">Segments 业务板块</button>
+    <button class="tab-btn" onclick="switchTab('nav')">NAV Analysis 资产净值</button>
+    <button class="tab-btn" onclick="switchTab('risks')">Risks & Catalysts 风险与催化剂</button>
+    <button class="tab-btn" onclick="switchTab('position')">Position Mgmt 持仓管理</button>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+<!-- TAB: OVERVIEW -->
+<div id="tab-overview" class="tab-content active">
+
+  <div class="verdict-box">
+    <h3>Verdict: Speculative Deep Value — Hold / Accumulate on Dips <span class="zh">判定：投机性深度价值 — 持有 / 逢低加仓</span></h3>
+    <p style="font-size:14px; color:#2C2C2C;">
+      Fosun trades at a 77% discount to adjusted NAV (HK$18.1/share), with core businesses generating RMB 4B in operating profit. The RMB 23.4B headline loss is driven entirely by non-cash impairments — a deliberate kitchen-sinking exercise. However, the 57% debt-to-capital ratio, BB- credit rating, and conglomerate complexity demand caution. This is not a "wonderful business at fair price" — it's closer to a Grahamite net-net with significant optionality.
+    </p>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">Income Statement <span class="zh">利润表</span></div>
+      <div class="card-subtitle">FY2025 vs FY2024 (RMB billions)</div>
+      <table class="data-table">
+        <thead><tr><th>Metric 指标</th><th class="num">FY2025</th><th class="num">FY2024</th><th class="num">Change</th></tr></thead>
+        <tbody>
+          <tr><td>Total Revenue <span class="zh">总收入</span></td><td class="num">173.43</td><td class="num">192.14</td><td class="num neg">-9.7%</td></tr>
+          <tr><td>Overseas Revenue <span class="zh">海外收入</span></td><td class="num">94.86</td><td class="num">~94.7</td><td class="num pos">54.7% share</td></tr>
+          <tr><td>Adj. Industrial Op. Profit <span class="zh">调整后经营利润</span></td><td class="num">4.0</td><td class="num">4.9</td><td class="num neg">-18.4%</td></tr>
+          <tr class="bold"><td>Net Loss <span class="zh">净亏损</span></td><td class="num neg">(23.4)</td><td class="num neg">(4.35)</td><td class="num neg">Widened</td></tr>
+          <tr><td>R&D Investment <span class="zh">研发投入</span></td><td class="num">7.8</td><td class="num">~6.9</td><td class="num pos">+13%</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Balance Sheet Snapshot <span class="zh">资产负债表</span></div>
+      <div class="card-subtitle">Key liquidity and leverage metrics</div>
+      <table class="data-table">
+        <thead><tr><th>Metric 指标</th><th class="num">FY2025</th><th class="num">FY2024</th></tr></thead>
+        <tbody>
+          <tr><td>Cash & Bank Deposits <span class="zh">现金及存款</span></td><td class="num">61.1B</td><td class="num">106.3B</td></tr>
+          <tr><td>Unutilized Facilities <span class="zh">未动用银行额度</span></td><td class="num pos">144.6B</td><td class="num">—</td></tr>
+          <tr><td>Debt / Total Capital <span class="zh">债务/总资本</span></td><td class="num neg">57%</td><td class="num">52%</td></tr>
+          <tr><td>S&P Rating <span class="zh">信用评级</span></td><td class="num">BB- (Stable)</td><td class="num">BB-</td></tr>
+          <tr><td>MSCI ESG Rating</td><td class="num pos">AAA ↑</td><td class="num">AA</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Revenue & Profit Trend <span class="zh">收入与利润趋势</span></div>
+    <div class="card-subtitle">FY2021 – FY2025 (RMB billions)</div>
+    <div class="chart-box"><canvas id="chartRevenue"></canvas></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Per-Share Metrics <span class="zh">每股指标</span></div>
+    <div class="card-subtitle">Based on ~8.17 billion shares outstanding</div>
+    <table class="data-table">
+      <thead><tr><th>Metric 指标</th><th class="num">FY2025</th><th class="num">FY2024</th><th>Note 备注</th></tr></thead>
+      <tbody>
+        <tr><td>Basic EPS <span class="zh">基本每股收益</span></td><td class="num neg">~¥-2.86</td><td class="num neg">~¥-0.53</td><td>Non-cash driven</td></tr>
+        <tr><td>Adjusted NAV/Share <span class="zh">调整后每股净值</span></td><td class="num pos">HK$18.1</td><td class="num">~HK$18.0</td><td>Mgmt stated figure</td></tr>
+        <tr><td>IFRS Equity/Share <span class="zh">每股账面值</span></td><td class="num">~HK$23</td><td class="num">~HK$27</td><td>Post impairment</td></tr>
+        <tr><td>Dividend/Share <span class="zh">每股股息</span></td><td class="num pos">HK$0.20</td><td class="num">HK$0.02</td><td>Special — 30th anniversary</td></tr>
+        <tr><td>FY2026 Dividend Policy</td><td class="num pos" colspan="2">≥HK$1.5B total, 35% payout</td><td>New policy 新股息政策</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- TAB: SEGMENTS -->
+<div id="tab-segments" class="tab-content">
+  <div class="card">
+    <div class="card-title">Four Core Subsidiaries = 74% of Revenue <span class="zh">四大核心子公司贡献74%收入</span></div>
+    <div class="card-subtitle">FY2025 Segment Breakdown</div>
+    <div class="chart-box"><canvas id="chartSegments"></canvas></div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title" style="color: var(--positive);">🏥 Health — Fosun Pharma <span class="zh">健康 — 复星医药</span></div>
+      <div class="card-subtitle">Star performer with 22% net profit growth</div>
+      <table class="data-table">
+        <tr><td>Revenue <span class="zh">收入</span></td><td class="num">¥41.5B (+1.4%)</td></tr>
+        <tr><td>Net Profit <span class="zh">净利润</span></td><td class="num pos">¥3.37B (+21.7%)</td></tr>
+        <tr><td>Innovative Drug Rev <span class="zh">创新药收入</span></td><td class="num pos">¥9.9B (+29.6%)</td></tr>
+        <tr><td>Overseas Revenue <span class="zh">海外收入</span></td><td class="num">¥13.0B (+14.9%)</td></tr>
+        <tr><td>Gross Margin <span class="zh">毛利率</span></td><td class="num pos">49.9% (+2.1ppt)</td></tr>
+        <tr><td>Henlius Profit <span class="zh">复宏汉霖利润</span></td><td class="num pos">¥827M (3rd yr profit)</td></tr>
+      </table>
+      <p style="margin-top:14px; font-size:13px; color: var(--text-muted);">
+        Pipeline deals worth >$9.5B combined (Pfizer, Clavis Bio, Eisai). Transitioning to global pharma platform.
+      </p>
+    </div>
+
+    <div class="card">
+      <div class="card-title" style="color: var(--accent-light);">🏖 Happiness — Tourism & Lifestyle <span class="zh">快乐 — 旅文板块</span></div>
+      <div class="card-subtitle">Club Med at record highs; Yuyuan a drag</div>
+      <table class="data-table">
+        <tr><td>Club Med Revenue</td><td class="num pos">¥18.07B (+3.6%)</td></tr>
+        <tr><td>Club Med Op. Profit</td><td class="num pos">¥1.44B (+4.6%)</td></tr>
+        <tr><td>Club Med Resorts</td><td class="num">67 worldwide</td></tr>
+        <tr><td>Yuyuan Loss <span class="zh">豫园亏损</span></td><td class="num neg">~¥-4.8B</td></tr>
+        <tr><td>Fosun Tourism</td><td class="num">Privatized Mar 2025</td></tr>
+      </table>
+      <p style="margin-top:14px; font-size:13px; color: var(--text-muted);">
+        Club Med IPO in Hong Kong reportedly under consideration (Bloomberg, Mar 25 2026). Key catalyst for value unlock.
+      </p>
+    </div>
+
+    <div class="card">
+      <div class="card-title" style="color: #8E44AD;">💰 Wealth — Insurance & Asset Mgmt <span class="zh">富足 — 保险与资管</span></div>
+      <div class="card-subtitle">Best-ever results across insurance businesses</div>
+      <table class="data-table">
+        <tr><td>Fidelidade Profit</td><td class="num pos">€201M (+15.8%)</td></tr>
+        <tr><td>Fidelidade S&P Rating</td><td class="num pos">A (Inaugural)</td></tr>
+        <tr><td>Pramerica Fosun Premium</td><td class="num pos">¥13.28B (+41.6%)</td></tr>
+        <tr><td>Pramerica Fosun Profit</td><td class="num pos">¥650M (~6x YoY)</td></tr>
+        <tr><td>United Health Income</td><td class="num pos">¥7.84B (+50%)</td></tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <div class="card-title" style="color: #D35400;">⛏ Intelligent Manufacturing <span class="zh">智造 — 资源与工业</span></div>
+      <div class="card-subtitle">Hainan Mining expanding minerals + energy network</div>
+      <table class="data-table">
+        <tr><td>Bougouni Lithium Output</td><td class="num">45,000 tons concentrate</td></tr>
+        <tr><td>First Shipment to China</td><td class="num pos">30,000 tons (Jan 2026)</td></tr>
+        <tr><td>Expansion</td><td class="num">Oil & gas in Oman</td></tr>
+        <tr><td>Network</td><td class="num">West Africa / ME / SE Asia</td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- TAB: NAV -->
+<div id="tab-nav" class="tab-content">
+  <div class="card">
+    <div class="card-title">NAV Discount Gauge <span class="zh">资产净值折让</span></div>
+    <div class="card-subtitle">Market cap vs. adjusted NAV — Graham-style margin of safety</div>
+    <div class="gauge-row">
+      <div style="text-align:center;">
+        <canvas id="gaugeCanvas" width="220" height="130"></canvas>
+        <div class="gauge-label">Discount to NAV <span class="zh">净值折让</span></div>
+      </div>
+      <div>
+        <div class="gauge-big">77%</div>
+        <div class="gauge-desc">HK$4.14 vs NAV HK$18.1</div>
+        <div class="gauge-desc" style="margin-top:6px;">
+          <span class="pill green">Strong Buy Zone (>40% MoS)</span>
+        </div>
+      </div>
+      <div style="text-align:center;">
+        <div style="font-size:13px; color: var(--text-muted); margin-bottom: 8px;">Analyst Targets 分析师目标价</div>
+        <div style="font-family:'DM Serif Display'; font-size:22px; color:var(--accent);">HK$5.49 <span style="font-size:13px; color:var(--text-muted);">consensus</span></div>
+        <div style="font-size:13px; margin-top:4px;">
+          Citi: <span style="font-weight:600;">HK$6.50</span> (Buy) |
+          Guotai: <span style="font-weight:600;">HK$7.24</span> (Buy)
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Sum-of-Parts Reconstruction <span class="zh">分拆估值法</span></div>
+    <div class="card-subtitle">Listed + unlisted asset values vs market cap</div>
+    <div class="chart-box" style="height:320px;"><canvas id="chartNAV"></canvas></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Listed Holdings Detail <span class="zh">上市持股明细</span></div>
+    <table class="data-table">
+      <thead>
+        <tr><th>Subsidiary 子公司</th><th class="num">Stake 持股</th><th class="num">Mkt Cap 市值</th><th class="num">Attributed (HKD)</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Fosun Pharma <span class="zh">复星医药</span> (600196.SS / 2196.HK)</td><td class="num">~36%</td><td class="num">~CNY 65B</td><td class="num">~HK$25.7B</td></tr>
+        <tr><td>Yuyuan Inc <span class="zh">豫园股份</span> (600655.SS)</td><td class="num">~62%</td><td class="num">~CNY 22.4B</td><td class="num">~HK$15.3B</td></tr>
+        <tr><td>Hainan Mining <span class="zh">海南矿业</span> (601969.SS)</td><td class="num">~60%</td><td class="num">~CNY 22.1B</td><td class="num">~HK$14.6B</td></tr>
+        <tr class="bold"><td>Listed Subtotal</td><td></td><td></td><td class="num">~HK$55.6B</td></tr>
+        <tr><td>Fidelidade (Portugal) ~85% stake</td><td class="num">~85%</td><td class="num">—</td><td class="num">~HK$30-40B</td></tr>
+        <tr><td>Club Med + Atlantis (100%)</td><td class="num">100%</td><td class="num">—</td><td class="num">~HK$10-15B</td></tr>
+        <tr><td>Other (Lanvin, Wolves FC, etc.)</td><td class="num">Varies</td><td class="num">—</td><td class="num">~HK$15-25B</td></tr>
+        <tr class="bold"><td>Gross Asset Value Range</td><td></td><td></td><td class="num pos">HK$110-136B</td></tr>
+        <tr><td>Less: Group-level Net Debt</td><td></td><td></td><td class="num neg">~HK$(15-25)B</td></tr>
+        <tr class="bold" style="background:#EAFAF1;"><td>Adjusted NAV (Mgmt)</td><td></td><td></td><td class="num pos" style="font-size:16px;">HK$148B → HK$18.1/sh</td></tr>
+        <tr class="bold" style="background:#FADBD8;"><td>Current Market Cap</td><td></td><td></td><td class="num neg" style="font-size:16px;">HK$33.8B → HK$4.14/sh</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- TAB: RISKS & CATALYSTS -->
+<div id="tab-risks" class="tab-content">
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">Key Risks <span class="zh">主要风险</span></div>
+      <div class="card-subtitle">Weighted by probability × impact</div>
+
+      <div class="risk-item">
+        <div class="risk-icon high">⚠</div>
+        <div>
+          <div class="risk-title">Conglomerate Discount Trap <span class="zh">控股公司折价陷阱</span></div>
+          <div class="risk-desc">Chinese holdcos historically trade 30-50% NAV discount. Fosun's 77% is extreme but may persist without structural simplification. Stockopedia flags as potential value trap.</div>
+        </div>
+      </div>
+
+      <div class="risk-item">
+        <div class="risk-icon high">⚠</div>
+        <div>
+          <div class="risk-title">Refinancing Dependency <span class="zh">再融资依赖</span></div>
+          <div class="risk-desc">Sub-investment-grade (BB-) with bond coupons 5.875-8.5%. Business model relies on continuous capital market access. USD May 2026 bond maturity is near-term test.</div>
+        </div>
+      </div>
+
+      <div class="risk-item">
+        <div class="risk-icon high">⚠</div>
+        <div>
+          <div class="risk-title">Real Estate Overhang <span class="zh">房地产风险敞口</span></div>
+          <div class="risk-desc">~55% of RMB 23.4B impairment from property write-downs. Residual exposure through Yuyuan. China property shows no structural recovery.</div>
+        </div>
+      </div>
+
+      <div class="risk-item">
+        <div class="risk-icon med">⚡</div>
+        <div>
+          <div class="risk-title">Key-Man Risk <span class="zh">关键人风险</span></div>
+          <div class="risk-desc">Inseparable from founder Guo Guangchang. Any personal, regulatory, or health event could materially impact group direction and market confidence.</div>
+        </div>
+      </div>
+
+      <div class="risk-item">
+        <div class="risk-icon med">⚡</div>
+        <div>
+          <div class="risk-title">Holdco Cash Flow Mismatch <span class="zh">母公司现金流错配</span></div>
+          <div class="risk-desc">Much of RMB 61B cash sits in regulated subs (insurance, pharma). Upstream dividends may not cover holdco interest + opex. S&P has flagged this historically.</div>
+        </div>
+      </div>
+
+      <div class="risk-item">
+        <div class="risk-icon med">⚡</div>
+        <div>
+          <div class="risk-title">China Macro Headwinds <span class="zh">中国宏观逆风</span></div>
+          <div class="risk-desc">~45% of revenue from mainland China. Deflation risk, consumer confidence, regulatory unpredictability for private conglomerates.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Catalysts & Triggers <span class="zh">催化剂</span></div>
+      <div class="card-subtitle">Events that could narrow the NAV discount</div>
+
+      <div class="catalyst-item">
+        <div class="cat-dot hot"></div>
+        <div>
+          <div class="risk-title">Club Med Hong Kong IPO <span class="zh">Club Med香港上市</span></div>
+          <div class="risk-desc">Bloomberg (Mar 25) reports HK listing under consideration. Would crystallize value of Fosun's most prized wholly-owned asset at market-determined price. <span class="pill yellow">High Impact</span></div>
+        </div>
+      </div>
+
+      <div class="catalyst-item">
+        <div class="cat-dot hot"></div>
+        <div>
+          <div class="risk-title">Dividend Step-Up + Buyback <span class="zh">股息增长+回购</span></div>
+          <div class="risk-desc">HK$0.20 special dividend (10x FY24). FY2026 payout ≥HK$1.5B at 35% ratio. Buyback program + HK$500M insider purchases. Total ~9% of market cap. <span class="pill green">Active Now</span></div>
+        </div>
+      </div>
+
+      <div class="catalyst-item">
+        <div class="cat-dot hot"></div>
+        <div>
+          <div class="risk-title">Pharma Licensing Pipeline <span class="zh">医药授权管线</span></div>
+          <div class="risk-desc">$9.5B+ in potential deal values (Pfizer, Clavis Bio, Eisai). Milestone payments could step-change health segment contribution. <span class="pill blue">Option Value</span></div>
+        </div>
+      </div>
+
+      <div class="catalyst-item">
+        <div class="cat-dot warm"></div>
+        <div>
+          <div class="risk-title">Debt Reduction Progress <span class="zh">降杠杆进展</span></div>
+          <div class="risk-desc">Target: holdco debt below RMB 60B + recover RMB 60B cash. $500M refi secured Mar 2026. Returned to Euro bond market (€400M, Nov 2025). Investment-grade upgrade would be transformative.</div>
+        </div>
+      </div>
+
+      <div class="catalyst-item">
+        <div class="cat-dot warm"></div>
+        <div>
+          <div class="risk-title">Profit Recovery Path <span class="zh">利润恢复路径</span></div>
+          <div class="risk-desc">Management targets RMB 10B annual profit in 3-5 years. FY2025 impairments clear the decks for cleaner P&L. If achieved at current market cap → trailing P/E of ~3x.</div>
+        </div>
+      </div>
+
+      <div class="catalyst-item">
+        <div class="cat-dot cool"></div>
+        <div>
+          <div class="risk-title">MSCI ESG AAA Upgrade <span class="zh">ESG评级提升至AAA</span></div>
+          <div class="risk-desc">Achieved March 2026. Expands eligible institutional investor universe. FTSE4Good inclusion for 5th year. Incremental but positive signaling.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Debt Maturity Profile <span class="zh">债务到期分布</span></div>
+    <div class="card-subtitle">Key upcoming maturities and recent refinancing activity</div>
+    <div class="chart-box"><canvas id="chartDebt"></canvas></div>
+  </div>
+</div>
+
+<!-- TAB: POSITION MGMT -->
+<div id="tab-position" class="tab-content">
+  <div class="verdict-box">
+    <h3>Position Management Framework <span class="zh">持仓管理框架</span></h3>
+    <p style="font-size:14px;">
+      Fosun at HK$4.14 is a <strong>speculative deep value</strong> play with genuine optionality but material risks. Position sizing should reflect the conglomerate's complexity and leverage. This is not a "sleep well at night" Buffett compounder — it's a Graham-style net-asset bargain with binary catalysts.
+    </p>
+  </div>
+
+  <div class="action-grid">
+    <div class="action-card hold">
+      <h4>If You Hold a Position 如果已持仓</h4>
+      <p><strong>Hold.</strong> Do not sell at these distressed levels. The 77% NAV discount is extreme, and selling here crystallizes losses at potentially the worst point. The FY2025 impairments are backward-looking; the operational trajectory (pharma +22% profit, insurance best-ever, Club Med record) is forward-positive. Set a <strong>stop-loss at HK$3.00</strong> (27% downside) as protection against a credit event — below that level, the thesis is broken.</p>
+    </div>
+    <div class="action-card add">
+      <h4>Adding to Position 加仓建议</h4>
+      <p><strong>Accumulate in tranches below HK$4.00.</strong> The ideal entry zone is <strong>HK$3.50-3.80</strong> — roughly 80% discount to NAV. Add no more than <strong>2-3% of portfolio</strong> per tranche, with total Fosun exposure capped at <strong>5% of portfolio</strong> given the risk profile. This is a Kelly Criterion-appropriate sizing for a 3:1 asymmetric payoff with ~30% probability of full thesis realization.</p>
+    </div>
+    <div class="action-card wait">
+      <h4>Take-Profit Levels 止盈目标</h4>
+      <p><strong>First target: HK$5.50-6.00</strong> (analyst consensus range, ~33-45% upside). Trim 30% here. <strong>Second target: HK$7.00-8.00</strong> (~70-93% upside, requires visible debt reduction + Club Med IPO progress). Trim another 30%. <strong>Full exit: HK$9.00+</strong> (50% NAV discount narrowing). Timeline: 12-24 months. If no catalysts materialize by end-2027, reassess the entire thesis.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Price vs. NAV Scenario Analysis <span class="zh">价格与净值情景分析</span></div>
+    <div class="chart-box" style="height:300px;"><canvas id="chartScenario"></canvas></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Key Monitoring Triggers <span class="zh">关键监测指标</span></div>
+    <table class="data-table">
+      <thead><tr><th>Trigger 触发条件</th><th>Action 操作</th><th>Why 原因</th></tr></thead>
+      <tbody>
+        <tr><td>Club Med IPO filing</td><td class="pos">Add aggressively to 5% cap</td><td>Crystallizes hidden value; strongest catalyst</td></tr>
+        <tr><td>Investment-grade upgrade (BBB-)</td><td class="pos">Add — this transforms the story</td><td>Lowers cost of capital, expands investor base</td></tr>
+        <tr><td>USD May 2026 bond refinanced smoothly</td><td class="pos">Hold with confidence</td><td>Removes near-term liquidity concern</td></tr>
+        <tr><td>Debt/capital ratio drops below 50%</td><td class="pos">Add on any dip</td><td>Confirms deleveraging trajectory</td></tr>
+        <tr><td class="neg">Failed bond refinancing / credit downgrade</td><td class="neg">Reduce to 1% of portfolio</td><td>Changes risk profile fundamentally</td></tr>
+        <tr><td class="neg">Guo Guangchang departure / investigation</td><td class="neg">Exit position</td><td>Key-man risk realized; franchise uncertain</td></tr>
+        <tr><td class="neg">Further material impairments (>RMB 10B)</td><td class="neg">Freeze position; reassess</td><td>Questions whether "kitchen sink" is complete</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+</div><!-- end .main -->
+
+<!-- FOOTER -->
+<div class="footer">
+  <strong>Disclaimer 免责声明:</strong> This analysis is for informational purposes only and does not constitute investment advice. The author is not a licensed financial advisor. All data sourced from Fosun International FY2025 annual results (HKEX filing, Mar 30 2026), PR Newswire, Bloomberg, Yahoo Finance, and analyst reports. Data may contain estimates where noted. Past performance does not guarantee future results. Conduct your own due diligence before making investment decisions.
+  <br>Generated: March 31, 2026 | Graham-Buffett Value Investing Framework
+</div>
+
+<script>
+// === Tab switching ===
+function switchTab(name) {
+  document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  event.target.classList.add('active');
+  // Re-render charts if needed
+  setTimeout(() => {
+    Object.values(Chart.instances).forEach(c => c.resize());
+  }, 50);
+}
+
+// === Chart.js defaults ===
+Chart.defaults.font.family = "'Source Sans 3', 'Microsoft YaHei', sans-serif";
+Chart.defaults.font.size = 12;
+Chart.defaults.color = '#555';
+Chart.defaults.plugins.legend.position = 'bottom';
+Chart.defaults.responsive = true;
+Chart.defaults.maintainAspectRatio = false;
+
+// === Revenue & Profit Chart ===
+new Chart(document.getElementById('chartRevenue'), {
+  type: 'bar',
+  data: {
+    labels: ['FY2021', 'FY2022', 'FY2023', 'FY2024', 'FY2025'],
+    datasets: [
+      {
+        label: 'Total Revenue (RMB B) 总收入',
+        data: [161.3, 178.6, 189.9, 192.14, 173.43],
+        backgroundColor: 'rgba(26,82,118,0.75)',
+        borderRadius: 4,
+        order: 2
+      },
+      {
+        label: 'Net Profit / (Loss) (RMB B) 净利润/亏损',
+        data: [9.0, -2.8, -6.85, -4.35, -23.4],
+        type: 'line',
+        borderColor: '#c0392b',
+        backgroundColor: 'rgba(192,57,43,0.1)',
+        fill: true,
+        tension: 0.3,
+        pointRadius: 5,
+        pointBackgroundColor: '#c0392b',
+        order: 1
+      },
+      {
+        label: 'Adj. Industrial Op. Profit (RMB B) 调整后经营利润',
+        data: [5.8, 5.2, 4.5, 4.9, 4.0],
+        type: 'line',
+        borderColor: '#1e8449',
+        borderDash: [5, 3],
+        pointRadius: 4,
+        pointBackgroundColor: '#1e8449',
+        fill: false,
+        tension: 0.3,
+        order: 0
+      }
+    ]
+  },
+  options: {
+    plugins: {
+      tooltip: {
+        callbacks: {
+          label: function(ctx) {
+            return ctx.dataset.label.split('(')[0].trim() + ': ¥' + ctx.parsed.y + 'B';
+          }
+        }
+      }
+    },
+    scales: {
+      y: {
+        beginAtZero: false,
+        grid: { color: '#EDEBE6' },
+        ticks: { callback: v => '¥' + v + 'B' }
+      },
+      x: { grid: { display: false } }
+    }
+  }
+});
+
+// === Segments Pie ===
+new Chart(document.getElementById('chartSegments'), {
+  type: 'doughnut',
+  data: {
+    labels: [
+      'Health / 健康 (Fosun Pharma)',
+      'Happiness / 快乐 (Club Med + Yuyuan)',
+      'Wealth / 富足 (Insurance)',
+      'Intelligent Mfg / 智造 (Hainan Mining)',
+      'Other / 其他'
+    ],
+    datasets: [{
+      data: [41.5, 38.0, 25.2, 23.5, 45.2],
+      backgroundColor: ['#1e8449', '#2980b9', '#8e44ad', '#d35400', '#95a5a6'],
+      borderWidth: 2,
+      borderColor: '#fff'
+    }]
+  },
+  options: {
+    cutout: '55%',
+    plugins: {
+      legend: { position: 'right', labels: { font: { size: 12 }, padding: 14 } },
+      tooltip: {
+        callbacks: {
+          label: ctx => ctx.label + ': ¥' + ctx.parsed + 'B'
+        }
+      }
+    }
+  }
+});
+
+// === NAV Waterfall ===
+new Chart(document.getElementById('chartNAV'), {
+  type: 'bar',
+  data: {
+    labels: [
+      'Fosun Pharma\n复星医药',
+      'Yuyuan\n豫园',
+      'Hainan Mining\n海南矿业',
+      'Fidelidade\n忠诚保险',
+      'Club Med\n+ Atlantis',
+      'Other Assets\n其他资产',
+      'Net Debt\n净负债',
+      'Adj. NAV\n调整后净值',
+      'Market Cap\n市值'
+    ],
+    datasets: [{
+      label: 'HKD Billions',
+      data: [25.7, 15.3, 14.6, 35, 12.5, 20, -20, null, null],
+      backgroundColor: [
+        '#1e8449', '#27ae60', '#2ecc71',
+        '#8e44ad', '#2980b9', '#3498db',
+        '#c0392b', null, null
+      ],
+      borderRadius: 4,
+    },
+    {
+      label: 'Totals',
+      data: [null, null, null, null, null, null, null, 103, 33.8],
+      backgroundColor: [null, null, null, null, null, null, null, '#1a5276', '#e74c3c'],
+      borderRadius: 4,
+    }]
+  },
+  options: {
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        callbacks: {
+          label: ctx => {
+            if (ctx.parsed.y === null) return '';
+            const sign = ctx.parsed.y < 0 ? '-' : '';
+            return sign + 'HK$' + Math.abs(ctx.parsed.y) + 'B';
+          }
+        }
+      }
+    },
+    scales: {
+      y: {
+        grid: { color: '#EDEBE6' },
+        ticks: { callback: v => 'HK$' + v + 'B' },
+        suggestedMin: -30,
+        suggestedMax: 120
+      },
+      x: {
+        grid: { display: false },
+        ticks: { font: { size: 10 }, maxRotation: 45, minRotation: 0 }
+      }
+    }
+  }
+});
+
+// === NAV Gauge (Canvas) ===
+(function drawGauge() {
+  const canvas = document.getElementById('gaugeCanvas');
+  const ctx = canvas.getContext('2d');
+  const cx = 110, cy = 115, r = 85;
+  const startAngle = Math.PI;
+  const endAngle = 2 * Math.PI;
+  const discountPct = 0.77;
+  const valueAngle = startAngle + discountPct * Math.PI;
+
+  // Background arc
+  ctx.beginPath();
+  ctx.arc(cx, cy, r, startAngle, endAngle);
+  ctx.lineWidth = 20;
+  ctx.strokeStyle = '#E5E1D8';
+  ctx.stroke();
+
+  // Value arc gradient
+  const grad = ctx.createLinearGradient(25, cy, 195, cy);
+  grad.addColorStop(0, '#27ae60');
+  grad.addColorStop(0.4, '#f39c12');
+  grad.addColorStop(0.7, '#e74c3c');
+  grad.addColorStop(1, '#922b21');
+
+  ctx.beginPath();
+  ctx.arc(cx, cy, r, startAngle, valueAngle);
+  ctx.lineWidth = 20;
+  ctx.strokeStyle = grad;
+  ctx.lineCap = 'round';
+  ctx.stroke();
+
+  // Needle dot
+  const nx = cx + r * Math.cos(valueAngle);
+  const ny = cy + r * Math.sin(valueAngle);
+  ctx.beginPath();
+  ctx.arc(nx, ny, 6, 0, 2 * Math.PI);
+  ctx.fillStyle = '#922b21';
+  ctx.fill();
+  ctx.strokeStyle = '#fff';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  // Labels
+  ctx.font = '11px Source Sans 3';
+  ctx.fillStyle = '#999';
+  ctx.textAlign = 'left';
+  ctx.fillText('0%', 18, cy + 14);
+  ctx.textAlign = 'right';
+  ctx.fillText('100%', 202, cy + 14);
+})();
+
+// === Debt Maturity Chart ===
+new Chart(document.getElementById('chartDebt'), {
+  type: 'bar',
+  data: {
+    labels: ['May 2026\nUSD Bond', 'H2 2026', '2027', '2028', '2029', '2030'],
+    datasets: [{
+      label: 'Estimated Maturity ($M equiv.)',
+      data: [500, 800, 1200, 900, 600, 400],
+      backgroundColor: ctx => {
+        const i = ctx.dataIndex;
+        return i === 0 ? '#c0392b' : i < 3 ? '#f39c12' : '#27ae60';
+      },
+      borderRadius: 4
+    }]
+  },
+  options: {
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        callbacks: { label: ctx => '$' + ctx.parsed.y + 'M' }
+      }
+    },
+    scales: {
+      y: {
+        grid: { color: '#EDEBE6' },
+        ticks: { callback: v => '$' + v + 'M' }
+      },
+      x: { grid: { display: false } }
+    }
+  }
+});
+
+// === Scenario Chart ===
+new Chart(document.getElementById('chartScenario'), {
+  type: 'bar',
+  data: {
+    labels: [
+      'Current Price\n当前股价',
+      'Bear Case\n悲观',
+      'Base Case\n基准',
+      'Bull Case\n乐观',
+      'Adj. NAV\n调整后净值'
+    ],
+    datasets: [{
+      label: 'HK$ per Share',
+      data: [4.14, 3.50, 6.50, 9.00, 18.10],
+      backgroundColor: ['#7f8c8d', '#c0392b', '#2980b9', '#1e8449', '#E8C872'],
+      borderRadius: 6,
+      barThickness: 50
+    }]
+  },
+  options: {
+    indexAxis: 'y',
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        callbacks: { label: ctx => 'HK$' + ctx.parsed.x.toFixed(2) }
+      }
+    },
+    scales: {
+      x: {
+        grid: { color: '#EDEBE6' },
+        ticks: { callback: v => 'HK$' + v },
+        suggestedMax: 20
+      },
+      y: { grid: { display: false } }
+    }
+  }
+});
+</script>
+
+</body>
+</html>
