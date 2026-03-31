@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BYD (1211.HK) — FY2025 Value Investing Analysis Update | 比亚迪价值投资分析更新</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    :root {
+      --en-color: #333333;
+      --zh-color: #4A6741;
+      --accent: #1a5276;
+      --positive: #1e8449;
+      --negative: #c0392b;
+      --neutral: #7f8c8d;
+      --warning: #d4ac0d;
+      --bg: #f4f6f8;
+      --card-bg: #ffffff;
+      --border: #dee2e6;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Microsoft YaHei', Arial, sans-serif;
+      background: var(--bg);
+      color: var(--en-color);
+      line-height: 1.6;
+    }
+    .en { color: var(--en-color); }
+    .zh { color: var(--zh-color); font-size: 0.88em; }
+    .header {
+      background: linear-gradient(135deg, #1a5276, #2c3e50);
+      color: #fff;
+      padding: 32px 24px 24px;
+      text-align: center;
+    }
+    .header h1 { font-size: 1.8em; margin-bottom: 4px; }
+    .header .sub { font-size: 1em; opacity: 0.85; margin-bottom: 8px; }
+    .header .zh-sub { color: #a3d9a5; font-size: 0.95em; }
+    .header .meta { font-size: 0.82em; opacity: 0.7; margin-top: 8px; }
+    .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+
+    /* Tabs */
+    .tabs { display: flex; gap: 4px; margin-bottom: 20px; flex-wrap: wrap; }
+    .tab-btn {
+      padding: 10px 18px; cursor: pointer; border: none;
+      background: #ddd; border-radius: 6px 6px 0 0; font-size: 0.9em;
+      font-weight: 500; transition: background 0.2s;
+    }
+    .tab-btn.active { background: var(--accent); color: #fff; }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    /* Cards */
+    .card {
+      background: var(--card-bg);
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      padding: 20px;
+      margin-bottom: 20px;
+      border: 1px solid var(--border);
+    }
+    .card h2 {
+      color: var(--accent);
+      font-size: 1.15em;
+      margin-bottom: 12px;
+      border-bottom: 2px solid var(--accent);
+      padding-bottom: 6px;
+    }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+    @media (max-width: 768px) {
+      .grid-2, .grid-3 { grid-template-columns: 1fr; }
+    }
+
+    /* KPI boxes */
+    .kpi-row { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 20px; }
+    .kpi {
+      flex: 1; min-width: 140px;
+      background: var(--card-bg);
+      border-radius: 8px; padding: 14px 16px;
+      border: 1px solid var(--border);
+      text-align: center;
+    }
+    .kpi .label { font-size: 0.78em; color: var(--neutral); margin-bottom: 4px; }
+    .kpi .label .zh { display: block; }
+    .kpi .value { font-size: 1.4em; font-weight: 700; }
+    .kpi .change { font-size: 0.78em; margin-top: 2px; }
+    .up { color: var(--positive); }
+    .down { color: var(--negative); }
+    .flat { color: var(--neutral); }
+
+    /* Tables */
+    table { width: 100%; border-collapse: collapse; font-size: 0.88em; }
+    th, td { padding: 8px 10px; border-bottom: 1px solid var(--border); text-align: right; }
+    th { background: #f0f2f5; color: var(--accent); font-weight: 600; text-align: right; }
+    th:first-child, td:first-child { text-align: left; }
+    tr:hover { background: #f9fbfd; }
+    .pass { color: var(--positive); font-weight: 600; }
+    .fail { color: var(--negative); font-weight: 600; }
+    .warn { color: var(--warning); font-weight: 600; }
+
+    /* Badge */
+    .badge {
+      display: inline-block; padding: 3px 10px; border-radius: 12px;
+      font-size: 0.76em; font-weight: 600; color: #fff;
+    }
+    .badge-green { background: var(--positive); }
+    .badge-red { background: var(--negative); }
+    .badge-yellow { background: var(--warning); color: #333; }
+    .badge-blue { background: var(--accent); }
+
+    /* Chart containers */
+    .chart-container { position: relative; height: 300px; margin: 10px 0; }
+    .chart-container-sm { position: relative; height: 240px; margin: 10px 0; }
+
+    /* Changes highlight */
+    .change-highlight {
+      background: #fff3cd; border-left: 4px solid var(--warning);
+      padding: 12px 16px; margin: 12px 0; border-radius: 0 6px 6px 0;
+      font-size: 0.9em;
+    }
+    .change-highlight strong { color: var(--accent); }
+
+    /* Verdict box */
+    .verdict-box {
+      background: linear-gradient(135deg, #1a5276, #2c3e50);
+      color: #fff; border-radius: 10px; padding: 24px;
+      margin: 20px 0;
+    }
+    .verdict-box h2 { color: #a3d9a5; border-bottom-color: #a3d9a5; }
+    .verdict-box .badge { font-size: 0.9em; padding: 5px 14px; }
+
+    .disclaimer {
+      font-size: 0.75em; color: var(--neutral);
+      text-align: center; padding: 20px; line-height: 1.5;
+      border-top: 1px solid var(--border); margin-top: 20px;
+    }
+
+    /* Comparison arrow */
+    .arrow-up::before { content: "▲ "; color: var(--positive); }
+    .arrow-down::before { content: "▼ "; color: var(--negative); }
+    .arrow-flat::before { content: "▸ "; color: var(--neutral); }
+  </style>
+</head>
+<body>
+
+<div style="max-width:1200px;margin:0 auto;padding:12px 20px 0;">
+  <a href="./index.html" style="display:inline-flex;align-items:center;gap:6px;padding:8px 18px;background:#fff;border:1px solid var(--border);border-radius:8px;color:var(--accent);text-decoration:none;font-size:0.88rem;font-weight:500;transition:border-color 0.2s,transform 0.2s;" onmouseover="this.style.borderColor='var(--accent)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='var(--border)';this.style.transform='none'">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    Return Home
+  </a>
+</div>
+
+<div class="header">
+  <h1>BYD Company (1211.HK / 002594.SZ)</h1>
+  <div class="sub">FY2025 Annual Results — Value Investing Analysis Update</div>
+  <div class="zh-sub">比亚迪 FY2025 年报 — 价值投资分析更新</div>
+  <div class="meta">Report Date: March 31, 2026 | Data Source: BYD FY2025 Annual Report (Released Mar 27, 2026), Yahoo Finance, CnEVPost, CleanTechnica</div>
+</div>
+
+<div class="container">
+
+  <!-- KPI Summary Row -->
+  <div class="kpi-row">
+    <div class="kpi">
+      <div class="label">Revenue <span class="zh">营业收入</span></div>
+      <div class="value">¥804.0B</div>
+      <div class="change up">+3.5% YoY</div>
+    </div>
+    <div class="kpi">
+      <div class="label">Net Profit <span class="zh">净利润</span></div>
+      <div class="value">¥32.6B</div>
+      <div class="change down">-19.0% YoY</div>
+    </div>
+    <div class="kpi">
+      <div class="label">Gross Margin <span class="zh">毛利率</span></div>
+      <div class="value">17.7%</div>
+      <div class="change down">-1.7pp YoY</div>
+    </div>
+    <div class="kpi">
+      <div class="label">Net Margin <span class="zh">净利率</span></div>
+      <div class="value">4.1%</div>
+      <div class="change down">-1.1pp YoY</div>
+    </div>
+    <div class="kpi">
+      <div class="label">NEV Sales <span class="zh">新能源车销量</span></div>
+      <div class="value">4.60M</div>
+      <div class="change up">+7.7% YoY</div>
+    </div>
+    <div class="kpi">
+      <div class="label">H-Share Price <span class="zh">H股价格</span></div>
+      <div class="value">HK$105.8</div>
+      <div class="change flat">52wk: 88.5–159.3</div>
+    </div>
+  </div>
+
+  <!-- Tab Navigation -->
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('overview')">Overview<br><span class="zh">概览</span></button>
+    <button class="tab-btn" onclick="switchTab('changes')">FY25 Changes<br><span class="zh">年报变化</span></button>
+    <button class="tab-btn" onclick="switchTab('financials')">Financials<br><span class="zh">财务数据</span></button>
+    <button class="tab-btn" onclick="switchTab('valuation')">Valuation<br><span class="zh">估值分析</span></button>
+    <button class="tab-btn" onclick="switchTab('moat')">Moat<br><span class="zh">护城河</span></button>
+    <button class="tab-btn" onclick="switchTab('verdict')">Verdict<br><span class="zh">投资结论</span></button>
+  </div>
+
+  <!-- ==================== TAB: OVERVIEW ==================== -->
+  <div id="tab-overview" class="tab-content active">
+    <div class="card">
+      <h2>Business Summary <span class="zh">/ 业务概述</span></h2>
+      <p>BYD is the world's largest NEV manufacturer by volume, headquartered in Shenzhen. In FY2025, BYD surpassed Tesla in global EV volumes for the first time when including all electrified powertrains. The company operates across three segments: automobiles & related products (~80.7% of revenue), mobile handset components & assembly (~19.3%), and rechargeable batteries & photovoltaics. BYD is vertically integrated across batteries (Blade Battery), semiconductors (BYD Semiconductor), and powertrains. In March 2026, BYD launched the second-generation Blade Battery with ultra-fast charging capability.</p>
+    </div>
+
+    <div class="grid-2">
+      <div class="card">
+        <h2>FY2025 Headline Numbers <span class="zh">/ 关键数据</span></h2>
+        <table>
+          <tr><th>Metric</th><th>FY2025</th><th>FY2024</th><th>YoY</th></tr>
+          <tr><td>Revenue (¥B)</td><td>804.0</td><td>777.1</td><td class="up">+3.5%</td></tr>
+          <tr><td>— Auto Segment (¥B)</td><td>648.7</td><td>617.4</td><td class="up">+5.1%</td></tr>
+          <tr><td>— Electronics (¥B)</td><td>155.2</td><td>159.6</td><td class="down">-2.7%</td></tr>
+          <tr><td>Net Profit (¥B)</td><td>32.6</td><td>40.3</td><td class="down">-19.0%</td></tr>
+          <tr><td>Gross Margin</td><td>17.7%</td><td>19.4%</td><td class="down">-1.7pp</td></tr>
+          <tr><td>Auto Gross Margin</td><td>20.5%</td><td>22.3%</td><td class="down">-1.8pp</td></tr>
+          <tr><td>Net Margin</td><td>4.1%</td><td>5.2%</td><td class="down">-1.1pp</td></tr>
+          <tr><td>R&D Spend (¥B)</td><td>63.4</td><td>54.2</td><td class="up">+17.0%</td></tr>
+          <tr><td>NEV Units Sold</td><td>4,602,436</td><td>4,272,145</td><td class="up">+7.7%</td></tr>
+          <tr><td>Overseas Units</td><td>1,050,000+</td><td>~420,000</td><td class="up">+151%</td></tr>
+        </table>
+      </div>
+      <div class="card">
+        <h2>Quarterly Net Profit Trend <span class="zh">/ 季度净利润趋势</span></h2>
+        <div class="chart-container"><canvas id="quarterlyProfitChart"></canvas></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== TAB: CHANGES ==================== -->
+  <div id="tab-changes" class="tab-content">
+    <div class="card">
+      <h2>Key Changes: FY2025 vs. Prior Analysis <span class="zh">/ 年报变化 vs 之前分析</span></h2>
+      
+      <div class="change-highlight">
+        <strong>1. First Annual Profit Decline in 4 Years</strong> <span class="zh">/ 四年来首次年度利润下降</span><br>
+        Net profit fell 19% to ¥32.6B, down from ¥40.3B in FY2024. This was the first annual decline since 2021. Q4 was particularly weak with profit down 38% YoY to ¥9.53B, well below consensus of ¥15B. Our prior analysis flagged margin pressure risk — this outcome was worse than base case but within our cautious scenario range.
+      </div>
+
+      <div class="change-highlight">
+        <strong>2. Revenue Growth Decelerated Sharply</strong> <span class="zh">/ 收入增速大幅放缓</span><br>
+        Revenue grew only 3.5% to ¥804B, a stark slowdown from +29% in FY2024. The domestic price war intensified throughout 2025, compressing average selling prices. H2 domestic ASP dropped to ~¥127,000/vehicle. Despite volume growth (+7.7%), pricing pressure dominated.
+      </div>
+
+      <div class="change-highlight">
+        <strong>3. Gross Margin Compression Confirmed</strong> <span class="zh">/ 毛利率压缩确认</span><br>
+        Overall gross margin fell from 19.4% → 17.7%. Auto segment margin fell to 20.5% from 22.3%. This validates our prior cautious stance on margin sustainability. Per-vehicle profit has thinned significantly from peak levels.
+      </div>
+
+      <div class="change-highlight">
+        <strong>4. Overseas Breakthrough: 1M+ Exports</strong> <span class="zh">/ 海外突破：出口超100万辆</span><br>
+        <span class="badge badge-green">POSITIVE</span> Overseas sales exceeded 1 million units for the first time (+151% YoY), covering 100+ countries. This was ahead of the original 800K target. Higher overseas margins partially offset domestic margin erosion. BYD targets 1.3M–1.5M overseas units in 2026.
+      </div>
+
+      <div class="change-highlight">
+        <strong>5. R&D Spending Nearly 2× Net Profit</strong> <span class="zh">/ 研发支出近净利润2倍</span><br>
+        R&D spending rose 17% to ¥63.4B (cumulative >¥240B), nearly double net profit. This reflects BYD's "engineer-first" culture. Key outputs: Gen-2 Blade Battery, DM-i/DM-p hybrid platforms, "God's Eye" ADAS system (installed in 1.7M vehicles). 120,000+ R&D engineers.
+      </div>
+
+      <div class="change-highlight">
+        <strong>6. Balance Sheet Strengthened</strong> <span class="zh">/ 资产负债表改善</span><br>
+        <span class="badge badge-green">POSITIVE</span> Total shareholder equity up ~30% YoY. Completed HK$43.5B accelerated share placement in early 2025 (largest in global auto in a decade). Shares outstanding increased from ~3.04B to ~9.12B (3:1 stock split in June 2025). Net cash position remains strong.
+      </div>
+
+      <div class="change-highlight">
+        <strong>7. Competitive Landscape Intensified</strong> <span class="zh">/ 竞争格局加剧</span><br>
+        <span class="badge badge-yellow">WATCH</span> Xiaomi, XPENG, Geely, and Leapmotor all gained ground. BYD's domestic market share growth slowed. Jan-Feb 2026 sales dipped YoY as competitors launched compelling models. The market has entered what BYD describes as a "knockout stage."
+      </div>
+
+      <div class="change-highlight">
+        <strong>8. Valuation Context Shifted</strong> <span class="zh">/ 估值背景变化</span><br>
+        Post-results stock traded at HK$105.8 (pre-split adjusted), down from 52-week high of HK$159.3. P/E now ~22x TTM on post-split EPS of ~¥3.57. Tesla comparison: BYD now ahead on net earnings, revenue, and automotive gross margin. BYD also beat Tesla on net margin for FY2025.
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== TAB: FINANCIALS ==================== -->
+  <div id="tab-financials" class="tab-content">
+    <div class="grid-2">
+      <div class="card">
+        <h2>Revenue & Profit Trend (FY2020–2025) <span class="zh">/ 收入与利润趋势</span></h2>
+        <div class="chart-container"><canvas id="revProfitChart"></canvas></div>
+      </div>
+      <div class="card">
+        <h2>Margin Trend <span class="zh">/ 利润率趋势</span></h2>
+        <div class="chart-container"><canvas id="marginChart"></canvas></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Balance Sheet Snapshot (Dec 2025 vs Dec 2024) <span class="zh">/ 资产负债表快照</span></h2>
+      <table>
+        <tr><th>Item (¥B)</th><th>FY2025 (E)</th><th>FY2024</th><th>Change</th></tr>
+        <tr><td>Total Assets</td><td>~950–1,000</td><td>783.4</td><td class="up">~+25%</td></tr>
+        <tr><td>Total Shareholders' Equity</td><td>~258</td><td>198.7</td><td class="up">~+30%</td></tr>
+        <tr><td>Total Common Equity</td><td>~245</td><td>185.3</td><td class="up">~+32%</td></tr>
+        <tr><td>Cash & ST Investments</td><td>~175</td><td>143.2</td><td class="up">~+22%</td></tr>
+        <tr><td>Total Debt</td><td>~97</td><td>40.5</td><td class="down">+140% (capex funded)</td></tr>
+        <tr><td>Net Cash Position</td><td>~78</td><td>102.8</td><td class="down">-24% (investment phase)</td></tr>
+        <tr><td>PP&E</td><td>~334</td><td>292.8</td><td class="up">+14% (factory buildout)</td></tr>
+        <tr><td>Inventory</td><td>~153</td><td>116.0</td><td class="up">+32% (model transitions)</td></tr>
+        <tr><td>Shares Outstanding (post-split)</td><td>~9,117M</td><td>~8,713M</td><td class="flat">+4.6% (placement)</td></tr>
+      </table>
+      <p style="font-size:0.8em; color:var(--neutral); margin-top:8px;">Note: FY2025 balance sheet estimated from TTM data (Sep 2025) and annual report commentary. Exact Dec 2025 figures pending full data feeds.</p>
+    </div>
+
+    <div class="grid-2">
+      <div class="card">
+        <h2>Revenue Breakdown <span class="zh">/ 收入构成</span></h2>
+        <div class="chart-container-sm"><canvas id="segmentChart"></canvas></div>
+      </div>
+      <div class="card">
+        <h2>R&D vs. Net Profit <span class="zh">/ 研发 vs 净利润</span></h2>
+        <div class="chart-container-sm"><canvas id="rdChart"></canvas></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== TAB: VALUATION ==================== -->
+  <div id="tab-valuation" class="tab-content">
+    <div class="card">
+      <h2>Quantitative Scorecard — Graham/Buffett <span class="zh">/ 量化评分 — 格雷厄姆/巴菲特</span></h2>
+      <table>
+        <tr><th>Criterion</th><th>Value</th><th>Threshold</th><th>Score</th></tr>
+        <tr><td>P/E Ratio (TTM)</td><td>~22x</td><td>&lt;15x (Graham)</td><td class="fail">FAIL</td></tr>
+        <tr><td>P/B Ratio</td><td>~3.2x</td><td>&lt;1.5x (Graham)</td><td class="fail">FAIL</td></tr>
+        <tr><td>Debt/Equity</td><td>~0.38x</td><td>&lt;0.5x</td><td class="pass">PASS</td></tr>
+        <tr><td>Current Ratio</td><td>~0.87x</td><td>&gt;2.0x (Graham)</td><td class="fail">FAIL</td></tr>
+        <tr><td>Earnings Stability (5yr)</td><td>Profitable 5yr</td><td>No losses in 5yr</td><td class="pass">PASS</td></tr>
+        <tr><td>Earnings Growth (5yr CAGR)</td><td>~40%+</td><td>&gt;7% (Graham)</td><td class="pass">PASS</td></tr>
+        <tr><td>Dividend Record</td><td>Pays dividend</td><td>Regular payer</td><td class="pass">PASS</td></tr>
+        <tr><td>ROIC (TTM)</td><td>~18.5%</td><td>&gt;15% (Buffett)</td><td class="pass">PASS</td></tr>
+        <tr><td>Gross Margin</td><td>17.7%</td><td>&gt;30% (Buffett ideal)</td><td class="fail">FAIL</td></tr>
+        <tr><td>Owner's Mindset / Insider Align</td><td>Wang Chuanfu = founder-CEO</td><td>Aligned</td><td class="pass">PASS</td></tr>
+      </table>
+      <p style="margin-top:12px;"><strong>Graham Score: 4/7</strong> | <strong>Buffett Score: 6/10</strong></p>
+      <p style="font-size:0.85em; color:var(--neutral);">BYD fails classic Graham deep-value screens (too expensive, thin margins, weak current ratio). It scores better on Buffett quality criteria: strong ROIC, growth track record, founder-led, and durable competitive position. This is a growth-at-reasonable-price candidate, not a deep-value play.</p>
+    </div>
+
+    <div class="grid-2">
+      <div class="card">
+        <h2>Intrinsic Value Range <span class="zh">/ 内在价值区间</span></h2>
+        <div class="chart-container"><canvas id="ivChart"></canvas></div>
+        <p style="font-size:0.8em; color:var(--neutral); margin-top:8px;">
+          H-share price: HK$105.8 (post 3:1 split). EPS FY2025 ≈ ¥3.57 (post-split). Using 10% discount rate. HKD/CNY ≈ 0.93.
+        </p>
+      </div>
+      <div class="card">
+        <h2>DCF Sensitivity Table <span class="zh">/ DCF 敏感性分析</span></h2>
+        <p style="font-size:0.85em; margin-bottom:10px;">Intrinsic value per H-share (HKD), post-split basis:</p>
+        <table>
+          <tr><th>Growth \ DR</th><th>9%</th><th>10%</th><th>11%</th></tr>
+          <tr><td><strong>Low (3%)</strong></td><td>62</td><td>54</td><td>47</td></tr>
+          <tr><td><strong>Base (8%)</strong></td><td>105</td><td>89</td><td>76</td></tr>
+          <tr><td><strong>High (12%)</strong></td><td>152</td><td>126</td><td>106</td></tr>
+        </table>
+        <p style="font-size:0.8em; color:var(--neutral); margin-top:8px;">
+          Based on owner earnings ≈ ¥32.6B net profit + ¥45B D&A − ¥70B maintenance capex (estimated at 50% of total ¥140B capex). Terminal growth 3%. Current price HK$105.8 roughly implies ~8% growth at 10% DR.
+        </p>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Reverse DCF — What's Priced In? <span class="zh">/ 反向DCF — 市场隐含预期</span></h2>
+      <p>At the current H-share price of HK$105.8 and a 10% discount rate, the market is implying roughly <strong>7–8% earnings growth</strong> over the next decade. Given that BYD's FY2025 earnings actually declined 19%, the market is clearly pricing in a recovery and return to growth. This is reasonable if overseas expansion delivers as planned, but leaves limited margin of safety if the domestic price war persists and overseas growth disappoints.</p>
+    </div>
+  </div>
+
+  <!-- ==================== TAB: MOAT ==================== -->
+  <div id="tab-moat" class="tab-content">
+    <div class="grid-2">
+      <div class="card">
+        <h2>Economic Moat Radar <span class="zh">/ 经济护城河</span></h2>
+        <div class="chart-container"><canvas id="moatChart"></canvas></div>
+      </div>
+      <div class="card">
+        <h2>Moat Assessment Details <span class="zh">/ 护城河评估</span></h2>
+        <table>
+          <tr><th>Moat Type</th><th>Score</th><th>Rationale</th></tr>
+          <tr>
+            <td>Cost Advantages<br><span class="zh">成本优势</span></td>
+            <td class="pass">3/3</td>
+            <td>Vertically integrated (batteries, chips, powertrains). Massive scale at 4.6M units. Blade Battery cost leadership.</td>
+          </tr>
+          <tr>
+            <td>Intangible Assets<br><span class="zh">无形资产</span></td>
+            <td class="pass">2.5/3</td>
+            <td>71,000+ patent applications. 42,000+ granted. Brand strength #1 in China NEV. Fortune Global 500 (#91). "God's Eye" ADAS.</td>
+          </tr>
+          <tr>
+            <td>Efficient Scale<br><span class="zh">规模效益</span></td>
+            <td class="pass">2.5/3</td>
+            <td>World's #1 NEV maker, #1 BESS producer. Global factory network expanding (Thailand, Brazil, Hungary, Indonesia, Turkey).</td>
+          </tr>
+          <tr>
+            <td>Switching Costs<br><span class="zh">转换成本</span></td>
+            <td class="warn">1.5/3</td>
+            <td>After-sales ecosystem growing. Flash Charging network (4,990 stations). But auto switching costs remain moderate — buyers can change brands easily.</td>
+          </tr>
+          <tr>
+            <td>Network Effects<br><span class="zh">网络效应</span></td>
+            <td class="warn">1/3</td>
+            <td>Limited direct network effects. Some benefit from charging infrastructure scale. Software/connected car ecosystem still developing.</td>
+          </tr>
+        </table>
+        <p style="margin-top:10px;"><strong>Overall Moat: WIDE</strong> <span class="badge badge-green">10.5/15</span></p>
+        <p style="font-size:0.85em; color:var(--neutral);">BYD's moat is primarily cost-driven and scale-driven, reinforced by deep vertical integration and massive R&D spending. The moat widened in FY2025 through overseas expansion and Gen-2 Blade Battery, but domestic competitive intensity represents moat erosion risk.</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Competitive Context: BYD vs. Peers <span class="zh">/ 竞争对比</span></h2>
+      <table>
+        <tr><th>Company</th><th>FY2025 Net Margin</th><th>Revenue Trend</th><th>Status</th></tr>
+        <tr><td>BYD</td><td>4.1%</td><td>+3.5% YoY</td><td class="pass">Profitable, growing</td></tr>
+        <tr><td>Tesla</td><td>~3.9%</td><td>Declining</td><td class="warn">Margin under pressure</td></tr>
+        <tr><td>Toyota (projected)</td><td>~7.1%</td><td>Flat</td><td class="pass">Higher margin, larger YoY drop</td></tr>
+        <tr><td>Hyundai</td><td>~5.9%</td><td>Flat</td><td class="pass">Higher margin, larger YoY drop</td></tr>
+        <tr><td>Volkswagen</td><td>~2.1%</td><td>Flat</td><td class="warn">Low margin</td></tr>
+        <tr><td>Geely</td><td>~4.9%</td><td>Growing</td><td class="pass">Profitable, flat earnings</td></tr>
+        <tr><td>GM / Ford / Stellantis</td><td>Negative</td><td>Mixed</td><td class="fail">Loss-making in 2025</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- ==================== TAB: VERDICT ==================== -->
+  <div id="tab-verdict" class="tab-content">
+    <div class="verdict-box">
+      <h2>Investment Verdict — Updated <span class="zh">/ 投资结论 — 更新</span></h2>
+      <p style="margin:12px 0;"><span class="badge badge-yellow" style="font-size:1em;">HOLD / WATCHLIST — 观望/候选</span></p>
+      <p style="margin:12px 0; line-height:1.7;">
+        <strong>Business Quality:</strong> BYD remains the world's preeminent NEV manufacturer with unmatched vertical integration and scale. The FY2025 results confirm both its dominance and the reality of intense competition. R&D spending at nearly 2× net profit signals long-term commitment to technological leadership.
+      </p>
+      <p style="margin:12px 0; line-height:1.7;">
+        <strong>Valuation:</strong> At HK$105.8 (P/E ~22x), BYD is not cheap by Graham standards. The stock prices in a solid recovery and ~8% sustained growth. Our base-case DCF puts fair value at ~HK$89, suggesting the stock is slightly overvalued at current levels. However, the bull case (12% growth, 9% DR) supports HK$152 — so upside exists if overseas expansion delivers above expectations.
+      </p>
+      <p style="margin:12px 0; line-height:1.7;">
+        <strong>Key Risks:</strong> (1) Domestic price war deepening — Citi warns domestic auto may turn unprofitable in Q1 2026; (2) Trade policy uncertainty (EU tariffs, potential US tariffs); (3) Margin compression may persist as competitors like Xiaomi and XPENG improve; (4) Massive capex cycle may strain FCF (TTM FCF is negative); (5) Gen-2 Blade Battery transition disrupting Q1 2026 sales.
+      </p>
+      <p style="margin:12px 0; line-height:1.7;">
+        <strong>Key Catalysts:</strong> (1) Overseas sales ramp to 1.5M units in 2026; (2) Gen-2 Blade Battery driving premium mix improvement; (3) Flash Charging infrastructure creating switching costs; (4) Hungary/Indonesia/Brazil factory ramp reducing tariff exposure; (5) Potential margin recovery in H2 2026 as new models mature.
+      </p>
+    </div>
+
+    <div class="card">
+      <h2>Position Sizing Guidance <span class="zh">/ 仓位建议</span></h2>
+      <table>
+        <tr><th>Scenario</th><th>Entry Range (HKD)</th><th>Position Size</th><th>Rationale</th></tr>
+        <tr><td>Strong Buy</td><td>&lt;HK$70</td><td>Full (5–8%)</td><td>&gt;40% MoS to base IV. Deep correction / global recession.</td></tr>
+        <tr><td>Accumulate</td><td>HK$70–85</td><td>Half (3–4%)</td><td>20–40% MoS. Domestic bottom confirmed, overseas on track.</td></tr>
+        <tr><td>Watch</td><td>HK$85–110</td><td>Starter (1–2%)</td><td>Fairly valued to slight premium. Current range.</td></tr>
+        <tr><td>Avoid Adding</td><td>&gt;HK$110</td><td>Hold existing</td><td>Limited MoS. Growth fully priced in.</td></tr>
+      </table>
+      <p style="font-size:0.85em; color:var(--neutral); margin-top:10px;">
+        <strong>Updated from prior analysis:</strong> We had previously flagged patience before full position entry. FY2025 results confirm this was correct — margins compressed more than expected. The stock has corrected ~33% from its 52-week high of HK$159.3, bringing it into the "Watch" zone. A further pullback toward HK$70–85 on Q1 2026 weakness would present a more attractive entry with adequate margin of safety for a quality compounder.
+      </p>
+    </div>
+
+    <div class="card">
+      <h2>What We're Watching Next <span class="zh">/ 后续关注</span></h2>
+      <p>Q1 2026 results (expected late April) will be critical — expect sequential weakness from model transitions and Gen-2 Blade Battery rollout. The key question is whether the margin trough occurs in Q1 and recovery begins in Q2. Overseas sales monthly data (targeting 100K+/month) and gross margin trajectory are the most important leading indicators. If domestic margins stabilize while overseas mix improves, the investment thesis strengthens materially.</p>
+    </div>
+  </div>
+
+</div>
+
+<div class="disclaimer">
+  <strong>Disclaimer / 免责声明:</strong> This report is for educational and informational purposes only. Not investment advice. 
+  The author is not a financial advisor. Data sourced from public filings and third-party sources; may contain errors. 
+  Always do your own research. Past performance does not guarantee future results.<br>
+  本报告仅供教育和参考目的，不构成投资建议。数据来源于公开文件和第三方来源，可能包含错误。请自行研究。过往表现不代表未来收益。
+</div>
+
+<script>
+  // === Global Chart.js defaults ===
+  Chart.defaults.font.family = 'Microsoft YaHei, Arial, sans-serif';
+  Chart.defaults.font.size = 12;
+  Chart.defaults.color = '#333';
+  Chart.defaults.plugins.legend.position = 'bottom';
+  Chart.defaults.responsive = true;
+  Chart.defaults.maintainAspectRatio = false;
+
+  // === Tab switching ===
+  function switchTab(tab) {
+    document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+    document.getElementById('tab-' + tab).classList.add('active');
+    event.target.closest('.tab-btn').classList.add('active');
+  }
+
+  // === 1. Quarterly Net Profit Chart ===
+  new Chart(document.getElementById('quarterlyProfitChart'), {
+    type: 'bar',
+    data: {
+      labels: ['Q1\'24','Q2\'24','Q3\'24','Q4\'24','Q1\'25','Q2\'25','Q3\'25','Q4\'25'],
+      datasets: [{
+        label: 'Net Profit (¥B)',
+        data: [7.27, 8.17, 11.61, 15.02, 9.15, 5.87, 7.82, 9.53],
+        backgroundColor: ['#3498db','#3498db','#3498db','#3498db','#1a5276','#1a5276','#1a5276','#1a5276'],
+        borderRadius: 4
+      }]
+    },
+    options: {
+      plugins: {
+        legend: { display: false },
+        title: { display: false }
+      },
+      scales: {
+        y: { beginAtZero: true, title: { display: true, text: '¥ Billion' } }
+      }
+    }
+  });
+
+  // === 2. Revenue & Profit Trend ===
+  new Chart(document.getElementById('revProfitChart'), {
+    type: 'bar',
+    data: {
+      labels: ['FY2020','FY2021','FY2022','FY2023','FY2024','FY2025'],
+      datasets: [
+        {
+          label: 'Revenue (¥B)',
+          data: [156.6, 216.1, 424.1, 602.3, 777.1, 804.0],
+          backgroundColor: '#3498db',
+          borderRadius: 4,
+          order: 2
+        },
+        {
+          label: 'Net Profit (¥B)',
+          data: [4.23, 3.05, 16.66, 30.04, 40.25, 32.62],
+          type: 'line',
+          borderColor: '#e74c3c',
+          backgroundColor: 'rgba(231,76,60,0.1)',
+          fill: true,
+          tension: 0.3,
+          pointRadius: 5,
+          yAxisID: 'y1',
+          order: 1
+        }
+      ]
+    },
+    options: {
+      scales: {
+        y: { beginAtZero: true, title: { display: true, text: 'Revenue (¥B)' }, position: 'left' },
+        y1: { beginAtZero: true, title: { display: true, text: 'Net Profit (¥B)' }, position: 'right', grid: { drawOnChartArea: false } }
+      }
+    }
+  });
+
+  // === 3. Margin Trend ===
+  new Chart(document.getElementById('marginChart'), {
+    type: 'line',
+    data: {
+      labels: ['FY2020','FY2021','FY2022','FY2023','FY2024','FY2025'],
+      datasets: [
+        {
+          label: 'Gross Margin',
+          data: [19.4, 13.0, 17.0, 18.6, 19.4, 17.7],
+          borderColor: '#1a5276',
+          backgroundColor: 'rgba(26,82,118,0.08)',
+          fill: true,
+          tension: 0.3,
+          pointRadius: 5
+        },
+        {
+          label: 'Net Margin',
+          data: [2.7, 1.4, 3.9, 5.0, 5.2, 4.1],
+          borderColor: '#e74c3c',
+          backgroundColor: 'rgba(231,76,60,0.08)',
+          fill: true,
+          tension: 0.3,
+          pointRadius: 5
+        }
+      ]
+    },
+    options: {
+      scales: {
+        y: { title: { display: true, text: '%' }, min: 0, max: 25 }
+      }
+    }
+  });
+
+  // === 4. Revenue Segment ===
+  new Chart(document.getElementById('segmentChart'), {
+    type: 'doughnut',
+    data: {
+      labels: ['Auto & Related (80.7%)', 'Electronics (19.3%)'],
+      datasets: [{
+        data: [648.65, 155.24],
+        backgroundColor: ['#1a5276','#7fb3d3'],
+        borderWidth: 2
+      }]
+    },
+    options: {
+      plugins: {
+        legend: { position: 'bottom' }
+      }
+    }
+  });
+
+  // === 5. R&D vs Net Profit ===
+  new Chart(document.getElementById('rdChart'), {
+    type: 'bar',
+    data: {
+      labels: ['FY2021','FY2022','FY2023','FY2024','FY2025'],
+      datasets: [
+        {
+          label: 'R&D Spend (¥B)',
+          data: [10.6, 18.7, 39.9, 54.2, 63.4],
+          backgroundColor: '#1a5276',
+          borderRadius: 4
+        },
+        {
+          label: 'Net Profit (¥B)',
+          data: [3.05, 16.66, 30.04, 40.25, 32.62],
+          backgroundColor: '#e74c3c',
+          borderRadius: 4
+        }
+      ]
+    },
+    options: {
+      scales: {
+        y: { beginAtZero: true, title: { display: true, text: '¥ Billion' } }
+      }
+    }
+  });
+
+  // === 6. Intrinsic Value Chart ===
+  new Chart(document.getElementById('ivChart'), {
+    type: 'bar',
+    data: {
+      labels: ['Current Price', 'DCF Bear', 'DCF Base', 'DCF Bull', 'Peer Avg P/E (9.6x)'],
+      datasets: [{
+        label: 'HKD per share',
+        data: [105.8, 54, 89, 126, 34],
+        backgroundColor: ['#e74c3c','#95a5a6','#3498db','#1e8449','#d4ac0d'],
+        borderRadius: 4
+      }]
+    },
+    options: {
+      indexAxis: 'y',
+      plugins: {
+        legend: { display: false },
+        annotation: {}
+      },
+      scales: {
+        x: { beginAtZero: true, title: { display: true, text: 'HKD per H-share (post-split)' } }
+      }
+    }
+  });
+
+  // === 7. Moat Radar ===
+  new Chart(document.getElementById('moatChart'), {
+    type: 'radar',
+    data: {
+      labels: [
+        'Cost Advantages\n成本优势',
+        'Intangible Assets\n无形资产',
+        'Efficient Scale\n规模效益',
+        'Switching Costs\n转换成本',
+        'Network Effects\n网络效应'
+      ],
+      datasets: [{
+        label: 'BYD FY2025',
+        data: [3, 2.5, 2.5, 1.5, 1],
+        fill: true,
+        backgroundColor: 'rgba(26, 82, 118, 0.2)',
+        borderColor: '#1a5276',
+        pointBackgroundColor: '#1a5276',
+        pointRadius: 5
+      },{
+        label: 'BYD Prior Assessment',
+        data: [2.5, 2, 2, 1, 0.5],
+        fill: true,
+        backgroundColor: 'rgba(149, 165, 166, 0.15)',
+        borderColor: '#95a5a6',
+        borderDash: [5,5],
+        pointBackgroundColor: '#95a5a6',
+        pointRadius: 4
+      }]
+    },
+    options: {
+      scales: {
+        r: { min: 0, max: 3, ticks: { stepSize: 1 } }
+      }
+    }
+  });
+
+</script>
+
+</body>
+</html>

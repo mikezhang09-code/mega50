@@ -1,0 +1,1275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>$100K Global Portfolio Blueprint · 20-Year Horizon</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy: #0a1628;
+  --navy-mid: #132240;
+  --navy-light: #1a3158;
+  --accent: #c9a84c;
+  --accent-soft: #d4b86a;
+  --green-cn: #6b8f63;
+  --green-muted: #4a6741;
+  --red-alert: #c0392b;
+  --teal: #1abc9c;
+  --blue: #3498db;
+  --orange: #e67e22;
+  --purple: #9b59b6;
+  --white: #f0ece2;
+  --white-dim: #d6d2c8;
+  --card-bg: rgba(19, 34, 64, 0.65);
+  --glass: rgba(255,255,255,0.04);
+  --border: rgba(201,168,76,0.15);
+  --radius: 14px;
+  --shadow: 0 8px 32px rgba(0,0,0,0.3);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--navy);
+  color: var(--white);
+  min-height: 100vh;
+  line-height: 1.65;
+  overflow-x: hidden;
+}
+
+body::before {
+  content: '';
+  position: fixed; top: 0; left: 0;
+  width: 100%; height: 100%;
+  background:
+    radial-gradient(ellipse at 20% 0%, rgba(201,168,76,0.06) 0%, transparent 60%),
+    radial-gradient(ellipse at 80% 100%, rgba(26,188,156,0.04) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 50%, rgba(10,22,40,1) 0%, rgba(10,22,40,0.95) 100%);
+  z-index: -1;
+}
+
+.container { max-width: 1280px; margin: 0 auto; padding: 0 28px; }
+
+/* ─── HEADER ─── */
+header {
+  padding: 56px 0 36px;
+  text-align: center;
+  position: relative;
+}
+
+header::after {
+  content: '';
+  display: block;
+  width: 80px; height: 2px;
+  background: var(--accent);
+  margin: 28px auto 0;
+}
+
+h1 {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(2rem, 4.5vw, 3.2rem);
+  font-weight: 400;
+  color: var(--white);
+  letter-spacing: -0.5px;
+  line-height: 1.2;
+}
+
+h1 .gold { color: var(--accent); }
+
+.subtitle {
+  font-size: 0.95rem;
+  color: var(--white-dim);
+  margin-top: 10px;
+  font-weight: 300;
+}
+
+.subtitle-cn {
+  font-family: 'Noto Sans SC', sans-serif;
+  color: var(--green-cn);
+  font-size: 0.88rem;
+  margin-top: 4px;
+  font-weight: 400;
+}
+
+/* ─── KPI ROW ─── */
+.kpi-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+  margin: 36px 0 40px;
+}
+
+.kpi {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 22px 20px;
+  text-align: center;
+  backdrop-filter: blur(8px);
+  transition: transform 0.25s, border-color 0.25s;
+}
+
+.kpi:hover { transform: translateY(-3px); border-color: var(--accent-soft); }
+
+.kpi-value {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.75rem;
+  color: var(--accent);
+  line-height: 1.1;
+}
+
+.kpi-label {
+  font-size: 0.78rem;
+  color: var(--white-dim);
+  margin-top: 6px;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  font-weight: 500;
+}
+
+.kpi-label-cn {
+  font-family: 'Noto Sans SC', sans-serif;
+  font-size: 0.72rem;
+  color: var(--green-muted);
+  margin-top: 2px;
+}
+
+/* ─── TABS ─── */
+.tabs {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 32px;
+  border-bottom: 1px solid var(--border);
+  overflow-x: auto;
+  padding-bottom: 0;
+  -webkit-overflow-scrolling: touch;
+}
+
+.tab-btn {
+  background: none;
+  border: none;
+  color: var(--white-dim);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.88rem;
+  font-weight: 500;
+  padding: 12px 22px;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s;
+  white-space: nowrap;
+  letter-spacing: 0.3px;
+}
+
+.tab-btn:hover { color: var(--white); }
+
+.tab-btn.active {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
+
+.tab-content { display: none; animation: fadeUp 0.4s ease; }
+.tab-content.active { display: block; }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── CARDS ─── */
+.card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 32px;
+  margin-bottom: 28px;
+  backdrop-filter: blur(8px);
+}
+
+.card-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.35rem;
+  color: var(--white);
+  margin-bottom: 4px;
+}
+
+.card-title-cn {
+  font-family: 'Noto Sans SC', sans-serif;
+  color: var(--green-cn);
+  font-size: 0.85rem;
+  margin-bottom: 18px;
+  font-weight: 400;
+}
+
+/* ─── TABLES ─── */
+.table-wrap { overflow-x: auto; margin: 16px 0; }
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+thead th {
+  text-align: left;
+  padding: 10px 14px;
+  font-weight: 600;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--accent);
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+}
+
+thead th:hover { color: var(--accent-soft); }
+thead th::after { content: ' ⇅'; font-size: 0.65rem; opacity: 0.4; }
+
+tbody td {
+  padding: 10px 14px;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  white-space: nowrap;
+}
+
+tbody tr:hover { background: rgba(201,168,76,0.05); }
+
+.ticker {
+  font-weight: 700;
+  color: var(--teal);
+  font-family: 'DM Sans', monospace;
+}
+
+.positive { color: #27ae60; }
+.negative { color: var(--red-alert); }
+
+/* ─── CHART CONTAINERS ─── */
+.chart-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-bottom: 28px;
+}
+
+.chart-box {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px;
+  backdrop-filter: blur(8px);
+}
+
+.chart-box h3 {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.05rem;
+  margin-bottom: 2px;
+}
+
+.chart-box .cn-sub {
+  font-family: 'Noto Sans SC', sans-serif;
+  color: var(--green-cn);
+  font-size: 0.78rem;
+  margin-bottom: 16px;
+}
+
+canvas { max-height: 340px; }
+
+/* ─── ALLOCATION GRID ─── */
+.alloc-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 14px;
+  margin: 20px 0;
+}
+
+.alloc-item {
+  background: var(--glass);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px;
+  position: relative;
+  overflow: hidden;
+}
+
+.alloc-item::before {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0;
+  height: 3px;
+  width: var(--pct);
+  background: var(--bar-color);
+  border-radius: 0 0 10px 10px;
+}
+
+.alloc-name { font-weight: 600; font-size: 0.88rem; }
+
+.alloc-name-cn {
+  font-family: 'Noto Sans SC', sans-serif;
+  color: var(--green-muted);
+  font-size: 0.72rem;
+}
+
+.alloc-meta {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 8px;
+  font-size: 0.82rem;
+  color: var(--white-dim);
+}
+
+.alloc-pct {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.2rem;
+  color: var(--accent);
+}
+
+/* ─── STOCK CARDS ─── */
+.stock-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 20px;
+  margin: 20px 0;
+}
+
+.stock-card {
+  background: var(--glass);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px;
+  transition: transform 0.2s, border-color 0.2s;
+}
+
+.stock-card:hover { transform: translateY(-2px); border-color: var(--accent-soft); }
+
+.stock-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 14px;
+}
+
+.stock-ticker {
+  font-family: 'DM Sans', monospace;
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: var(--teal);
+}
+
+.stock-name { font-size: 0.82rem; color: var(--white-dim); margin-top: 2px; }
+
+.stock-name-cn {
+  font-family: 'Noto Sans SC', sans-serif;
+  color: var(--green-muted);
+  font-size: 0.75rem;
+}
+
+.stock-alloc {
+  background: rgba(201,168,76,0.15);
+  color: var(--accent);
+  font-weight: 700;
+  font-size: 0.88rem;
+  padding: 4px 12px;
+  border-radius: 20px;
+}
+
+.stock-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.metric-item { text-align: center; }
+
+.metric-val {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.05rem;
+  color: var(--white);
+}
+
+.metric-label {
+  font-size: 0.68rem;
+  color: var(--white-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin-top: 2px;
+}
+
+.stock-thesis {
+  margin-top: 14px;
+  font-size: 0.82rem;
+  color: var(--white-dim);
+  line-height: 1.6;
+  border-top: 1px solid var(--border);
+  padding-top: 12px;
+}
+
+/* ─── RISK FLAGS ─── */
+.risk-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+  margin: 20px 0;
+}
+
+.risk-item {
+  background: rgba(192,57,43,0.06);
+  border: 1px solid rgba(192,57,43,0.2);
+  border-radius: 10px;
+  padding: 18px;
+}
+
+.risk-item h4 {
+  color: var(--red-alert);
+  font-size: 0.9rem;
+  margin-bottom: 6px;
+}
+
+.risk-item p { font-size: 0.82rem; color: var(--white-dim); line-height: 1.55; }
+
+/* ─── STRATEGY TIMELINE ─── */
+.timeline { position: relative; padding-left: 28px; margin: 20px 0; }
+
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 8px; top: 0; bottom: 0;
+  width: 2px;
+  background: linear-gradient(to bottom, var(--accent), var(--teal));
+}
+
+.tl-item { position: relative; margin-bottom: 28px; }
+
+.tl-item::before {
+  content: '';
+  position: absolute;
+  left: -24px; top: 6px;
+  width: 12px; height: 12px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: 2px solid var(--navy);
+}
+
+.tl-item h4 {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1rem;
+  color: var(--accent);
+  margin-bottom: 4px;
+}
+
+.tl-item p { font-size: 0.84rem; color: var(--white-dim); line-height: 1.6; }
+
+/* ─── FOOTER ─── */
+footer {
+  text-align: center;
+  padding: 48px 0 32px;
+  font-size: 0.75rem;
+  color: rgba(255,255,255,0.25);
+  border-top: 1px solid var(--border);
+  margin-top: 48px;
+}
+
+footer .disclaimer {
+  max-width: 700px;
+  margin: 0 auto 10px;
+  line-height: 1.6;
+}
+
+/* ─── RESPONSIVE ─── */
+@media (max-width: 768px) {
+  .chart-row { grid-template-columns: 1fr; }
+  .stock-grid { grid-template-columns: 1fr; }
+  .card { padding: 22px 18px; }
+  .tabs { gap: 0; }
+  .tab-btn { padding: 10px 14px; font-size: 0.8rem; }
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+<!-- Home Button -->
+<a href="./index.html" style="display:inline-flex;align-items:center;gap:6px;margin-top:20px;padding:8px 18px;background:var(--card-bg);border:1px solid var(--border);border-radius:8px;color:var(--accent);text-decoration:none;font-family:'DM Sans',sans-serif;font-size:0.88rem;font-weight:500;backdrop-filter:blur(8px);transition:border-color 0.2s,transform 0.2s;" onmouseover="this.style.borderColor='var(--accent-soft)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='var(--border)';this.style.transform='none'">
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+  Return Home
+</a>
+
+<!-- ═══════ HEADER ═══════ -->
+<header>
+  <h1><span class="gold">$100,000</span> Global Portfolio Blueprint</h1>
+  <div class="subtitle">US · Hong Kong / China · India — 20-Year Moderate-Risk Horizon</div>
+  <div class="subtitle-cn">美国 · 港股/中国 · 印度 — 20年中等风险投资组合</div>
+</header>
+
+<!-- ═══════ KPI ROW ═══════ -->
+<div class="kpi-row">
+  <div class="kpi">
+    <div class="kpi-value">$100K</div>
+    <div class="kpi-label">Initial Capital</div>
+    <div class="kpi-label-cn">初始资金</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-value">~9%</div>
+    <div class="kpi-label">Target CAGR</div>
+    <div class="kpi-label-cn">目标年化收益</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-value">$560K</div>
+    <div class="kpi-label">Base Case (Yr 20)</div>
+    <div class="kpi-label-cn">基准情景终值</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-value">2.3%</div>
+    <div class="kpi-label">Portfolio Yield</div>
+    <div class="kpi-label-cn">组合股息率</div>
+  </div>
+  <div class="kpi">
+    <div class="kpi-value">17</div>
+    <div class="kpi-label">Holdings</div>
+    <div class="kpi-label-cn">持仓数量</div>
+  </div>
+</div>
+
+<!-- ═══════ TABS ═══════ -->
+<div class="tabs" role="tablist">
+  <button class="tab-btn active" data-tab="allocation">Allocation</button>
+  <button class="tab-btn" data-tab="us">US Picks</button>
+  <button class="tab-btn" data-tab="hk">HK / China</button>
+  <button class="tab-btn" data-tab="india">India</button>
+  <button class="tab-btn" data-tab="bonds">Bonds & Alts</button>
+  <button class="tab-btn" data-tab="projections">Growth Projections</button>
+  <button class="tab-btn" data-tab="risk">Risk & Strategy</button>
+</div>
+
+<!-- ═══════ TAB 1 — ALLOCATION ═══════ -->
+<div class="tab-content active" id="tab-allocation">
+
+  <div class="chart-row">
+    <div class="chart-box">
+      <h3>Asset Allocation</h3>
+      <div class="cn-sub">资产配置</div>
+      <canvas id="chartAllocation"></canvas>
+    </div>
+    <div class="chart-box">
+      <h3>Geographic Split</h3>
+      <div class="cn-sub">地区分布</div>
+      <canvas id="chartGeo"></canvas>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Full Allocation Breakdown</div>
+    <div class="card-title-cn">完整配置明细</div>
+    <div class="alloc-grid">
+      <div class="alloc-item" style="--pct:100%;--bar-color:#3498db">
+        <div class="alloc-name">US ETFs</div><div class="alloc-name-cn">美股ETF</div>
+        <div class="alloc-meta"><span class="alloc-pct">35%</span><span>$35,000</span></div>
+      </div>
+      <div class="alloc-item" style="--pct:28.6%;--bar-color:#2980b9">
+        <div class="alloc-name">US Value Picks</div><div class="alloc-name-cn">美股价值精选</div>
+        <div class="alloc-meta"><span class="alloc-pct">10%</span><span>$10,000</span></div>
+      </div>
+      <div class="alloc-item" style="--pct:22.8%;--bar-color:#c0392b">
+        <div class="alloc-name">HK/China ETFs</div><div class="alloc-name-cn">港股/中国ETF</div>
+        <div class="alloc-meta"><span class="alloc-pct">8%</span><span>$8,000</span></div>
+      </div>
+      <div class="alloc-item" style="--pct:20%;--bar-color:#e74c3c">
+        <div class="alloc-name">HK/China Stocks</div><div class="alloc-name-cn">港股个股精选</div>
+        <div class="alloc-meta"><span class="alloc-pct">7%</span><span>$7,000</span></div>
+      </div>
+      <div class="alloc-item" style="--pct:22.8%;--bar-color:#e67e22">
+        <div class="alloc-name">India ETFs</div><div class="alloc-name-cn">印度ETF</div>
+        <div class="alloc-meta"><span class="alloc-pct">8%</span><span>$8,000</span></div>
+      </div>
+      <div class="alloc-item" style="--pct:14.3%;--bar-color:#f39c12">
+        <div class="alloc-name">India ADRs</div><div class="alloc-name-cn">印度ADR</div>
+        <div class="alloc-meta"><span class="alloc-pct">5%</span><span>$5,000</span></div>
+      </div>
+      <div class="alloc-item" style="--pct:42.8%;--bar-color:#1abc9c">
+        <div class="alloc-name">Bonds</div><div class="alloc-name-cn">债券</div>
+        <div class="alloc-meta"><span class="alloc-pct">15%</span><span>$15,000</span></div>
+      </div>
+      <div class="alloc-item" style="--pct:11.4%;--bar-color:#16a085">
+        <div class="alloc-name">REITs</div><div class="alloc-name-cn">房地产信托</div>
+        <div class="alloc-meta"><span class="alloc-pct">4%</span><span>$4,000</span></div>
+      </div>
+      <div class="alloc-item" style="--pct:11.4%;--bar-color:#c9a84c">
+        <div class="alloc-name">Gold</div><div class="alloc-name-cn">黄金</div>
+        <div class="alloc-meta"><span class="alloc-pct">4%</span><span>$4,000</span></div>
+      </div>
+      <div class="alloc-item" style="--pct:11.4%;--bar-color:#7f8c8d">
+        <div class="alloc-name">Cash</div><div class="alloc-name-cn">现金</div>
+        <div class="alloc-meta"><span class="alloc-pct">4%</span><span>$4,000</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ TAB 2 — US PICKS ═══════ -->
+<div class="tab-content" id="tab-us">
+
+  <div class="card">
+    <div class="card-title">Core US ETFs — $35,000</div>
+    <div class="card-title-cn">核心美股ETF — $35,000</div>
+    <div class="table-wrap">
+      <table id="tableUS">
+        <thead><tr>
+          <th>Ticker</th><th>ETF</th><th>Price</th><th>ER</th><th>10-Yr Return</th><th>Yield</th><th>Allocation</th>
+        </tr></thead>
+        <tbody>
+          <tr><td class="ticker">VOO</td><td>Vanguard S&P 500</td><td>$633</td><td>0.03%</td><td class="positive">15.07%</td><td>1.12%</td><td>$14,000</td></tr>
+          <tr><td class="ticker">VTI</td><td>Vanguard Total Stock Mkt</td><td>$339</td><td>0.03%</td><td class="positive">14.55%</td><td>1.11%</td><td>$7,000</td></tr>
+          <tr><td class="ticker">SCHD</td><td>Schwab US Div Equity</td><td>$34</td><td>0.06%</td><td class="positive">11.59%</td><td>3.39%</td><td>$8,000</td></tr>
+          <tr><td class="ticker">DGRO</td><td>iShares Core Div Growth</td><td>$65</td><td>0.08%</td><td class="positive">13.01%</td><td>2.02%</td><td>$6,000</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Individual US Value Picks — $10,000</div>
+    <div class="card-title-cn">美股价值精选 — $10,000</div>
+    <div class="stock-grid">
+      <div class="stock-card">
+        <div class="stock-header">
+          <div><div class="stock-ticker">BRK.B</div><div class="stock-name">Berkshire Hathaway</div><div class="stock-name-cn">伯克希尔·哈撒韦</div></div>
+          <div class="stock-alloc">$4,000</div>
+        </div>
+        <div class="stock-metrics">
+          <div class="metric-item"><div class="metric-val">~$475</div><div class="metric-label">Price</div></div>
+          <div class="metric-item"><div class="metric-val">15.3x</div><div class="metric-label">P/E</div></div>
+          <div class="metric-item"><div class="metric-val">17.1%</div><div class="metric-label">ROIC</div></div>
+          <div class="metric-item"><div class="metric-val">0.19</div><div class="metric-label">D/E</div></div>
+          <div class="metric-item"><div class="metric-val">0.69</div><div class="metric-label">Beta</div></div>
+          <div class="metric-item"><div class="metric-val">—</div><div class="metric-label">Yield</div></div>
+        </div>
+        <div class="stock-thesis">Fortress balance sheet, ultra-low leverage, diversified across insurance, energy, railroads, consumer brands. Low beta provides defensive anchor. Estimated ~10% below fair value.</div>
+      </div>
+      <div class="stock-card">
+        <div class="stock-header">
+          <div><div class="stock-ticker">JPM</div><div class="stock-name">JPMorgan Chase</div><div class="stock-name-cn">摩根大通</div></div>
+          <div class="stock-alloc">$3,000</div>
+        </div>
+        <div class="stock-metrics">
+          <div class="metric-item"><div class="metric-val">~$290</div><div class="metric-label">Price</div></div>
+          <div class="metric-item"><div class="metric-val">14.5x</div><div class="metric-label">P/E</div></div>
+          <div class="metric-item"><div class="metric-val">16.1%</div><div class="metric-label">ROE</div></div>
+          <div class="metric-item"><div class="metric-val">13.2x</div><div class="metric-label">Fwd P/E</div></div>
+          <div class="metric-item"><div class="metric-val">2.06%</div><div class="metric-label">Yield</div></div>
+          <div class="metric-item"><div class="metric-val">$168B</div><div class="metric-label">Revenue</div></div>
+        </div>
+        <div class="stock-thesis">America's dominant bank at a 33% discount to the market. Best-in-class profitability, aggressive capital return via $6 annual dividend and buybacks.</div>
+      </div>
+      <div class="stock-card">
+        <div class="stock-header">
+          <div><div class="stock-ticker">GOOGL</div><div class="stock-name">Alphabet Inc.</div><div class="stock-name-cn">谷歌母公司</div></div>
+          <div class="stock-alloc">$3,000</div>
+        </div>
+        <div class="stock-metrics">
+          <div class="metric-item"><div class="metric-val">~$274</div><div class="metric-label">Price</div></div>
+          <div class="metric-item"><div class="metric-val">25.2x</div><div class="metric-label">P/E</div></div>
+          <div class="metric-item"><div class="metric-val">31.2%</div><div class="metric-label">ROIC</div></div>
+          <div class="metric-item"><div class="metric-val">35.7%</div><div class="metric-label">ROE</div></div>
+          <div class="metric-item"><div class="metric-val">0.16</div><div class="metric-label">D/E</div></div>
+          <div class="metric-item"><div class="metric-val">1.58</div><div class="metric-label">PEG</div></div>
+        </div>
+        <div class="stock-thesis">Quality-growth pick: 31%+ ROIC at mega-cap scale with near-zero leverage. Below 10-year average P/E. Dominant in search, cloud, YouTube, and AI.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ TAB 3 — HK/CHINA ═══════ -->
+<div class="tab-content" id="tab-hk">
+
+  <div class="chart-row">
+    <div class="chart-box">
+      <h3>HK vs US Valuation</h3>
+      <div class="cn-sub">港股 vs 美股估值对比</div>
+      <canvas id="chartHKvsUS"></canvas>
+    </div>
+    <div class="chart-box">
+      <h3>HK/China Pick Yields</h3>
+      <div class="cn-sub">港股精选股息率</div>
+      <canvas id="chartHKYields"></canvas>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Core HK/China ETFs — $8,000</div>
+    <div class="card-title-cn">核心港股/中国ETF — $8,000</div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Ticker</th><th>ETF</th><th>Price</th><th>ER</th><th>P/E</th><th>Yield</th><th>Allocation</th></tr></thead>
+        <tbody>
+          <tr><td class="ticker">MCHI</td><td>iShares MSCI China</td><td>$62.91</td><td>0.57%</td><td>~14x</td><td>~1.8%</td><td>$5,000</td></tr>
+          <tr><td class="ticker">2800.HK</td><td>Tracker Fund of HK</td><td>HK$26.10</td><td>0.05%</td><td>12.6x</td><td>2.88%</td><td>$3,000</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Individual HK/China Picks — $7,000</div>
+    <div class="card-title-cn">港股价值精选 — $7,000</div>
+    <div class="stock-grid">
+      <div class="stock-card">
+        <div class="stock-header">
+          <div><div class="stock-ticker">0939.HK</div><div class="stock-name">China Construction Bank</div><div class="stock-name-cn">中国建设银行</div></div>
+          <div class="stock-alloc">$3,000</div>
+        </div>
+        <div class="stock-metrics">
+          <div class="metric-item"><div class="metric-val">HK$8.12</div><div class="metric-label">Price</div></div>
+          <div class="metric-item"><div class="metric-val">5.5x</div><div class="metric-label">P/E</div></div>
+          <div class="metric-item"><div class="metric-val">5.5%</div><div class="metric-label">Yield</div></div>
+          <div class="metric-item"><div class="metric-val">30%</div><div class="metric-label">Payout</div></div>
+          <div class="metric-item"><div class="metric-val">HK$338B</div><div class="metric-label">Net Cash</div></div>
+          <div class="metric-item"><div class="metric-val">#2</div><div class="metric-label">Global Rank</div></div>
+        </div>
+        <div class="stock-thesis">World's 2nd-largest bank at 5.5× earnings with massive room for dividend growth. Net cash fortress position protects against property-sector headwinds.</div>
+      </div>
+      <div class="stock-card">
+        <div class="stock-header">
+          <div><div class="stock-ticker">0941.HK</div><div class="stock-name">China Mobile</div><div class="stock-name-cn">中国移动</div></div>
+          <div class="stock-alloc">$2,000</div>
+        </div>
+        <div class="stock-metrics">
+          <div class="metric-item"><div class="metric-val">HK$79</div><div class="metric-label">Price</div></div>
+          <div class="metric-item"><div class="metric-val">~11x</div><div class="metric-label">P/E</div></div>
+          <div class="metric-item"><div class="metric-val">7.0%</div><div class="metric-label">Yield</div></div>
+          <div class="metric-item"><div class="metric-val">4.7x</div><div class="metric-label">EV/EBITDA</div></div>
+          <div class="metric-item"><div class="metric-val">11.0%</div><div class="metric-label">Div Growth</div></div>
+          <div class="metric-item"><div class="metric-val">HK$150B+</div><div class="metric-label">Net Cash</div></div>
+        </div>
+        <div class="stock-thesis">World's largest telecom by subscribers. 7% yield + 11% dividend growth = powerful compounding. Delisted from NYSE in 2021; HK-listed shares only.</div>
+      </div>
+      <div class="stock-card">
+        <div class="stock-header">
+          <div><div class="stock-ticker">0700.HK</div><div class="stock-name">Tencent Holdings</div><div class="stock-name-cn">腾讯控股</div></div>
+          <div class="stock-alloc">$2,000</div>
+        </div>
+        <div class="stock-metrics">
+          <div class="metric-item"><div class="metric-val">HK$550</div><div class="metric-label">Price</div></div>
+          <div class="metric-item"><div class="metric-val">15.5x</div><div class="metric-label">Fwd P/E</div></div>
+          <div class="metric-item"><div class="metric-val">0.95</div><div class="metric-label">PEG</div></div>
+          <div class="metric-item"><div class="metric-val">15.5%</div><div class="metric-label">ROIC</div></div>
+          <div class="metric-item"><div class="metric-val">19.8%</div><div class="metric-label">ROE</div></div>
+          <div class="metric-item"><div class="metric-val">14%</div><div class="metric-label">Rev Growth</div></div>
+        </div>
+        <div class="stock-thesis">Quality-growth in China: PEG < 1 for WeChat's 1.3B-user ecosystem, dominant gaming, growing cloud/AI. Active buybacks + 30% CAGR dividend growth.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">China Risk Factors</div>
+    <div class="card-title-cn">中国投资风险</div>
+    <div class="risk-grid">
+      <div class="risk-item">
+        <h4>⚠ VIE Structure Risk</h4>
+        <p>US investors own Cayman shells bound by contracts, not actual Chinese equity. Government could theoretically invalidate. Mitigated by buying HK-listed shares.</p>
+      </div>
+      <div class="risk-item">
+        <h4>⚠ Delisting Risk</h4>
+        <p>~280 Chinese companies ($880B market cap) trade in the US. US officials have said delisting is "on the table." 75% by cap also trade in HK as a fallback.</p>
+      </div>
+      <div class="risk-item">
+        <h4>⚠ Geopolitical Tail Risk</h4>
+        <p>Taiwan tensions, trade wars, and regulatory unpredictability are permanent features. The valuation discount is the compensation for bearing these risks.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ TAB 4 — INDIA ═══════ -->
+<div class="tab-content" id="tab-india">
+
+  <div class="chart-row">
+    <div class="chart-box">
+      <h3>India Macro Snapshot</h3>
+      <div class="cn-sub">印度宏观指标</div>
+      <canvas id="chartIndiaMacro"></canvas>
+    </div>
+    <div class="chart-box">
+      <h3>Nifty 50 P/E History</h3>
+      <div class="cn-sub">印度Nifty 50市盈率历史</div>
+      <canvas id="chartNiftyPE"></canvas>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Core India ETFs — $8,000</div>
+    <div class="card-title-cn">核心印度ETF — $8,000</div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Ticker</th><th>ETF</th><th>Price</th><th>ER</th><th>AUM</th><th>Allocation</th></tr></thead>
+        <tbody>
+          <tr><td class="ticker">FLIN</td><td>Franklin FTSE India</td><td>~$34</td><td class="positive">0.19%</td><td>$2.9B</td><td>$5,000</td></tr>
+          <tr><td class="ticker">INDA</td><td>iShares MSCI India</td><td>$45.81</td><td>0.62%</td><td>$7.1B</td><td>$3,000</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">India ADR Picks — $5,000</div>
+    <div class="card-title-cn">印度ADR精选 — $5,000</div>
+    <div class="stock-grid">
+      <div class="stock-card">
+        <div class="stock-header">
+          <div><div class="stock-ticker">IBN</div><div class="stock-name">ICICI Bank ADR</div><div class="stock-name-cn">印度工商银行</div></div>
+          <div class="stock-alloc">$3,000</div>
+        </div>
+        <div class="stock-metrics">
+          <div class="metric-item"><div class="metric-val">~$26.72</div><div class="metric-label">Price</div></div>
+          <div class="metric-item"><div class="metric-val">17.2x</div><div class="metric-label">P/E</div></div>
+          <div class="metric-item"><div class="metric-val">17.0%</div><div class="metric-label">ROE</div></div>
+          <div class="metric-item"><div class="metric-val">2.59</div><div class="metric-label">P/B</div></div>
+          <div class="metric-item"><div class="metric-val">a-</div><div class="metric-label">S&P Rating</div></div>
+          <div class="metric-item"><div class="metric-val">12-15%</div><div class="metric-label">Credit Grw</div></div>
+        </div>
+        <div class="stock-thesis">India's #2 private bank, direct play on the credit-growth story. Near 52-week low ($26 vs $34.57 high). S&P upgraded standalone credit to 'a-' in July 2025.</div>
+      </div>
+      <div class="stock-card">
+        <div class="stock-header">
+          <div><div class="stock-ticker">HDB</div><div class="stock-name">HDFC Bank ADR</div><div class="stock-name-cn">印度住房开发银行</div></div>
+          <div class="stock-alloc">$2,000</div>
+        </div>
+        <div class="stock-metrics">
+          <div class="metric-item"><div class="metric-val">~$25.50</div><div class="metric-label">Price</div></div>
+          <div class="metric-item"><div class="metric-val">15.0x</div><div class="metric-label">P/E</div></div>
+          <div class="metric-item"><div class="metric-val">16-17%</div><div class="metric-label">ROE</div></div>
+          <div class="metric-item"><div class="metric-val">1.6-2.1</div><div class="metric-label">P/B</div></div>
+          <div class="metric-item"><div class="metric-val">5,485</div><div class="metric-label">Branches</div></div>
+          <div class="metric-item"><div class="metric-val">14,533</div><div class="metric-label">ATMs</div></div>
+        </div>
+        <div class="stock-thesis">India's largest private bank at roughly half its 5-year average P/E. Deep contrarian play — post-HDFC Ltd merger integration unlocking cross-sell and funding cost benefits.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ TAB 5 — BONDS & ALTS ═══════ -->
+<div class="tab-content" id="tab-bonds">
+  <div class="card">
+    <div class="card-title">Stability Layer — $27,000 (27%)</div>
+    <div class="card-title-cn">稳定配置层 — $27,000 (27%)</div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Ticker</th><th>Holding</th><th>Amount</th><th>Yield</th><th>ER</th><th>Purpose</th></tr></thead>
+        <tbody>
+          <tr><td class="ticker">BND</td><td>Vanguard Total Bond Mkt</td><td>$10,000</td><td>4.18%</td><td>0.03%</td><td>Core fixed income</td></tr>
+          <tr><td class="ticker">TIP</td><td>iShares TIPS Bond</td><td>$5,000</td><td>~4.0%</td><td>0.19%</td><td>Inflation protection</td></tr>
+          <tr><td class="ticker">VNQ</td><td>Vanguard Real Estate</td><td>$4,000</td><td>3.62%</td><td>0.13%</td><td>Real asset income</td></tr>
+          <tr><td class="ticker">IAU</td><td>iShares Gold Trust</td><td>$4,000</td><td>—</td><td>0.25%</td><td>Tail risk hedge</td></tr>
+          <tr><td class="ticker">—</td><td>High-Yield Savings / MMF</td><td>$4,000</td><td>4.0-4.2%</td><td>—</td><td>Dry powder</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="chart-row">
+    <div class="chart-box">
+      <h3>Stability Layer Allocation</h3>
+      <div class="cn-sub">稳定层配置</div>
+      <canvas id="chartBonds"></canvas>
+    </div>
+    <div class="chart-box">
+      <h3>Tax Placement Guide</h3>
+      <div class="cn-sub">税务优化配置建议</div>
+      <canvas id="chartTax"></canvas>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ TAB 6 — PROJECTIONS ═══════ -->
+<div class="tab-content" id="tab-projections">
+  <div class="chart-row">
+    <div class="chart-box" style="grid-column: 1 / -1;">
+      <h3>20-Year Compound Growth Scenarios</h3>
+      <div class="cn-sub">20年复利增长情景模拟</div>
+      <canvas id="chartProjections"></canvas>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Scenario Summary</div>
+    <div class="card-title-cn">情景汇总</div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Scenario</th><th>CAGR</th><th>Year 5</th><th>Year 10</th><th>Year 15</th><th>Year 20</th></tr></thead>
+        <tbody>
+          <tr><td>Conservative</td><td>7%</td><td>$140,255</td><td>$196,715</td><td>$275,903</td><td class="positive">$386,968</td></tr>
+          <tr><td><strong>Base Case</strong></td><td><strong>9%</strong></td><td><strong>$153,862</strong></td><td><strong>$236,736</strong></td><td><strong>$364,248</strong></td><td class="positive"><strong>$560,441</strong></td></tr>
+          <tr><td>Optimistic</td><td>11%</td><td>$168,506</td><td>$283,942</td><td>$478,459</td><td class="positive">$806,231</td></tr>
+          <tr><td>Bull Case</td><td>13%</td><td>$184,244</td><td>$339,457</td><td>$625,427</td><td class="positive">$1,152,309</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Historical 20-Year Market Returns (USD)</div>
+    <div class="card-title-cn">20年市场历史回报(美元计)</div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Market</th><th>20-Yr CAGR</th><th>Max Drawdown</th><th>Recovery Time</th></tr></thead>
+        <tbody>
+          <tr><td>S&P 500</td><td class="positive">~10.8%</td><td class="negative">-56.8% (2008)</td><td>~4.5 years</td></tr>
+          <tr><td>Nifty 50 (India, USD)</td><td class="positive">~8-9%</td><td class="negative">-65% (2008)</td><td>~6 years</td></tr>
+          <tr><td>Hang Seng (HK)</td><td>~2-4%</td><td class="negative">-65.2% (2008)</td><td>~9 years</td></tr>
+          <tr><td>60/40 US Portfolio</td><td class="positive">~7.5-8%</td><td class="negative">-30.5% (2008)</td><td>~3 years</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ TAB 7 — RISK & STRATEGY ═══════ -->
+<div class="tab-content" id="tab-risk">
+  <div class="card">
+    <div class="card-title">Capital Deployment Strategy</div>
+    <div class="card-title-cn">资金部署策略</div>
+    <div class="timeline">
+      <div class="tl-item">
+        <h4>Month 1 — Deploy 60% ($60,000)</h4>
+        <p>Lump-sum invest the majority immediately. Vanguard's research shows lump-sum beats DCA in 67% of historical periods, delivering an average 2.4% higher return. Markets rise ~70-75% of all 12-month periods.</p>
+      </div>
+      <div class="tl-item">
+        <h4>Months 2–6 — DCA Remaining 25% ($25,000)</h4>
+        <p>Dollar-cost average into India and HK/China positions during volatility. Target dips in FLIN, INDA, MCHI, and individual HK stocks. Given elevated US CAPE (~36.65), spreading international buys smooths entry risk.</p>
+      </div>
+      <div class="tl-item">
+        <h4>Months 6–12 — Deploy Final 15% ($15,000)</h4>
+        <p>Complete bond, REIT, and gold allocations. Keep $4,000 in high-yield savings (4.0–4.2% APY) as permanent dry-powder reserve for opportunistic rebalancing.</p>
+      </div>
+      <div class="tl-item">
+        <h4>Ongoing — Annual Rebalance + 5% Drift Trigger</h4>
+        <p>Conduct scheduled annual review. Also rebalance if any asset drifts more than 5 percentage points from target. This hybrid approach captured 38bps of additional annual return in Morgan Stanley's research.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Tax Optimization Placement</div>
+    <div class="card-title-cn">税务优化建议</div>
+    <div class="risk-grid">
+      <div class="risk-item" style="background: rgba(26,188,156,0.06); border-color: rgba(26,188,156,0.2);">
+        <h4 style="color: var(--teal);">✓ Taxable Account</h4>
+        <p>International ETFs (MCHI, FLIN, INDA) to capture Foreign Tax Credit. HK charges 0% withholding — most tax-friendly market for US investors. US equities (VOO, VTI, individual stocks) for long-term capital gains rates.</p>
+      </div>
+      <div class="risk-item" style="background: rgba(52,152,219,0.06); border-color: rgba(52,152,219,0.2);">
+        <h4 style="color: var(--blue);">✓ Tax-Advantaged (IRA/401k)</h4>
+        <p>Bonds (BND, TIP) — interest taxed as ordinary income. REITs (VNQ) — distributions taxed as ordinary income. Gold (IAU) — taxed at 28% collectibles rate. India stocks (IBN, HDB) — 25% withholding not recoverable.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Portfolio Income Forecast</div>
+    <div class="card-title-cn">组合收入预测</div>
+    <div class="chart-row" style="margin: 16px 0 0;">
+      <div class="chart-box" style="grid-column: 1 / -1; background: transparent; border: none; padding: 0;">
+        <canvas id="chartIncome"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- .container -->
+
+<footer>
+  <div class="container">
+    <div class="disclaimer">⚠ This is not financial advice. This analysis is for educational and informational purposes only. Consult a licensed financial advisor before making any investment decisions. Past performance does not guarantee future results. All data as of late March 2026.</div>
+    <div>$100K Global Portfolio Blueprint · Built March 2026</div>
+  </div>
+</footer>
+
+<script>
+// ─── TAB LOGIC ───
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+  });
+});
+
+// ─── TABLE SORT ───
+document.querySelectorAll('table thead th').forEach(th => {
+  th.addEventListener('click', () => {
+    const table = th.closest('table');
+    const idx = Array.from(th.parentNode.children).indexOf(th);
+    const rows = Array.from(table.querySelectorAll('tbody tr'));
+    const asc = th.dataset.sort !== 'asc';
+    th.dataset.sort = asc ? 'asc' : 'desc';
+    rows.sort((a, b) => {
+      let av = a.children[idx].textContent.replace(/[$,%~HK]/g, '').trim();
+      let bv = b.children[idx].textContent.replace(/[$,%~HK]/g, '').trim();
+      let an = parseFloat(av), bn = parseFloat(bv);
+      if (!isNaN(an) && !isNaN(bn)) return asc ? an - bn : bn - an;
+      return asc ? av.localeCompare(bv) : bv.localeCompare(av);
+    });
+    rows.forEach(r => table.querySelector('tbody').appendChild(r));
+  });
+});
+
+// ─── CHART DEFAULTS ───
+Chart.defaults.color = '#d6d2c8';
+Chart.defaults.borderColor = 'rgba(255,255,255,0.06)';
+Chart.defaults.font.family = "'DM Sans', sans-serif";
+Chart.defaults.font.size = 12;
+Chart.defaults.plugins.legend.labels.usePointStyle = true;
+Chart.defaults.plugins.legend.labels.pointStyle = 'circle';
+Chart.defaults.plugins.legend.labels.padding = 16;
+
+const GOLD = '#c9a84c';
+const TEAL = '#1abc9c';
+const BLUE = '#3498db';
+const RED = '#e74c3c';
+const ORANGE = '#e67e22';
+const PURPLE = '#9b59b6';
+const GREY = '#7f8c8d';
+
+// ─── ALLOCATION DOUGHNUT ───
+new Chart(document.getElementById('chartAllocation'), {
+  type: 'doughnut',
+  data: {
+    labels: ['US ETFs','US Picks','HK/CN ETFs','HK/CN Picks','India ETFs','India ADRs','Bonds','REITs','Gold','Cash'],
+    datasets: [{
+      data: [35,10,8,7,8,5,15,4,4,4],
+      backgroundColor: [BLUE,'#2980b9',RED,'#e74c3c',ORANGE,'#f39c12',TEAL,'#16a085',GOLD,GREY],
+      borderWidth: 0,
+      hoverOffset: 8
+    }]
+  },
+  options: {
+    cutout: '62%',
+    plugins: {
+      legend: { position: 'bottom', labels: { font: { size: 10 } } },
+      tooltip: { callbacks: { label: ctx => `${ctx.label}: ${ctx.parsed}% ($${ctx.parsed * 1000})` } }
+    }
+  }
+});
+
+// ─── GEO DOUGHNUT ───
+new Chart(document.getElementById('chartGeo'), {
+  type: 'doughnut',
+  data: {
+    labels: ['United States 🇺🇸','Hong Kong / China 🇭🇰','India 🇮🇳','Bonds & Alts','Cash'],
+    datasets: [{
+      data: [45,15,13,23,4],
+      backgroundColor: [BLUE, RED, ORANGE, TEAL, GREY],
+      borderWidth: 0,
+      hoverOffset: 8
+    }]
+  },
+  options: {
+    cutout: '62%',
+    plugins: {
+      legend: { position: 'bottom', labels: { font: { size: 11 } } },
+      tooltip: { callbacks: { label: ctx => `${ctx.label}: ${ctx.parsed}% ($${ctx.parsed * 1000})` } }
+    }
+  }
+});
+
+// ─── HK VS US VALUATION BAR ───
+new Chart(document.getElementById('chartHKvsUS'), {
+  type: 'bar',
+  data: {
+    labels: ['CAPE Ratio','Trailing P/E','Dividend Yield %','P/B Ratio'],
+    datasets: [
+      { label: 'S&P 500', data: [36.65, 27.5, 1.3, 4.8], backgroundColor: 'rgba(52,152,219,0.7)' },
+      { label: 'Hang Seng', data: [14.7, 12.6, 2.94, 1.1], backgroundColor: 'rgba(231,76,60,0.7)' }
+    ]
+  },
+  options: {
+    responsive: true,
+    plugins: { legend: { position: 'top' } },
+    scales: { y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.04)' } } }
+  }
+});
+
+// ─── HK YIELDS BAR ───
+new Chart(document.getElementById('chartHKYields'), {
+  type: 'bar',
+  data: {
+    labels: ['CCB\n建设银行','China Mobile\n中国移动','Tencent\n腾讯','MCHI ETF','2800.HK'],
+    datasets: [{
+      label: 'Dividend Yield %',
+      data: [5.5, 7.0, 0.8, 1.8, 2.88],
+      backgroundColor: [RED, '#c0392b', ORANGE, TEAL, '#16a085'],
+      borderRadius: 6
+    }]
+  },
+  options: {
+    indexAxis: 'y',
+    responsive: true,
+    plugins: { legend: { display: false } },
+    scales: { x: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.04)' } } }
+  }
+});
+
+// ─── INDIA MACRO BAR ───
+new Chart(document.getElementById('chartIndiaMacro'), {
+  type: 'bar',
+  data: {
+    labels: ['GDP Growth %','Median Age','% Under 35','Nifty P/E','Credit Growth %'],
+    datasets: [{
+      label: 'India 2026',
+      data: [6.5, 28, 65, 19.97, 13.5],
+      backgroundColor: [ORANGE, '#f39c12', '#e67e22', GOLD, TEAL],
+      borderRadius: 6
+    }]
+  },
+  options: {
+    responsive: true,
+    plugins: { legend: { display: false } },
+    scales: { y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.04)' } } }
+  }
+});
+
+// ─── NIFTY PE HISTORY LINE ───
+new Chart(document.getElementById('chartNiftyPE'), {
+  type: 'line',
+  data: {
+    labels: ['2016','2017','2018','2019','2020','2021','2022','2023','2024','2025','Mar 2026'],
+    datasets: [
+      {
+        label: 'Nifty 50 P/E',
+        data: [22.5, 26.8, 25.7, 28.3, 37.8, 28.3, 21.3, 22.7, 24.6, 21.8, 19.97],
+        borderColor: ORANGE, backgroundColor: 'rgba(230,126,34,0.1)',
+        fill: true, tension: 0.3, pointRadius: 4
+      },
+      {
+        label: '7-Yr Median (22.7)',
+        data: Array(11).fill(22.74),
+        borderColor: 'rgba(255,255,255,0.25)', borderDash: [6,4],
+        pointRadius: 0, fill: false
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    plugins: { legend: { position: 'top' } },
+    scales: {
+      y: { min: 15, max: 42, grid: { color: 'rgba(255,255,255,0.04)' } },
+      x: { grid: { display: false } }
+    }
+  }
+});
+
+// ─── BONDS PIE ───
+new Chart(document.getElementById('chartBonds'), {
+  type: 'doughnut',
+  data: {
+    labels: ['BND (Bonds)','TIP (TIPS)','VNQ (REITs)','IAU (Gold)','Cash/MMF'],
+    datasets: [{
+      data: [10000, 5000, 4000, 4000, 4000],
+      backgroundColor: [TEAL, '#16a085', PURPLE, GOLD, GREY],
+      borderWidth: 0
+    }]
+  },
+  options: {
+    cutout: '55%',
+    plugins: {
+      legend: { position: 'bottom' },
+      tooltip: { callbacks: { label: ctx => `${ctx.label}: $${ctx.parsed.toLocaleString()}` } }
+    }
+  }
+});
+
+// ─── TAX PLACEMENT STACKED BAR ───
+new Chart(document.getElementById('chartTax'), {
+  type: 'bar',
+  data: {
+    labels: ['Taxable Acct','Tax-Advantaged'],
+    datasets: [
+      { label: 'US Equities', data: [45000, 0], backgroundColor: BLUE },
+      { label: 'Intl ETFs', data: [16000, 0], backgroundColor: ORANGE },
+      { label: 'Bonds/TIPS', data: [0, 15000], backgroundColor: TEAL },
+      { label: 'REITs', data: [0, 4000], backgroundColor: PURPLE },
+      { label: 'Gold', data: [0, 4000], backgroundColor: GOLD },
+      { label: 'India ADRs', data: [0, 5000], backgroundColor: '#f39c12' },
+      { label: 'HK Stocks', data: [7000, 0], backgroundColor: RED },
+      { label: 'Cash', data: [4000, 0], backgroundColor: GREY }
+    ]
+  },
+  options: {
+    responsive: true,
+    plugins: { legend: { position: 'bottom', labels: { font: { size: 10 } } } },
+    scales: {
+      x: { stacked: true },
+      y: { stacked: true, beginAtZero: true, grid: { color: 'rgba(255,255,255,0.04)' },
+           ticks: { callback: v => '$' + (v/1000) + 'K' } }
+    }
+  }
+});
+
+// ─── 20-YEAR PROJECTION LINES ───
+const years = Array.from({length: 21}, (_, i) => i);
+const compound = (r) => years.map(y => 100000 * Math.pow(1 + r, y));
+
+new Chart(document.getElementById('chartProjections'), {
+  type: 'line',
+  data: {
+    labels: years.map(y => y === 0 ? 'Start' : `Yr ${y}`),
+    datasets: [
+      { label: 'Conservative 7%', data: compound(0.07), borderColor: GREY, backgroundColor: 'transparent', tension: 0.3, pointRadius: 0, borderWidth: 2 },
+      { label: 'Base Case 9%', data: compound(0.09), borderColor: GOLD, backgroundColor: 'rgba(201,168,76,0.08)', fill: true, tension: 0.3, pointRadius: 0, borderWidth: 3 },
+      { label: 'Optimistic 11%', data: compound(0.11), borderColor: TEAL, backgroundColor: 'transparent', tension: 0.3, pointRadius: 0, borderWidth: 2 },
+      { label: 'Bull Case 13%', data: compound(0.13), borderColor: ORANGE, backgroundColor: 'transparent', tension: 0.3, pointRadius: 0, borderWidth: 2, borderDash: [5,3] }
+    ]
+  },
+  options: {
+    responsive: true,
+    interaction: { mode: 'index', intersect: false },
+    plugins: { legend: { position: 'top' },
+      tooltip: { callbacks: { label: ctx => `${ctx.dataset.label}: $${Math.round(ctx.parsed.y).toLocaleString()}` } }
+    },
+    scales: {
+      y: { beginAtZero: false, min: 80000,
+           ticks: { callback: v => '$' + (v >= 1000000 ? (v/1000000).toFixed(1) + 'M' : (v/1000) + 'K') },
+           grid: { color: 'rgba(255,255,255,0.04)' }
+      },
+      x: { grid: { display: false }, ticks: { maxTicksLimit: 11 } }
+    }
+  }
+});
+
+// ─── INCOME PROJECTION BAR ───
+new Chart(document.getElementById('chartIncome'), {
+  type: 'bar',
+  data: {
+    labels: ['Year 1','Year 3','Year 5','Year 7','Year 10','Year 15','Year 20'],
+    datasets: [{
+      label: 'Estimated Annual Dividend Income ($)',
+      data: [2300, 2750, 3300, 3900, 5000, 7800, 12200],
+      backgroundColor: 'rgba(201,168,76,0.6)',
+      borderColor: GOLD,
+      borderWidth: 1,
+      borderRadius: 6
+    }]
+  },
+  options: {
+    responsive: true,
+    plugins: { legend: { display: false },
+      tooltip: { callbacks: { label: ctx => `$${ctx.parsed.y.toLocaleString()} / year` } }
+    },
+    scales: {
+      y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.04)' },
+           ticks: { callback: v => '$' + v.toLocaleString() } },
+      x: { grid: { display: false } }
+    }
+  }
+});
+</script>
+</body>
+</html>
