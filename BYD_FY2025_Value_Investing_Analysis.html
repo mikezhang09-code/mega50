@@ -140,18 +140,36 @@
     .arrow-up::before { content: "▲ "; color: var(--positive); }
     .arrow-down::before { content: "▼ "; color: var(--negative); }
     .arrow-flat::before { content: "▸ "; color: var(--neutral); }
+
+    /* Return Home Button */
+    .home-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.25);
+      color: #a3d9a5;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 6px 16px;
+      border-radius: 20px;
+      text-decoration: none;
+      margin-bottom: 18px;
+      transition: background 0.2s;
+    }
+    .home-btn:hover {
+      background: rgba(255,255,255,0.22);
+    }
+    .home-btn svg { flex-shrink: 0; }
   </style>
 </head>
 <body>
 
-<div style="max-width:1200px;margin:0 auto;padding:12px 20px 0;">
-  <a href="./index.html" style="display:inline-flex;align-items:center;gap:6px;padding:8px 18px;background:#fff;border:1px solid var(--border);border-radius:8px;color:var(--accent);text-decoration:none;font-size:0.88rem;font-weight:500;transition:border-color 0.2s,transform 0.2s;" onmouseover="this.style.borderColor='var(--accent)';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='var(--border)';this.style.transform='none'">
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-    Return Home
-  </a>
-</div>
-
 <div class="header">
+  <a href="./index.html" class="home-btn">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+    Return to Home
+  </a>
   <h1>BYD Company (1211.HK / 002594.SZ)</h1>
   <div class="sub">FY2025 Annual Results — Value Investing Analysis Update</div>
   <div class="zh-sub">比亚迪 FY2025 年报 — 价值投资分析更新</div>
@@ -178,19 +196,59 @@
       <div class="change down">-1.7pp YoY</div>
     </div>
     <div class="kpi">
-      <div class="label">Net Margin <span class="zh">净利率</span></div>
-      <div class="value">4.1%</div>
-      <div class="change down">-1.1pp YoY</div>
+      <div class="label">Q1'26 Sales <span class="zh">Q1'26销量</span></div>
+      <div class="value" style="color:var(--negative)">700.5K</div>
+      <div class="change down">-30.0% YoY</div>
     </div>
     <div class="kpi">
-      <div class="label">NEV Sales <span class="zh">新能源车销量</span></div>
-      <div class="value">4.60M</div>
-      <div class="change up">+7.7% YoY</div>
+      <div class="label">Q1'26 Exports <span class="zh">Q1'26出口</span></div>
+      <div class="value" style="color:var(--positive)">321.2K</div>
+      <div class="change up">~+56% YoY</div>
     </div>
     <div class="kpi">
       <div class="label">H-Share Price <span class="zh">H股价格</span></div>
-      <div class="value">HK$105.8</div>
+      <div class="value">HK$103.0</div>
       <div class="change flat">52wk: 88.5–159.3</div>
+    </div>
+  </div>
+
+  <!-- Q1 2026 ALERT BOX -->
+  <div class="card" style="border-left:4px solid var(--negative); background:#fff5f5;">
+    <h2 style="color:var(--negative);">⚠ Q1 2026 Sales Data Alert <span class="zh">/ Q1 2026 销量预警</span></h2>
+    <p style="margin-bottom:12px;">BYD's Q1 2026 sales data (just released April 1, 2026) confirms the steep near-term headwinds we flagged in our FY2025 report. This data significantly impacts the near-term outlook:</p>
+    <div class="grid-3">
+      <div class="kpi" style="border-color:var(--negative);">
+        <div class="label">Q1 2026 Total NEV</div>
+        <div class="value" style="font-size:1.2em;color:var(--negative);">700,463</div>
+        <div class="change down">-30.0% YoY / -47.8% QoQ</div>
+      </div>
+      <div class="kpi" style="border-color:var(--negative);">
+        <div class="label">Domestic Sales</div>
+        <div class="value" style="font-size:1.2em;color:var(--negative);">~379K</div>
+        <div class="change down">-58% YoY (Jan-Feb)</div>
+      </div>
+      <div class="kpi" style="border-color:var(--positive);">
+        <div class="label">Overseas Exports</div>
+        <div class="value" style="font-size:1.2em;color:var(--positive);">321,165</div>
+        <div class="change up">~+56% YoY</div>
+      </div>
+    </div>
+
+    <div style="margin-top:16px;">
+      <h3 style="font-size:0.95em; color:var(--accent); margin-bottom:8px;">Monthly Breakdown:</h3>
+      <table>
+        <tr><th>Month</th><th>Total NEV</th><th>YoY</th><th>Overseas</th><th>YoY</th><th>Key Factor</th></tr>
+        <tr><td>Jan 2026</td><td>210,051</td><td class="down">-30.1%</td><td>100,482</td><td class="up">+51.5%</td><td>5% purchase tax reinstated; subsidy removal</td></tr>
+        <tr><td>Feb 2026</td><td>190,190</td><td class="down">-41.1%</td><td>100,600</td><td class="up">+50.1%</td><td>CNY holiday; 6th consecutive monthly decline</td></tr>
+        <tr><td>Mar 2026</td><td>300,222</td><td class="down">-20.5%</td><td>120,083</td><td class="up">+65.1%</td><td>Rebound from Feb; Gen-2 Blade ramp starting</td></tr>
+      </table>
+    </div>
+
+    <div style="margin-top:16px;">
+      <h3 style="font-size:0.95em; color:var(--accent); margin-bottom:8px;">What This Means for Our Thesis:</h3>
+      <p style="font-size:0.9em;"><strong style="color:var(--negative);">DOMESTIC: Worse than expected.</strong> Seven consecutive months of YoY decline. Market share fell from ~27% to ~17–19%. BYD's domestic sales were less than overseas exports in February — a first. The 5% purchase tax reinstatement, subsidy removal, and fierce competition from Xiaomi (YU7 was China's #1 in Jan), Leapmotor, Zeekr, and Geely are all squeezing BYD domestically.</p>
+      <p style="font-size:0.9em; margin-top:8px;"><strong style="color:var(--positive);">OVERSEAS: Better than expected.</strong> Q1 exports of 321K units put BYD on an annualized pace of ~1.28M, supporting the upgraded 1.5M target. March exports of 120K (+65% YoY) were a record. Europe (especially Spain, Netherlands, Norway) and Southeast Asia (rising oil prices driving EV demand) are key growth engines. BYD's overseas share reached ~40% of total sales in March — management says it "could eventually account for half."</p>
+      <p style="font-size:0.9em; margin-top:8px;"><strong style="color:var(--accent);">NET ASSESSMENT:</strong> Q1 confirmed the "two-speed" BYD story. The domestic business is in a genuine trough (Citi warned it could turn unprofitable), while the overseas business is accelerating faster than expected. For value investors, the question is whether the stock price (now HK$103, down ~35% from 52-week high) adequately discounts the domestic weakness. We believe Q2–Q3 will be the key inflection period as Gen-2 Blade Battery models ramp and overseas factories in Hungary/Indonesia come online.</p>
     </div>
   </div>
 
@@ -279,6 +337,43 @@
         <strong>8. Valuation Context Shifted</strong> <span class="zh">/ 估值背景变化</span><br>
         Post-results stock traded at HK$105.8 (pre-split adjusted), down from 52-week high of HK$159.3. P/E now ~22x TTM on post-split EPS of ~¥3.57. Tesla comparison: BYD now ahead on net earnings, revenue, and automotive gross margin. BYD also beat Tesla on net margin for FY2025.
       </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="card">
+        <h2>Prior Analysis vs. FY2025 Actual <span class="zh">/ 之前分析 vs 实际</span></h2>
+        <table>
+          <tr><th>Metric</th><th>Prior Assumption</th><th>FY2025 Actual</th><th>Delta</th></tr>
+          <tr><td>Revenue Growth</td><td>~15–20% YoY</td><td>+3.5%</td><td class="down">Missed ↓</td></tr>
+          <tr><td>Net Profit</td><td>~¥45–50B</td><td>¥32.6B</td><td class="down">Missed ↓</td></tr>
+          <tr><td>Gross Margin</td><td>~19–20%</td><td>17.7%</td><td class="down">Missed ↓</td></tr>
+          <tr><td>NEV Unit Sales</td><td>~5M+</td><td>4.60M</td><td class="warn">Slightly below</td></tr>
+          <tr><td>Overseas Sales</td><td>~800K</td><td>1.05M</td><td class="up">Beat ↑</td></tr>
+          <tr><td>R&D Spend</td><td>~¥55–60B</td><td>¥63.4B</td><td class="up">Higher than expected</td></tr>
+          <tr><td>Dividend</td><td>Modest</td><td>¥0.358/share</td><td class="flat">In line</td></tr>
+          <tr><td>Balance Sheet</td><td>Strong</td><td>Equity +30%</td><td class="up">Better than expected</td></tr>
+          <tr><td>Stock Price (H)</td><td>HK$318 pre-split</td><td>HK$105.8 (post-split ≈ HK$317)</td><td class="flat">Flat vs. prior</td></tr>
+        </table>
+        <p style="font-size:0.82em; color:var(--neutral); margin-top:8px;">Our prior analysis correctly identified margin pressure risk but underestimated the severity. The overseas outperformance was a positive surprise. Net-net, the stock is roughly flat since our initial analysis, suggesting the market had already partially priced in these risks.</p>
+      </div>
+      <div class="card">
+        <h2>Overseas Expansion Trajectory <span class="zh">/ 海外扩张轨迹</span></h2>
+        <div class="chart-container"><canvas id="overseasChart"></canvas></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Portfolio Impact Assessment <span class="zh">/ 组合影响评估</span></h2>
+      <p style="margin-bottom:10px;">Based on our 10-stock global value portfolio context where BYD was included at a "Watch / Starter" position:</p>
+      <table>
+        <tr><th>Assessment Dimension</th><th>Prior Rating</th><th>Updated Rating</th><th>Commentary</th></tr>
+        <tr><td>Business Quality</td><td><span class="badge badge-green">8/10</span></td><td><span class="badge badge-green">8/10</span></td><td>Unchanged. World-class vertical integration, R&D leadership, global scale.</td></tr>
+        <tr><td>Valuation Attractiveness</td><td><span class="badge badge-yellow">5/10</span></td><td><span class="badge badge-yellow">5/10</span></td><td>Stock flat despite weaker results = market adjusting expectations down. Not yet cheap enough for a full position.</td></tr>
+        <tr><td>Margin of Safety</td><td><span class="badge badge-yellow">4/10</span></td><td><span class="badge badge-yellow">4/10</span></td><td>Limited MoS at current prices. Would need HK$70–85 range for adequate MoS.</td></tr>
+        <tr><td>Growth Outlook</td><td><span class="badge badge-green">8/10</span></td><td><span class="badge badge-green">7/10</span></td><td>Downgraded slightly — domestic price war more severe than expected. Overseas is the bright spot.</td></tr>
+        <tr><td>Risk Level</td><td><span class="badge badge-yellow">5/10</span></td><td><span class="badge badge-red">6/10</span></td><td>Elevated — negative FCF, capex doubling, Q1'26 expected weakness, trade policy uncertainty.</td></tr>
+        <tr><td><strong>Overall Confidence</strong></td><td><span class="badge badge-blue">6.0/10</span></td><td><span class="badge badge-blue">5.8/10</span></td><td>Slight downgrade. Thesis intact but near-term headwinds are stronger than expected.</td></tr>
+      </table>
     </div>
   </div>
 
@@ -466,7 +561,9 @@
 
     <div class="card">
       <h2>What We're Watching Next <span class="zh">/ 后续关注</span></h2>
-      <p>Q1 2026 results (expected late April) will be critical — expect sequential weakness from model transitions and Gen-2 Blade Battery rollout. The key question is whether the margin trough occurs in Q1 and recovery begins in Q2. Overseas sales monthly data (targeting 100K+/month) and gross margin trajectory are the most important leading indicators. If domestic margins stabilize while overseas mix improves, the investment thesis strengthens materially.</p>
+      <p><strong>UPDATE (April 2, 2026):</strong> Q1 2026 sales data is now in. Total Q1 NEV sales of 700,463 units (-30% YoY) confirmed the expected weakness. However, the March rebound to 300K+ units and overseas exports accelerating to 120K in March (+65% YoY) provide cautious optimism. The "two-speed" thesis is playing out clearly — domestic in trough, overseas in breakout mode.</p>
+      <p style="margin-top:10px;"><strong>Key monitors for Q2:</strong> (1) April Beijing Auto Show new model launches; (2) Gen-2 Blade Battery rollout breadth — how fast does it spread below ¥200K models? (3) Monthly domestic sales trajectory — does April break the 7-month YoY decline streak? (4) Hungary factory trial production → commercial production timeline; (5) Flash Charging network build pace toward 20,000 stations target; (6) Rising oil prices from Middle East tensions — potential EV demand catalyst globally.</p>
+      <p style="margin-top:10px;"><strong>Revised entry guidance:</strong> With the stock now at HK$103 (down from HK$105.8 when we published the FY25 report just 3 days ago), we are approaching the lower end of the "Watch" zone. A further decline toward HK$85–90 on Q1 financial results (expected late April) would begin to offer adequate margin of safety for a half position. The domestic trough is real but likely temporary; the overseas acceleration is structural.</p>
     </div>
   </div>
 
@@ -500,21 +597,30 @@
   new Chart(document.getElementById('quarterlyProfitChart'), {
     type: 'bar',
     data: {
-      labels: ['Q1\'24','Q2\'24','Q3\'24','Q4\'24','Q1\'25','Q2\'25','Q3\'25','Q4\'25'],
+      labels: ['Q1\'24','Q2\'24','Q3\'24','Q4\'24','Q1\'25','Q2\'25','Q3\'25','Q4\'25','Q1\'26'],
       datasets: [{
         label: 'Net Profit (¥B)',
-        data: [7.27, 8.17, 11.61, 15.02, 9.15, 5.87, 7.82, 9.53],
-        backgroundColor: ['#3498db','#3498db','#3498db','#3498db','#1a5276','#1a5276','#1a5276','#1a5276'],
+        data: [7.27, 8.17, 11.61, 15.02, 9.15, 5.87, 7.82, 9.53, null],
+        backgroundColor: ['#3498db','#3498db','#3498db','#3498db','#1a5276','#1a5276','#1a5276','#1a5276','#95a5a6'],
         borderRadius: 4
+      },{
+        label: 'NEV Sales (K units)',
+        data: [624, 983, 1134, 1524, 1001, 1270, 1001, 1330, 700],
+        type: 'line',
+        borderColor: '#e74c3c',
+        backgroundColor: 'transparent',
+        tension: 0.3,
+        pointRadius: 5,
+        yAxisID: 'y1'
       }]
     },
     options: {
       plugins: {
-        legend: { display: false },
-        title: { display: false }
+        title: { display: true, text: 'Quarterly Profit & Sales Volume (Q1\'26 profit TBD)', font: { size: 11 } }
       },
       scales: {
-        y: { beginAtZero: true, title: { display: true, text: '¥ Billion' } }
+        y: { beginAtZero: true, title: { display: true, text: '¥ Billion' }, position: 'left' },
+        y1: { beginAtZero: true, title: { display: true, text: 'Units (K)' }, position: 'right', grid: { drawOnChartArea: false } }
       }
     }
   });
@@ -689,6 +795,31 @@
     options: {
       scales: {
         r: { min: 0, max: 3, ticks: { stepSize: 1 } }
+      }
+    }
+  });
+
+  // === 8. Overseas Expansion Chart ===
+  new Chart(document.getElementById('overseasChart'), {
+    type: 'bar',
+    data: {
+      labels: ['FY2021','FY2022','FY2023','FY2024','FY2025','FY2026T'],
+      datasets: [
+        {
+          label: 'Overseas Units (K)',
+          data: [15, 55, 243, 420, 1050, 1500],
+          backgroundColor: ['#95a5a6','#95a5a6','#3498db','#3498db','#1e8449','#27ae60'],
+          borderRadius: 4
+        }
+      ]
+    },
+    options: {
+      plugins: {
+        legend: { display: false },
+        title: { display: true, text: 'BYD Overseas Vehicle Sales (Units K) — FY2026T = Target', font: { size: 11 } }
+      },
+      scales: {
+        y: { beginAtZero: true, title: { display: true, text: 'Units (Thousands)' } }
       }
     }
   });
