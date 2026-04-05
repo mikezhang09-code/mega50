@@ -1,0 +1,974 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Berkshire Hathaway — The Greatest Compounding Machine | 伯克希尔·哈撒韦</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=Source+Sans+3:wght@300;400;600;700&family=Noto+Sans+SC:wght@300;400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg-deep: #0a0f1a;
+  --bg-card: #111827;
+  --bg-card-hover: #1a2332;
+  --gold: #c9a84c;
+  --gold-light: #e8d48b;
+  --gold-dim: rgba(201,168,76,0.15);
+  --blue: #3b82f6;
+  --blue-dim: rgba(59,130,246,0.12);
+  --green: #10b981;
+  --red: #ef4444;
+  --text-primary: #f1f5f9;
+  --text-secondary: #94a3b8;
+  --text-cn: #a8c4e0;
+  --border: rgba(201,168,76,0.2);
+  --serif: 'Playfair Display', Georgia, serif;
+  --sans: 'Source Sans 3', sans-serif;
+  --cn: 'Noto Sans SC', sans-serif;
+  --mono: 'JetBrains Mono', monospace;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg-deep);
+  color: var(--text-primary);
+  font-family: var(--sans);
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+/* Noise texture overlay */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 9999;
+}
+::selection { background: var(--gold); color: var(--bg-deep); }
+
+/* ─── HERO ─── */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  position: relative;
+  padding: 2rem;
+  background: radial-gradient(ellipse at 50% 30%, rgba(201,168,76,0.08) 0%, transparent 60%),
+              radial-gradient(ellipse at 80% 70%, rgba(59,130,246,0.06) 0%, transparent 50%),
+              var(--bg-deep);
+}
+.hero::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 200px;
+  background: linear-gradient(transparent, var(--bg-deep));
+}
+.hero-badge {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--gold);
+  border: 1px solid var(--border);
+  padding: 0.4rem 1.2rem;
+  border-radius: 2px;
+  margin-bottom: 2.5rem;
+  opacity: 0;
+  animation: fadeUp 1s 0.2s forwards;
+}
+.hero h1 {
+  font-family: var(--serif);
+  font-size: clamp(2.5rem, 6vw, 5rem);
+  font-weight: 900;
+  line-height: 1.1;
+  max-width: 900px;
+  background: linear-gradient(135deg, var(--text-primary) 0%, var(--gold-light) 50%, var(--gold) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  opacity: 0;
+  animation: fadeUp 1s 0.4s forwards;
+}
+.hero-cn {
+  font-family: var(--cn);
+  font-size: clamp(1.2rem, 2.5vw, 1.8rem);
+  font-weight: 500;
+  color: var(--text-cn);
+  margin-top: 1rem;
+  opacity: 0;
+  animation: fadeUp 1s 0.6s forwards;
+}
+.hero-stat-row {
+  display: flex;
+  gap: 3rem;
+  margin-top: 3rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  opacity: 0;
+  animation: fadeUp 1s 0.8s forwards;
+}
+.hero-stat {
+  text-align: center;
+}
+.hero-stat-value {
+  font-family: var(--mono);
+  font-size: 2rem;
+  font-weight: 600;
+  color: var(--gold);
+}
+.hero-stat-label {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  margin-top: 0.2rem;
+}
+.hero-stat-cn {
+  font-family: var(--cn);
+  font-size: 0.7rem;
+  color: var(--text-cn);
+  opacity: 0.7;
+}
+.scroll-hint {
+  position: absolute;
+  bottom: 60px;
+  z-index: 2;
+  opacity: 0;
+  animation: fadeUp 1s 1.2s forwards;
+}
+.scroll-hint span {
+  display: block;
+  width: 20px;
+  height: 30px;
+  border: 2px solid var(--gold);
+  border-radius: 10px;
+  position: relative;
+}
+.scroll-hint span::after {
+  content: '';
+  width: 4px;
+  height: 8px;
+  background: var(--gold);
+  border-radius: 2px;
+  position: absolute;
+  top: 5px;
+  left: 50%;
+  transform: translateX(-50%);
+  animation: scrollDot 2s infinite;
+}
+
+/* ─── NAV ─── */
+.nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(10,15,26,0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  padding: 0.8rem 2rem;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.nav a {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  text-decoration: none;
+  white-space: nowrap;
+  padding: 0.3rem 0;
+  border-bottom: 2px solid transparent;
+  transition: all 0.3s;
+}
+.nav a:hover, .nav a.active { color: var(--gold); border-bottom-color: var(--gold); }
+
+/* ─── SECTIONS ─── */
+.container { max-width: 1100px; margin: 0 auto; padding: 0 2rem; }
+section { padding: 5rem 0; }
+.section-label {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 0.8rem;
+}
+.section-title {
+  font-family: var(--serif);
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  font-weight: 700;
+  line-height: 1.2;
+  margin-bottom: 0.4rem;
+}
+.section-title-cn {
+  font-family: var(--cn);
+  font-size: clamp(1rem, 2vw, 1.4rem);
+  font-weight: 500;
+  color: var(--text-cn);
+  margin-bottom: 2rem;
+}
+.prose { max-width: 780px; }
+.prose p { margin-bottom: 0.5rem; color: var(--text-secondary); font-size: 1.05rem; }
+.prose .cn { font-family: var(--cn); color: var(--text-cn); font-size: 0.95rem; margin-bottom: 1.8rem; opacity: 0.85; }
+.prose strong { color: var(--text-primary); font-weight: 600; }
+.prose .gold { color: var(--gold); }
+.divider {
+  width: 60px;
+  height: 2px;
+  background: linear-gradient(90deg, var(--gold), transparent);
+  margin: 3rem 0;
+}
+
+/* ─── CARDS ─── */
+.card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin: 2rem 0; }
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 1.8rem;
+  transition: all 0.4s;
+  position: relative;
+  overflow: hidden;
+}
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--gold), var(--blue));
+  opacity: 0;
+  transition: opacity 0.4s;
+}
+.card:hover { background: var(--bg-card-hover); transform: translateY(-2px); }
+.card:hover::before { opacity: 1; }
+.card-year { font-family: var(--mono); font-size: 0.75rem; color: var(--gold); margin-bottom: 0.5rem; }
+.card-title { font-family: var(--serif); font-size: 1.2rem; font-weight: 700; margin-bottom: 0.5rem; }
+.card-title-cn { font-family: var(--cn); font-size: 0.9rem; color: var(--text-cn); margin-bottom: 0.8rem; }
+.card-body { font-size: 0.9rem; color: var(--text-secondary); line-height: 1.6; }
+.card-body .cn { font-family: var(--cn); color: var(--text-cn); font-size: 0.85rem; opacity: 0.8; display: block; margin-top: 0.5rem; }
+.card-amount { font-family: var(--mono); font-size: 1.4rem; font-weight: 600; color: var(--green); margin: 0.8rem 0 0.3rem; }
+.card-return { font-family: var(--mono); font-size: 0.85rem; color: var(--gold); }
+
+/* ─── CHART CONTAINERS ─── */
+.chart-container {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 2rem;
+  margin: 2rem 0;
+}
+.chart-title {
+  font-family: var(--serif);
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin-bottom: 0.3rem;
+}
+.chart-title-cn {
+  font-family: var(--cn);
+  font-size: 0.9rem;
+  color: var(--text-cn);
+  margin-bottom: 1.5rem;
+}
+canvas { width: 100% !important; max-height: 400px; }
+
+/* ─── TIMELINE ─── */
+.timeline { position: relative; padding-left: 40px; margin: 2rem 0; }
+.timeline::before { content: ''; position: absolute; left: 15px; top: 0; bottom: 0; width: 2px; background: linear-gradient(180deg, var(--gold), var(--blue), var(--gold)); }
+.tl-item { position: relative; margin-bottom: 2rem; }
+.tl-dot {
+  position: absolute;
+  left: -33px;
+  top: 4px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--gold);
+  border: 3px solid var(--bg-deep);
+  box-shadow: 0 0 0 2px var(--gold);
+}
+.tl-year { font-family: var(--mono); font-size: 0.8rem; color: var(--gold); }
+.tl-title { font-family: var(--serif); font-size: 1.1rem; font-weight: 700; margin: 0.2rem 0; }
+.tl-title-cn { font-family: var(--cn); font-size: 0.85rem; color: var(--text-cn); }
+.tl-body { font-size: 0.9rem; color: var(--text-secondary); margin-top: 0.4rem; }
+.tl-body .cn { font-family: var(--cn); color: var(--text-cn); font-size: 0.85rem; opacity: 0.8; display: block; margin-top: 0.3rem; }
+
+/* ─── STAT BLOCKS ─── */
+.stat-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin: 2rem 0; }
+.stat-block {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 1.5rem;
+  text-align: center;
+}
+.stat-value { font-family: var(--mono); font-size: 2rem; font-weight: 600; color: var(--gold); }
+.stat-label { font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.3rem; }
+.stat-label-cn { font-family: var(--cn); font-size: 0.75rem; color: var(--text-cn); opacity: 0.7; }
+.stat-green .stat-value { color: var(--green); }
+.stat-red .stat-value { color: var(--red); }
+.stat-blue .stat-value { color: var(--blue); }
+
+/* ─── MISTAKES TABLE ─── */
+.mistake-table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; font-size: 0.9rem; }
+.mistake-table th {
+  text-align: left;
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--gold);
+  padding: 0.8rem;
+  border-bottom: 2px solid var(--border);
+}
+.mistake-table td {
+  padding: 0.8rem;
+  border-bottom: 1px solid rgba(201,168,76,0.1);
+  color: var(--text-secondary);
+  vertical-align: top;
+}
+.mistake-table tr:hover td { background: var(--gold-dim); }
+.mistake-table .loss { color: var(--red); font-family: var(--mono); font-weight: 600; }
+
+/* ─── QUOTE ─── */
+.quote-block {
+  border-left: 3px solid var(--gold);
+  padding: 1.5rem 2rem;
+  margin: 2rem 0;
+  background: var(--gold-dim);
+  border-radius: 0 6px 6px 0;
+}
+.quote-block p {
+  font-family: var(--serif);
+  font-size: 1.15rem;
+  font-style: italic;
+  color: var(--text-primary);
+  line-height: 1.6;
+}
+.quote-block .cn {
+  font-family: var(--cn);
+  font-size: 0.95rem;
+  color: var(--text-cn);
+  font-style: normal;
+  margin-top: 0.5rem;
+  display: block;
+}
+.quote-author { font-size: 0.85rem; color: var(--gold); margin-top: 0.8rem; font-style: normal; }
+
+/* ─── FOOTER ─── */
+footer {
+  border-top: 1px solid var(--border);
+  padding: 3rem 2rem;
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+}
+footer .cn { font-family: var(--cn); color: var(--text-cn); opacity: 0.6; }
+
+/* ─── ANIMATIONS ─── */
+@keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes scrollDot { 0%,20% { transform: translateX(-50%) translateY(0); opacity: 1; } 100% { transform: translateX(-50%) translateY(12px); opacity: 0; } }
+.reveal { opacity: 0; transform: translateY(30px); transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
+.reveal.visible { opacity: 1; transform: translateY(0); }
+
+/* ─── RESPONSIVE ─── */
+@media (max-width: 768px) {
+  .hero-stat-row { gap: 1.5rem; }
+  .hero-stat-value { font-size: 1.5rem; }
+  .card-grid { grid-template-columns: 1fr; }
+  .stat-row { grid-template-columns: repeat(2, 1fr); }
+  .nav { padding: 0.6rem 1rem; gap: 1rem; }
+  section { padding: 3rem 0; }
+  .container { padding: 0 1.2rem; }
+  .mistake-table { font-size: 0.8rem; }
+}
+/* ─── HOME BUTTON ─── */
+.home-btn {
+  position: fixed;
+  top: 1.2rem;
+  left: 1.2rem;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: rgba(17, 24, 39, 0.85);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--gold);
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  opacity: 0;
+  animation: fadeUp 1s 0.3s forwards;
+}
+.home-btn:hover {
+  background: var(--gold-dim);
+  border-color: var(--gold);
+  color: var(--gold-light);
+  transform: translateX(-2px);
+}
+.home-btn svg {
+  flex-shrink: 0;
+  transition: transform 0.3s;
+}
+.home-btn:hover svg {
+  transform: translateX(-3px);
+}
+</style>
+</head>
+<body>
+
+<!-- HOME BUTTON -->
+<a href="./index.html" class="home-btn" title="Return to MegaCap 50 Home">
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+  <span>Home</span>
+</a>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-badge">1839 — 2026 · Bilingual Research Report · 双语研究报告</div>
+  <h1>The Greatest Compounding Machine in History</h1>
+  <div class="hero-cn">伯克希尔·哈撒韦如何成为历史上最伟大的复利机器</div>
+  <div class="hero-stat-row">
+    <div class="hero-stat">
+      <div class="hero-stat-value">19.9%</div>
+      <div class="hero-stat-label">Annual Compound Return</div>
+      <div class="hero-stat-cn">年化复合回报率</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hero-stat-value">$1T+</div>
+      <div class="hero-stat-label">Market Capitalization</div>
+      <div class="hero-stat-cn">市值</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hero-stat-value">$174B</div>
+      <div class="hero-stat-label">Insurance Float (2025)</div>
+      <div class="hero-stat-cn">保险浮存 (2025)</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hero-stat-value">60 yrs</div>
+      <div class="hero-stat-label">Compounding Duration</div>
+      <div class="hero-stat-cn">复利持续时间</div>
+    </div>
+  </div>
+  <div class="scroll-hint"><span></span></div>
+</section>
+
+<!-- NAV -->
+<nav class="nav">
+  <a href="#origins">I. Origins 起源</a>
+  <a href="#seeds">II. Seeds 播种</a>
+  <a href="#insurance">III. Insurance 保险</a>
+  <a href="#golden">IV. Golden Age 黄金</a>
+  <a href="#giant">V. Giant 巨人</a>
+  <a href="#modern">VI. Modern 现代</a>
+  <a href="#float">VII. Float 浮存</a>
+  <a href="#mistakes">VIII. Mistakes 错误</a>
+</nav>
+
+<div class="container">
+
+<!-- ═══════ SECTION I ═══════ -->
+<section id="origins" class="reveal">
+  <div class="section-label">Chapter I · 第一章</div>
+  <div class="section-title">A Textile Mill and a Grudge</div>
+  <div class="section-title-cn">一家纺织厂与一场怨恨 (1839–1965)</div>
+  <div class="prose">
+    <p>Berkshire Hathaway's corporate lineage stretches back to <strong>1839</strong>, when Oliver Chace established a textile mill in Rhode Island. The Hathaway Manufacturing Company was founded in <strong>1888</strong>. In 1955, the two merged into Berkshire Hathaway — <strong>12,000 employees, 15 plants, $53M net worth</strong>. By 1964, only two mills remained. Net worth had collapsed to <strong>$22 million</strong>.</p>
+    <p class="cn">伯克希尔·哈撒韦的企业谱系可追溯到1839年。1955年两家企业合并，拥有12,000名员工、15家工厂、净资产约5,300万美元。到1964年，只剩两家工厂，净资产缩水至约2,200万美元。</p>
+    <p>In <strong>1962</strong>, a 31-year-old Warren Buffett began buying shares at <strong>$7.50</strong>. When Seabury Stanton shorted the agreed tender price by one-eighth of a dollar — from $11.50 to $11.375 — Buffett was so enraged he bought control of the entire company out of spite. By <strong>May 10, 1965</strong>, he had enough shares to seize the board.</p>
+    <p class="cn">1962年，31岁的巴菲特以每股约7.50美元开始买入。当斯坦顿将约定价格少了八分之一美元时，巴菲特怒不可遏，出于赌气买下了整个公司的控制权。</p>
+  </div>
+
+  <div class="quote-block">
+    <p>"The dumbest stock I ever bought — not because it lost money, but because of the staggering opportunity cost."</p>
+    <span class="cn">"我买过的最愚蠢的股票——不是因为亏了钱，而是因为惊人的机会成本。"</span>
+    <div class="quote-author">— Warren Buffett 沃伦·巴菲特</div>
+  </div>
+
+  <div class="stat-row">
+    <div class="stat-block">
+      <div class="stat-value">$7.50</div>
+      <div class="stat-label">Entry Price Per Share</div>
+      <div class="stat-label-cn">每股买入价</div>
+    </div>
+    <div class="stat-block stat-red">
+      <div class="stat-value">$200B+</div>
+      <div class="stat-label">Estimated Opportunity Cost</div>
+      <div class="stat-label-cn">估计机会成本</div>
+    </div>
+    <div class="stat-block stat-green">
+      <div class="stat-value">$809K</div>
+      <div class="stat-label">2025 All-Time High (Class A)</div>
+      <div class="stat-label-cn">2025年历史高价 (A类)</div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══════ SECTION II ═══════ -->
+<section id="seeds" class="reveal">
+  <div class="section-label">Chapter II · 第二章</div>
+  <div class="section-title">Planting the Seeds of an Empire</div>
+  <div class="section-title-cn">播下帝国的种子 (1965–1975)</div>
+
+  <div class="card-grid">
+    <div class="card">
+      <div class="card-year">1967 · MARCH</div>
+      <div class="card-title">National Indemnity</div>
+      <div class="card-title-cn">国民赔偿公司：发现浮存的力量</div>
+      <div class="card-body">
+        Acquired for <strong>$8.6 million</strong> from Jack Ringwalt. Net worth $6.7M with <strong>$17-19M in float</strong>. Buffett paid $8.6M for the right to invest $19M of other people's money indefinitely.
+        <span class="cn">以860万美元收购。净资产670万美元，浮存约1,700-1,900万美元。巴菲特用860万美元获得了无限期投资1,900万美元他人资金的权利。</span>
+      </div>
+      <div class="card-amount">$8.6M → $174B float</div>
+      <div class="card-return">Float grew 10,000x over 58 years</div>
+    </div>
+    <div class="card">
+      <div class="card-year">1972 · JANUARY</div>
+      <div class="card-title">See's Candies — The Turning Point</div>
+      <div class="card-title-cn">喜诗糖果——转折点</div>
+      <div class="card-body">
+        Acquired for <strong>$25 million</strong>. 60% pre-tax return on tangible assets. Generated <strong>$2B+ cumulative earnings</strong> with only $32M reinvestment. This purchase transformed Buffett from a "cigar butt" investor to a quality investor.
+        <span class="cn">以2,500万美元收购。有形资产税前回报率60%。产生了超过20亿美元的累计收益，仅需3,200万美元再投资。这次收购将巴菲特从"雪茄屁股"投资者转变为品质投资者。</span>
+      </div>
+      <div class="card-amount">$25M → $2B+ earnings</div>
+      <div class="card-return">Return exceeds 8,000%</div>
+    </div>
+    <div class="card">
+      <div class="card-year">1973</div>
+      <div class="card-title">The Washington Post</div>
+      <div class="card-title-cn">华盛顿邮报：耐心的力量</div>
+      <div class="card-body">
+        Invested <strong>$10.6 million</strong> when market cap was $80M but intrinsic value was $400-500M — paying 25 cents on the dollar. By 1985, worth <strong>$221 million</strong>.
+        <span class="cn">在市值8,000万美元时投资1,060万美元，但内在价值为4-5亿美元。到1985年价值2.21亿美元。</span>
+      </div>
+      <div class="card-amount">$10.6M → $1.23B</div>
+      <div class="card-return">32% annualized return</div>
+    </div>
+  </div>
+
+  <div class="quote-block">
+    <p>"If we hadn't bought See's, we wouldn't have bought Coca-Cola in 1988."</p>
+    <span class="cn">"如果我们没有买喜诗，我们就不会在1988年买可口可乐。"</span>
+    <div class="quote-author">— Warren Buffett, 1997 Annual Meeting</div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══════ SECTION III ═══════ -->
+<section id="insurance" class="reveal">
+  <div class="section-label">Chapter III · 第三章</div>
+  <div class="section-title">Building the Insurance Engine</div>
+  <div class="section-title-cn">构建保险引擎 (1975–1990)</div>
+
+  <div class="card-grid">
+    <div class="card">
+      <div class="card-year">1976–1996 · GEICO</div>
+      <div class="card-title">GEICO: Maximum Despair to Maximum Profit</div>
+      <div class="card-title-cn">GEICO：从最绝望到最大利润</div>
+      <div class="card-body">
+        Stock crashed from $61 to $2. Buffett invested <strong>$23.5M in 1976</strong>. By 1995, worth <strong>$2.393 billion</strong>. Acquired remaining 49% for $2.3B in 1996.
+        <span class="cn">股价从61美元暴跌至2美元。巴菲特1976年投资2,350万美元。到1995年价值23.93亿美元。</span>
+      </div>
+      <div class="card-amount">$23.5M → $2.4B</div>
+      <div class="card-return">5,136% gain · 回报率5,136%</div>
+    </div>
+    <div class="card">
+      <div class="card-year">1988–1989 · COCA-COLA</div>
+      <div class="card-title">Coca-Cola: The Ultimate Moat</div>
+      <div class="card-title-cn">可口可乐：终极护城河</div>
+      <div class="card-body">
+        Invested <strong>$1.02 billion</strong> for 7% of the company. Never sold. Worth <strong>~$28 billion</strong> by 2025. Generates <strong>$848M/year</strong> in dividends — 65% annual yield on cost.
+        <span class="cn">投资10.2亿美元获得公司7%股份。从未卖出。到2025年价值约280亿美元。每年产生8.48亿美元股息——成本基础上65%的年化收益率。</span>
+      </div>
+      <div class="card-amount">$1.02B → $28B</div>
+      <div class="card-return">65% yield on cost · 成本收益率65%</div>
+    </div>
+    <div class="card">
+      <div class="card-year">1986 · AJIT JAIN</div>
+      <div class="card-title">Ajit Jain: Super-Catastrophe Empire</div>
+      <div class="card-title-cn">阿吉特·贾恩：超级巨灾帝国</div>
+      <div class="card-body">
+        Zero insurance experience. Built Berkshire Re into the world's premier catastrophe reinsurer. Created <strong>$34-37B in float</strong> with cumulative underwriting profit from a standing start.
+        <span class="cn">零保险经验。将伯克希尔再保险打造成世界顶级巨灾再保险公司。从零开始创造了340-370亿美元的浮存。</span>
+      </div>
+      <div class="card-amount">$0 → $37B float</div>
+      <div class="card-return">Built from scratch · 从零开始</div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══════ SECTION IV ═══════ -->
+<section id="golden" class="reveal">
+  <div class="section-label">Chapter IV · 第四章</div>
+  <div class="section-title">Crises, Elephants, and the Golden Age</div>
+  <div class="section-title-cn">危机、大象与黄金时代 (1990–2005)</div>
+
+  <div class="timeline">
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div class="tl-year">1991</div>
+      <div class="tl-title">Salomon Brothers Crisis</div>
+      <div class="tl-title-cn">所罗门兄弟危机</div>
+      <div class="tl-body">Buffett became interim chairman at $1/year. Investment of $700M ultimately yielded $1.7B. Crystallized the maxim about reputation.
+        <span class="cn">巴菲特以年薪1美元担任临时董事长。7亿美元投资最终产生17亿美元回报。</span>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot" style="background:var(--red)"></div>
+      <div class="tl-year">1993</div>
+      <div class="tl-title">Dexter Shoe — The Worst Deal</div>
+      <div class="tl-title-cn">德克斯特鞋业——最糟糕的交易</div>
+      <div class="tl-body">Paid $433M <em>in Berkshire stock</em>. Value went to zero. Those shares would be worth <strong style="color:var(--red)">$12B+ by 2023</strong>. Iron rule born: never pay with stock.
+        <span class="cn">以4.33亿美元的伯克希尔股票支付。价值归零。那些股票到2023年将价值超过120亿美元。</span>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div class="tl-year">1998</div>
+      <div class="tl-title">General Re — $22 Billion Lesson</div>
+      <div class="tl-title-cn">通用再保险——220亿美元的教训</div>
+      <div class="tl-body">All-stock deal valued at $22B. Hidden reserves, derivatives mess. True cost: <strong style="color:var(--red)">$70B in Berkshire shares</strong>. Pivoted permanently to cash-only deals.
+        <span class="cn">价值220亿美元的全股票交易。隐藏准备金、衍生品混乱。真实成本：700亿美元的伯克希尔股份。从此永久转向纯现金交易。</span>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div class="tl-year">1999</div>
+      <div class="tl-title">MidAmerican Energy → BHE</div>
+      <div class="tl-title-cn">中美能源→伯克希尔能源</div>
+      <div class="tl-body">Acquired 76% for $2.1B. Greg Abel became CEO. Opened the regulated utility pillar, eventually rebranded as Berkshire Hathaway Energy in 2014.
+        <span class="cn">以21亿美元收购76%股权。格雷格·阿贝尔成为CEO。开辟了受监管的公用事业支柱。</span>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div class="tl-year">2002–03</div>
+      <div class="tl-title">PetroChina — The 8x Return</div>
+      <div class="tl-title-cn">中石油——8倍回报</div>
+      <div class="tl-body">Invested $488M after reading the annual report. Estimated value at $100B vs $37B market cap. Sold in 2007 for ~$4B — 55% annualized.
+        <span class="cn">阅读年报后投资4.88亿美元。估计价值1,000亿美元，市值仅370亿美元。2007年以约40亿美元卖出。</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══════ SECTION V ═══════ -->
+<section id="giant" class="reveal">
+  <div class="section-label">Chapter V · 第五章</div>
+  <div class="section-title">Berkshire Becomes a Giant</div>
+  <div class="section-title-cn">伯克希尔成为巨人 (2005–2016)</div>
+
+  <!-- Investment Returns Chart -->
+  <div class="chart-container">
+    <div class="chart-title">Landmark Investments: Cost vs. Value</div>
+    <div class="chart-title-cn">里程碑投资：成本 vs 价值（十亿美元）</div>
+    <canvas id="investmentChart"></canvas>
+  </div>
+
+  <div class="card-grid">
+    <div class="card">
+      <div class="card-year">2008 · FINANCIAL CRISIS</div>
+      <div class="card-title">Crisis Deals: Goldman & GE</div>
+      <div class="card-title-cn">危机交易：高盛与通用电气</div>
+      <div class="card-body">
+        Deployed <strong>$8B in 8 days</strong>. Goldman: $5B at 10% + warrants = ~$3.7B profit. GE: $3B at 10% + warrants = ~$1.5B profit. Published iconic "Buy American" op-ed.
+        <span class="cn">8天部署80亿美元。高盛：50亿美元+认股权证≈37亿美元利润。通用电气：30亿美元≈15亿美元利润。</span>
+      </div>
+      <div class="card-amount">$8B → $13.2B profit</div>
+    </div>
+    <div class="card">
+      <div class="card-year">2010 · BNSF RAILWAY</div>
+      <div class="card-title">BNSF: All-in Wager on America</div>
+      <div class="card-title-cn">BNSF：对美国的全部赌注</div>
+      <div class="card-body">
+        Acquired for <strong>~$44 billion</strong>. 32,500 miles of track. Has paid <strong>$47.7B+ in distributions</strong> since acquisition. Pre-tax earnings: $6.6B in 2024.
+        <span class="cn">以约440亿美元收购。32,500英里铁路。收购以来已支付超过477亿美元分红。</span>
+      </div>
+      <div class="card-amount">$44B → $47.7B+ distributions</div>
+    </div>
+    <div class="card">
+      <div class="card-year">2016 · APPLE</div>
+      <div class="card-title">Apple: Greatest Stock Investment Ever</div>
+      <div class="card-title-cn">苹果：有史以来最伟大的股票投资</div>
+      <div class="card-body">
+        Built ~1B share position at ~$35/share. Total cost: <strong>$36 billion</strong>. Peak value: <strong>$175 billion+</strong>. Apple was understood as a consumer brand, not a tech company.
+        <span class="cn">以约每股35美元建立近10亿股持仓。总成本360亿美元。峰值价值超过1,750亿美元。</span>
+      </div>
+      <div class="card-amount">$36B → $175B+</div>
+      <div class="card-return">~$140B in gains · 约1,400亿美元收益</div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══════ SECTION VI ═══════ -->
+<section id="modern" class="reveal">
+  <div class="section-label">Chapter VI · 第六章</div>
+  <div class="section-title">The Modern Era & End of an Epoch</div>
+  <div class="section-title-cn">现代与一个时代的结束 (2016–2026)</div>
+
+  <div class="stat-row">
+    <div class="stat-block">
+      <div class="stat-value">$373B</div>
+      <div class="stat-label">Cash Position (YE 2025)</div>
+      <div class="stat-label-cn">现金头寸 (2025年末)</div>
+    </div>
+    <div class="stat-block stat-green">
+      <div class="stat-value">$23.5B</div>
+      <div class="stat-label">Japan Trading Houses Value</div>
+      <div class="stat-label-cn">日本商社市值</div>
+    </div>
+    <div class="stat-block stat-blue">
+      <div class="stat-value">28%+</div>
+      <div class="stat-label">Occidental Petroleum Stake</div>
+      <div class="stat-label-cn">西方石油持股比例</div>
+    </div>
+    <div class="stat-block">
+      <div class="stat-value">Jan 1, 2026</div>
+      <div class="stat-label">Greg Abel Becomes CEO</div>
+      <div class="stat-label-cn">格雷格·阿贝尔就任CEO</div>
+    </div>
+  </div>
+
+  <div class="prose">
+    <p>On <strong>May 3, 2025</strong>, the 94-year-old Buffett stunned 40,000 shareholders by announcing his retirement. <strong>Greg Abel</strong> became CEO on January 1, 2026 — less than 18 months after Charlie Munger's death on November 28, 2023, at age 99. Berkshire was a net seller of equities for <strong>13 consecutive quarters</strong>.</p>
+    <p class="cn">2025年5月3日，94岁的巴菲特宣布退休，震惊了4万名股东。格雷格·阿贝尔于2026年1月1日成为CEO——距芒格2023年11月28日去世不到18个月。伯克希尔连续13个季度净卖出股票。</p>
+  </div>
+
+  <!-- Cash Growth Chart -->
+  <div class="chart-container">
+    <div class="chart-title">The Unprecedented Cash Fortress</div>
+    <div class="chart-title-cn">史无前例的现金堡垒（十亿美元）</div>
+    <canvas id="cashChart"></canvas>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══════ SECTION VII ═══════ -->
+<section id="float" class="reveal">
+  <div class="section-label">Chapter VII · 第七章</div>
+  <div class="section-title">The Float Flywheel</div>
+  <div class="section-title-cn">浮存飞轮——伯克希尔的金融引擎</div>
+
+  <div class="chart-container">
+    <div class="chart-title">Insurance Float Growth: $17M → $174B (1967–2025)</div>
+    <div class="chart-title-cn">保险浮存增长：1,700万 → 1,740亿美元</div>
+    <canvas id="floatChart"></canvas>
+  </div>
+
+  <div class="prose">
+    <p>Float grew at a <strong class="gold">16–18% compound annual rate</strong> over five decades. The mechanism is deceptively simple: premiums collected today fund claims paid years or decades later, with the intervening capital invested in stocks, bonds, and whole companies. When underwriting is profitable, the float is <strong>better than free</strong> — because the insurer is being paid to hold other people's money.</p>
+    <p class="cn">浮存在五十年间以16-18%的年复合增长率增长。机制看似简单：今天收取的保费用于支付数年或数十年后的理赔，其间的资金投资于股票、债券和整个企业。当承保盈利时，浮存比免费还好——因为保险公司实际上是在收取费用来持有别人的钱。</p>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══════ SECTION VIII ═══════ -->
+<section id="mistakes" class="reveal">
+  <div class="section-label">Chapter VIII · 第八章</div>
+  <div class="section-title">The Ledger of Mistakes</div>
+  <div class="section-title-cn">错误账本</div>
+
+  <div class="prose">
+    <p>Buffett's willingness to publicly catalogue his errors became itself a competitive advantage — reinforcing credibility and attracting future deal flow.</p>
+    <p class="cn">巴菲特愿意公开编录自己的错误，这本身就成为了竞争优势——强化信誉并吸引未来的交易流。</p>
+  </div>
+
+  <div class="chart-container" style="overflow-x:auto">
+    <table class="mistake-table">
+      <thead>
+        <tr><th>Year 年份</th><th>Investment 投资</th><th>Cost 成本</th><th>Lesson 教训</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>1962</td><td>Berkshire Hathaway 伯克希尔</td><td class="loss">$200B+ opp. cost</td><td>Never let emotion drive decisions<br><span style="color:var(--text-cn);font-family:var(--cn);font-size:0.8rem">永远不要让情绪驱动决策</span></td></tr>
+        <tr><td>1993</td><td>Dexter Shoe 德克斯特鞋业</td><td class="loss">$12B+ in stock</td><td>Never pay with Berkshire stock<br><span style="color:var(--text-cn);font-family:var(--cn);font-size:0.8rem">永远不用伯克希尔股票支付</span></td></tr>
+        <tr><td>1998</td><td>General Re 通用再保险</td><td class="loss">$70B true cost</td><td>Verify reserves, understand worst case<br><span style="color:var(--text-cn);font-family:var(--cn);font-size:0.8rem">验证准备金，理解最坏情况</span></td></tr>
+        <tr><td>2015</td><td>Kraft Heinz 卡夫亨氏</td><td class="loss">$3.76B write-down</td><td>Cost-cutting alone can't sustain advantage<br><span style="color:var(--text-cn);font-family:var(--cn);font-size:0.8rem">仅靠削减成本无法维持竞争优势</span></td></tr>
+        <tr><td>2016</td><td>Precision Castparts 精密铸件</td><td class="loss">$11B write-down</td><td>Even great businesses can be overpaid for<br><span style="color:var(--text-cn);font-family:var(--cn);font-size:0.8rem">即使是伟大的企业也可能被高估</span></td></tr>
+        <tr><td>2020</td><td>Airlines 航空公司</td><td class="loss">$3-5B loss</td><td>Selling into panic can be costly<br><span style="color:var(--text-cn);font-family:var(--cn);font-size:0.8rem">恐慌中卖出有时代价高昂</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══════ CONCLUSION ═══════ -->
+<section class="reveal" style="padding-bottom:4rem">
+  <div class="section-label">Conclusion · 结论</div>
+  <div class="section-title">The Machine Beyond the Maker</div>
+  <div class="section-title-cn">超越创造者的机器</div>
+  <div class="prose">
+    <p>Berkshire's transformation from a $22 million textile wreck into a <strong class="gold">$1+ trillion</strong> conglomerate rests on an interlocking system of structural advantages: insurance float providing hundreds of billions in free capital, decentralized culture attracting exceptional managers, and permanent-capital structure enabling patient compounding.</p>
+    <p class="cn">伯克希尔从净资产2,200万美元的纺织业残骸转变为超过万亿美元的企业集团，依靠的是一套相互联锁的结构性优势：保险浮存提供数千亿美元免费资本、去中心化文化吸引优秀管理者、永久资本结构使耐心的长期复利成为可能。</p>
+  </div>
+
+  <div class="quote-block">
+    <p>"Compounding is not magic but discipline."</p>
+    <span class="cn">"复利不是魔法，而是纪律。"</span>
+    <div class="quote-author">— The Ultimate Lesson 终极教训</div>
+  </div>
+</section>
+
+</div><!-- /container -->
+
+<footer>
+  <p>Berkshire Hathaway Bilingual Research Report · 伯克希尔·哈撒韦双语研究报告</p>
+  <p class="cn" style="margin-top:0.3rem">English – Chinese Edition · 英文–中文版 · 1839–2026</p>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script>
+// ─── SCROLL REVEAL ───
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.1 });
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+// ─── ACTIVE NAV ───
+const sections = document.querySelectorAll('section[id]');
+const navLinks = document.querySelectorAll('.nav a');
+window.addEventListener('scroll', () => {
+  let current = '';
+  sections.forEach(s => { if (window.scrollY >= s.offsetTop - 200) current = s.id; });
+  navLinks.forEach(a => { a.classList.toggle('active', a.getAttribute('href') === '#' + current); });
+});
+
+// ─── CHART CONFIG ───
+const chartFont = { family: "'Source Sans 3', sans-serif", size: 12 };
+const gridColor = 'rgba(201,168,76,0.1)';
+const tickColor = '#94a3b8';
+
+Chart.defaults.color = tickColor;
+Chart.defaults.font = chartFont;
+
+// ─── INVESTMENT CHART ───
+new Chart(document.getElementById('investmentChart'), {
+  type: 'bar',
+  data: {
+    labels: ["See's\n喜诗", "GEICO", "Coca-Cola\n可口可乐", "BNSF\n铁路", "Apple\n苹果", "Japan\n日本商社"],
+    datasets: [
+      {
+        label: 'Cost ($B)',
+        data: [0.025, 0.046, 1.02, 44, 36, 13.8],
+        backgroundColor: 'rgba(59,130,246,0.7)',
+        borderColor: '#3b82f6',
+        borderWidth: 1,
+        borderRadius: 3
+      },
+      {
+        label: 'Value / Return ($B)',
+        data: [2, 2.4, 28, 47.7, 175, 23.5],
+        backgroundColor: 'rgba(201,168,76,0.7)',
+        borderColor: '#c9a84c',
+        borderWidth: 1,
+        borderRadius: 3
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    plugins: {
+      legend: { labels: { padding: 20, usePointStyle: true, pointStyle: 'rect' } },
+      tooltip: { callbacks: { label: ctx => ctx.dataset.label + ': $' + ctx.parsed.y + 'B' } }
+    },
+    scales: {
+      y: { type: 'logarithmic', grid: { color: gridColor }, ticks: { callback: v => '$' + v + 'B' }, title: { display: true, text: 'Billions (log scale) 十亿美元（对数）', color: tickColor } },
+      x: { grid: { display: false } }
+    }
+  }
+});
+
+// ─── FLOAT CHART ───
+new Chart(document.getElementById('floatChart'), {
+  type: 'line',
+  data: {
+    labels: ['1967', '1970', '1975', '1980', '1985', '1990', '1995', '2000', '2005', '2010', '2015', '2017', '2020', '2024', '2025'],
+    datasets: [{
+      label: 'Float ($B)',
+      data: [0.017, 0.039, 0.095, 0.237, 0.8, 1.6, 7.6, 27.9, 49.3, 65.8, 87.7, 114.5, 138, 171, 174],
+      fill: true,
+      backgroundColor: 'rgba(201,168,76,0.12)',
+      borderColor: '#c9a84c',
+      borderWidth: 2.5,
+      pointBackgroundColor: '#c9a84c',
+      pointBorderColor: '#0a0f1a',
+      pointBorderWidth: 2,
+      pointRadius: 4,
+      pointHoverRadius: 7,
+      tension: 0.35
+    }]
+  },
+  options: {
+    responsive: true,
+    plugins: {
+      legend: { display: false },
+      tooltip: { callbacks: { label: ctx => '$' + ctx.parsed.y + 'B' } }
+    },
+    scales: {
+      y: { grid: { color: gridColor }, ticks: { callback: v => '$' + v + 'B' }, title: { display: true, text: 'Float (Billions) 浮存（十亿美元）', color: tickColor } },
+      x: { grid: { color: gridColor } }
+    }
+  }
+});
+
+// ─── CASH CHART ───
+new Chart(document.getElementById('cashChart'), {
+  type: 'bar',
+  data: {
+    labels: ['2015', '2016', '2017', '2018', '2019', '2020', '2021', '2022', '2023', '2024', 'Q3 2025', 'YE 2025'],
+    datasets: [{
+      label: 'Cash & T-Bills ($B)',
+      data: [72, 86, 116, 112, 128, 138, 149, 109, 168, 334, 382, 373],
+      backgroundColor: ctx => {
+        const g = ctx.chart.ctx.createLinearGradient(0, 0, 0, 400);
+        g.addColorStop(0, 'rgba(201,168,76,0.8)');
+        g.addColorStop(1, 'rgba(201,168,76,0.2)');
+        return g;
+      },
+      borderColor: '#c9a84c',
+      borderWidth: 1,
+      borderRadius: 4
+    }]
+  },
+  options: {
+    responsive: true,
+    plugins: {
+      legend: { display: false },
+      tooltip: { callbacks: { label: ctx => '$' + ctx.parsed.y + 'B' } }
+    },
+    scales: {
+      y: { grid: { color: gridColor }, ticks: { callback: v => '$' + v + 'B' }, title: { display: true, text: 'Cash & Equivalents (Billions) 现金（十亿美元）', color: tickColor } },
+      x: { grid: { display: false } }
+    }
+  }
+});
+</script>
+</body>
+</html>
