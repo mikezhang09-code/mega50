@@ -135,6 +135,7 @@ var CATEGORIES = {
           { id: "fosun-fy2025", label: "Fosun Int'l FY2025", url: "./fosun_fy25_analysis.html", icon: "doc" },
           { id: "berkshire", label: "Berkshire Hathaway", url: "./berkshire_hathaway_report.html", icon: "doc" },
           { id: "xiaomi", label: "Xiaomi (1810.HK)", url: "./xiaomi_investment_analysis.html", icon: "doc" },
+          { id: "xiaomi-intrinsic", label: "Xiaomi Intrinsic Value", url: "./xiaomi-1810hk-intrinsic-value-report.html", icon: "doc" },
         ],
       },
       {
