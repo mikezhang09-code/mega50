@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Xiaomi Corporation (1810.HK) Value Investment Analysis</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Source+Sans+3:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --en-color: #1a1a2e;
+  --zh-color: #4A6741;
+  --accent: #ff6900;
+  --accent-dark: #cc5400;
+  --deep-navy: #151515;
+  --slate: #2b2b2b;
+  --card-bg: #fafafa;
+  --bg: #f2f2f2;
+  --positive: #008000;
+  --negative: #d32f2f;
+  --warning: #f57c00;
+  --text: #333333;
+  --text-light: #666666;
+  --border: #e0e0e0;
+  --highlight: rgba(255,105,0,0.1);
+  --shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'Source Sans 3', 'Microsoft YaHei', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+}
+.zh { color: var(--zh-color); font-family: 'Microsoft YaHei', sans-serif; }
+.hero {
+  background: var(--deep-navy);
+  color: #fff;
+  padding: 80px 0 60px;
+}
+.hero-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 40px;
+}
+.hero-badge {
+  display: inline-flex;
+  gap: 8px;
+  background: rgba(255,105,0,0.2);
+  border: 1px solid rgba(255,105,0,0.4);
+  color: var(--accent);
+  padding: 6px 16px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  font-weight: 600;
+  margin-bottom: 24px;
+}
+.hero h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: 3rem;
+  margin-bottom: 12px;
+}
+.hero-sub {
+  font-size: 1.15rem;
+  color: #ccc;
+  max-width: 800px;
+  margin-bottom: 32px;
+}
+.hero-metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 20px;
+}
+.hero-metric {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 6px;
+  padding: 18px;
+}
+.hero-metric .label { font-size: 0.75rem; color: #aaa; text-transform: uppercase; }
+.hero-metric .value { font-family: 'JetBrains Mono', monospace; font-size: 1.5rem; color: var(--accent); font-weight: bold; }
+.toc {
+  background: #fff;
+  position: sticky; top: 0; z-index: 100;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  padding: 14px 0; border-bottom: 1px solid var(--border);
+}
+.toc-inner {
+  max-width: 1100px; margin: 0 auto; padding: 0 40px;
+  display: flex; gap: 15px; overflow-x: auto;
+}
+.toc a { text-decoration: none; font-size: 0.85rem; font-weight: 600; color: var(--text-light); }
+.toc a:hover { color: var(--accent); }
+.content { max-width: 1100px; margin: 0 auto; padding: 48px 40px 80px; }
+.section { margin-bottom: 60px; }
+.section-label { font-size: 0.75rem; text-transform: uppercase; color: var(--accent); font-weight: bold; letter-spacing: 2px; margin-bottom: 8px; }
+h2 { font-family: 'Playfair Display', serif; font-size: 2rem; color: var(--slate); margin-bottom: 16px; }
+h3 { margin-top: 24px; margin-bottom: 12px; font-size: 1.25rem; }
+p { margin-bottom: 16px; }
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin: 24px 0; }
+.card { background: var(--card-bg); border: 1px solid var(--border); padding: 24px; border-radius: 8px; box-shadow: var(--shadow); }
+.card-header { font-weight: bold; font-size: 0.9rem; text-transform: uppercase; color: var(--text-light); border-bottom: 1px solid var(--border); padding-bottom: 12px; margin-bottom: 16px; }
+.table-wrap { overflow-x: auto; margin: 24px 0; border: 1px solid var(--border); border-radius: 8px; box-shadow: var(--shadow); }
+table { width: 100%; border-collapse: collapse; background: #fff; }
+th, td { padding: 12px 16px; text-align: right; border-bottom: 1px solid var(--border); }
+th { background: var(--deep-navy); color: #fff; font-size: 0.8rem; }
+th:first-child, td:first-child { text-align: left; }
+td { font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; }
+.chart-container { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 24px; margin: 24px 0; box-shadow: var(--shadow); }
+.chart-title { font-weight: bold; margin-bottom: 16px; font-size: 1rem; color: var(--slate); }
+.callout { background: rgba(255,105,0,0.05); border-left: 4px solid var(--accent); padding: 16px 24px; border-radius: 4px; margin: 24px 0; }
+.callout-title { font-weight: bold; margin-bottom: 8px; color: var(--deep-navy); }
+.verdict-box { background: var(--deep-navy); color: #fff; padding: 40px; border-radius: 12px; margin-top: 40px; }
+.verdict-rating { background: var(--accent); color: #fff; padding: 6px 16px; font-weight: bold; display: inline-block; border-radius: 4px; margin-bottom: 16px; }
+.metrics { font-family: 'JetBrains Mono', monospace; font-size: 1.25rem; font-weight:bold; }
+.home-btn {
+  position: fixed; top: 20px; left: 20px; z-index: 200; display: inline-flex; align-items: center; gap: 8px; padding: 10px 16px;
+  background: rgba(0,0,0,0.5); color: #fff; text-decoration: none; border-radius: 8px; font-size: 0.9rem; font-weight: bold; backdrop-filter: blur(5px);
+}
+.home-btn:hover { background: rgba(0,0,0,0.7); }
+</style>
+</head>
+<body>
+
+<a href="index.html" class="home-btn">
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><polyline points="12 19 5 12 12 5"/></svg>
+  Return Home
+</a>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="hero-badge">Value Investing Research: Xiaomi</div>
+    <h1>Xiaomi Corporation (1810.HK) <span class="zh">小米集团</span></h1>
+    <p class="hero-sub">From smartphones and AIoT to a breakout EV business: Analyzing Xiaomi's record-breaking FY25 results to uncover intrinsic value and long-term moat.</p>
+    <div class="hero-metrics">
+      <div class="hero-metric">
+        <div class="label">Stock Price</div>
+        <div class="value">HK$30.88</div>
+      </div>
+      <div class="hero-metric">
+        <div class="label">Market Cap</div>
+        <div class="value">HK$800B</div>
+      </div>
+      <div class="hero-metric">
+        <div class="label">FY25 Revenue</div>
+        <div class="value">RMB 457.3B</div>
+        <div style="font-size:0.8rem; color:#aaa">+25.0% YoY</div>
+      </div>
+      <div class="hero-metric">
+        <div class="label">FY25 Adj. Net Profit</div>
+        <div class="value">RMB 39.2B</div>
+        <div style="font-size:0.8rem; color:#aaa">+43.8% YoY</div>
+      </div>
+      <div class="hero-metric">
+        <div class="label">EV Segment Rev</div>
+        <div class="value">RMB 106.1B</div>
+        <div style="font-size:0.8rem; color:#aaa">+223.8% YoY</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<nav class="toc">
+  <div class="toc-inner">
+    <a href="#financials">Financials</a>
+    <a href="#ev">EV Breakdown</a>
+    <a href="#moat">Moat Analysis</a>
+    <a href="#valuation">Valuation</a>
+    <a href="#verdict">Verdict</a>
+  </div>
+</nav>
+
+<main class="content">
+
+<section id="financials" class="section">
+  <div class="section-label">Section 01</div>
+  <h2>Historical Financial Trajectory <span class="zh">财务轨迹分析</span></h2>
+  <p>Xiaomi has transitioned from a pure smartphone brand into a comprehensive "Human x Car x Home" smart ecosystem. Its FY25 results shattered records, demonstrating that the structural shift into EVs and AI-driven hardware has accelerated growth profoundly.</p>
+  
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Metric (RMB Billions)</th><th>FY2021</th><th>FY2022</th><th>FY2023</th><th>FY2024</th><th>FY2025</th><th>4-Yr CAGR</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Total Revenue</td><td>328.3</td><td>280.0</td><td>271.0</td><td>365.9</td><td>457.3</td><td style="color:var(--positive);">~8.7%</td></tr>
+        <tr><td>Adjusted Net Profit</td><td>22.0</td><td>8.5</td><td>19.3</td><td>27.2</td><td>39.2</td><td style="color:var(--positive);">~15.5%</td></tr>
+        <tr><td>Gross Profit Margin</td><td>17.7%</td><td>17.0%</td><td>21.2%</td><td>21.2%</td><td>22.3%</td><td>-</td></tr>
+      </tbody>
+    </table>
+  </div>
+  
+  <div class="callout">
+    <div class="callout-title">Core Profitability Strength</div>
+    <p>Overall gross margins hit a record 22.3% in FY25, propelled by premiumization in smartphones and impressive 24.3% margins in the EV segment. The company successfully executed its high-end strategy while balancing cost constraints.</p>
+  </div>
+  
+  <div class="chart-container">
+    <div class="chart-title">Revenue & Net Profit Trend (RMB B)</div>
+    <div style="height:300px;"><canvas id="revenueChart"></canvas></div>
+  </div>
+</section>
+
+<section id="ev" class="section">
+  <div class="section-label">Section 02</div>
+  <h2>The EV Catalyst <span class="zh">造车催化剂</span></h2>
+  <p>The Xiaomi Smart EV division turned a corner in FY25. Delivering 411,082 vehicles (an astouding +200.4% YoY jump), the division generated RMB 106.1 billion in revenue and logged its first-ever operating profit (RMB 0.9 billion).</p>
+  
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-header">EV Segment Highlights</div>
+      <h3>RMB 106.1B</h3><p>FY25 Segment Revenue</p>
+      <h3>24.3%</h3><p>Gross Profit Margin (up 5.8 ppts)</p>
+      <h3>411,082</h3><p>Vehicles Delivered</p>
+    </div>
+    <div class="card">
+      <div class="card-header">Core Hardware & Services</div>
+      <p>While the EV side thrives, <strong>Smartphones</strong> saw slight contraction (-2.8% YoY to RMB 186.4B due to memory component costs) but maintained leadership in key global markets. <strong>IoT & Lifestyle</strong> set a record at RMB 123.2B (+18.3%), and <strong>Internet Services</strong> posted RMB 37.4B with a massive 76.5% margin.</p>
+    </div>
+  </div>
+</section>
+
+<section id="moat" class="section">
+  <div class="section-label">Section 03</div>
+  <h2>Moat Assessment <span class="zh">护城河分析</span></h2>
+  <p>Xiaomi has successfully built a <strong>Narrow to Wide Moat</strong> based on network effects, ecosystem lock-in, and scale advantages.</p>
+  <ul>
+    <li><strong>Network Effects & Switching Costs (Strong):</strong> Users buying into Xiaomi's HyperOS ecosystem face increasing switching costs. Moving from a Xiaomi phone to a Xiaomi EV integrated with home IoT devices creates immense lifestyle stickiness.</li>
+    <li><strong>Cost Advantage (Moderate):</strong> Xiaomi’s legendary supply chain efficiency, initially built around low-margin hardware, is paying compounding dividends in EV manufacturing scale.</li>
+    <li><strong>Brand Intangibles (Strong):</strong> Despite early impressions as a "budget" choice, Xiaomi effectively commands premium status in China alongside Apple and Huawei, further validated by its rapid EV execution.</li>
+  </ul>
+</section>
+
+<section id="valuation" class="section">
+  <div class="section-label">Section 04</div>
+  <h2>Intrinsic Valuation <span class="zh">估值分析</span></h2>
+  <p>At a market cap of HK$800 billion (~RMB 740B), Xiaomi is trading at roughly 18.8x its FY25 adjusted net profit of RMB 39.2 billion. Given its EV trajectory and historical >15% bottom-line CAGR, this is a highly attractive multiple for a global tech compounding machine.</p>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Valuation Method</th><th>Estimated Intrinsic Value (HK$)</th><th>Margin of Safety</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Conservative DCF (10% growth)</td><td>HK$ 28.00</td><td><span style="color:var(--negative)">-9%</span></td></tr>
+        <tr><td>Base DCF (15% growth, EV scale)</td><td>HK$ 37.50</td><td><span style="color:var(--positive)">+18%</span></td></tr>
+        <tr><td>Optimistic (20% growth + Software)</td><td>HK$ 48.00</td><td><span style="color:var(--positive)">+36%</span></td></tr>
+        <tr style="background:rgba(255,105,0,0.1)"><td><strong>Current Market Price</strong></td><td><strong>HK$ 30.88</strong></td><td><strong>Fairly Valued</strong></td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section id="verdict" class="section">
+  <div class="section-label">Section 05</div>
+  <h2>Investment Decision <span class="zh">投资结论</span></h2>
+  <div class="verdict-box">
+    <div class="verdict-rating">ACCUMULATE</div>
+    <h3>A Tech Powerhouse at a Fair Price</h3>
+    <p>Xiaomi merits an <strong>ACCUMULATE</strong> rating. The company has executed almost flawlessly on the hardest pivot in modern hardware: seamlessly entering the EV space. With its "Human x Car x Home" strategy generating real operating profits, a 24% EV margin, and Internet Services providing a high-margin bedrock, Xiaomi is competitively entrenched. The current price (around HK$31) provides an adequate margin of safety for long-term investors looking for secular Chinese tech growth combined with automotive manufacturing leverage.</p>
+  </div>
+</section>
+
+</main>
+
+<script>
+  const ctx = document.getElementById('revenueChart').getContext('2d');
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: ['FY21', 'FY22', 'FY23', 'FY24', 'FY25'],
+      datasets: [
+        {
+          label: 'Revenue (RMB B)',
+          data: [328.3, 280.0, 271.0, 365.9, 457.3],
+          backgroundColor: 'rgba(255,105,0, 0.2)',
+          borderColor: 'rgba(255,105,0, 1)',
+          borderWidth: 1,
+          yAxisID: 'y'
+        },
+        {
+          label: 'Net Profit (RMB B)',
+          data: [22.0, 8.5, 19.3, 27.2, 39.2],
+          type: 'line',
+          backgroundColor: '#151515',
+          borderColor: '#151515',
+          borderWidth: 2,
+          yAxisID: 'y1'
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        y: { beginAtZero: true, position: 'left' },
+        y1: { beginAtZero: true, position: 'right', grid: { drawOnChartArea: false } }
+      }
+    }
+  });
+</script>
+</body>
+</html>
