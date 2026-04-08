@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Copper & Electricity: The Physical Layer of AI | 铜与电力：AI的物理基石</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&display=swap');
+  :root{--bg:#0c1117;--card:#151c28;--card2:#1a2332;--border:#253040;--accent-copper:#d4760a;--accent-elec:#4fc3f7;--accent-nuclear:#ab47bc;--accent-gas:#ff7043;--navy:#1a5276;--green-cn:#4a6741;--text:#e0e6ed;--dim:#7b8fa3;--pos:#2ecc71;--neg:#e74c3c;--gold:#f5b041}
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'DM Sans','Noto Sans SC',sans-serif;background:var(--bg);color:var(--text);line-height:1.65}
+  .c{max-width:1400px;margin:0 auto;padding:20px}
+  .hdr{text-align:center;padding:40px 20px 30px;border-bottom:1px solid var(--border);margin-bottom:28px}
+  .hdr h1{font-size:1.9rem;font-weight:700;color:#fff;background:linear-gradient(135deg,var(--accent-copper),var(--accent-elec));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+  .hdr .cn{font-size:1.2rem;color:var(--green-cn);margin-top:6px}
+  .hdr .sub{font-size:0.88rem;color:var(--dim);margin-top:12px;max-width:900px;margin-left:auto;margin-right:auto}
+  .hdr .dt{font-size:0.78rem;color:var(--dim);margin-top:8px;opacity:.6}
+  .tabs{display:flex;gap:8px;margin-bottom:22px;flex-wrap:wrap;justify-content:center}
+  .tab{padding:10px 18px;border:1px solid var(--border);border-radius:8px;cursor:pointer;font-size:.84rem;background:transparent;color:var(--dim);transition:all .3s;font-family:inherit}
+  .tab:hover{border-color:var(--accent-copper);color:var(--accent-copper)}
+  .tab.active{background:linear-gradient(135deg,var(--accent-copper),#b86800);border-color:transparent;color:#fff;font-weight:600}
+  .tc{display:none}.tc.active{display:block}
+  .sect{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:24px;margin-bottom:20px}
+  .sect-t{font-size:1.05rem;font-weight:600;color:#fff;margin-bottom:3px}
+  .sect-cn{font-size:.85rem;color:var(--green-cn);margin-bottom:14px}
+  .tw{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  table.st{width:100%;border-collapse:collapse;font-size:.84rem}
+  .st th{text-align:left;padding:10px 8px;border-bottom:2px solid var(--border);color:var(--dim);font-weight:600;font-size:.73rem;text-transform:uppercase;letter-spacing:.5px;white-space:nowrap}
+  .st td{padding:10px 8px;border-bottom:1px solid rgba(255,255,255,.04);vertical-align:middle}
+  .st tr:hover{background:var(--card2)}
+  .tag{padding:3px 10px;border-radius:20px;font-size:.68rem;font-weight:600;display:inline-block}
+  .tag-cu{background:rgba(212,118,10,.15);color:var(--accent-copper)}
+  .tag-el{background:rgba(79,195,247,.15);color:var(--accent-elec)}
+  .tag-nu{background:rgba(171,71,188,.15);color:var(--accent-nuclear)}
+  .tag-gs{background:rgba(255,112,67,.15);color:var(--accent-gas)}
+  .tag-pw{background:rgba(245,176,65,.15);color:var(--gold)}
+  .tag-buy{background:rgba(46,204,113,.2);color:#2ecc71;padding:4px 12px;border-radius:6px;font-size:.78rem;font-weight:600}
+  .tag-hold{background:rgba(243,156,18,.2);color:#f39c12;padding:4px 12px;border-radius:6px;font-size:.78rem;font-weight:600}
+  .cg{display:grid;grid-template-columns:1fr;gap:18px}
+  .cc{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:22px;transition:all .3s}
+  .cc:hover{border-color:var(--accent-copper);background:var(--card2)}
+  .cc-h{display:flex;align-items:flex-start;gap:12px;margin-bottom:14px;flex-wrap:wrap}
+  .cc-r{font-size:2.2rem;font-weight:700;opacity:.25;line-height:1}
+  .cc-r.cu{color:var(--accent-copper)}.cc-r.el{color:var(--accent-elec)}
+  .cc-tb{flex:1;min-width:200px}
+  .cc-n{font-size:1.2rem;font-weight:700;color:#fff}
+  .cc-ncn{font-size:.9rem;color:var(--green-cn);margin-top:1px}
+  .cc-tk{font-size:.82rem;color:var(--gold);margin-top:3px;font-weight:600}
+  .cc-bg{display:flex;gap:5px;flex-wrap:wrap;margin-top:6px}
+  .gs{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:10px;margin:14px 0}
+  .g{background:rgba(255,255,255,.03);border-radius:7px;padding:9px 11px}
+  .g-l{font-size:.68rem;color:var(--dim);text-transform:uppercase;letter-spacing:.4px}
+  .g-v{font-size:1.05rem;font-weight:700;color:#fff;margin-top:1px}
+  .g-v.pos{color:var(--pos)}.g-v.neg{color:var(--neg)}
+  .cb{font-size:.86rem;color:var(--dim);line-height:1.7}
+  .cb p{margin-bottom:9px}
+  .cb strong{color:var(--text)}
+  .ms{margin-top:11px;padding-top:11px;border-top:1px solid var(--border)}
+  .ms-l{font-size:.72rem;text-transform:uppercase;letter-spacing:.8px;margin-bottom:5px;font-weight:600}
+  .ms-l.moat{color:var(--gold)}.ms-l.risk{color:var(--neg)}
+  .ar{display:flex;gap:14px;margin-top:10px;flex-wrap:wrap;align-items:center}
+  .cr{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  .ch-c{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:22px}
+  .disc{font-size:.73rem;color:var(--dim);opacity:.5;text-align:center;margin-top:36px;padding:18px;border-top:1px solid var(--border)}
+  @media(max-width:768px){.hdr h1{font-size:1.3rem}.cr{grid-template-columns:1fr}.cc-h{flex-direction:column}}
+</style>
+</head>
+<body>
+<a href="./index.html" style="display:inline-flex;align-items:center;gap:6px;position:fixed;top:16px;left:16px;z-index:9999;padding:8px 16px;background:rgba(21,28,40,0.85);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,0.1);border-radius:8px;color:#e0e6ed;text-decoration:none;font-family:'DM Sans',sans-serif;font-size:0.82rem;font-weight:500;transition:all 0.3s;cursor:pointer;" onmouseover="this.style.borderColor='#d4760a';this.style.color='#d4760a'" onmouseout="this.style.borderColor='rgba(255,255,255,0.1)';this.style.color='#e0e6ed'">
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+  Return to Home
+</a>
+<div class="c">
+  <div class="hdr">
+    <h1>Copper & Electricity: The Physical Layer of AI Infrastructure</h1>
+    <div class="cn">铜与电力：AI基础设施的物理基石 · 黄仁勋 "电力是瓶颈，不是芯片" 延伸研究</div>
+    <div class="sub">Jensen Huang identified power — not chips — as the binding constraint on AI scaling. Every $50B AI factory needs ~1GW of 24/7 baseload power. Every GW of data center capacity requires thousands of tonnes of copper for wiring, busbars, switchgear, and power distribution. This report identifies 10 companies across US and HK markets positioned at these critical physical bottlenecks.</div>
+    <div class="dt">Research Date: April 7, 2026 · Copper hit record $14,000/tonne in Jan 2026</div>
+  </div>
+  
+  <div class="tabs">
+    <button class="tab active" onclick="showTab('overview')">Overview 总览</button>
+    <button class="tab" onclick="showTab('companies')">Company Profiles 公司详情</button>
+    <button class="tab" onclick="showTab('charts')">Charts 图表</button>
+  </div>
+  
+  <!-- OVERVIEW -->
+  <div id="tab-overview" class="tc active">
+    <div class="sect">
+      <div class="sect-t">The Investment Thesis: Why Copper & Electricity Are the Ultimate AI Picks-and-Shovels</div>
+      <div class="sect-cn">投资逻辑：为什么铜与电力是AI的终极 "卖铲人"</div>
+      <div class="cb" style="margin-top:10px">
+        <p><strong>Power is the bottleneck.</strong> Huang stated explicitly that a 1GW data center campus cannot magically become 2GW — the metric that matters is "tokens per watt." US electricity demand is projected to grow ~2% annually through 2030, with AI data centers consuming 1.5% of global supply (equivalent to the entire UK) and doubling by 2030. Hyperscaler capex is expected to exceed <strong>$700 billion in 2026</strong>, with ~90% flowing to power-hungry AI infrastructure.</p>
+        <p><strong>Copper is the wiring of the AI era.</strong> BloombergNEF projects data center copper demand reaching <strong>572,000 tonnes annually by 2028</strong>. J.P. Morgan projects a refined copper shortfall of ~330,000 tonnes in 2026. Goldman Sachs calls copper the commodity with the "highest growth potential" in the AI and electrification supercycle. A single hyperscale AI data center consumes more copper than a traditional facility by orders of magnitude — busbars, switchgear, PDUs, and miles of high-amperage cabling.</p>
+        <p><strong>The supply-demand gap is structural, not cyclical.</strong> WoodMac expects global copper demand to surge 24% by 2035, requiring $210 billion of new mining investment — vs. only $76 billion invested over the past six years. S&P Global warns copper supply could fall short of demand by 10 million tonnes by 2040. Meanwhile, new mines take 15-20 years from discovery to production.</p>
+      </div>
+    </div>
+    
+    <div class="sect">
+      <div class="sect-t">Summary: 10 Companies Across the Copper & Electricity AI Value Chain</div>
+      <div class="sect-cn">10家覆盖铜与电力AI产业链的公司概览</div>
+      <div class="tw">
+      <table class="st">
+        <thead><tr>
+          <th>#</th><th>Company 公司</th><th>Ticker</th><th>Market</th><th>Sector</th><th>Mkt Cap</th><th>Key Metric</th><th>Consensus</th>
+        </tr></thead>
+        <tbody>
+          <tr><td>1</td><td><strong>Freeport-McMoRan</strong></td><td>FCX</td><td>NYSE</td><td><span class="tag tag-cu">Copper Mining</span></td><td>~$60B</td><td>3.4B lbs Cu/yr</td><td><span class="tag-buy">Buy</span></td></tr>
+          <tr><td>2</td><td><strong>Constellation Energy</strong></td><td>CEG</td><td>NASDAQ</td><td><span class="tag tag-nu">Nuclear Power</span></td><td>~$109B</td><td>31.7GW nuclear fleet</td><td><span class="tag-buy">Strong Buy</span></td></tr>
+          <tr><td>3</td><td><strong>Vistra Corp</strong></td><td>VST</td><td>NYSE</td><td><span class="tag tag-nu">Nuclear</span> <span class="tag tag-gs">Gas</span></td><td>~$60B</td><td>$6.8-7.6B EBITDA '26E</td><td><span class="tag-buy">Buy</span></td></tr>
+          <tr><td>4</td><td><strong>Eaton Corporation</strong></td><td>ETN</td><td>NYSE</td><td><span class="tag tag-pw">Power Management</span></td><td>~$145B</td><td>DC backlog = 11yr '25 build</td><td><span class="tag-buy">Strong Buy</span></td></tr>
+          <tr><td>5</td><td><strong>NextEra Energy</strong></td><td>NEE</td><td>NYSE</td><td><span class="tag tag-el">Utility + Renewables</span></td><td>~$170B</td><td>15GW DC power by 2035</td><td><span class="tag-buy">Buy</span></td></tr>
+          <tr><td>6</td><td><strong>BHP Group</strong></td><td>BHP</td><td>NYSE/ASX</td><td><span class="tag tag-cu">Diversified Mining</span></td><td>~$150B</td><td>1.8-2.0M tonnes Cu '26E</td><td><span class="tag-buy">Buy</span></td></tr>
+          <tr><td>7</td><td><strong>Teck Resources</strong></td><td>TECK</td><td>NYSE</td><td><span class="tag tag-cu">Copper Pure-Play</span></td><td>~$30B</td><td>QB2 ramp + Anglo merger</td><td><span class="tag-buy">Buy</span></td></tr>
+          <tr><td>8</td><td><strong>Jiangxi Copper</strong> 江西铜业</td><td>0358.HK</td><td>HKEx</td><td><span class="tag tag-cu">China's #1 Copper</span></td><td>~$27B</td><td>China's top smelter</td><td><span class="tag-hold">Hold/Buy</span></td></tr>
+          <tr><td>9</td><td><strong>China Longyuan Power</strong> 龙源电力</td><td>0916.HK</td><td>HKEx</td><td><span class="tag tag-el">Wind + Renewables</span></td><td>~HK$130B</td><td>China's #1 wind power</td><td><span class="tag-buy">Buy</span></td></tr>
+          <tr><td>10</td><td><strong>CGN Power</strong> 中广核电力</td><td>1816.HK</td><td>HKEx</td><td><span class="tag tag-nu">Nuclear Power</span></td><td>~HK$210B</td><td>33.3GW capacity, 6 under const.</td><td><span class="tag-buy">Buy</span></td></tr>
+        </tbody>
+      </table>
+      </div>
+    </div>
+  </div>
+  
+  <!-- COMPANIES -->
+  <div id="tab-companies" class="tc">
+    <div class="cg">
+    
+    <!-- 1. FCX -->
+    <div class="cc"><div class="cc-h"><div class="cc-r cu">01</div><div class="cc-tb">
+      <div class="cc-n">Freeport-McMoRan</div><div class="cc-tk">FCX · NYSE · "America's Copper Champion"</div>
+      <div class="cc-bg"><span class="tag tag-cu">Copper Mining</span><span class="tag tag-pw">AI Infrastructure Metal</span></div>
+    </div></div>
+    <div class="gs">
+      <div class="g"><div class="g-l">Market Cap</div><div class="g-v">~$60B</div></div>
+      <div class="g"><div class="g-l">FY2025 Cu Output</div><div class="g-v">3.4B lbs</div></div>
+      <div class="g"><div class="g-l">Op. Cash Flow</div><div class="g-v">$5.6B</div></div>
+      <div class="g"><div class="g-l">US Cu Sales '26E</div><div class="g-v pos">1.4B lbs</div></div>
+      <div class="g"><div class="g-l">Leach Target '26</div><div class="g-v">300M lbs add'l</div></div>
+      <div class="g"><div class="g-l">Net Debt</div><div class="g-v">$2.3B</div></div>
+    </div>
+    <div class="cb">
+      <p>Freeport is the <strong>world's purest large-cap copper play</strong> — 75% of revenue from copper, with world-class assets spanning Indonesia (Grasberg), Arizona (Morenci, Bagdad), Peru (Cerro Verde), and Chile (El Abra). The company is using <strong>AI to optimize ore sequencing, mill throughput, and recovery rates</strong>, targeting 300M additional pounds from leaching innovation in 2026. Amazon Web Services signed a landmark 2-year agreement to purchase domestically produced copper from an Arizona mine — the first direct link between low-carbon copper and AI infrastructure.</p>
+      <p>A 50% US tariff on copper imports (effective Aug 2025) gives domestic producers like FCX a structural pricing advantage, with COMEX trading at a 9%+ premium to LME. The Grasberg mud rush (Sep 2025) temporarily reduced output, with phased restart targeting ~85% capacity by H2 2026. FCX's project pipeline targets <strong>2.5 billion additional pounds of annual copper</strong> plus 0.5M oz gold from Bagdad expansion, El Abra phase 2, and Kucing Liar.</p>
+      <div class="ms"><div class="ms-l moat">Moat 护城河</div><p class="cb">Grasberg is one of the world's largest copper/gold deposits. Downstream integration in Indonesia (new smelter operational). AI-enhanced leaching is a proprietary technology advantage. US tariff creates pricing moat for domestic production.</p></div>
+      <div class="ms"><div class="ms-l risk">Risks 风险</div><p class="cb">Grasberg restart execution risk. Indonesian regulatory/ownership issues (government holds 51%). Copper price cyclicality. Capex-intensive growth ($4.5B/yr). Environmental and permitting challenges at Bagdad expansion.</p></div>
+      <div class="ar"><span class="tag-buy">Buy — 16 of 22 analysts</span><span style="font-size:.83rem;color:var(--dim)">Avg target ~$55-60; using AI themselves to mine the AI era's most critical metal</span></div>
+    </div></div>
+    
+    <!-- 2. CEG -->
+    <div class="cc"><div class="cc-h"><div class="cc-r el">02</div><div class="cc-tb">
+      <div class="cc-n">Constellation Energy</div><div class="cc-tk">CEG · NASDAQ · US #1 Nuclear Fleet</div>
+      <div class="cc-bg"><span class="tag tag-nu">Nuclear Baseload</span><span class="tag tag-el">Clean Energy</span></div>
+    </div></div>
+    <div class="gs">
+      <div class="g"><div class="g-l">Market Cap</div><div class="g-v">~$109B</div></div>
+      <div class="g"><div class="g-l">Nuclear Capacity</div><div class="g-v">31.7 GW</div></div>
+      <div class="g"><div class="g-l">Adj. Op. EPS '25</div><div class="g-v">$9.39</div></div>
+      <div class="g"><div class="g-l">Key Deal</div><div class="g-v">MSFT 20-yr PPA</div></div>
+      <div class="g"><div class="g-l">Calpine Acq.</div><div class="g-v">$16.4B</div></div>
+      <div class="g"><div class="g-l">Fwd P/E</div><div class="g-v">~32-35x</div></div>
+    </div>
+    <div class="cb">
+      <p>Covered in our original Top 10 Global list. Constellation operates the <strong>largest US nuclear fleet</strong> and signed the landmark 20-year Microsoft PPA to restart Crane Clean Energy Center (835 MW). The $16.4B Calpine acquisition (Jan 2026) created the nation's largest electricity producer. Nuclear provides <strong>24/7 carbon-free baseload</strong> — the only generation type that can reliably power AI data centers without intermittency. Behind-the-meter co-location at nuclear sites is the "holy grail" model hyperscalers want.</p>
+      <div class="ms"><div class="ms-l moat">Moat</div><p class="cb">Irreplaceable nuclear fleet — no new nuclear plants being built at scale. 80% of Fortune 100 as C&I customers. Long-term PPAs with Microsoft, Meta, CyrusOne provide contracted revenue visibility. 10% annual dividend growth.</p></div>
+      <div class="ms"><div class="ms-l risk">Risks</div><p class="cb">Calpine integration risk. Crane restart regulatory/permitting. GAAP earnings volatility from nuclear PTC portfolio. Concentrated hyperscaler customer base.</p></div>
+      <div class="ar"><span class="tag-buy">Strong Buy — 16 Buy, 4 Hold</span><span style="font-size:.83rem;color:var(--dim)">Median target ~$400 (35% upside)</span></div>
+    </div></div>
+    
+    <!-- 3. VST -->
+    <div class="cc"><div class="cc-h"><div class="cc-r el">03</div><div class="cc-tb">
+      <div class="cc-n">Vistra Corp</div><div class="cc-tk">VST · NYSE · Nuclear + Gas Power</div>
+      <div class="cc-bg"><span class="tag tag-nu">Nuclear</span><span class="tag tag-gs">Natural Gas</span><span class="tag tag-el">Retail Power</span></div>
+    </div></div>
+    <div class="gs">
+      <div class="g"><div class="g-l">Market Cap</div><div class="g-v">~$60B</div></div>
+      <div class="g"><div class="g-l">FY2025 EBITDA</div><div class="g-v">~$5.9B</div></div>
+      <div class="g"><div class="g-l">2026E EBITDA</div><div class="g-v pos">$6.8-7.6B</div></div>
+      <div class="g"><div class="g-l">Cogentrix Acq.</div><div class="g-v">$4.0B (5.5GW)</div></div>
+      <div class="g"><div class="g-l">Nuclear PPAs</div><div class="g-v">Amazon + Meta</div></div>
+      <div class="g"><div class="g-l">Nuclear Uprate</div><div class="g-v">3.2GW potential</div></div>
+    </div>
+    <div class="cb">
+      <p>Vistra is the <strong>"merchant power + nuclear" play on AI electricity demand</strong>. The company delivered record financial performance in 2025, with EBITDA of ~$5.9B and 2026 guidance of $6.8-7.6B (+22% YoY). Signed landmark nuclear PPAs with Amazon and Meta at Comanche Peak and Beaver Valley, providing 20-year contracted revenue. The $4.0B Cogentrix acquisition adds 5.5GW of flexible gas generation for peaking power as data centers spike demand.</p>
+      <p>Vistra holds <strong>3.2GW of incremental nuclear contracting potential</strong> including ~200MW of Comanche Peak upgrades. PJM capacity auctions cleared at record $333/MW-day, signaling structural power scarcity. The integrated generation + retail model provides hedging and earnings stability. New 860MW gas units announced for West Texas.</p>
+      <div class="ms"><div class="ms-l moat">Moat</div><p class="cb">Diversified generation fleet: nuclear (24/7 baseload) + gas (flexible peaking) + solar/storage. Integrated retail business provides natural hedge. Long-term hyperscaler PPAs lock in premium pricing. Texas market exposure (ERCOT) where AI data center growth is fastest.</p></div>
+      <div class="ms"><div class="ms-l risk">Risks</div><p class="cb">Q4 2025 EPS miss ($2.13 vs $2.33 est) raised execution concerns. Coal/battery fleet maintenance issues. Commodity exposure beyond hedge book. "Behind-the-meter" regulatory scrutiny. $4B Cogentrix integration.</p></div>
+      <div class="ar"><span class="tag-buy">Buy</span><span style="font-size:.83rem;color:var(--dim)">2026E EBITDA of $7.2B midpoint; stock sold off post-Q4 miss creates entry opportunity</span></div>
+    </div></div>
+    
+    <!-- 4. ETN -->
+    <div class="cc"><div class="cc-h"><div class="cc-r el">04</div><div class="cc-tb">
+      <div class="cc-n">Eaton Corporation</div><div class="cc-tk">ETN · NYSE · Electrical Power Management</div>
+      <div class="cc-bg"><span class="tag tag-pw">Power Distribution</span><span class="tag tag-el">Data Center Electrical</span></div>
+    </div></div>
+    <div class="gs">
+      <div class="g"><div class="g-l">Market Cap</div><div class="g-v">~$145B</div></div>
+      <div class="g"><div class="g-l">Q4 Revenue</div><div class="g-v">~$7B</div></div>
+      <div class="g"><div class="g-l">Rev Growth</div><div class="g-v pos">+10.6% YoY</div></div>
+      <div class="g"><div class="g-l">DC Backlog</div><div class="g-v pos">11 years of '25 build</div></div>
+      <div class="g"><div class="g-l">DC Order Growth</div><div class="g-v pos">+200% Q4</div></div>
+      <div class="g"><div class="g-l">Fwd P/E</div><div class="g-v">~32x</div></div>
+    </div>
+    <div class="cb">
+      <p>Eaton is the <strong>"electrical backbone" company for every AI data center</strong>. Its data center backlog equals <strong>11 years of what was built in 2025</strong> — a staggering metric that CEO Paulo Ruiz Sternadt highlighted on the Q4 earnings call. Data center orders accelerated 200% in Q4. Eaton provides the critical power distribution infrastructure: switchgear, UPS systems, PDUs, transformers, and its proprietary <strong>busbar technology</strong> (rigid metal conductors that replace cables, reducing power loss in high-density AI racks).</p>
+      <p>This is the company that sits between the utility meter and the GPU rack — every watt of power flowing to NVIDIA's Blackwell systems passes through Eaton's electrical infrastructure. The company also produces liquid cooling distribution and software for power management optimization.</p>
+      <div class="ms"><div class="ms-l moat">Moat</div><p class="cb">Category leader in electrical power distribution for data centers. 11-year backlog provides extraordinary visibility. Busbar technology is a differentiated product for high-density AI racks. Cross-selling across electrical, cooling, and software creates stickiness. Design-in relationships with hyperscalers.</p></div>
+      <div class="ms"><div class="ms-l risk">Risks</div><p class="cb">Premium valuation (~32x fwd P/E) for an industrial company. Revenue growth (10.6%) is slower than pure-play AI infrastructure peers. Macro sensitivity in non-data-center segments (industrial, aerospace). Supply chain constraints on transformer components.</p></div>
+      <div class="ar"><span class="tag-buy">Strong Buy</span><span style="font-size:.83rem;color:var(--dim)">11-year backlog = highest visibility on this list; the essential wiring company for AI</span></div>
+    </div></div>
+    
+    <!-- 5. NEE -->
+    <div class="cc"><div class="cc-h"><div class="cc-r el">05</div><div class="cc-tb">
+      <div class="cc-n">NextEra Energy</div><div class="cc-tk">NEE · NYSE · Largest US Electric Utility</div>
+      <div class="cc-bg"><span class="tag tag-el">Regulated Utility</span><span class="tag tag-el">Renewables + Storage</span></div>
+    </div></div>
+    <div class="gs">
+      <div class="g"><div class="g-l">Market Cap</div><div class="g-v">~$170B</div></div>
+      <div class="g"><div class="g-l">DC Power Target</div><div class="g-v">15 GW by 2035</div></div>
+      <div class="g"><div class="g-l">Capex Plan</div><div class="g-v">$295-325B thru '32</div></div>
+      <div class="g"><div class="g-l">EPS Growth</div><div class="g-v pos">8%+ annually</div></div>
+      <div class="g"><div class="g-l">Div Yield</div><div class="g-v">~3%</div></div>
+      <div class="g"><div class="g-l">Div Growth '26</div><div class="g-v pos">+10%</div></div>
+    </div>
+    <div class="cb">
+      <p>NextEra is the <strong>largest electric utility in the US</strong> and the most comprehensive play on AI power demand. Florida Power & Light serves 12 million people with the state's first approved large-load data center tariff. NextEra Energy Resources is building <strong>15 GW of power specifically for data center hubs by 2035</strong>, partnering with Google and developing 6.2 GW of renewable + storage capacity for Entergy's Meta AI data center project.</p>
+      <p>The "bring-your-own-power" model — where data center developers build power generation into their projects — is becoming standard, and NextEra is the preferred partner. The $295-325 billion capex plan through 2032 is the industry's most aggressive. A planned 10% dividend increase in 2026 marks the second consecutive decade of double-digit payout growth.</p>
+      <div class="ms"><div class="ms-l moat">Moat</div><p class="cb">Largest US electric utility by market cap. Florida regulatory moat (favorable data center tariffs). Scale advantage in renewable energy development. Decades of execution track record. 3% yield + 10% dividend growth = compelling total return.</p></div>
+      <div class="ms"><div class="ms-l risk">Risks</div><p class="cb">Massive capex plan requires continued access to cheap capital. Interest rate sensitivity. Renewable energy policy risk under current administration. Florida hurricane exposure. Valuation premium vs. utility peers.</p></div>
+      <div class="ar"><span class="tag-buy">Buy</span><span style="font-size:.83rem;color:var(--dim)">Best risk-adjusted utility for AI power; 3% yield + 8% EPS growth = 11%+ total return</span></div>
+    </div></div>
+    
+    <!-- 6. BHP -->
+    <div class="cc"><div class="cc-h"><div class="cc-r cu">06</div><div class="cc-tb">
+      <div class="cc-n">BHP Group</div><div class="cc-tk">BHP · NYSE/ASX · World's Largest Miner</div>
+      <div class="cc-bg"><span class="tag tag-cu">Copper</span><span class="tag tag-cu">Iron Ore</span></div>
+    </div></div>
+    <div class="gs">
+      <div class="g"><div class="g-l">Market Cap</div><div class="g-v">~$150B</div></div>
+      <div class="g"><div class="g-l">Cu Production '26E</div><div class="g-v">1.8-2.0M tonnes</div></div>
+      <div class="g"><div class="g-l">Olympic Dam</div><div class="g-v">$550M expansion</div></div>
+      <div class="g"><div class="g-l">Resolution Cu</div><div class="g-v">40B lbs over 40 yrs</div></div>
+      <div class="g"><div class="g-l">Min Div Payout</div><div class="g-v">50%</div></div>
+    </div>
+    <div class="cb">
+      <p>BHP is the world's largest diversified miner, pivoting aggressively toward copper as its core growth commodity. The company expects to produce <strong>1.8-2.0 million tonnes of copper in 2026</strong>, making it the world's largest copper producer. The $550M Olympic Dam expansion in Australia sets the stage for doubling output by mid-2030s. BHP co-owns <strong>Resolution Copper</strong> in Arizona (55%) with Rio Tinto — one of the world's largest undeveloped deposits with 40 billion pounds of copper over 40 years.</p>
+      <div class="ms"><div class="ms-l moat">Moat</div><p class="cb">Unmatched portfolio of tier-1 copper assets. Diversification across iron ore, potash provides cash flow stability. Balance sheet strength. Resolution Copper could supply ~25% of projected US copper demand.</p></div>
+      <div class="ms"><div class="ms-l risk">Risks</div><p class="cb">Resolution Copper faces 8-10 year build timeline and $64B estimated cost. Iron ore price weakness weighs on near-term earnings. Australian regulatory environment. Dividend tied to commodity prices.</p></div>
+      <div class="ar"><span class="tag-buy">Buy</span><span style="font-size:.83rem;color:var(--dim)">Largest copper producer globally; 50%+ dividend payout; long-duration growth pipeline</span></div>
+    </div></div>
+    
+    <!-- 7. TECK -->
+    <div class="cc"><div class="cc-h"><div class="cc-r cu">07</div><div class="cc-tb">
+      <div class="cc-n">Teck Resources</div><div class="cc-tk">TECK · NYSE · Copper Pure-Play Transition</div>
+      <div class="cc-bg"><span class="tag tag-cu">Copper Growth</span></div>
+    </div></div>
+    <div class="gs">
+      <div class="g"><div class="g-l">Market Cap</div><div class="g-v">~$30B</div></div>
+      <div class="g"><div class="g-l">QB2 Ramp</div><div class="g-v pos">Peak capex ~$2B</div></div>
+      <div class="g"><div class="g-l">Cu Production '26E</div><div class="g-v">455-530K tonnes</div></div>
+      <div class="g"><div class="g-l">Record EBITDA '25</div><div class="g-v pos">Yes</div></div>
+    </div>
+    <div class="cb">
+      <p>Teck completed its transformation into a <strong>copper-focused company</strong> by selling its coal assets. The Quebrada Blanca Phase 2 (QB2) mine in Chile is ramping toward full capacity, making Teck one of the fastest-growing copper producers globally. A proposed merger with Anglo American could create one of the world's top five copper producers. Teck reported <strong>record revenue and EBITDA in 2025</strong>, doubled its quarterly dividend, and increased 2026 capex to support growth.</p>
+      <div class="ms"><div class="ms-l moat">Moat</div><p class="cb">Pure copper focus after coal divestiture. QB2 provides multi-decade mine life. Canadian jurisdiction = stable, friendly mining regime. Potential Anglo American merger creates scale.</p></div>
+      <div class="ms"><div class="ms-l risk">Risks</div><p class="cb">QB2 execution and ramp-up risk (high-altitude Chilean operation). Merger uncertainty. Copper price sensitivity. Capital intensity of growth projects.</p></div>
+      <div class="ar"><span class="tag-buy">Buy</span><span style="font-size:.83rem;color:var(--dim)">Fastest-growing mid-cap copper producer; record results; Anglo merger upside</span></div>
+    </div></div>
+    
+    <!-- 8. Jiangxi Copper -->
+    <div class="cc"><div class="cc-h"><div class="cc-r cu">08</div><div class="cc-tb">
+      <div class="cc-n">Jiangxi Copper Company</div><div class="cc-ncn">江西铜业</div>
+      <div class="cc-tk">0358.HK · HKEx · China's #1 Copper Producer</div>
+      <div class="cc-bg"><span class="tag tag-cu">China Copper</span><span class="tag tag-cu">Smelting + Fabrication</span></div>
+    </div></div>
+    <div class="gs">
+      <div class="g"><div class="g-l">Market Cap</div><div class="g-v">~$27B</div></div>
+      <div class="g"><div class="g-l">TTM Revenue</div><div class="g-v">~$72.7B</div></div>
+      <div class="g"><div class="g-l">Business Model</div><div class="g-v">Vertically Integrated</div></div>
+      <div class="g"><div class="g-l">Products</div><div class="g-v">Cathode, foil, wire, rod</div></div>
+    </div>
+    <div class="cb">
+      <p>Jiangxi Copper is <strong>China's largest copper producer and smelter</strong>, providing the domestic supply backbone for China's own AI data center buildout and grid modernization. The company is vertically integrated from mining to downstream fabrication (copper rods, strips, wires, cables, and critically, <strong>copper foil</strong> for electronics). China's copper market is projected to reach 13.56 million tonnes in 2026 (+5.3% CAGR through 2031), with AI-ready data centers in Beijing-Tianjin-Hebei growing fastest at 6.84% CAGR.</p>
+      <p>Jiangxi Copper is ramping automation, robotics, and real-time data analytics across its operations. The company is expanding internationally into Africa and South America to secure long-term supply. Fortune China Top 500 (#43).</p>
+      <div class="ms"><div class="ms-l moat">Moat</div><p class="cb">China's #1 copper producer — strategic national asset. Vertically integrated from mine to finished product. Domestic demand from AI data centers, UHV grid, and EV manufacturing creates captive market. Government policy support for supply chain self-reliance.</p></div>
+      <div class="ms"><div class="ms-l risk">Risks</div><p class="cb">Thin smelting margins. Global concentrate deficit pushing treatment charges to single-digit levels. SOE governance discount. Copper price cyclicality. Environmental compliance costs under tightening regulation.</p></div>
+      <div class="ar"><span class="tag-hold">Hold/Buy</span><span style="font-size:.83rem;color:var(--dim)">Best HK-listed exposure to China's domestic copper-for-AI demand; value play with thin margins</span></div>
+    </div></div>
+    
+    <!-- 9. Longyuan -->
+    <div class="cc"><div class="cc-h"><div class="cc-r el">09</div><div class="cc-tb">
+      <div class="cc-n">China Longyuan Power Group</div><div class="cc-ncn">龙源电力</div>
+      <div class="cc-tk">0916.HK · HKEx · China's #1 Wind Power</div>
+      <div class="cc-bg"><span class="tag tag-el">Wind Power</span><span class="tag tag-el">Renewable Energy</span></div>
+    </div></div>
+    <div class="gs">
+      <div class="g"><div class="g-l">Market Cap</div><div class="g-v">~HK$130B</div></div>
+      <div class="g"><div class="g-l">Installed Capacity</div><div class="g-v">~35 GW</div></div>
+      <div class="g"><div class="g-l">Position</div><div class="g-v">China's #1 wind operator</div></div>
+      <div class="g"><div class="g-l">Parent</div><div class="g-v">CHN Energy (SOE)</div></div>
+    </div>
+    <div class="cb">
+      <p>China Longyuan is <strong>China's and Asia's largest wind power producer</strong>, a subsidiary of China Energy Investment Corporation (China's largest power company). As China targets 1,200 GW of combined wind + solar capacity and builds massive UHV transmission lines connecting western renewable generation to eastern data center hubs, Longyuan sits at the intersection of both the power generation and the AI infrastructure buildout.</p>
+      <p>China's AI data center power demand is growing alongside its commitment to reach carbon peak by 2030. Hyperscalers like Alibaba and Tencent increasingly require renewable energy PPAs for their data centers — Longyuan is the natural counterparty for these deals given its scale and SOE backing.</p>
+      <div class="ms"><div class="ms-l moat">Moat</div><p class="cb">China's largest wind operator by installed capacity. SOE parent provides capital access and policy support. Positioned on the UHV corridor linking western generation to eastern AI data center demand. Early mover in offshore wind.</p></div>
+      <div class="ms"><div class="ms-l risk">Risks</div><p class="cb">Power tariff cuts and grid curtailment. Capital-intensive expansion. SOE governance/dividend policy risk. Competition from CGN New Energy and other SOE renewables arms. RMB depreciation for HK-listed shares.</p></div>
+      <div class="ar"><span class="tag-buy">Buy</span><span style="font-size:.83rem;color:var(--dim)">China's renewable AI power play; scale advantage; dividend yield ~3-4%</span></div>
+    </div></div>
+    
+    <!-- 10. CGN -->
+    <div class="cc"><div class="cc-h"><div class="cc-r el">10</div><div class="cc-tb">
+      <div class="cc-n">CGN Power Co.</div><div class="cc-ncn">中广核电力</div>
+      <div class="cc-tk">1816.HK · HKEx · China's #1 Nuclear Pure-Play</div>
+      <div class="cc-bg"><span class="tag tag-nu">Nuclear Baseload</span><span class="tag tag-el">Clean Baseload Power</span></div>
+    </div></div>
+    <div class="gs">
+      <div class="g"><div class="g-l">Market Cap</div><div class="g-v">~HK$210B</div></div>
+      <div class="g"><div class="g-l">Operating Capacity</div><div class="g-v">33.3 GW</div></div>
+      <div class="g"><div class="g-l">Units Under Const.</div><div class="g-v">6 units</div></div>
+      <div class="g"><div class="g-l">Capacity Factor</div><div class="g-v">~90%+</div></div>
+      <div class="g"><div class="g-l">Div Yield</div><div class="g-v">~3%</div></div>
+    </div>
+    <div class="cb">
+      <p>CGN Power is <strong>China's Constellation Energy equivalent</strong> — the largest pure-play nuclear power operator listed in Hong Kong. With 33.3 GW of managed nuclear capacity and 6 units under construction, CGN provides the carbon-free 24/7 baseload power that AI data centers require. This directly maps to Huang's thesis: nuclear is the only generation technology that delivers continuous, reliable power at data center scale without carbon emissions.</p>
+      <p>China approved a record number of new nuclear units in 2024-2025, with CGN as the primary beneficiary. As Alibaba, Tencent, and Baidu build massive AI computing clusters across southern China (where CGN's plants are concentrated), the company is a natural behind-the-meter power provider. The stock trades at a significant discount to Constellation Energy on every metric.</p>
+      <div class="ms"><div class="ms-l moat">Moat</div><p class="cb">China's #1 nuclear operator. Nuclear construction approvals are government-controlled — massive barrier to entry. 90%+ capacity factor delivers predictable generation. HPR1000 (Hualong One) technology is China's standard reactor design, giving CGN a construction cost advantage.</p></div>
+      <div class="ms"><div class="ms-l risk">Risks</div><p class="cb">US Entity List designation limits international partnerships. SOE governance and dividend policy uncertainty. Nuclear safety is always a tail risk. Tariff regulation limits pricing power. RMB depreciation.</p></div>
+      <div class="ar"><span class="tag-buy">Buy</span><span style="font-size:.83rem;color:var(--dim)">China's nuclear baseload play for AI power demand; trades at deep discount to CEG; 3% yield</span></div>
+    </div></div>
+    
+    </div>
+  </div>
+  
+  <!-- CHARTS -->
+  <div id="tab-charts" class="tc">
+    <div class="cr">
+      <div class="ch-c">
+        <div class="sect-t">Value Chain Positioning</div>
+        <div class="sect-cn">产业链定位：从矿山到GPU机架</div>
+        <canvas id="ch1" height="320"></canvas>
+      </div>
+      <div class="ch-c">
+        <div class="sect-t">Market Cap Distribution</div>
+        <div class="sect-cn">市值分布 (USD Billion)</div>
+        <canvas id="ch2" height="320"></canvas>
+      </div>
+    </div>
+    <div class="cr" style="margin-top:18px">
+      <div class="ch-c">
+        <div class="sect-t">Copper Supply-Demand Projection</div>
+        <div class="sect-cn">全球铜供需缺口预测</div>
+        <canvas id="ch3" height="300"></canvas>
+      </div>
+      <div class="ch-c">
+        <div class="sect-t">Power Demand Growth from AI Data Centers</div>
+        <div class="sect-cn">AI数据中心电力需求增长</div>
+        <canvas id="ch4" height="300"></canvas>
+      </div>
+    </div>
+  </div>
+  
+  <div class="disc">
+    <strong>Disclaimer 免责声明:</strong> This report is for informational and research purposes only. It does not constitute investment advice. All data from public filings and analyst estimates as of April 2026. Past performance is not indicative of future results. 本报告仅供研究参考，不构成投资建议。
+  </div>
+</div>
+
+<script>
+function showTab(id){
+  document.querySelectorAll('.tc').forEach(e=>e.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(e=>e.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  event.target.classList.add('active');
+  if(id==='charts'&&!window.ci){initCharts();window.ci=true}
+}
+function initCharts(){
+  Chart.defaults.color='#7b8fa3';Chart.defaults.borderColor='rgba(255,255,255,.05)';
+  Chart.defaults.font.family="'DM Sans','Noto Sans SC',sans-serif";
+  
+  // Value chain bar
+  new Chart(document.getElementById('ch1'),{type:'bar',data:{
+    labels:['Copper\nMining','Copper\nSmelting','Power\nGeneration','Power\nDistribution','Utility\nDelivery'],
+    datasets:[
+      {label:'US Companies',data:[2,0,2,1,1],backgroundColor:'rgba(79,195,247,0.6)',borderRadius:4},
+      {label:'HK Companies',data:[0,1,1,0,1],backgroundColor:'rgba(212,118,10,0.6)',borderRadius:4}
+    ]},options:{responsive:true,scales:{y:{beginAtZero:true,title:{display:true,text:'# Companies'},grid:{color:'rgba(255,255,255,.04)'}},x:{grid:{display:false}}},plugins:{legend:{position:'bottom',labels:{usePointStyle:true,padding:12}}}}});
+  
+  // Market cap
+  new Chart(document.getElementById('ch2'),{type:'doughnut',data:{
+    labels:['NextEra $170B','BHP $150B','Eaton $145B','Constellation $109B','Vistra $60B','FCX $60B','Teck $30B','CGN Power $27B','Jiangxi Cu $27B','Longyuan $17B'],
+    datasets:[{data:[170,150,145,109,60,60,30,27,27,17],backgroundColor:['#4fc3f7','#d4760a','#f5b041','#ab47bc','#ff7043','#e74c3c','#2ecc71','#9b59b6','#f39c12','#3498db'],borderWidth:0}]
+  },options:{responsive:true,cutout:'52%',plugins:{legend:{position:'right',labels:{usePointStyle:true,padding:6,font:{size:10}}}}}});
+  
+  // Copper supply-demand
+  new Chart(document.getElementById('ch3'),{type:'line',data:{
+    labels:['2024','2025','2026E','2027E','2028E','2030E','2035E'],
+    datasets:[
+      {label:'Global Demand (M tonnes)',data:[26.5,27.2,28.1,29.2,30.5,33,43],borderColor:'#e74c3c',backgroundColor:'rgba(231,76,60,.1)',fill:true,tension:.3},
+      {label:'Global Supply (M tonnes)',data:[26.3,26.9,27.8,28.5,29.2,30,35],borderColor:'#2ecc71',backgroundColor:'rgba(46,204,113,.1)',fill:true,tension:.3}
+    ]},options:{responsive:true,scales:{y:{title:{display:true,text:'Million Tonnes'},grid:{color:'rgba(255,255,255,.04)'}},x:{grid:{display:false}}},plugins:{legend:{position:'bottom',labels:{usePointStyle:true}}}}});
+  
+  // Power demand
+  new Chart(document.getElementById('ch4'),{type:'bar',data:{
+    labels:['2024','2025','2026E','2028E','2030E'],
+    datasets:[
+      {label:'DC Power Demand (GW)',data:[50,65,85,130,200],backgroundColor:'rgba(79,195,247,.5)',borderRadius:5},
+      {label:'AI Share (GW)',data:[12,22,38,65,100],backgroundColor:'rgba(171,71,188,.5)',borderRadius:5}
+    ]},options:{responsive:true,scales:{y:{title:{display:true,text:'GW Capacity'},beginAtZero:true,grid:{color:'rgba(255,255,255,.04)'}},x:{grid:{display:false}}},plugins:{legend:{position:'bottom',labels:{usePointStyle:true}}}}});
+}
+</script>
+</body>
+</html>

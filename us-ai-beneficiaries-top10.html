@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Top 10 Global AI Infrastructure Beneficiaries | AI基础设施受益十强</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&display=swap');
+:root{
+  --bg:#0b0f14;--card:#131a24;--card2:#19222f;--border:#1f2d3d;
+  --navy:#1a5276;--green-cn:#4a6741;
+  --blue:#3b82f6;--teal:#14b8a6;--purple:#a855f7;--amber:#f59e0b;--rose:#f43f5e;--emerald:#10b981;--sky:#0ea5e9;--orange:#f97316;
+  --text:#e2e8f0;--dim:#64748b;--pos:#22c55e;--neg:#ef4444;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'DM Sans','Noto Sans SC',sans-serif;background:var(--bg);color:var(--text);line-height:1.65}
+.wrap{max-width:1440px;margin:0 auto;padding:20px}
+
+/* HEADER */
+.hero{text-align:center;padding:48px 24px 36px;border-bottom:1px solid var(--border);margin-bottom:28px;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-60%;left:-20%;width:140%;height:140%;background:radial-gradient(ellipse at 30% 50%,rgba(59,130,246,.06) 0%,transparent 60%),radial-gradient(ellipse at 70% 50%,rgba(168,85,247,.05) 0%,transparent 60%);pointer-events:none}
+.hero h1{font-size:2.1rem;font-weight:700;color:#fff;position:relative;letter-spacing:-.5px}
+.hero .cn{font-size:1.25rem;color:var(--green-cn);margin-top:6px;position:relative}
+.hero .sub{font-size:.88rem;color:var(--dim);margin-top:14px;max-width:960px;margin-left:auto;margin-right:auto;position:relative;line-height:1.7}
+.hero .meta{font-size:.78rem;color:var(--dim);margin-top:10px;opacity:.6;position:relative}
+.hero .tag-row{display:flex;gap:8px;justify-content:center;margin-top:14px;flex-wrap:wrap;position:relative}
+.hero-tag{padding:4px 14px;border-radius:20px;font-size:.72rem;font-weight:600;border:1px solid}
+.ht1{color:var(--blue);border-color:rgba(59,130,246,.3);background:rgba(59,130,246,.08)}
+.ht2{color:var(--teal);border-color:rgba(20,184,166,.3);background:rgba(20,184,166,.08)}
+.ht3{color:var(--purple);border-color:rgba(168,85,247,.3);background:rgba(168,85,247,.08)}
+.ht4{color:var(--amber);border-color:rgba(245,158,11,.3);background:rgba(245,158,11,.08)}
+.ht5{color:var(--emerald);border-color:rgba(16,185,129,.3);background:rgba(16,185,129,.08)}
+.ht6{color:var(--rose);border-color:rgba(244,63,94,.3);background:rgba(244,63,94,.08)}
+
+/* TABS */
+.tabs{display:flex;gap:6px;margin-bottom:24px;flex-wrap:wrap;justify-content:center}
+.tab{padding:10px 20px;border:1px solid var(--border);border-radius:8px;cursor:pointer;font-size:.84rem;background:transparent;color:var(--dim);transition:all .25s;font-family:inherit}
+.tab:hover{border-color:var(--blue);color:var(--blue)}
+.tab.on{background:var(--blue);border-color:var(--blue);color:#fff;font-weight:600}
+.tp{display:none}.tp.on{display:block}
+
+/* CARDS */
+.sect{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:24px;margin-bottom:18px}
+.sect-t{font-size:1.05rem;font-weight:600;color:#fff;margin-bottom:2px}
+.sect-cn{font-size:.85rem;color:var(--green-cn);margin-bottom:14px}
+
+.cg{display:grid;gap:18px}
+.cc{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:24px;transition:border-color .3s,background .3s}
+.cc:hover{border-color:var(--blue);background:var(--card2)}
+.cc-top{display:flex;align-items:flex-start;gap:14px;margin-bottom:14px;flex-wrap:wrap}
+.cc-num{font-size:2.4rem;font-weight:700;line-height:1;min-width:48px}
+.cc-num.chip{color:var(--blue);opacity:.25}.cc-num.cloud{color:var(--sky);opacity:.25}.cc-num.infra{color:var(--amber);opacity:.25}.cc-num.power{color:var(--emerald);opacity:.25}.cc-num.soft{color:var(--purple);opacity:.25}
+.cc-info{flex:1;min-width:220px}
+.cc-name{font-size:1.25rem;font-weight:700;color:#fff}
+.cc-namecn{font-size:.9rem;color:var(--green-cn);margin-top:1px}
+.cc-ticker{font-size:.82rem;color:var(--amber);font-weight:600;margin-top:3px}
+.badges{display:flex;gap:5px;flex-wrap:wrap;margin-top:6px}
+.badge{padding:3px 10px;border-radius:16px;font-size:.68rem;font-weight:600}
+.b-chip{background:rgba(59,130,246,.12);color:var(--blue)}
+.b-net{background:rgba(14,165,233,.12);color:var(--sky)}
+.b-mem{background:rgba(168,85,247,.12);color:var(--purple)}
+.b-cloud{background:rgba(20,184,166,.12);color:var(--teal)}
+.b-cool{background:rgba(245,158,11,.12);color:var(--amber)}
+.b-pwr{background:rgba(16,185,129,.12);color:var(--emerald)}
+.b-opt{background:rgba(249,115,22,.12);color:var(--orange)}
+.b-agent{background:rgba(244,63,94,.12);color:var(--rose)}
+.b-phys{background:rgba(139,92,246,.12);color:#8b5cf6}
+
+.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(115px,1fr));gap:10px;margin:14px 0}
+.m{background:rgba(255,255,255,.025);border-radius:8px;padding:10px 12px}
+.m-l{font-size:.68rem;color:var(--dim);text-transform:uppercase;letter-spacing:.5px}
+.m-v{font-size:1.05rem;font-weight:700;color:#fff;margin-top:2px}
+.m-v.pos{color:var(--pos)}.m-v.neg{color:var(--neg)}
+
+.body{font-size:.87rem;color:var(--dim);line-height:1.72}
+.body p{margin-bottom:9px}.body strong{color:var(--text)}
+.divider{margin-top:12px;padding-top:12px;border-top:1px solid var(--border)}
+.label{font-size:.72rem;text-transform:uppercase;letter-spacing:.8px;margin-bottom:5px;font-weight:600}
+.label.moat{color:var(--amber)}.label.risk{color:var(--neg)}
+.analyst{display:flex;gap:14px;margin-top:11px;flex-wrap:wrap;align-items:center}
+.a-tag{padding:4px 13px;border-radius:6px;font-size:.79rem;font-weight:600}
+.a-buy{background:rgba(34,197,94,.18);color:#22c55e}
+.a-note{font-size:.83rem;color:var(--dim)}
+
+/* TABLE */
+.tw{overflow-x:auto;-webkit-overflow-scrolling:touch}
+table.tbl{width:100%;border-collapse:collapse;font-size:.83rem}
+.tbl th{text-align:left;padding:11px 8px;border-bottom:2px solid var(--border);color:var(--dim);font-weight:600;font-size:.72rem;text-transform:uppercase;letter-spacing:.5px;white-space:nowrap}
+.tbl td{padding:11px 8px;border-bottom:1px solid rgba(255,255,255,.03);vertical-align:middle}
+.tbl tr:hover{background:var(--card2)}
+
+/* CHARTS */
+.chart-row{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:18px}
+.ch-box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:22px}
+
+/* THEME MAP */
+.theme-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px}
+.theme-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:20px}
+.theme-card h3{font-size:.95rem;font-weight:600;color:#fff;margin-bottom:3px}
+.theme-card .cn{font-size:.8rem;color:var(--green-cn);margin-bottom:10px}
+.theme-card ul{list-style:none;padding:0}
+.theme-card li{font-size:.82rem;color:var(--dim);padding:5px 0;border-bottom:1px solid rgba(255,255,255,.03)}
+.theme-card li:last-child{border:none}
+.theme-card li strong{color:var(--text)}
+
+.check{color:var(--pos);font-size:.9rem}.cross{color:var(--dim);font-size:.9rem;opacity:.3}
+
+.disc{font-size:.73rem;color:var(--dim);opacity:.45;text-align:center;margin-top:40px;padding:20px;border-top:1px solid var(--border)}
+
+@media(max-width:800px){.hero h1{font-size:1.4rem}.chart-row{grid-template-columns:1fr}.cc-top{flex-direction:column}}
+</style>
+</head>
+<body>
+<a href="./index.html" style="display:inline-flex;align-items:center;gap:6px;position:fixed;top:16px;left:16px;z-index:9999;padding:8px 16px;background:rgba(19,26,36,0.9);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,0.1);border-radius:8px;color:#e2e8f0;text-decoration:none;font-family:'DM Sans',sans-serif;font-size:0.82rem;font-weight:500;transition:all 0.3s;cursor:pointer;" onmouseover="this.style.borderColor='#3b82f6';this.style.color='#3b82f6'" onmouseout="this.style.borderColor='rgba(255,255,255,0.1)';this.style.color='#e2e8f0'">
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+  Return to Home
+</a>
+<div class="wrap">
+
+<div class="hero">
+  <h1>Ten Companies Primed to Capture the AI Infrastructure Supercycle</h1>
+  <div class="cn">AI基础设施超级周期十大受益公司</div>
+  <div class="sub">Based on Jensen Huang's post-GTC 2026 thesis: AI has entered the "inference + agents + AI factory" infrastructure era. The trillion-dollar buildout creates investable opportunities spanning chips, memory, networking, power, cooling, enterprise software, and cloud. These 10 companies touch the most critical chokepoints across the entire value chain.</div>
+  <div class="meta">Research Date: April 7, 2026 · Data from latest filings · 黄仁勋GTC 2026后四次访谈主题延伸</div>
+  <div class="tag-row">
+    <span class="hero-tag ht1">Inference Era 推理时代</span>
+    <span class="hero-tag ht2">Token Factory AI工厂</span>
+    <span class="hero-tag ht3">Agentic AI 智能体</span>
+    <span class="hero-tag ht4">Physical AI 物理AI</span>
+    <span class="hero-tag ht5">Infrastructure 基建</span>
+    <span class="hero-tag ht6">Full-Stack 全栈平台</span>
+  </div>
+</div>
+
+<div class="tabs">
+  <button class="tab on" onclick="showTab('overview')">Overview 总览</button>
+  <button class="tab" onclick="showTab('profiles')">Company Profiles 公司详情</button>
+  <button class="tab" onclick="showTab('charts')">Charts 图表</button>
+  <button class="tab" onclick="showTab('themes')">Theme Map 主题映射</button>
+</div>
+
+<!-- ===== OVERVIEW ===== -->
+<div id="t-overview" class="tp on">
+  <div class="sect">
+    <div class="sect-t">Valuation Snapshot & Analyst Consensus</div>
+    <div class="sect-cn">估值概览与分析师共识</div>
+    <div class="tw"><table class="tbl"><thead><tr>
+      <th>#</th><th>Company 公司</th><th>Ticker</th><th>Exchange</th><th>Mkt Cap</th><th>Fwd P/E</th><th>Rev Growth</th><th>Consensus</th><th>Target Upside</th>
+    </tr></thead><tbody>
+      <tr><td>1</td><td><strong>NVIDIA</strong></td><td>NVDA</td><td>NASDAQ</td><td>$4.32T</td><td>~21.5x</td><td class="pos">+73%</td><td><span class="a-tag a-buy">Strong Buy</span></td><td>~50%</td></tr>
+      <tr><td>2</td><td><strong>TSMC</strong> 台积电</td><td>TSM</td><td>NYSE</td><td>~$1.5T</td><td>~20-24x</td><td class="pos">+26%</td><td><span class="a-tag a-buy">Buy</span></td><td>~20%</td></tr>
+      <tr><td>3</td><td><strong>Broadcom</strong></td><td>AVGO</td><td>NASDAQ</td><td>$1.49T</td><td>~23-27x</td><td class="pos">+30%</td><td><span class="a-tag a-buy">Strong Buy</span></td><td>~40%</td></tr>
+      <tr><td>4</td><td><strong>Microsoft</strong> 微软</td><td>MSFT</td><td>NASDAQ</td><td>$2.77T</td><td>~21.3x</td><td class="pos">+17%</td><td><span class="a-tag a-buy">Strong Buy</span></td><td>~60%</td></tr>
+      <tr><td>5</td><td><strong>SK Hynix</strong></td><td>000660.KS</td><td>KRX</td><td>~$450B</td><td style="color:var(--pos);font-weight:700">~5x</td><td class="pos">+66%</td><td><span class="a-tag a-buy">Strong Buy</span></td><td>~52%</td></tr>
+      <tr><td>6</td><td><strong>Arista Networks</strong></td><td>ANET</td><td>NYSE</td><td>~$157B</td><td>~36x</td><td class="pos">+29%</td><td><span class="a-tag a-buy">Strong Buy</span></td><td>~40%</td></tr>
+      <tr><td>7</td><td><strong>Vertiv Holdings</strong></td><td>VRT</td><td>NYSE</td><td>~$99B</td><td>~43x</td><td class="pos">+23%</td><td><span class="a-tag a-buy">Buy</span></td><td>~5%</td></tr>
+      <tr><td>8</td><td><strong>Constellation Energy</strong></td><td>CEG</td><td>NASDAQ</td><td>~$109B</td><td>~32-35x</td><td class="pos">+13%</td><td><span class="a-tag a-buy">Strong Buy</span></td><td>~35%</td></tr>
+      <tr><td>9</td><td><strong>Coherent Corp</strong></td><td>COHR</td><td>NYSE</td><td>~$44B</td><td>~40x</td><td class="pos">+18%</td><td><span class="a-tag a-buy">Strong Buy</span></td><td>~65%</td></tr>
+      <tr><td>10</td><td><strong>ServiceNow</strong></td><td>NOW</td><td>NYSE</td><td>~$110B</td><td>~25x</td><td class="pos">+21%</td><td><span class="a-tag a-buy">Strong Buy</span></td><td>~100%</td></tr>
+    </tbody></table></div>
+  </div>
+
+  <div class="sect">
+    <div class="sect-t">Portfolio Logic: Picks & Shovels Across Every Chokepoint</div>
+    <div class="sect-cn">组合逻辑：覆盖每一个关键瓶颈的 "卖铲人" 策略</div>
+    <div class="body" style="margin-top:8px">
+      <p>The AI inference explosion requires <strong>compute</strong> (NVIDIA, Broadcom), which requires <strong>fabrication</strong> (TSMC) and <strong>memory</strong> (SK Hynix). These chips must be <strong>networked</strong> (Arista, Coherent) inside facilities that need <strong>power</strong> (Constellation Energy) and <strong>cooling</strong> (Vertiv). The resulting compute generates tokens consumed by <strong>enterprise applications</strong> (ServiceNow) running on <strong>hyperscaler infrastructure</strong> (Microsoft).</p>
+      <p><strong>SK Hynix at ~5x forward earnings</strong> stands out as the most striking valuation anomaly — a company with 58% operating margins and sold-out HBM capacity trading at a discount reserved for cyclical commodity businesses. <strong>ServiceNow and Microsoft</strong> both show significant valuation compression from recent selloffs, with analyst targets implying 60-100% upside. The key macro risk: hyperscaler capex projected at $660-720 billion in 2026 must prove sustainable.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ===== PROFILES ===== -->
+<div id="t-profiles" class="tp">
+<div class="cg" id="profileGrid"></div>
+</div>
+
+<!-- ===== CHARTS ===== -->
+<div id="t-charts" class="tp">
+  <div class="chart-row">
+    <div class="ch-box"><div class="sect-t">Forward P/E Comparison</div><div class="sect-cn">远期市盈率对比</div><canvas id="chPE" height="300"></canvas></div>
+    <div class="ch-box"><div class="sect-t">Revenue Growth (YoY %)</div><div class="sect-cn">营收增速</div><canvas id="chGrowth" height="300"></canvas></div>
+  </div>
+  <div class="chart-row">
+    <div class="ch-box"><div class="sect-t">Market Cap Distribution ($B)</div><div class="sect-cn">市值分布</div><canvas id="chMcap" height="300"></canvas></div>
+    <div class="ch-box"><div class="sect-t">AI Theme Exposure — Top 4</div><div class="sect-cn">AI主题覆盖度 (前四公司)</div><canvas id="chRadar" height="300"></canvas></div>
+  </div>
+  <div class="chart-row">
+    <div class="ch-box"><div class="sect-t">Analyst Target Upside (%)</div><div class="sect-cn">分析师目标价上行空间</div><canvas id="chUpside" height="280"></canvas></div>
+    <div class="ch-box"><div class="sect-t">Risk-Reward Bubble Chart</div><div class="sect-cn">风险收益气泡图</div><canvas id="chBubble" height="280"></canvas></div>
+  </div>
+</div>
+
+<!-- ===== THEME MAP ===== -->
+<div id="t-themes" class="tp">
+  <div class="sect">
+    <div class="sect-t">Mapping Huang's 6 Structural Shifts to Portfolio Holdings</div>
+    <div class="sect-cn">黄仁勋六大结构性转变 × 持仓标的映射</div>
+    <div class="tw" style="margin-top:14px">
+    <table class="tbl" style="text-align:center">
+      <thead><tr><th style="text-align:left">Company</th><th>Inference<br>推理</th><th>Token Factory<br>AI工厂</th><th>Agentic AI<br>智能体</th><th>Physical AI<br>物理AI</th><th>Infrastructure<br>基建</th><th>Full-Stack<br>全栈</th><th>Themes</th></tr></thead>
+      <tbody>
+        <tr><td style="text-align:left"><strong>NVIDIA</strong></td><td><span class="check">✓</span></td><td><span class="check">✓</span></td><td><span class="check">✓</span></td><td><span class="check">✓</span></td><td><span class="check">✓</span></td><td><span class="check">✓</span></td><td><strong>6/6</strong></td></tr>
+        <tr><td style="text-align:left"><strong>TSMC</strong></td><td><span class="check">✓</span></td><td><span class="check">✓</span></td><td><span class="cross">—</span></td><td><span class="check">✓</span></td><td><span class="check">✓</span></td><td><span class="cross">—</span></td><td>4/6</td></tr>
+        <tr><td style="text-align:left"><strong>Broadcom</strong></td><td><span class="check">✓</span></td><td><span class="check">✓</span></td><td><span class="cross">—</span></td><td><span class="cross">—</span></td><td><span class="check">✓</span></td><td><span class="cross">—</span></td><td>3/6</td></tr>
+        <tr><td style="text-align:left"><strong>Microsoft</strong></td><td><span class="check">✓</span></td><td><span class="check">✓</span></td><td><span class="check">✓</span></td><td><span class="cross">—</span></td><td><span class="check">✓</span></td><td><span class="cross">—</span></td><td>4/6</td></tr>
+        <tr><td style="text-align:left"><strong>SK Hynix</strong></td><td><span class="check">✓</span></td><td><span class="check">✓</span></td><td><span class="cross">—</span></td><td><span class="cross">—</span></td><td><span class="cross">—</span></td><td><span class="cross">—</span></td><td>2/6</td></tr>
+        <tr><td style="text-align:left"><strong>Arista</strong></td><td><span class="cross">—</span></td><td><span class="check">✓</span></td><td><span class="cross">—</span></td><td><span class="cross">—</span></td><td><span class="check">✓</span></td><td><span class="cross">—</span></td><td>2/6</td></tr>
+        <tr><td style="text-align:left"><strong>Vertiv</strong></td><td><span class="cross">—</span></td><td><span class="check">✓</span></td><td><span class="cross">—</span></td><td><span class="cross">—</span></td><td><span class="check">✓</span></td><td><span class="cross">—</span></td><td>2/6</td></tr>
+        <tr><td style="text-align:left"><strong>Constellation</strong></td><td><span class="cross">—</span></td><td><span class="check">✓</span></td><td><span class="cross">—</span></td><td><span class="cross">—</span></td><td><span class="check">✓</span></td><td><span class="cross">—</span></td><td>2/6</td></tr>
+        <tr><td style="text-align:left"><strong>Coherent</strong></td><td><span class="cross">—</span></td><td><span class="check">✓</span></td><td><span class="cross">—</span></td><td><span class="cross">—</span></td><td><span class="check">✓</span></td><td><span class="cross">—</span></td><td>2/6</td></tr>
+        <tr><td style="text-align:left"><strong>ServiceNow</strong></td><td><span class="check">✓</span></td><td><span class="cross">—</span></td><td><span class="check">✓</span></td><td><span class="cross">—</span></td><td><span class="cross">—</span></td><td><span class="cross">—</span></td><td>2/6</td></tr>
+      </tbody>
+    </table>
+    </div>
+  </div>
+
+  <div class="theme-grid">
+    <div class="theme-card"><h3>1. Inference Era 推理时代</h3><div class="cn">从训练到推理 · 百万倍算力跃迁</div><ul>
+      <li><strong>NVIDIA</strong> — Blackwell + Vera Rubin; Groq LPU for dedicated inference</li>
+      <li><strong>TSMC</strong> — Fabricates every advanced AI inference chip</li>
+      <li><strong>Broadcom</strong> — Custom XPUs (Google TPU, Meta MTIA, OpenAI)</li>
+      <li><strong>SK Hynix</strong> — HBM4 memory substrate for inference GPUs</li>
+      <li><strong>Microsoft</strong> — Azure inference serving for 250+ trillion-token customers</li>
+      <li><strong>ServiceNow</strong> — Inference compute consumer via Now Assist AI</li>
+    </ul></div>
+    <div class="theme-card"><h3>2. Token Factory / AI工厂</h3><div class="cn">数据中心→Token工厂 · tokens/watt经济学</div><ul>
+      <li><strong>NVIDIA</strong> — DSX AI Factory platform; 10x perf/watt improvement</li>
+      <li><strong>TSMC</strong> — CoWoS packaging is the fabrication bottleneck</li>
+      <li><strong>Broadcom</strong> — Tomahawk/Jericho switching ASICs for every DC</li>
+      <li><strong>Microsoft</strong> — Azure AI Foundry: 80K+ orgs, $625B commercial backlog</li>
+      <li><strong>SK Hynix</strong> — HBM = the memory bottleneck in AI factory economics</li>
+      <li><strong>Arista</strong> — 800G/1.6T Ethernet fabric for AI clusters</li>
+      <li><strong>Vertiv</strong> — Cooling/power at 100kW+ per rack; liquid CDUs</li>
+      <li><strong>Constellation</strong> — Nuclear baseload: 24/7 carbon-free "tokens per watt"</li>
+      <li><strong>Coherent</strong> — Optical interconnects for rack-to-rack data transfer</li>
+    </ul></div>
+    <div class="theme-card"><h3>3. Agentic AI 智能体</h3><div class="cn">OpenClaw操作系统 · 每个工程师100个Agent</div><ul>
+      <li><strong>NVIDIA</strong> — NemoClaw/Dynamo inference framework</li>
+      <li><strong>Microsoft</strong> — Copilot + Azure AI Foundry; 65% Office price increase</li>
+      <li><strong>ServiceNow</strong> — Now Assist AI agents; 4x volume growth; Moveworks acq.</li>
+    </ul></div>
+    <div class="theme-card"><h3>4. Physical AI 物理AI</h3><div class="cn">~50万亿美元产业 · 机器人+自驾+工业自动化</div><ul>
+      <li><strong>NVIDIA</strong> — Drive (Uber 28 cities), Isaac GR00T, Omniverse; ~$10B/yr</li>
+      <li><strong>TSMC</strong> — Edge/automotive AI chip fabrication</li>
+    </ul></div>
+    <div class="theme-card"><h3>5. Infrastructure Buildout 基础设施建设</h3><div class="cn">人类历史上最大基础设施工程 · $660-720B hyperscaler capex 2026</div><ul>
+      <li><strong>NVIDIA</strong> — $1T order visibility for Blackwell + Rubin</li>
+      <li><strong>TSMC</strong> — $52-56B capex in 2026; CoWoS capacity expansion</li>
+      <li><strong>Broadcom</strong> — Google deploying 1GW of TPUs; 3GW+ in 2027</li>
+      <li><strong>Microsoft</strong> — $37.5B capex in single quarter; record</li>
+      <li><strong>Arista</strong> — $3.25B AI networking revenue target 2026 (doubled)</li>
+      <li><strong>Vertiv</strong> — $15B backlog (+109% YoY); 252% organic orders growth</li>
+      <li><strong>Constellation</strong> — $16.4B Calpine acq.; Crane restart; 80% F100 customers</li>
+      <li><strong>Coherent</strong> — $2B NVIDIA investment for next-gen optics</li>
+    </ul></div>
+    <div class="theme-card"><h3>6. Full-Stack Platform 全栈平台</h3><div class="cn">从CUDA到Omniverse · 垂直整合横向开放</div><ul>
+      <li><strong>NVIDIA</strong> — Only company touching all 6 themes: CUDA ecosystem (20yr moat), GPU + CPU (Vera) + DPU (BlueField) + LPU (Groq) + NVLink networking + Omniverse simulation + Dynamo inference + Isaac robotics</li>
+    </ul></div>
+  </div>
+</div>
+
+<div class="disc">
+  <strong>Disclaimer 免责声明:</strong> This report is for informational and research purposes only. It does not constitute investment advice or a recommendation to buy or sell any securities. All data sourced from public filings, news reports, and analyst estimates as of April 2026. Past performance is not indicative of future results. 本报告仅供研究参考，不构成投资建议。
+</div>
+</div>
+
+<script>
+// ---- DATA ----
+const companies=[
+{n:'NVIDIA',cn:'英伟达',tk:'NVDA',ex:'NASDAQ',mc:'$4.32T',fpe:'~21.5x',grow:'+73%',up:'~50%',con:'Strong Buy (41/43)',
+ badges:[['b-chip','GPU / Inference'],['b-net','Networking'],['b-phys','Physical AI'],['b-agent','Agentic']],cls:'chip',
+ stats:[['Market Cap','$4.32T'],['FY26 Revenue','$216B (+65%)'],['Q1 FY27 Guide','~$78B (+77%)'],['Gross Margin','71.1%'],['Order Visibility','$1T (B+R)'],['Fwd P/E','~21.5x']],
+ body:'<p>NVIDIA touches all six structural themes Huang described. <strong>FY2026 revenue reached $216 billion</strong> (+65% YoY), with Q4 data center revenue alone hitting ~$63 billion. Management disclosed <strong>$1 trillion in combined Blackwell and Vera Rubin order visibility</strong> through 2027, beating consensus by $5.4 billion.</p><p>CUDA\'s 20-year ecosystem locks in developers across every cloud and enterprise platform. Vera Rubin (shipping H2 2026) claims <strong>10x performance per watt</strong> vs. Grace Blackwell. The Groq LPU acquisition ($20B) adds dedicated inference. NVLink Fusion extends networking moat. In physical AI, NVIDIA Drive powers Uber\'s autonomous fleet in 28 cities, and Isaac GR00T underpins humanoid robotics.</p>',
+ moat:'CUDA ecosystem = 20-year developer lock-in. Full-stack integration (GPU + CPU + DPU + LPU + networking + software). $1T order visibility. Physical AI revenue approaching $10B/yr.',
+ risk:'China export headwinds ($4.5B charge). Gross margin compression during Blackwell ramp (71.1% vs 75% prior). Custom ASIC competition from hyperscalers. HBM memory supply constraints.',
+},
+{n:'TSMC',cn:'台积电',tk:'TSM',ex:'NYSE (ADR)',mc:'~$1.5T',fpe:'~20-24x',grow:'+26%',up:'~20%',con:'Buy',
+ badges:[['b-chip','Foundry'],['b-net','Switching ASICs'],['b-phys','Edge AI']],cls:'chip',
+ stats:[['Market Cap','~$1.5T'],['FY25 Revenue','$122B (+36%)'],['2026E Growth','~30% YoY'],['AI Rev CAGR','55-59% thru \'29'],['2026 Capex','$52-56B'],['Fwd P/E','~20-24x']],
+ body:'<p>Every advanced AI processor — NVIDIA Blackwell, AMD MI350, Broadcom XPUs, Google TPUs — is manufactured by TSMC. <strong>No viable alternative exists</strong> for cutting-edge node fabrication. FY2025 revenue reached $122 billion (+36% YoY), with 77% from 7nm and below. AI revenue specifically is compounding at a <strong>55-59% CAGR through 2029</strong>.</p><p>CoWoS (Chip-on-Wafer-on-Substrate) advanced packaging is the critical bottleneck for assembling AI chips with HBM stacks. TSMC is aggressively expanding capacity. The 2nm node is on track for high-volume manufacturing in 2025-2026. With <strong>$52-56B in 2026 capex</strong> and FCF exceeding $32B, TSMC invests at scale while generating substantial returns. At 20-24x forward P/E, it offers arguably the best risk-adjusted value among mega-cap chip names.</p>',
+ moat:'Irreplaceable monopoly on cutting-edge fabrication. CoWoS packaging is THE bottleneck. 2nm node leadership. Decades of process expertise no competitor can replicate.',
+ risk:'Taiwan geopolitical risk is existential. Capital intensity enormous. Customer concentration (Apple + NVIDIA + AMD). Arizona fabs carry higher operating costs.',
+},
+{n:'Broadcom',cn:'博通',tk:'AVGO',ex:'NASDAQ',mc:'$1.49T',fpe:'~23-27x',grow:'+30%',up:'~40%',con:'Strong Buy',
+ badges:[['b-chip','Custom XPUs'],['b-net','Switching ASICs'],['b-cloud','VMware']],cls:'chip',
+ stats:[['Market Cap','$1.49T'],['Q1 AI Rev','$8.4B (+106%)'],['Q2 AI Guide','$10.7B'],['XPU Share','>70%'],['Adj. EBITDA Margin','~68%'],['Fwd P/E','~23-27x']],
+ body:'<p>Broadcom holds <strong>over 70% market share in custom AI accelerators</strong> (XPUs), designing chips for Google (TPU), Meta (MTIA), and OpenAI. Q1 FY2026 AI revenue hit $8.4 billion (+106% YoY), Q2 guides to <strong>$10.7 billion</strong>. CEO Hock Tan projected line of sight to $100+ billion in annual AI chip revenue.</p><p>The dual moat: custom silicon + <strong>Tomahawk and Jericho switching ASICs</strong> essential in virtually every AI data center. VMware adds ~$4-5B/quarter in recurring enterprise software revenue. Adjusted EBITDA margins run at ~68%.</p>',
+ moat:'70%+ custom AI accelerator market share. Essential networking ASICs. VMware recurring revenue. Extreme margin profile (68% EBITDA).',
+ risk:'Extreme customer concentration (Google, Meta). Custom chip customers could diversify. VMware integration execution. Elevated debt from acquisition (D/E ~0.83).',
+},
+{n:'Microsoft',cn:'微软',tk:'MSFT',ex:'NASDAQ',mc:'$2.77T',fpe:'~21.3x',grow:'+17%',up:'~60%',con:'Strong Buy',
+ badges:[['b-cloud','Azure Cloud'],['b-agent','Copilot / Foundry'],['b-chip','AI Infrastructure']],cls:'cloud',
+ stats:[['Market Cap','$2.77T'],['Azure Growth','39% YoY'],['Cloud Revenue','$51.5B/qtr'],['Commercial RPO','$625B (+110%)'],['Capex (Q2)','$37.5B (record)'],['Fwd P/E','~21.3x']],
+ body:'<p>Microsoft sits at the intersection of AI infrastructure and enterprise monetization. <strong>Azure grew 39% YoY</strong> in Q2 FY2026. Commercial remaining performance obligations surged to <strong>$625 billion</strong> (+110% YoY). Over 250 customers process 1T+ tokens/year via Azure AI Foundry. Copilot achieved "audacious" sales goals, with a 65% Office Suite price increase in March 2026.</p><p>The stock trades at just <strong>21.3x forward earnings — 30% below its 10-year median P/E of ~33x</strong> — having sold off 33% from its 52-week high on CapEx intensity concerns ($37.5B in Q2 alone). This creates potentially the best mega-cap entry point in tech.</p>',
+ moat:'Azure is #2 cloud globally. $625B backlog = multi-year revenue visibility. OpenAI partnership. Office 365 + Copilot = 400M+ enterprise users. GitHub Copilot dominates developer AI.',
+ risk:'Record capex (~45% of revenue) transforms financial profile. OpenAI dependency. Rising depreciation from AI infrastructure will pressure margins.',
+},
+{n:'SK Hynix',cn:'SK海力士',tk:'000660.KS',ex:'Korea Exchange',mc:'~$450B',fpe:'~5x',grow:'+66%',up:'~52%',con:'Strong Buy (36/39)',
+ badges:[['b-mem','HBM Memory'],['b-chip','AI Memory Substrate']],cls:'chip',
+ stats:[['Market Cap','~$450B'],['Q4\'25 Revenue','KRW 32.83T (+66%)'],['Op. Margin','58%'],['HBM Market Share','53-62%'],['FY25 Op. Profit','KRW 47.21T (+101%)'],['Fwd P/E','~5x (!)']],
+ body:'<p>SK Hynix is the <strong>undisputed leader in HBM memory</strong> (53-62% market share) — the component without which no AI GPU can function. Q4 2025 delivered record revenue with an extraordinary <strong>58% operating margin</strong>. HBM revenue doubled YoY, capacity is <strong>sold out through 2026</strong>. First to mass-produce HBM4 for NVIDIA\'s Blackwell Ultra and Rubin platforms.</p><p>The valuation is stunning: at a <strong>forward P/E of approximately 5x</strong> and PEG of 0.09, SK Hynix trades at a fraction of its peers. Goldman forecasts operating profit soaring to ~KRW 202T in 2026. BofA named it global memory "Top Pick" projecting HBM market reaching <strong>$54.6B in 2026</strong> (+58% YoY).</p>',
+ moat:'53-62% HBM market share — sold out through 2026. First HBM4 mass production. MRNUF advanced packaging technology. Net cash position (KRW 34.9T).',
+ risk:'NVIDIA accounts for ~90% of HBM commitments. Massive capex increases (mid-30% ratio). Samsung/Micron investing to close gap. Memory cyclicality.',
+},
+{n:'Arista Networks',cn:'Arista网络',tk:'ANET',ex:'NYSE',mc:'~$157B',fpe:'~36x',grow:'+29%',up:'~40%',con:'Strong Buy (94% Buy)',
+ badges:[['b-net','800G/1.6T Ethernet'],['b-cloud','AI DC Networking']],cls:'infra',
+ stats:[['Market Cap','~$157B'],['FY25 Revenue','$9.01B (+29%)'],['AI Net Rev \'26 Target','$3.25B (2x)'],['Capex','$120M/yr only'],['Op. Margin','47.5%'],['Fwd P/E','~36x']],
+ body:'<p>While hyperscalers spend $660-720 billion on AI infrastructure, Arista captures networking revenue with just <strong>$120 million in annual capex</strong> — a capital-light model that converts nearly half of revenue to operating income (47.5% margin). FY2025 revenue reached a record $9.01 billion (+29% YoY). AI networking revenue target for 2026: <strong>$3.25 billion — doubled from 2025</strong>.</p><p>EOS runs on 150M+ cumulative ports as the dominant networking platform for AI clusters. Ramping <strong>800G deployed and 1.6T Ethernet</strong> for next-gen interconnects. International revenue surged 71% YoY.</p>',
+ moat:'EOS platform dominance (150M+ ports). Capital-light model ($120M capex). 47.5% operating margins. 800G/1.6T technology leadership. Hyperscaler design-in relationships.',
+ risk:'Top hyperscalers = 48% of revenue (concentration). Gross margin pressure from mix shift. Cisco competitive threat in enterprise.',
+},
+{n:'Vertiv Holdings',cn:'维谛技术',tk:'VRT',ex:'NYSE',mc:'~$99B',fpe:'~43x',grow:'+23%',up:'~5%',con:'Buy',
+ badges:[['b-cool','Liquid Cooling'],['b-pwr','Power Management'],['b-cloud','DC Infrastructure']],cls:'infra',
+ stats:[['Market Cap','~$99B'],['Q4 Organic Orders','+252% YoY'],['Backlog','$15B (+109%)'],['Liquid Cool Growth','40% CAGR thru \'28'],['FY26 Guide','$13.25-13.75B'],['FCF Margin','31.6% (Q4)']],
+ body:'<p>With 80%+ revenue from data centers, Vertiv is the most concentrated play on AI cooling and power management. Q4 2025 saw <strong>organic orders growth of 252%</strong> — the strongest quarter ever — driving backlog to $15 billion (+109% YoY). Liquid cooling revenue more than doubled in 2025, projecting <strong>40% CAGR through 2028</strong>.</p><p>Vertiv co-develops thermal reference designs with NVIDIA and AMD for next-gen GPU architectures like GB200 NVL72. As AI racks push beyond <strong>100kW per rack</strong>, liquid cooling becomes mandatory, and Vertiv is the market leader. Joined S&P 500 on March 23, 2026.</p>',
+ moat:'Market leader in liquid cooling CDUs and direct-to-chip solutions. Co-development with NVIDIA/AMD. 252% order growth = multi-year visibility. S&P 500 inclusion drives passive flows.',
+ risk:'~43x fwd P/E elevated for industrial. Scaling capacity for 252% order growth. Hyperscaler concentration. Tariff exposure.',
+},
+{n:'Constellation Energy',cn:'星座能源',tk:'CEG',ex:'NASDAQ',mc:'~$109B',fpe:'~32-35x',grow:'+13%',up:'~35%',con:'Strong Buy (16 Buy, 4 Hold)',
+ badges:[['b-pwr','Nuclear Baseload'],['b-pwr','Clean Energy']],cls:'power',
+ stats:[['Market Cap','~$109B'],['Nuclear Fleet','31,676 MW'],['MSFT PPA','20-yr, 835 MW'],['Calpine Acq.','$16.4B'],['Adj. Op. EPS \'25','$9.39'],['Div Growth','10%/yr']],
+ body:'<p>Jensen Huang identified power as THE bottleneck — not chips. Constellation operates the <strong>largest nuclear fleet in the US</strong> (~31,676 MW) and signed a landmark 20-year PPA with Microsoft to restart Crane Clean Energy Center (835 MW of carbon-free baseload). The $16.4B Calpine acquisition (Jan 2026) created the nation\'s largest electricity producer.</p><p>Nuclear provides <strong>24/7 carbon-free baseload generation</strong> that cannot be replicated by intermittent renewables. Constellation is pursuing behind-the-meter co-location at nuclear sites — the "holy grail" model for hyperscalers. Serves 80% of Fortune 100 C&I customers. Additional agreements with Meta and CyrusOne.</p>',
+ moat:'Irreplaceable nuclear fleet — no new plants being built at scale. 20-year contracted PPAs with MSFT, Meta. 80% Fortune 100 as customers. 10% annual dividend growth.',
+ risk:'GAAP earnings volatility from nuclear PTC. $16.4B Calpine integration risk. Crane restart regulatory uncertainty. Concentrated hyperscaler customer base.',
+},
+{n:'Coherent Corp',cn:'相干公司',tk:'COHR',ex:'NYSE',mc:'~$44B',fpe:'~40x',grow:'+18%',up:'~65%',con:'Strong Buy (16 Buy, 4 Hold)',
+ badges:[['b-opt','Optical Interconnects'],['b-net','AI Networking'],['b-cool','Liquid Cold Plates']],cls:'infra',
+ stats:[['Market Cap','~$44B'],['NVIDIA Investment','$2B'],['Q2 FY26 Rev','$1.69B (+17.5%)'],['1-Yr Return','+200%+'],['Non-GAAP EPS','$1.29 (beat 7%)'],['Fwd P/E','~40x']],
+ body:'<p>In March 2026, NVIDIA invested <strong>$2 billion in Coherent</strong> alongside a multibillion-dollar purchase commitment for advanced laser and optical products — validating optical networking as the next critical AI infrastructure bottleneck. As clusters expand to campus-scale, optical interconnects become essential for 800G and 1.6T rack-to-rack data transfer.</p><p>Coherent possesses a <strong>full-stack optical capability</strong>: InP lasers, silicon photonics, VCSELs, transceivers, co-packaged optics, and optical circuit switches. Also offers Thermadite 800 liquid cold plates and SiC substrates for power applications, providing exposure beyond pure optics.</p>',
+ moat:'$2B NVIDIA strategic investment = validation. Full-stack optical capability. First-mover in co-packaged optics. Multi-product exposure (optics + cooling + power).',
+ risk:'Elevated valuation after 200%+ run. Broadcom backing copper DACs for intra-rack (limits optical TAM). ASP erosion risk. High debt from II-VI merger. Lumentum competition.',
+},
+{n:'ServiceNow',cn:'ServiceNow',tk:'NOW',ex:'NYSE',mc:'~$110B',fpe:'~25x',grow:'+21%',up:'~100%',con:'Strong Buy',
+ badges:[['b-agent','Agentic AI Platform'],['b-cloud','Enterprise Workflow']],cls:'soft',
+ stats:[['Market Cap','~$110B'],['Sub Rev (Q4)','$3.47B (+21%)'],['cRPO','$12.85B (+25%)'],['Renewal Rate','98%'],['AI Volume Growth','4x targets'],['Fwd P/E','~25x']],
+ body:'<p>Huang\'s thesis that enterprise software ($2T industry) will transform into "token resellers" growing to $8T finds its most direct expression in ServiceNow. AI workflow automation volume <strong>grew 4x targets in 2025</strong>, with Now Assist AI ACV more than doubling YoY. ServiceNow processes <strong>4 billion+ workflow transactions daily</strong>.</p><p>The stock has sold off <strong>~37% from its 52-week high</strong> amid SaaS rotation, compressing forward P/E to ~25x — attractive for 20%+ subscription growth with 57% FCF margins. Strategic acquisitions of Moveworks (~$3B AI assistant), Armis ($7.75B cybersecurity), and partnerships with Anthropic and OpenAI extend the agentic platform. <strong>Analyst targets imply 78-126% upside</strong> — the highest on this entire list.</p>',
+ moat:'98% renewal rate = extraordinary stickiness. 4B+ daily workflow transactions. "AI Control Tower" positioning for enterprise. Moveworks + Armis extend platform. 57% FCF margins.',
+ risk:'Multiple large acquisitions = integration risk. Salesforce competition in ITSM. Enterprise spending macro sensitivity. SaaS sector rotation has been severe.',
+},
+];
+
+// ---- RENDER PROFILES ----
+function renderProfiles(){
+  const grid=document.getElementById('profileGrid');
+  grid.innerHTML=companies.map((c,i)=>{
+    const statsHTML=c.stats.map(s=>`<div class="m"><div class="m-l">${s[0]}</div><div class="m-v">${s[1]}</div></div>`).join('');
+    const badgesHTML=c.badges.map(b=>`<span class="badge ${b[0]}">${b[1]}</span>`).join('');
+    return `<div class="cc"><div class="cc-top"><div class="cc-num ${c.cls}">${String(i+1).padStart(2,'0')}</div><div class="cc-info">
+      <div class="cc-name">${c.n}</div>${c.cn?`<div class="cc-namecn">${c.cn}</div>`:''}
+      <div class="cc-ticker">${c.tk} · ${c.ex}</div>
+      <div class="badges">${badgesHTML}</div>
+    </div></div>
+    <div class="metrics">${statsHTML}</div>
+    <div class="body">${c.body}
+      <div class="divider"><div class="label moat">Competitive Moat 护城河</div><p>${c.moat}</p></div>
+      <div class="divider"><div class="label risk">Key Risks 主要风险</div><p>${c.risk}</p></div>
+      <div class="analyst"><span class="a-tag a-buy">${c.con}</span><span class="a-note">Target upside: ${c.up}</span></div>
+    </div></div>`;
+  }).join('');
+}
+renderProfiles();
+
+// ---- TABS ----
+function showTab(id){
+  document.querySelectorAll('.tp').forEach(e=>e.classList.remove('on'));
+  document.querySelectorAll('.tab').forEach(e=>e.classList.remove('on'));
+  document.getElementById('t-'+id).classList.add('on');
+  event.target.classList.add('on');
+  if(id==='charts'&&!window._ci){initCharts();window._ci=true}
+}
+
+// ---- CHARTS ----
+function initCharts(){
+  Chart.defaults.color='#64748b';Chart.defaults.borderColor='rgba(255,255,255,.04)';
+  Chart.defaults.font.family="'DM Sans','Noto Sans SC',sans-serif";
+  const names=['NVDA','TSM','AVGO','MSFT','SK Hynix','ANET','VRT','CEG','COHR','NOW'];
+  const cols=['#3b82f6','#14b8a6','#a855f7','#0ea5e9','#f59e0b','#f97316','#ef4444','#10b981','#8b5cf6','#f43f5e'];
+
+  // P/E
+  new Chart(document.getElementById('chPE'),{type:'bar',data:{labels:names,datasets:[{label:'Forward P/E',data:[21.5,22,25,21.3,5,36,43,33.5,40,25],backgroundColor:cols,borderRadius:5,barThickness:28}]},options:{responsive:true,indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{grid:{color:'rgba(255,255,255,.03)'},title:{display:true,text:'Forward P/E'}},y:{grid:{display:false}}}}});
+
+  // Growth
+  new Chart(document.getElementById('chGrowth'),{type:'bar',data:{labels:names,datasets:[{label:'Rev Growth %',data:[73,26,30,17,66,29,23,13,18,21],backgroundColor:cols,borderRadius:5,barThickness:28}]},options:{responsive:true,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,ticks:{callback:v=>v+'%'},grid:{color:'rgba(255,255,255,.03)'}},x:{grid:{display:false}}}}});
+
+  // Market Cap
+  new Chart(document.getElementById('chMcap'),{type:'doughnut',data:{labels:names.map((n,i)=>n+' $'+[4320,1500,1490,2770,450,157,99,109,44,110][i]+'B'),datasets:[{data:[4320,1500,1490,2770,450,157,99,109,44,110],backgroundColor:cols,borderWidth:0}]},options:{responsive:true,cutout:'50%',plugins:{legend:{position:'right',labels:{usePointStyle:true,padding:6,font:{size:10}}}}}});
+
+  // Radar
+  new Chart(document.getElementById('chRadar'),{type:'radar',data:{labels:['Inference\n推理','Token Factory\nAI工厂','Agentic AI\n智能体','Physical AI\n物理AI','Infrastructure\n基建','Full-Stack\n全栈'],datasets:[
+    {label:'NVIDIA',data:[5,5,4,5,5,5],borderColor:'#3b82f6',backgroundColor:'rgba(59,130,246,.08)',pointBackgroundColor:'#3b82f6'},
+    {label:'Microsoft',data:[4,4,5,1,4,2],borderColor:'#0ea5e9',backgroundColor:'rgba(14,165,233,.08)',pointBackgroundColor:'#0ea5e9'},
+    {label:'TSMC',data:[5,4,0,3,4,0],borderColor:'#14b8a6',backgroundColor:'rgba(20,184,166,.08)',pointBackgroundColor:'#14b8a6'},
+    {label:'Broadcom',data:[4,4,0,0,4,0],borderColor:'#a855f7',backgroundColor:'rgba(168,85,247,.08)',pointBackgroundColor:'#a855f7'},
+  ]},options:{responsive:true,scales:{r:{beginAtZero:true,max:5,ticks:{stepSize:1,display:false},grid:{color:'rgba(255,255,255,.06)'},pointLabels:{font:{size:10}}}},plugins:{legend:{position:'bottom',labels:{usePointStyle:true,padding:12,font:{size:11}}}}}});
+
+  // Upside
+  new Chart(document.getElementById('chUpside'),{type:'bar',data:{labels:names,datasets:[{label:'Target Upside %',data:[50,20,40,60,52,40,5,35,65,100],backgroundColor:cols.map(c=>c+'cc'),borderColor:cols,borderWidth:1,borderRadius:4,barThickness:26}]},options:{responsive:true,indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{ticks:{callback:v=>v+'%'},grid:{color:'rgba(255,255,255,.03)'}},y:{grid:{display:false}}}}});
+
+  // Bubble
+  new Chart(document.getElementById('chBubble'),{type:'bubble',data:{datasets:[
+    {label:'NVIDIA',data:[{x:4,y:50,r:22}],backgroundColor:cols[0]+'88'},
+    {label:'TSMC',data:[{x:5,y:20,r:18}],backgroundColor:cols[1]+'88'},
+    {label:'Broadcom',data:[{x:4,y:40,r:17}],backgroundColor:cols[2]+'88'},
+    {label:'Microsoft',data:[{x:3,y:60,r:20}],backgroundColor:cols[3]+'88'},
+    {label:'SK Hynix',data:[{x:6,y:52,r:13}],backgroundColor:cols[4]+'88'},
+    {label:'Arista',data:[{x:4,y:40,r:10}],backgroundColor:cols[5]+'88'},
+    {label:'Vertiv',data:[{x:5,y:5,r:9}],backgroundColor:cols[6]+'88'},
+    {label:'Constellation',data:[{x:4,y:35,r:9}],backgroundColor:cols[7]+'88'},
+    {label:'Coherent',data:[{x:6,y:65,r:7}],backgroundColor:cols[8]+'88'},
+    {label:'ServiceNow',data:[{x:5,y:100,r:9}],backgroundColor:cols[9]+'88'},
+  ]},options:{responsive:true,scales:{x:{title:{display:true,text:'Risk Level (1=Low, 10=High) 风险',font:{size:11}},min:0,max:10,grid:{color:'rgba(255,255,255,.03)'}},y:{title:{display:true,text:'Analyst Target Upside % 上行空间',font:{size:11}},min:0,max:120,grid:{color:'rgba(255,255,255,.03)'}}},plugins:{legend:{position:'bottom',labels:{usePointStyle:true,padding:8,font:{size:10}}}}}});
+}
+</script>
+</body>
+</html>

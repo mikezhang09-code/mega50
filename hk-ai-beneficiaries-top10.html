@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Top 10 HK-Listed AI Beneficiaries | 港股AI受益十强</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&display=swap');
+  :root {
+    --navy: #1a5276;
+    --green-cn: #4a6741;
+    --bg: #0f1419;
+    --card: #1a1f2e;
+    --card-hover: #222840;
+    --accent: #e74c3c;
+    --gold: #f39c12;
+    --teal: #1abc9c;
+    --blue: #3498db;
+    --purple: #9b59b6;
+    --text: #e8e8e8;
+    --text-dim: #8899aa;
+    --border: #2a3040;
+    --positive: #27ae60;
+    --negative: #e74c3c;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'DM Sans','Noto Sans SC',sans-serif; background:var(--bg); color:var(--text); line-height:1.6; }
+  .container { max-width:1400px; margin:0 auto; padding:20px; }
+  
+  /* Header */
+  .header { text-align:center; padding:40px 20px 30px; border-bottom:1px solid var(--border); margin-bottom:30px; }
+  .header h1 { font-size:2rem; font-weight:700; color:#fff; letter-spacing:-0.5px; }
+  .header .cn-title { font-size:1.3rem; color:var(--green-cn); margin-top:6px; font-weight:500; }
+  .header .subtitle { font-size:0.9rem; color:var(--text-dim); margin-top:12px; max-width:800px; margin-left:auto; margin-right:auto; }
+  .header .date { font-size:0.8rem; color:var(--text-dim); margin-top:8px; opacity:0.7; }
+  
+  /* Tabs */
+  .tabs { display:flex; gap:8px; margin-bottom:24px; flex-wrap:wrap; justify-content:center; }
+  .tab { padding:10px 20px; border:1px solid var(--border); border-radius:8px; cursor:pointer; font-size:0.85rem; background:transparent; color:var(--text-dim); transition:all 0.3s; font-family:inherit; }
+  .tab:hover { border-color:var(--blue); color:var(--blue); }
+  .tab.active { background:var(--blue); border-color:var(--blue); color:#fff; font-weight:600; }
+  
+  .tab-content { display:none; }
+  .tab-content.active { display:block; }
+  
+  /* Cards */
+  .company-grid { display:grid; grid-template-columns:1fr; gap:20px; }
+  .company-card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:24px; transition:all 0.3s; }
+  .company-card:hover { border-color:var(--blue); background:var(--card-hover); }
+  .card-header { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:16px; flex-wrap:wrap; gap:12px; }
+  .card-rank { font-size:2.5rem; font-weight:700; color:var(--blue); opacity:0.3; line-height:1; margin-right:12px; }
+  .card-title-block { flex:1; min-width:200px; }
+  .card-title { font-size:1.3rem; font-weight:700; color:#fff; }
+  .card-title-cn { font-size:1rem; color:var(--green-cn); margin-top:2px; }
+  .card-ticker { font-size:0.85rem; color:var(--gold); margin-top:4px; font-weight:600; }
+  .card-badges { display:flex; gap:6px; flex-wrap:wrap; margin-top:8px; }
+  .badge { padding:3px 10px; border-radius:20px; font-size:0.7rem; font-weight:600; }
+  .badge-chip { background:rgba(231,76,60,0.15); color:#e74c3c; }
+  .badge-cloud { background:rgba(52,152,219,0.15); color:#3498db; }
+  .badge-agent { background:rgba(155,89,182,0.15); color:#9b59b6; }
+  .badge-physical { background:rgba(26,188,156,0.15); color:#1abc9c; }
+  .badge-infra { background:rgba(243,156,18,0.15); color:#f39c12; }
+  .badge-model { background:rgba(241,196,15,0.15); color:#f1c40f; }
+  .badge-content { background:rgba(46,204,113,0.15); color:#2ecc71; }
+  
+  .card-stats { display:grid; grid-template-columns:repeat(auto-fit, minmax(120px,1fr)); gap:12px; margin:16px 0; }
+  .stat { background:rgba(255,255,255,0.03); border-radius:8px; padding:10px 12px; }
+  .stat-label { font-size:0.7rem; color:var(--text-dim); text-transform:uppercase; letter-spacing:0.5px; }
+  .stat-value { font-size:1.1rem; font-weight:700; color:#fff; margin-top:2px; }
+  .stat-value.positive { color:var(--positive); }
+  .stat-value.negative { color:var(--negative); }
+  
+  .card-body { font-size:0.88rem; color:var(--text-dim); line-height:1.7; }
+  .card-body p { margin-bottom:10px; }
+  .card-body strong { color:var(--text); }
+  
+  .moat-section { margin-top:12px; padding-top:12px; border-top:1px solid var(--border); }
+  .moat-label { font-size:0.75rem; color:var(--gold); text-transform:uppercase; letter-spacing:1px; margin-bottom:6px; font-weight:600; }
+  .risk-label { font-size:0.75rem; color:var(--accent); text-transform:uppercase; letter-spacing:1px; margin-bottom:6px; font-weight:600; }
+  .analyst-row { display:flex; gap:16px; margin-top:12px; flex-wrap:wrap; align-items:center; }
+  .analyst-tag { padding:4px 12px; border-radius:6px; font-size:0.8rem; font-weight:600; }
+  .analyst-buy { background:rgba(39,174,96,0.2); color:#27ae60; }
+  .analyst-hold { background:rgba(243,156,18,0.2); color:#f39c12; }
+  
+  /* Summary Table */
+  .summary-table { width:100%; border-collapse:collapse; font-size:0.85rem; }
+  .summary-table th { text-align:left; padding:12px 10px; border-bottom:2px solid var(--border); color:var(--text-dim); font-weight:600; font-size:0.75rem; text-transform:uppercase; letter-spacing:0.5px; white-space:nowrap; }
+  .summary-table td { padding:12px 10px; border-bottom:1px solid var(--border); vertical-align:middle; }
+  .summary-table tr:hover { background:var(--card-hover); }
+  .table-wrap { overflow-x:auto; -webkit-overflow-scrolling:touch; }
+  
+  /* Chart section */
+  .chart-container { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:24px; margin-bottom:20px; }
+  .chart-title { font-size:1rem; font-weight:600; color:#fff; margin-bottom:4px; }
+  .chart-title-cn { font-size:0.85rem; color:var(--green-cn); margin-bottom:16px; }
+  .chart-row { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+  
+  /* Theme mapping */
+  .theme-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:16px; margin-top:20px; }
+  .theme-card { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:20px; }
+  .theme-card h3 { font-size:0.95rem; font-weight:600; color:#fff; margin-bottom:4px; }
+  .theme-card .cn { font-size:0.8rem; color:var(--green-cn); margin-bottom:10px; }
+  .theme-card ul { list-style:none; padding:0; }
+  .theme-card li { font-size:0.82rem; color:var(--text-dim); padding:4px 0; border-bottom:1px solid rgba(255,255,255,0.03); }
+  .theme-card li:last-child { border:none; }
+  .theme-icon { margin-right:6px; }
+  
+  .disclaimer { font-size:0.75rem; color:var(--text-dim); opacity:0.5; text-align:center; margin-top:40px; padding:20px; border-top:1px solid var(--border); }
+  
+  @media(max-width:768px) {
+    .header h1 { font-size:1.4rem; }
+    .chart-row { grid-template-columns:1fr; }
+    .card-header { flex-direction:column; }
+    .card-rank { font-size:2rem; }
+  }
+</style>
+</head>
+<body>
+<a href="./index.html" style="display:inline-flex;align-items:center;gap:6px;position:fixed;top:16px;left:16px;z-index:9999;padding:8px 16px;background:rgba(26,31,46,0.9);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,0.1);border-radius:8px;color:#e8e8e8;text-decoration:none;font-family:'DM Sans',sans-serif;font-size:0.82rem;font-weight:500;transition:all 0.3s;cursor:pointer;" onmouseover="this.style.borderColor='#3498db';this.style.color='#3498db'" onmouseout="this.style.borderColor='rgba(255,255,255,0.1)';this.style.color='#e8e8e8'">
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+  Return to Home
+</a>
+<div class="container">
+  <div class="header">
+    <h1>Top 10 HK-Listed AI Beneficiaries</h1>
+    <div class="cn-title">港股AI受益十强 · 黄仁勋AI工厂与百万倍推理时代延伸研究</div>
+    <div class="subtitle">Extending the global AI infrastructure analysis to Hong Kong-listed companies capturing China's AI supercycle — spanning cloud platforms, AI chips, agentic software, physical AI/robotics, and frontier model development.</div>
+    <div class="date">Research Date: April 7, 2026 · Data as of latest available filings</div>
+  </div>
+  
+  <div class="tabs">
+    <button class="tab active" onclick="showTab('overview')">Overview 总览</button>
+    <button class="tab" onclick="showTab('companies')">Company Profiles 公司详情</button>
+    <button class="tab" onclick="showTab('charts')">Charts 图表</button>
+    <button class="tab" onclick="showTab('themes')">Theme Map 主题映射</button>
+  </div>
+  
+  <!-- TAB: Overview -->
+  <div id="tab-overview" class="tab-content active">
+    <div class="chart-container">
+      <div class="chart-title">HK AI Beneficiaries — Summary Table</div>
+      <div class="chart-title-cn">港股AI受益公司概览</div>
+      <div class="table-wrap">
+      <table class="summary-table">
+        <thead>
+          <tr>
+            <th>#</th><th>Company 公司</th><th>Ticker</th><th>Mkt Cap</th><th>Rev Growth</th><th>Key AI Theme</th><th>Consensus</th><th>Upside</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>1</td><td><strong>Tencent</strong> 腾讯</td><td>0700.HK</td><td>~HK$3.9T</td><td class="positive">+14%</td><td>Agentic AI · Cloud · Content</td><td><span class="analyst-tag analyst-buy">Strong Buy</span></td><td>~30%</td></tr>
+          <tr><td>2</td><td><strong>Alibaba</strong> 阿里巴巴</td><td>9988.HK</td><td>~HK$2.2T</td><td class="positive">+5%</td><td>Cloud Infra · AI Models</td><td><span class="analyst-tag analyst-buy">Buy</span></td><td>~45%</td></tr>
+          <tr><td>3</td><td><strong>Xiaomi</strong> 小米</td><td>1810.HK</td><td>~HK$860B</td><td class="positive">+25%</td><td>Physical AI · Robotics · EV</td><td><span class="analyst-tag analyst-buy">Buy</span></td><td>~35%</td></tr>
+          <tr><td>4</td><td><strong>SMIC</strong> 中芯国际</td><td>0981.HK</td><td>~HK$420B</td><td class="positive">+16%</td><td>AI Chip Fabrication</td><td><span class="analyst-tag analyst-buy">Buy</span></td><td>~50%</td></tr>
+          <tr><td>5</td><td><strong>Kuaishou</strong> 快手</td><td>1024.HK</td><td>~HK$231B</td><td class="positive">+15%</td><td>AI Video (Kling) · Content</td><td><span class="analyst-tag analyst-buy">Buy</span></td><td>~30%</td></tr>
+          <tr><td>6</td><td><strong>Kingsoft Cloud</strong> 金山云</td><td>3896.HK</td><td>~HK$32B</td><td class="positive">+24%</td><td>AI Cloud IaaS/PaaS</td><td><span class="analyst-tag analyst-buy">Buy</span></td><td>~40%</td></tr>
+          <tr><td>7</td><td><strong>Zhipu AI</strong> 智谱</td><td>2513.HK</td><td>~HK$210B</td><td class="positive">N/A (IPO)</td><td>Frontier LLM · Agentic AI</td><td><span class="analyst-tag analyst-buy">Buy</span></td><td>Speculative</td></tr>
+          <tr><td>8</td><td><strong>SenseTime</strong> 商汤</td><td>0020.HK</td><td>~HK$67B</td><td class="positive">+16%</td><td>AI Platform · Generative AI</td><td><span class="analyst-tag analyst-hold">Hold</span></td><td>~25%</td></tr>
+          <tr><td>9</td><td><strong>Biren Tech</strong> 壁仞科技</td><td>2684.HK</td><td>~HK$80B</td><td class="positive">N/A (IPO)</td><td>Domestic GPU / GPGPU</td><td><span class="analyst-tag analyst-buy">Buy</span></td><td>Speculative</td></tr>
+          <tr><td>10</td><td><strong>MiniMax</strong></td><td>9692.HK</td><td>~HK$75B</td><td class="positive">N/A (IPO)</td><td>Frontier LLM · AI Apps</td><td><span class="analyst-tag analyst-buy">Buy</span></td><td>Speculative</td></tr>
+        </tbody>
+      </table>
+      </div>
+    </div>
+    
+    <div class="chart-container">
+      <div class="chart-title">Why Hong Kong? The China AI Thesis</div>
+      <div class="chart-title-cn">为什么关注港股？中国AI投资逻辑</div>
+      <div class="card-body" style="margin-top:10px">
+        <p>Jensen Huang's GTC 2026 thesis explicitly warned that <strong>China will build its own AI technology stack</strong> if American technology isn't available there — and that this parallel stack would eventually compete globally. The evidence is already materializing: DeepSeek's viral moment in 2025 catalyzed a massive revaluation of Chinese AI assets. Hong Kong's Q1 2026 IPO fundraising hit a <strong>5-year high of ~$14 billion</strong>, driven almost entirely by AI companies.</p>
+        <p>The HK market offers exposure to themes that don't exist in the US list: <strong>domestic GPU self-sufficiency</strong> (SMIC, Biren), <strong>AI-native consumer platforms at Chinese scale</strong> (1.4B users via WeChat/Kuaishou), <strong>physical AI + EV convergence</strong> (Xiaomi's factory robots), and <strong>frontier LLM labs going public</strong> (Zhipu, MiniMax — China's "AI Tigers"). Tencent and Alibaba together plan to spend <strong>RMB 150B+ on AI in 2026</strong>, creating a domestic AI infrastructure cycle that mirrors but is independent from the US hyperscaler buildout.</p>
+      </div>
+    </div>
+  </div>
+  
+  <!-- TAB: Companies -->
+  <div id="tab-companies" class="tab-content">
+    <div class="company-grid">
+    
+    <!-- 1. Tencent -->
+    <div class="company-card">
+      <div class="card-header">
+        <div style="display:flex;align-items:flex-start">
+          <div class="card-rank">01</div>
+          <div class="card-title-block">
+            <div class="card-title">Tencent Holdings</div>
+            <div class="card-title-cn">腾讯控股</div>
+            <div class="card-ticker">0700.HK · HKEx Main Board</div>
+            <div class="card-badges">
+              <span class="badge badge-agent">Agentic AI</span>
+              <span class="badge badge-cloud">Cloud</span>
+              <span class="badge badge-content">AI Content</span>
+              <span class="badge badge-model">AI Models</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card-stats">
+        <div class="stat"><div class="stat-label">Market Cap</div><div class="stat-value">~HK$3.9T</div></div>
+        <div class="stat"><div class="stat-label">FY2025 Revenue</div><div class="stat-value">RMB 751.8B</div></div>
+        <div class="stat"><div class="stat-label">Rev Growth</div><div class="stat-value positive">+14% YoY</div></div>
+        <div class="stat"><div class="stat-label">Non-IFRS Net Profit</div><div class="stat-value">RMB 259.6B</div></div>
+        <div class="stat"><div class="stat-label">Fwd P/E</div><div class="stat-value">~18x</div></div>
+        <div class="stat"><div class="stat-label">2025 AI Spend</div><div class="stat-value">RMB 18B</div></div>
+      </div>
+      <div class="card-body">
+        <p>Tencent is the <strong>most diversified AI play in China</strong>, uniquely positioned to embed AI into 1.3 billion WeChat users' daily lives. FY2025 results showed AI working as a performance multiplier across existing profit centers: <strong>marketing services grew 19%</strong> powered by AI ad targeting, domestic gaming revenue surged 18% (Delta Force, VALORANT Mobile), and Business Services accelerated to 22% growth in Q4 driven by cloud + AI workloads.</p>
+        <p>The company spent RMB 18 billion on AI products in 2025 and plans to <strong>double that in 2026</strong>. Management launched QClaw — an advanced AI agent within WeChat — and is preparing Hunyuan 3.0, its next-gen LLM, for April 2026. Tencent Cloud achieved <strong>profitability at scale</strong> for the first time. The strategic shift is from "building a unified AI entry point" to distributing agentic capabilities across the WeChat ecosystem — precisely the "every company needs an agentic strategy" thesis Huang described.</p>
+        <div class="moat-section">
+          <div class="moat-label">Competitive Moat 护城河</div>
+          <p>WeChat's 1.3B MAU ecosystem is an unassailable distribution moat. Closed-loop ad commerce (Mini Programs → Mini Shops) creates an AI monetization flywheel no competitor can replicate. International games revenue surpassed USD 10 billion.</p>
+        </div>
+        <div class="moat-section">
+          <div class="risk-label">Key Risks 主要风险</div>
+          <p>Management admitted AI development pace has lagged — the "All in AI" pivot is late relative to Alibaba and ByteDance. GPU supply constraints limited 2025 capex. Reduced buybacks in 2026 to fund AI investment may pressure short-term shareholder returns. Regulatory overhang persists.</p>
+        </div>
+        <div class="analyst-row">
+          <span class="analyst-tag analyst-buy">Strong Buy — 45 of 52 analysts</span>
+          <span style="font-size:0.85rem;color:var(--text-dim)">Avg Target: ~HK$580 (30%+ upside)</span>
+        </div>
+      </div>
+    </div>
+    
+    <!-- 2. Alibaba -->
+    <div class="company-card">
+      <div class="card-header">
+        <div style="display:flex;align-items:flex-start">
+          <div class="card-rank">02</div>
+          <div class="card-title-block">
+            <div class="card-title">Alibaba Group</div>
+            <div class="card-title-cn">阿里巴巴集团</div>
+            <div class="card-ticker">9988.HK · HKEx Main Board (also BABA NYSE)</div>
+            <div class="card-badges">
+              <span class="badge badge-cloud">Cloud Infra</span>
+              <span class="badge badge-model">Qwen Models</span>
+              <span class="badge badge-infra">AI Factory</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card-stats">
+        <div class="stat"><div class="stat-label">Market Cap</div><div class="stat-value">~HK$2.2T</div></div>
+        <div class="stat"><div class="stat-label">Cloud Rev (Q2 FY26)</div><div class="stat-value">RMB 39.8B</div></div>
+        <div class="stat"><div class="stat-label">Cloud Growth</div><div class="stat-value positive">+34% YoY</div></div>
+        <div class="stat"><div class="stat-label">AI Rev Growth</div><div class="stat-value positive">Triple-digit (9Q)</div></div>
+        <div class="stat"><div class="stat-label">3-Yr AI Capex Plan</div><div class="stat-value">RMB 380B+</div></div>
+        <div class="stat"><div class="stat-label">Fwd P/E</div><div class="stat-value">~10x</div></div>
+      </div>
+      <div class="card-body">
+        <p>Alibaba is China's <strong>closest equivalent to a US hyperscaler</strong> — the only Chinese company building full-stack AI infrastructure from custom chips (T-Head) to consumer applications (Qwen chatbot crossed 10M downloads in one week). Cloud Intelligence Group posted <strong>34% revenue growth</strong> with AI-related products maintaining triple-digit growth for the ninth consecutive quarter, now exceeding 20% of external cloud revenue.</p>
+        <p>The $53 billion 3-year AI capex plan may prove "on the small side" per CEO Eddie Wu, who noted that <strong>server deployment cannot keep pace with customer demand</strong>. All GPUs are running at full capacity. Alibaba is building an AI cloud ecosystem analogous to what AWS/Azure represent in the US, but tuned for Chinese enterprise needs and Qwen model deployment. The Qwen open-source model family is among the most widely adopted globally.</p>
+        <div class="moat-section">
+          <div class="moat-label">Competitive Moat 护城河</div>
+          <p>China's #1 cloud provider by market share. Qwen model ecosystem creates developer lock-in. E-commerce data flywheel feeds AI training. International expansion (new data centers in Brazil, France, Middle East) diversifies geographically.</p>
+        </div>
+        <div class="moat-section">
+          <div class="risk-label">Key Risks 主要风险</div>
+          <p>Profitability under severe pressure — net income fell 53% as heavy investment cycle consumes cash. Free cash flow turned negative. US chip export restrictions create GPU supply chain uncertainty. E-commerce competition from PDD, Douyin, JD intensifies.</p>
+        </div>
+        <div class="analyst-row">
+          <span class="analyst-tag analyst-buy">Buy — ~70% of analysts</span>
+          <span style="font-size:0.85rem;color:var(--text-dim)">~45% upside to consensus target; deeply discounted at ~10x fwd P/E</span>
+        </div>
+      </div>
+    </div>
+    
+    <!-- 3. Xiaomi -->
+    <div class="company-card">
+      <div class="card-header">
+        <div style="display:flex;align-items:flex-start">
+          <div class="card-rank">03</div>
+          <div class="card-title-block">
+            <div class="card-title">Xiaomi Corporation</div>
+            <div class="card-title-cn">小米集团</div>
+            <div class="card-ticker">1810.HK · HKEx Main Board</div>
+            <div class="card-badges">
+              <span class="badge badge-physical">Physical AI / EV</span>
+              <span class="badge badge-agent">Agentic AI (miclaw)</span>
+              <span class="badge badge-model">LLM (MiMo)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card-stats">
+        <div class="stat"><div class="stat-label">Market Cap</div><div class="stat-value">~HK$860B</div></div>
+        <div class="stat"><div class="stat-label">FY2025 Revenue</div><div class="stat-value">RMB 457.3B</div></div>
+        <div class="stat"><div class="stat-label">Rev Growth</div><div class="stat-value positive">+25% YoY</div></div>
+        <div class="stat"><div class="stat-label">EV + AI Rev</div><div class="stat-value">RMB 106.1B</div></div>
+        <div class="stat"><div class="stat-label">EV Deliveries</div><div class="stat-value">411,082 units</div></div>
+        <div class="stat"><div class="stat-label">2026 Target</div><div class="stat-value">550K vehicles</div></div>
+      </div>
+      <div class="card-body">
+        <p>Xiaomi is the <strong>purest "Physical AI" play on the HK market</strong> — directly embodying Huang's thesis that the $50 trillion physical world is technology's next frontier. The Smart EV + AI segment hit <strong>RMB 106.1 billion revenue (+224% YoY)</strong> and achieved its first annual operating profit in just 19 months since launching the SU7. Vehicle deliveries tripled to 411K units, with 550K targeted for 2026.</p>
+        <p>But this is far more than an EV story. Xiaomi launched <strong>MiMo-V2-Pro</strong>, ranking 8th globally and 2nd in China on the Artificial Analysis Intelligence Index. The open-sourced <strong>Xiaomi-Robotics-0 VLA model</strong> powers embodied robots that ran autonomously for 3 hours at Xiaomi's EV factory in March 2026, achieving 90.2% success rate on assembly tasks. Xiaomi's <strong>miclaw</strong> (their OpenClaw-based mobile agent) entered beta testing. R&D investment hit RMB 33.1 billion, with 60 billion planned for AI over three years.</p>
+        <div class="moat-section">
+          <div class="moat-label">Competitive Moat 护城河</div>
+          <p>"Human × Car × Home" ecosystem integrates 165M smartphone users with EV + AIoT devices. Manufacturing expertise from smartphone mass production transfers to vehicle production. Cost discipline: EV segment achieved 24.3% gross margin in year one — unprecedented for a new EV entrant.</p>
+        </div>
+        <div class="moat-section">
+          <div class="risk-label">Key Risks 主要风险</div>
+          <p>EV competition in China is brutal — BYD, NIO, Huawei all competing. Stock has pulled back ~45% from highs. Smartphone ASP pressure from memory chip shortages. EV tax break phaseout could dampen demand. Robotics commercialization timeline uncertain.</p>
+        </div>
+        <div class="analyst-row">
+          <span class="analyst-tag analyst-buy">Buy — majority of analysts</span>
+          <span style="font-size:0.85rem;color:var(--text-dim)">~35% upside to consensus after recent selloff</span>
+        </div>
+      </div>
+    </div>
+    
+    <!-- 4. SMIC -->
+    <div class="company-card">
+      <div class="card-header">
+        <div style="display:flex;align-items:flex-start">
+          <div class="card-rank">04</div>
+          <div class="card-title-block">
+            <div class="card-title">SMIC (Semiconductor Manufacturing International)</div>
+            <div class="card-title-cn">中芯国际</div>
+            <div class="card-ticker">0981.HK · HKEx Main Board (also 688981.SH)</div>
+            <div class="card-badges">
+              <span class="badge badge-chip">AI Chip Fabrication</span>
+              <span class="badge badge-infra">Semiconductor Self-Reliance</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card-stats">
+        <div class="stat"><div class="stat-label">Market Cap</div><div class="stat-value">~HK$420B</div></div>
+        <div class="stat"><div class="stat-label">FY2025 Revenue</div><div class="stat-value">US$9.3B</div></div>
+        <div class="stat"><div class="stat-label">Rev Growth</div><div class="stat-value positive">+16.2% YoY</div></div>
+        <div class="stat"><div class="stat-label">Net Profit Growth</div><div class="stat-value positive">+39% YoY</div></div>
+        <div class="stat"><div class="stat-label">Wafers Shipped</div><div class="stat-value">9.7M (+21%)</div></div>
+        <div class="stat"><div class="stat-label">Gross Margin</div><div class="stat-value">~22%</div></div>
+      </div>
+      <div class="card-body">
+        <p>SMIC is China's <strong>TSMC equivalent — the foundry backbone of domestic AI chip production</strong>. As US export controls block Chinese companies from accessing TSMC's advanced nodes, SMIC becomes the critical enabler for every domestic GPU maker (Biren, Moore Threads, MetaX, Iluvatar). FY2025 revenue rose to $9.3 billion with net profit surging 39%, driven by AI chip demand that is "squeezing out" orders from lower-end smartphone and consumer electronics customers.</p>
+        <p>SMIC operates at mature nodes (primarily 28nm and above), but has demonstrated the ability to produce 7nm-class chips using multi-patterning on older equipment — a remarkable engineering achievement under sanctions. The company shipped 9.7 million wafers in 2025, up 21% YoY, and maintains massive capex (~$7B annually) to expand capacity.</p>
+        <div class="moat-section">
+          <div class="moat-label">Competitive Moat 护城河</div>
+          <p>Irreplaceable strategic position as China's most advanced foundry. Government policy support guarantees demand. Capacity expansion creates long-term scale advantages. Every Chinese AI chip startup MUST fab through SMIC or Hua Hong.</p>
+        </div>
+        <div class="moat-section">
+          <div class="risk-label">Key Risks 主要风险</div>
+          <p>US sanctions limit access to EUV lithography, capping node advancement. Gross margins (22%) significantly below TSMC (55%+). Revenue guidance for Q1 2026 was flat. Entity List restrictions create ongoing uncertainty. Low profitability relative to global peers.</p>
+        </div>
+        <div class="analyst-row">
+          <span class="analyst-tag analyst-buy">Buy — 17 of 22 analysts</span>
+          <span style="font-size:0.85rem;color:var(--text-dim)">Avg Target: HK$77 (~50% upside from ~HK$51)</span>
+        </div>
+      </div>
+    </div>
+    
+    <!-- 5. Kuaishou -->
+    <div class="company-card">
+      <div class="card-header">
+        <div style="display:flex;align-items:flex-start">
+          <div class="card-rank">05</div>
+          <div class="card-title-block">
+            <div class="card-title">Kuaishou Technology</div>
+            <div class="card-title-cn">快手科技</div>
+            <div class="card-ticker">1024.HK · HKEx Main Board</div>
+            <div class="card-badges">
+              <span class="badge badge-content">AI Video (Kling)</span>
+              <span class="badge badge-model">Generative AI</span>
+              <span class="badge badge-agent">AI Agent Tools</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card-stats">
+        <div class="stat"><div class="stat-label">Market Cap</div><div class="stat-value">~HK$231B</div></div>
+        <div class="stat"><div class="stat-label">TTM Revenue</div><div class="stat-value">~RMB 138.6B</div></div>
+        <div class="stat"><div class="stat-label">Kling AI MAU</div><div class="stat-value">12M+</div></div>
+        <div class="stat"><div class="stat-label">1-Yr Return</div><div class="stat-value positive">+98.6%</div></div>
+        <div class="stat"><div class="stat-label">P/E (TTM)</div><div class="stat-value">~18x</div></div>
+        <div class="stat"><div class="stat-label">Net Income</div><div class="stat-value">RMB 17.4B</div></div>
+      </div>
+      <div class="card-body">
+        <p>Kuaishou has reinvented itself from a TikTok laggard into <strong>China's leading AI-generated video platform</strong>. Kling AI, its video generation tool, reached 12 million MAU and generated $20M+ monthly revenue by December 2025. The launch of <strong>Kling AI 3.0</strong> in February 2026 added narrative control, photorealistic consistency, and native multilingual audio generation — positioning it as a direct competitor to Runway, Sora, and Veo.</p>
+        <p>This aligns perfectly with Huang's "agentic AI × content creation" thesis: Kling AI enables creators to produce professional video content at a fraction of traditional cost, expanding the "user base" from human editors to AI agents — exactly the 100x software usage multiplier Huang described. Revenue from Kling is projected to double in 2026, with increased capex for AI computing power.</p>
+        <div class="moat-section">
+          <div class="moat-label">Competitive Moat 护城河</div>
+          <p>Massive proprietary video training dataset from short-video platform. 600M+ MAU provides distribution. Kling's first-mover advantage in Chinese AI video generation. Monetization via B2B API + B2C subscriptions creates dual revenue streams.</p>
+        </div>
+        <div class="moat-section">
+          <div class="risk-label">Key Risks 主要风险</div>
+          <p>Stock has pulled back ~50% from 52-week high of HK$92.60. Intense competition from ByteDance (Seedance 2.0), Alibaba, and US players. AI video generation is capital-intensive with uncertain long-term monetization. Core short-video business growth is decelerating.</p>
+        </div>
+        <div class="analyst-row">
+          <span class="analyst-tag analyst-buy">Buy</span>
+          <span style="font-size:0.85rem;color:var(--text-dim)">Consensus target: ~HK$93 (~30% upside at ~18x P/E — value territory)</span>
+        </div>
+      </div>
+    </div>
+    
+    <!-- 6. Kingsoft Cloud -->
+    <div class="company-card">
+      <div class="card-header">
+        <div style="display:flex;align-items:flex-start">
+          <div class="card-rank">06</div>
+          <div class="card-title-block">
+            <div class="card-title">Kingsoft Cloud</div>
+            <div class="card-title-cn">金山云</div>
+            <div class="card-ticker">3896.HK · HKEx (also NASDAQ: KC)</div>
+            <div class="card-badges">
+              <span class="badge badge-cloud">AI Cloud</span>
+              <span class="badge badge-infra">Intelligent Computing</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card-stats">
+        <div class="stat"><div class="stat-label">Market Cap</div><div class="stat-value">~HK$32B</div></div>
+        <div class="stat"><div class="stat-label">Q4'25 Revenue</div><div class="stat-value">RMB 2.76B</div></div>
+        <div class="stat"><div class="stat-label">Rev Growth</div><div class="stat-value positive">+23.7% YoY</div></div>
+        <div class="stat"><div class="stat-label">AI Billing Growth</div><div class="stat-value positive">+95% YoY (Q4)</div></div>
+        <div class="stat"><div class="stat-label">AI % of Public Cloud</div><div class="stat-value">~45%</div></div>
+        <div class="stat"><div class="stat-label">Profitability</div><div class="stat-value positive">First adj. profit Q3</div></div>
+      </div>
+      <div class="card-body">
+        <p>Kingsoft Cloud is the <strong>small-cap pure-play on China's AI cloud infrastructure</strong> buildout. AI billings grew 95-228% YoY across 2025 quarters, now accounting for ~45% of public cloud services. The company achieved its first-ever adjusted operating profit and net profit in Q3 2025 — a fundamental inflection point. Q4 revenue hit a record high of RMB 2.76 billion.</p>
+        <p>Deep integration with the <strong>Xiaomi-Kingsoft ecosystem</strong> (ecosystem customer revenue grew 69.5% YoY) provides a captive demand base. As Xiaomi's AI/EV ambitions expand, Kingsoft Cloud benefits directly from its computing needs. The company provides turnkey AI solutions spanning computing resources, PaaS platforms, and applications.</p>
+        <div class="moat-section">
+          <div class="moat-label">Competitive Moat 护城河</div>
+          <p>Xiaomi-Kingsoft ecosystem creates captive demand. First mover in mid-market AI cloud for gaming, video, and enterprise customers that are too small for Alibaba/Tencent Cloud but need AI infrastructure. Profitability turning point reached.</p>
+        </div>
+        <div class="moat-section">
+          <div class="risk-label">Key Risks 主要风险</div>
+          <p>Tiny scale vs. Alibaba Cloud and Tencent Cloud. Xiaomi ecosystem dependency (single client concentration). Margins remain thin. Capital-intensive business competing against giants with far deeper pockets. Dilution risk from equity offerings.</p>
+        </div>
+        <div class="analyst-row">
+          <span class="analyst-tag analyst-buy">Buy</span>
+          <span style="font-size:0.85rem;color:var(--text-dim)">High-risk/high-reward; ~40% upside if AI cloud execution continues</span>
+        </div>
+      </div>
+    </div>
+    
+    <!-- 7. Zhipu -->
+    <div class="company-card">
+      <div class="card-header">
+        <div style="display:flex;align-items:flex-start">
+          <div class="card-rank">07</div>
+          <div class="card-title-block">
+            <div class="card-title">Zhipu AI (Knowledge Atlas Technology)</div>
+            <div class="card-title-cn">智谱AI</div>
+            <div class="card-ticker">2513.HK · HKEx Main Board (IPO Jan 2026)</div>
+            <div class="card-badges">
+              <span class="badge badge-model">Frontier LLM</span>
+              <span class="badge badge-agent">AutoClaw / Agentic</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card-stats">
+        <div class="stat"><div class="stat-label">Market Cap</div><div class="stat-value">~HK$210B</div></div>
+        <div class="stat"><div class="stat-label">IPO Price</div><div class="stat-value">HK$116.20</div></div>
+        <div class="stat"><div class="stat-label">Post-IPO Gain</div><div class="stat-value positive">+400%+</div></div>
+        <div class="stat"><div class="stat-label">Latest Model</div><div class="stat-value">GLM-5</div></div>
+        <div class="stat"><div class="stat-label">Status</div><div class="stat-value">Pre-profit</div></div>
+      </div>
+      <div class="card-body">
+        <p>Zhipu is the <strong>first pure-play Chinese LLM developer to list publicly</strong> — effectively China's answer to OpenAI/Anthropic in the public markets. IPO'd in January 2026 at HK$116.20, shares have surged over 400%. The company released <strong>GLM-5</strong>, an open-source model that reportedly approaches Claude Opus 4.5 on coding benchmarks while surpassing Gemini 3 Pro on some tests. Zhipu also launched <strong>AutoClaw</strong> — China's first locally deployable OpenClaw-compatible tool with one-click installation.</p>
+        <p>This is the purest expression of Huang's "every company needs an OpenClaw strategy" thesis applied to China. Zhipu's Z.ai platform targets international expansion across Southeast Asia, Middle East, Europe, and the Global South.</p>
+        <div class="moat-section">
+          <div class="moat-label">Competitive Moat 护城河</div>
+          <p>Tsinghua University lineage provides top AI research talent pipeline. First-mover in HK-listed frontier LLM. Open-source GLM model family builds ecosystem lock-in. AutoClaw gives enterprises a domestically-deployable agentic framework.</p>
+        </div>
+        <div class="moat-section">
+          <div class="risk-label">Key Risks 主要风险</div>
+          <p>Pre-revenue/pre-profit with extreme valuation after 400%+ IPO run. Intense competition from Alibaba (Qwen), ByteDance (Doubao), Baidu (Ernie), DeepSeek. No proven monetization model. GPU access under export controls. Speculative.</p>
+        </div>
+        <div class="analyst-row">
+          <span class="analyst-tag analyst-buy">Buy (speculative)</span>
+          <span style="font-size:0.85rem;color:var(--text-dim)">Pure AI frontier bet — treat as venture-style position</span>
+        </div>
+      </div>
+    </div>
+    
+    <!-- 8. SenseTime -->
+    <div class="company-card">
+      <div class="card-header">
+        <div style="display:flex;align-items:flex-start">
+          <div class="card-rank">08</div>
+          <div class="card-title-block">
+            <div class="card-title">SenseTime Group</div>
+            <div class="card-title-cn">商汤集团</div>
+            <div class="card-ticker">0020.HK · HKEx Main Board</div>
+            <div class="card-badges">
+              <span class="badge badge-model">Generative AI Platform</span>
+              <span class="badge badge-infra">AI Infrastructure</span>
+              <span class="badge badge-physical">Autonomous Driving</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card-stats">
+        <div class="stat"><div class="stat-label">Market Cap</div><div class="stat-value">~HK$67B</div></div>
+        <div class="stat"><div class="stat-label">Generative AI Rev</div><div class="stat-value positive">Rapid growth</div></div>
+        <div class="stat"><div class="stat-label">SenseNova Platform</div><div class="stat-value">Enterprise-grade</div></div>
+        <div class="stat"><div class="stat-label">Pivot</div><div class="stat-value">CV → GenAI</div></div>
+      </div>
+      <div class="card-body">
+        <p>SenseTime has pivoted from its legacy facial recognition and surveillance business to become a <strong>generative AI platform company</strong>. SenseNova, its enterprise AI platform, offers LLMs, image generation, and AI agent tools. Shares jumped 6.8% on the February 2026 Chinese AI rally as investors recognized the platform potential. The company operates one of China's largest AI computing clusters.</p>
+        <p>The transformation carries higher risk than peers — SenseTime remains loss-making and faces a legacy brand association with surveillance that complicates international expansion. However, the SenseNova ecosystem is gaining traction with enterprise customers who need a full-stack AI development platform.</p>
+        <div class="moat-section">
+          <div class="moat-label">Competitive Moat 护城河</div>
+          <p>Deep computer vision R&D heritage. Large proprietary AI computing infrastructure. SenseNova platform offers full model + deployment stack. Autonomous driving partnerships provide physical AI exposure.</p>
+        </div>
+        <div class="moat-section">
+          <div class="risk-label">Key Risks 主要风险</div>
+          <p>Persistent losses — cash burn is a going concern risk. US Entity List designation limits partnerships. Competition from better-funded Alibaba, Tencent, ByteDance in GenAI platform. Surveillance legacy creates ESG/compliance headwinds.</p>
+        </div>
+        <div class="analyst-row">
+          <span class="analyst-tag analyst-hold">Mixed — Hold/Buy split</span>
+          <span style="font-size:0.85rem;color:var(--text-dim)">Turnaround play; ~25% upside if GenAI pivot succeeds</span>
+        </div>
+      </div>
+    </div>
+    
+    <!-- 9. Biren -->
+    <div class="company-card">
+      <div class="card-header">
+        <div style="display:flex;align-items:flex-start">
+          <div class="card-rank">09</div>
+          <div class="card-title-block">
+            <div class="card-title">Shanghai Biren Technology</div>
+            <div class="card-title-cn">壁仞科技</div>
+            <div class="card-ticker">2684.HK · HKEx (IPO Jan 2026)</div>
+            <div class="card-badges">
+              <span class="badge badge-chip">Domestic GPU</span>
+              <span class="badge badge-infra">GPGPU / AI Accelerator</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card-stats">
+        <div class="stat"><div class="stat-label">Market Cap</div><div class="stat-value">~HK$80B</div></div>
+        <div class="stat"><div class="stat-label">IPO Debut Gain</div><div class="stat-value positive">+76%</div></div>
+        <div class="stat"><div class="stat-label">Order Pipeline</div><div class="stat-value">>RMB 2B</div></div>
+        <div class="stat"><div class="stat-label">Product</div><div class="stat-value">BR100 GPGPU</div></div>
+        <div class="stat"><div class="stat-label">IPO Raised</div><div class="stat-value">HK$5.58B</div></div>
+        <div class="stat"><div class="stat-label">Oversubscription</div><div class="stat-value">2,347x retail</div></div>
+      </div>
+      <div class="card-body">
+        <p>Biren is one of China's "Four Little Dragons" in high-performance GPUs — the domestic challengers aiming to fill the void left by NVIDIA's restricted access. Its Hong Kong debut on January 2, 2026 surged <strong>76% on day one</strong> with 2,347x retail oversubscription, the highest in a year. The BR100 GPGPU is designed for AI data center training and inference workloads, with customers spanning telecom operators, AI data centers, and internet companies.</p>
+        <p>This directly addresses Huang's concern that China will "self-build" its AI technology stack. Biren, alongside Moore Threads, MetaX, and Iluvatar, represents the emerging domestic GPU supply chain that will serve China's AI factory buildout regardless of US export policy.</p>
+        <div class="moat-section">
+          <div class="moat-label">Competitive Moat 护城河</div>
+          <p>Strategic national priority status guarantees government/SOE demand. Founded by ex-SenseTime president with deep industry connections. Order pipeline exceeds RMB 2 billion. First HK-listed domestic GPU maker.</p>
+        </div>
+        <div class="moat-section">
+          <div class="risk-label">Key Risks 主要风险</div>
+          <p>Pre-profit with limited commercial track record. GPGPU performance significantly lags NVIDIA (generation behind). Software ecosystem (CUDA equivalent) is immature. US secondary sanctions risk. Multiple domestic competitors in same space. Highly speculative.</p>
+        </div>
+        <div class="analyst-row">
+          <span class="analyst-tag analyst-buy">Buy (speculative)</span>
+          <span style="font-size:0.85rem;color:var(--text-dim)">Pure semiconductor self-reliance play — venture-style risk/reward</span>
+        </div>
+      </div>
+    </div>
+    
+    <!-- 10. MiniMax -->
+    <div class="company-card">
+      <div class="card-header">
+        <div style="display:flex;align-items:flex-start">
+          <div class="card-rank">10</div>
+          <div class="card-title-block">
+            <div class="card-title">MiniMax</div>
+            <div class="card-title-cn">稀宇科技 (MiniMax)</div>
+            <div class="card-ticker">9692.HK · HKEx (IPO 2026)</div>
+            <div class="card-badges">
+              <span class="badge badge-model">Frontier LLM</span>
+              <span class="badge badge-agent">AI Agent Tools</span>
+              <span class="badge badge-content">Consumer AI Apps</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card-stats">
+        <div class="stat"><div class="stat-label">Market Cap</div><div class="stat-value">~HK$75B</div></div>
+        <div class="stat"><div class="stat-label">Post-IPO Gain</div><div class="stat-value positive">+400%+</div></div>
+        <div class="stat"><div class="stat-label">Latest Model</div><div class="stat-value">M2.5 (open-source)</div></div>
+        <div class="stat"><div class="stat-label">Key Product</div><div class="stat-value">Talkie/Hailuo</div></div>
+        <div class="stat"><div class="stat-label">Status</div><div class="stat-value">Pre-profit</div></div>
+      </div>
+      <div class="card-body">
+        <p>MiniMax is one of China's "AI Tigers" — a top-tier frontier AI lab alongside Zhipu, Moonshot, and Baichuan. The company's M2.5 open-source model with enhanced AI agent tools was released in February 2026. MiniMax's consumer-facing products (Talkie for AI companion chat, Hailuo for video generation) have achieved significant traction, particularly among younger users and international markets.</p>
+        <p>South Korean investors piled in as the <strong>#1 net-bought HK stock</strong> in early February 2026 with over $20M in net purchases — signaling broad Asian investor enthusiasm for China's pure-play AI model companies. MiniMax represents the "application layer" of Huang's AI stack — where models meet end users at scale.</p>
+        <div class="moat-section">
+          <div class="moat-label">Competitive Moat 护城河</div>
+          <p>Strong consumer AI product-market fit (Talkie). Multi-modal capabilities (text + video + voice). Open-source M2.5 builds developer ecosystem. International user growth differentiates from China-only peers.</p>
+        </div>
+        <div class="moat-section">
+          <div class="risk-label">Key Risks 主要风险</div>
+          <p>Pre-profit with extreme post-IPO valuation. Fierce competition from Zhipu, ByteDance Doubao, Alibaba Qwen. Consumer AI monetization remains unproven at scale in China. Beijing regulatory restrictions on some overseas-incorporated AI companies could affect operations. Highly speculative.</p>
+        </div>
+        <div class="analyst-row">
+          <span class="analyst-tag analyst-buy">Buy (speculative)</span>
+          <span style="font-size:0.85rem;color:var(--text-dim)">Frontier AI consumer play — highest risk on this list</span>
+        </div>
+      </div>
+    </div>
+    
+    </div>
+  </div>
+  
+  <!-- TAB: Charts -->
+  <div id="tab-charts" class="tab-content">
+    <div class="chart-row">
+      <div class="chart-container">
+        <div class="chart-title">Revenue Growth Comparison (FY2025 YoY)</div>
+        <div class="chart-title-cn">营收增速对比</div>
+        <canvas id="chartRevGrowth" height="300"></canvas>
+      </div>
+      <div class="chart-container">
+        <div class="chart-title">AI Theme Exposure by Company</div>
+        <div class="chart-title-cn">AI主题覆盖度</div>
+        <canvas id="chartThemes" height="300"></canvas>
+      </div>
+    </div>
+    <div class="chart-row">
+      <div class="chart-container">
+        <div class="chart-title">Market Cap Distribution (HK$ Billion)</div>
+        <div class="chart-title-cn">市值分布</div>
+        <canvas id="chartMktCap" height="300"></canvas>
+      </div>
+      <div class="chart-container">
+        <div class="chart-title">Risk-Reward Profile</div>
+        <div class="chart-title-cn">风险收益特征</div>
+        <canvas id="chartRiskReward" height="300"></canvas>
+      </div>
+    </div>
+  </div>
+  
+  <!-- TAB: Themes -->
+  <div id="tab-themes" class="tab-content">
+    <div class="chart-container">
+      <div class="chart-title">Mapping Huang's 6 Structural Shifts to HK-Listed Companies</div>
+      <div class="chart-title-cn">黄仁勋六大结构性转变 × 港股标的映射</div>
+    </div>
+    <div class="theme-grid">
+      <div class="theme-card">
+        <h3>1. Inference Era / 推理时代</h3>
+        <div class="cn">从训练到推理 · 算力需求百万倍跃迁</div>
+        <ul>
+          <li><span class="theme-icon">🔴</span> <strong>SMIC</strong> — Fabricates inference chips domestically</li>
+          <li><span class="theme-icon">🔴</span> <strong>Biren</strong> — Builds inference-capable GPGPUs</li>
+          <li><span class="theme-icon">🟡</span> <strong>Alibaba</strong> — T-Head inference accelerators + Qwen serving</li>
+          <li><span class="theme-icon">🟡</span> <strong>Tencent</strong> — Inference workloads for 1.3B WeChat users</li>
+        </ul>
+      </div>
+      <div class="theme-card">
+        <h3>2. Token Factory / AI工厂</h3>
+        <div class="cn">数据中心→Token工厂 · tokens/watt经济学</div>
+        <ul>
+          <li><span class="theme-icon">🔴</span> <strong>Alibaba Cloud</strong> — China's #1 cloud, $53B+ AI capex</li>
+          <li><span class="theme-icon">🔴</span> <strong>Tencent Cloud</strong> — RMB 36B+ AI spend in 2026</li>
+          <li><span class="theme-icon">🟡</span> <strong>Kingsoft Cloud</strong> — Mid-market AI cloud infrastructure</li>
+          <li><span class="theme-icon">🟡</span> <strong>SenseTime</strong> — Operates large AI computing cluster</li>
+        </ul>
+      </div>
+      <div class="theme-card">
+        <h3>3. Agentic AI / 智能体</h3>
+        <div class="cn">OpenClaw操作系统 · 每个工程师100个Agent</div>
+        <ul>
+          <li><span class="theme-icon">🔴</span> <strong>Tencent</strong> — QClaw agent in WeChat ecosystem</li>
+          <li><span class="theme-icon">🔴</span> <strong>Zhipu</strong> — AutoClaw (China's first local OpenClaw tool)</li>
+          <li><span class="theme-icon">🟡</span> <strong>MiniMax</strong> — M2.5 with agent capabilities</li>
+          <li><span class="theme-icon">🟡</span> <strong>Xiaomi</strong> — miclaw mobile agent in beta</li>
+        </ul>
+      </div>
+      <div class="theme-card">
+        <h3>4. Physical AI / 物理AI</h3>
+        <div class="cn">~50万亿美元产业 · 机器人+自驾+工业自动化</div>
+        <ul>
+          <li><span class="theme-icon">🔴</span> <strong>Xiaomi</strong> — Factory robots + 550K EV target + MiMo VLA</li>
+          <li><span class="theme-icon">🟡</span> <strong>SenseTime</strong> — Autonomous driving solutions</li>
+          <li><span class="theme-icon">🟡</span> <strong>SMIC</strong> — Chips for automotive/edge AI</li>
+        </ul>
+      </div>
+      <div class="theme-card">
+        <h3>5. Infrastructure Buildout / 基础设施建设</h3>
+        <div class="cn">人类历史上最大基础设施工程</div>
+        <ul>
+          <li><span class="theme-icon">🔴</span> <strong>SMIC</strong> — Foundry capacity expansion</li>
+          <li><span class="theme-icon">🔴</span> <strong>Alibaba</strong> — Global data center buildout</li>
+          <li><span class="theme-icon">🔴</span> <strong>Biren</strong> — Domestic GPU production scaling</li>
+          <li><span class="theme-icon">🟡</span> <strong>Kingsoft Cloud</strong> — Intelligent computing infrastructure</li>
+        </ul>
+      </div>
+      <div class="theme-card">
+        <h3>6. AI Model & Content / 模型与内容</h3>
+        <div class="cn">开源模型生态 · AI内容创作大爆发</div>
+        <ul>
+          <li><span class="theme-icon">🔴</span> <strong>Zhipu</strong> — GLM-5 frontier open-source LLM</li>
+          <li><span class="theme-icon">🔴</span> <strong>MiniMax</strong> — M2.5 + Talkie/Hailuo consumer apps</li>
+          <li><span class="theme-icon">🔴</span> <strong>Kuaishou</strong> — Kling AI video generation</li>
+          <li><span class="theme-icon">🟡</span> <strong>Alibaba</strong> — Qwen open-source model family</li>
+          <li><span class="theme-icon">🟡</span> <strong>Tencent</strong> — Hunyuan 3.0 LLM</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  
+  <div class="disclaimer">
+    <p><strong>Disclaimer 免责声明:</strong> This report is for informational and research purposes only. It does not constitute investment advice or a recommendation to buy or sell any securities. All data sourced from public filings, news reports, and analyst estimates as of April 2026. Past performance is not indicative of future results. Invest based on your own due diligence and risk tolerance. 本报告仅供研究参考，不构成投资建议。</p>
+  </div>
+</div>
+
+<script>
+function showTab(id) {
+  document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  event.target.classList.add('active');
+  
+  if (id === 'charts' && !window.chartsInit) {
+    initCharts();
+    window.chartsInit = true;
+  }
+}
+
+function initCharts() {
+  Chart.defaults.color = '#8899aa';
+  Chart.defaults.borderColor = 'rgba(255,255,255,0.06)';
+  Chart.defaults.font.family = "'DM Sans','Noto Sans SC',sans-serif";
+  
+  // Revenue Growth
+  new Chart(document.getElementById('chartRevGrowth'), {
+    type: 'bar',
+    data: {
+      labels: ['Xiaomi\n小米', 'Kingsoft\nCloud', 'SMIC\n中芯', 'Kuaishou\n快手', 'Tencent\n腾讯', 'Alibaba\n阿里'],
+      datasets: [{
+        label: 'FY2025 Revenue Growth %',
+        data: [25, 24, 16.2, 15, 14, 5],
+        backgroundColor: ['#1abc9c','#3498db','#e74c3c','#9b59b6','#f39c12','#2ecc71'],
+        borderRadius: 6,
+        barThickness: 40
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { display: false } },
+      scales: {
+        y: { beginAtZero: true, ticks: { callback: v => v + '%' }, grid: { color: 'rgba(255,255,255,0.04)' } },
+        x: { grid: { display: false } }
+      }
+    }
+  });
+  
+  // Theme Exposure Radar
+  new Chart(document.getElementById('chartThemes'), {
+    type: 'radar',
+    data: {
+      labels: ['Inference\n推理', 'Token Factory\nAI工厂', 'Agentic AI\n智能体', 'Physical AI\n物理AI', 'Infrastructure\n基建', 'Models\n模型'],
+      datasets: [
+        { label: 'Tencent', data: [3,3,4,1,2,3], borderColor: '#f39c12', backgroundColor: 'rgba(243,156,18,0.1)', pointBackgroundColor: '#f39c12' },
+        { label: 'Alibaba', data: [3,4,2,1,4,3], borderColor: '#3498db', backgroundColor: 'rgba(52,152,219,0.1)', pointBackgroundColor: '#3498db' },
+        { label: 'Xiaomi', data: [2,1,3,5,2,2], borderColor: '#1abc9c', backgroundColor: 'rgba(26,188,156,0.1)', pointBackgroundColor: '#1abc9c' },
+        { label: 'SMIC', data: [4,2,0,2,4,0], borderColor: '#e74c3c', backgroundColor: 'rgba(231,76,60,0.1)', pointBackgroundColor: '#e74c3c' }
+      ]
+    },
+    options: {
+      responsive: true,
+      scales: { r: { beginAtZero: true, max: 5, ticks: { stepSize: 1, display: false }, grid: { color: 'rgba(255,255,255,0.08)' }, pointLabels: { font: { size: 10 } } } },
+      plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, padding: 15, font: { size: 11 } } } }
+    }
+  });
+  
+  // Market Cap
+  new Chart(document.getElementById('chartMktCap'), {
+    type: 'doughnut',
+    data: {
+      labels: ['Tencent 3,900B', 'Alibaba 2,200B', 'Xiaomi 860B', 'SMIC 420B', 'Kuaishou 231B', 'Zhipu 210B', 'Biren 80B', 'MiniMax 75B', 'SenseTime 67B', 'Kingsoft Cloud 32B'],
+      datasets: [{
+        data: [3900, 2200, 860, 420, 231, 210, 80, 75, 67, 32],
+        backgroundColor: ['#f39c12','#3498db','#1abc9c','#e74c3c','#9b59b6','#e67e22','#2ecc71','#f1c40f','#34495e','#16a085'],
+        borderWidth: 0
+      }]
+    },
+    options: {
+      responsive: true,
+      cutout: '55%',
+      plugins: { legend: { position: 'right', labels: { usePointStyle: true, padding: 8, font: { size: 10 } } } }
+    }
+  });
+  
+  // Risk-Reward Bubble
+  new Chart(document.getElementById('chartRiskReward'), {
+    type: 'bubble',
+    data: {
+      datasets: [
+        { label: 'Tencent', data: [{x:3,y:30,r:20}], backgroundColor: 'rgba(243,156,18,0.6)' },
+        { label: 'Alibaba', data: [{x:4,y:45,r:18}], backgroundColor: 'rgba(52,152,219,0.6)' },
+        { label: 'Xiaomi', data: [{x:5,y:35,r:14}], backgroundColor: 'rgba(26,188,156,0.6)' },
+        { label: 'SMIC', data: [{x:6,y:50,r:12}], backgroundColor: 'rgba(231,76,60,0.6)' },
+        { label: 'Kuaishou', data: [{x:5,y:30,r:10}], backgroundColor: 'rgba(155,89,182,0.6)' },
+        { label: 'Kingsoft Cloud', data: [{x:7,y:40,r:6}], backgroundColor: 'rgba(22,160,133,0.6)' },
+        { label: 'Zhipu', data: [{x:9,y:80,r:8}], backgroundColor: 'rgba(230,126,34,0.6)' },
+        { label: 'SenseTime', data: [{x:8,y:25,r:7}], backgroundColor: 'rgba(52,73,94,0.6)' },
+        { label: 'Biren', data: [{x:9,y:75,r:7}], backgroundColor: 'rgba(46,204,113,0.6)' },
+        { label: 'MiniMax', data: [{x:9,y:85,r:6}], backgroundColor: 'rgba(241,196,15,0.6)' }
+      ]
+    },
+    options: {
+      responsive: true,
+      scales: {
+        x: { title: { display: true, text: 'Risk Level (1=Low, 10=High) 风险等级', font: { size: 11 } }, min: 0, max: 10, grid: { color: 'rgba(255,255,255,0.04)' } },
+        y: { title: { display: true, text: 'Potential Upside % 潜在上行空间', font: { size: 11 } }, min: 0, max: 100, grid: { color: 'rgba(255,255,255,0.04)' } }
+      },
+      plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, padding: 10, font: { size: 10 } } } }
+    }
+  });
+}
+</script>
+</body>
+</html>

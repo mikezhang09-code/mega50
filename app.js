@@ -136,6 +136,7 @@ var CATEGORIES = {
           { id: "berkshire", label: "Berkshire Hathaway", url: "./berkshire_hathaway_report.html", icon: "doc" },
           { id: "xiaomi", label: "Xiaomi (1810.HK)", url: "./xiaomi_investment_analysis.html", icon: "doc" },
           { id: "xiaomi-intrinsic", label: "Xiaomi Intrinsic Value", url: "./xiaomi-1810hk-intrinsic-value-report.html", icon: "doc" },
+          { id: "hk-ai-beneficiaries", label: "HK AI Beneficiaries Top 10", url: "./hk-ai-beneficiaries-top10.html", icon: "chart" },
         ],
       },
       {
@@ -146,9 +147,11 @@ var CATEGORIES = {
         ],
       },
       {
-        label: "Events & Thematic",
+        label: "AI Infrastructure & Thematic",
         items: [
           { id: "gtc2026", label: "GTC 2026 Analysis", url: "./gtc2026_jensen_huang_analysis.html", icon: "event" },
+          { id: "us-ai-beneficiaries", label: "US AI Beneficiaries Top 10", url: "./us-ai-beneficiaries-top10.html", icon: "chart" },
+          { id: "copper-electricity-ai", label: "Copper & Electricity AI Infra", url: "./copper-electricity-ai-infrastructure-top10.html", icon: "bolt" },
         ],
       },
     ],
