@@ -136,6 +136,7 @@ var CATEGORIES = {
           { id: "berkshire", label: "Berkshire Hathaway", url: "./berkshire_hathaway_report.html", icon: "doc" },
           { id: "xiaomi", label: "Xiaomi (1810.HK)", url: "./xiaomi_investment_analysis.html", icon: "doc" },
           { id: "xiaomi-intrinsic", label: "Xiaomi Intrinsic Value", url: "./xiaomi-1810hk-intrinsic-value-report.html", icon: "doc" },
+          { id: "popmart", label: "Pop Mart (9992.HK)", url: "./popmart-9992hk-report-202604.html", icon: "doc" },
           { id: "hk-ai-beneficiaries", label: "HK AI Beneficiaries Top 10", url: "./hk-ai-beneficiaries-top10.html", icon: "chart" },
         ],
       },

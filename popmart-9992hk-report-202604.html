@@ -1,0 +1,1001 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pop Mart (9992.HK) — Value Investing Deep Dive | 泡泡玛特深度研究</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=Source+Sans+3:wght@300;400;500;600;700&display=swap');
+
+  :root {
+    --navy: #0a1628;
+    --navy-mid: #132240;
+    --navy-light: #1a3055;
+    --gold: #c9a84c;
+    --gold-light: #e4c96a;
+    --gold-dim: rgba(201,168,76,0.15);
+    --en-color: #e8e0d0;
+    --zh-color: #7da87a;
+    --positive: #4ade80;
+    --negative: #f87171;
+    --warning: #fbbf24;
+    --neutral: #94a3b8;
+    --card-bg: rgba(19,34,64,0.7);
+    --card-border: rgba(201,168,76,0.2);
+    --text-primary: #e8e0d0;
+    --text-secondary: #94a3b8;
+    --text-muted: #64748b;
+    --font-display: 'Playfair Display', Georgia, serif;
+    --font-body: 'Source Sans 3', 'Microsoft YaHei', Arial, sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: var(--font-body);
+    background: var(--navy);
+    color: var(--text-primary);
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* ── Decorative background ── */
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background:
+      radial-gradient(ellipse at 20% 0%, rgba(201,168,76,0.06) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 100%, rgba(201,168,76,0.04) 0%, transparent 60%),
+      linear-gradient(180deg, #0a1628 0%, #0e1d38 50%, #0a1628 100%);
+    z-index: -1;
+  }
+
+  .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+
+  /* ── Header ── */
+  .hero {
+    padding: 48px 0 32px;
+    border-bottom: 1px solid var(--card-border);
+    margin-bottom: 0;
+  }
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--gold-dim);
+    border: 1px solid var(--card-border);
+    border-radius: 20px;
+    padding: 4px 14px;
+    font-size: 0.78rem;
+    color: var(--gold);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+  .hero-badge .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--negative); animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.3; } }
+
+  .hero h1 {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    font-weight: 700;
+    color: var(--gold);
+    line-height: 1.15;
+    margin-bottom: 4px;
+  }
+  .hero .zh-title {
+    font-size: clamp(1rem, 2.5vw, 1.4rem);
+    color: var(--zh-color);
+    font-weight: 400;
+    margin-bottom: 16px;
+  }
+  .hero-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+    font-size: 0.88rem;
+    color: var(--text-secondary);
+  }
+  .hero-meta span { display: flex; align-items: center; gap: 6px; }
+  .hero-meta .label { color: var(--text-muted); }
+
+  /* ── KPI Strip ── */
+  .kpi-strip {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 16px;
+    padding: 24px 0;
+    border-bottom: 1px solid var(--card-border);
+  }
+  .kpi {
+    text-align: center;
+    padding: 16px 8px;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 10px;
+    transition: border-color 0.3s;
+  }
+  .kpi:hover { border-color: var(--gold); }
+  .kpi .value { font-family: var(--font-display); font-size: 1.6rem; font-weight: 700; color: var(--gold-light); }
+  .kpi .label-en { font-size: 0.78rem; color: var(--text-secondary); margin-top: 4px; }
+  .kpi .label-zh { font-size: 0.72rem; color: var(--zh-color); }
+  .kpi .change { font-size: 0.75rem; margin-top: 2px; }
+  .kpi .change.up { color: var(--positive); }
+  .kpi .change.down { color: var(--negative); }
+
+  /* ── Tab Navigation ── */
+  .tab-nav {
+    display: flex;
+    gap: 0;
+    padding-top: 24px;
+    border-bottom: 2px solid var(--card-border);
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .tab-btn {
+    background: none;
+    border: none;
+    padding: 12px 20px;
+    font-family: var(--font-body);
+    font-size: 0.88rem;
+    font-weight: 500;
+    color: var(--text-muted);
+    cursor: pointer;
+    white-space: nowrap;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
+    transition: all 0.3s;
+  }
+  .tab-btn:hover { color: var(--text-secondary); }
+  .tab-btn.active { color: var(--gold); border-bottom-color: var(--gold); }
+  .tab-btn .zh { font-size: 0.78rem; color: var(--zh-color); margin-left: 4px; }
+
+  .tab-content { display: none; padding: 28px 0 48px; animation: fadeIn 0.4s ease; }
+  .tab-content.active { display: block; }
+  @keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+
+  /* ── Cards ── */
+  .card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 20px;
+    backdrop-filter: blur(10px);
+  }
+  .card h3 {
+    font-family: var(--font-display);
+    font-size: 1.15rem;
+    color: var(--gold);
+    margin-bottom: 4px;
+  }
+  .card .zh-sub { font-size: 0.82rem; color: var(--zh-color); margin-bottom: 16px; }
+  .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 20px; }
+  .chart-wrap { position: relative; height: 300px; width: 100%; }
+
+  /* ── Tables ── */
+  .data-table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+  .data-table th {
+    text-align: left;
+    padding: 10px 12px;
+    border-bottom: 2px solid var(--gold-dim);
+    color: var(--gold);
+    font-weight: 600;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .data-table td {
+    padding: 10px 12px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    color: var(--text-primary);
+  }
+  .data-table tr:hover td { background: rgba(201,168,76,0.05); }
+  .data-table .num { text-align: right; font-variant-numeric: tabular-nums; }
+  .data-table .pos { color: var(--positive); }
+  .data-table .neg { color: var(--negative); }
+  .data-table .hl { color: var(--gold-light); font-weight: 600; }
+
+  /* ── Verdict Box ── */
+  .verdict-box {
+    background: linear-gradient(135deg, rgba(201,168,76,0.1), rgba(201,168,76,0.03));
+    border: 1px solid var(--gold);
+    border-radius: 12px;
+    padding: 28px;
+    margin: 20px 0;
+    text-align: center;
+  }
+  .verdict-label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 2px; color: var(--text-muted); margin-bottom: 6px; }
+  .verdict-rating { font-family: var(--font-display); font-size: 2.2rem; font-weight: 900; color: var(--gold); }
+  .verdict-sub { color: var(--zh-color); font-size: 1rem; margin-top: 2px; }
+  .verdict-score { display: flex; justify-content: center; gap: 32px; margin-top: 18px; flex-wrap: wrap; }
+  .verdict-score .item { text-align: center; }
+  .verdict-score .num { font-family: var(--font-display); font-size: 1.5rem; font-weight: 700; }
+  .verdict-score .desc { font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
+
+  /* ── Prose ── */
+  .prose { color: var(--text-secondary); font-size: 0.92rem; line-height: 1.75; }
+  .prose p { margin-bottom: 14px; }
+  .prose strong { color: var(--text-primary); font-weight: 600; }
+  .prose .highlight { color: var(--gold-light); font-weight: 600; }
+
+  /* ── Risk Gauge ── */
+  .risk-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; }
+  .risk-item {
+    background: rgba(0,0,0,0.2);
+    border-radius: 10px;
+    padding: 16px;
+    border-left: 3px solid var(--negative);
+  }
+  .risk-item.medium { border-left-color: var(--warning); }
+  .risk-item.low { border-left-color: var(--positive); }
+  .risk-item .risk-title { font-weight: 600; font-size: 0.88rem; color: var(--text-primary); margin-bottom: 4px; }
+  .risk-item .risk-zh { font-size: 0.78rem; color: var(--zh-color); margin-bottom: 6px; }
+  .risk-item .risk-desc { font-size: 0.8rem; color: var(--text-muted); line-height: 1.5; }
+
+  .footer {
+    padding: 24px 0;
+    border-top: 1px solid var(--card-border);
+    text-align: center;
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    margin-top: 32px;
+  }
+
+  /* ── Return Home Button ── */
+  .home-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(201,168,76,0.15);
+    border: 1px solid rgba(201,168,76,0.3);
+    color: var(--gold);
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 6px 16px;
+    border-radius: 20px;
+    text-decoration: none;
+    margin-bottom: 20px;
+    transition: all 0.2s;
+  }
+  .home-btn:hover {
+    background: rgba(201,168,76,0.25);
+    border-color: var(--gold);
+  }
+  .home-btn svg { flex-shrink: 0; }
+
+  /* ── Responsive ── */
+  @media (max-width: 768px) {
+    .container { padding: 0 16px; }
+    .card-grid { grid-template-columns: 1fr; }
+    .kpi-strip { grid-template-columns: repeat(3, 1fr); }
+    .chart-wrap { height: 250px; }
+    .tab-btn { padding: 10px 14px; font-size: 0.82rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════ HEADER ═══════════════ -->
+<div class="container">
+  <div class="hero">
+    <a href="./index.html" class="home-btn">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      Return to Home / 返回主页
+    </a>
+    <br>
+    <div class="hero-badge"><span class="dot"></span> DEEP DIVE RESEARCH</div>
+    <h1>Pop Mart International</h1>
+    <div class="zh-title">泡泡玛特国际集团 (9992.HK) — 从天价坠落，是否该入场？</div>
+    <div class="hero-meta">
+      <span><span class="label">Exchange:</span> HKEX</span>
+      <span><span class="label">Sector:</span> Consumer Discretionary / Art Toys</span>
+      <span><span class="label">Data:</span> FY2025 Annual Results (Mar 2026)</span>
+      <span><span class="label">Report Date:</span> April 13, 2026</span>
+    </div>
+  </div>
+
+  <!-- ═══════════════ KPI STRIP ═══════════════ -->
+  <div class="kpi-strip">
+    <div class="kpi">
+      <div class="value">HK$152.7</div>
+      <div class="label-en">Stock Price</div>
+      <div class="label-zh">股价</div>
+      <div class="change down">▼ 55% from ATH</div>
+    </div>
+    <div class="kpi">
+      <div class="value">10.3x</div>
+      <div class="label-en">Fwd P/E</div>
+      <div class="label-zh">远期市盈率</div>
+      <div class="change down">Record low</div>
+    </div>
+    <div class="kpi">
+      <div class="value">37.1B</div>
+      <div class="label-en">Revenue (RMB)</div>
+      <div class="label-zh">营收</div>
+      <div class="change up">▲ +185% YoY</div>
+    </div>
+    <div class="kpi">
+      <div class="value">12.8B</div>
+      <div class="label-en">Net Profit (RMB)</div>
+      <div class="label-zh">净利润</div>
+      <div class="change up">▲ +308% YoY</div>
+    </div>
+    <div class="kpi">
+      <div class="value">72.1%</div>
+      <div class="label-en">Gross Margin</div>
+      <div class="label-zh">毛利率</div>
+      <div class="change up">▲ +5.3pp</div>
+    </div>
+    <div class="kpi">
+      <div class="value">44.5%</div>
+      <div class="label-en">ROIC</div>
+      <div class="label-zh">投入资本回报率</div>
+      <div class="change up">Exceptional</div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ TAB NAV ═══════════════ -->
+  <div class="tab-nav" id="tabNav">
+    <button class="tab-btn active" data-tab="overview">Overview<span class="zh">概览</span></button>
+    <button class="tab-btn" data-tab="financials">Financials<span class="zh">财务</span></button>
+    <button class="tab-btn" data-tab="ips">IP Portfolio<span class="zh">IP矩阵</span></button>
+    <button class="tab-btn" data-tab="geography">Global Reach<span class="zh">全球布局</span></button>
+    <button class="tab-btn" data-tab="valuation">Valuation<span class="zh">估值</span></button>
+    <button class="tab-btn" data-tab="moat">Moat & Risks<span class="zh">护城河与风险</span></button>
+    <button class="tab-btn" data-tab="verdict">Verdict<span class="zh">投资结论</span></button>
+  </div>
+
+  <!-- ═══════════════ TAB: OVERVIEW ═══════════════ -->
+  <div class="tab-content active" id="tab-overview">
+    <div class="card">
+      <h3>Investment Thesis</h3>
+      <div class="zh-sub">投资论点</div>
+      <div class="prose">
+        <p>Pop Mart presents one of the most polarizing value debates in Hong Kong markets today. After delivering <strong>RMB 37.1B revenue (+185%)</strong> and <strong>RMB 12.8B net profit (+308%)</strong> in FY2025, the stock paradoxically cratered <span class="highlight">55% from its August 2025 all-time high of HK$339.80</span> to ~HK$152.70 — compressing the forward P/E to a record low of <strong>10.3x</strong> versus its three-year average of 24x.</p>
+        <p>The sell-off reflects a market grappling with a single question: <strong>is Pop Mart a generational consumer brand or a fad at peak earnings?</strong> At current prices, the stock trades at a steep discount to analyst consensus targets of HK$250–260, yet the bear case — 38% revenue concentration in Labubu, collapsing resale prices, and management guiding for just 20%+ growth in 2026 — remains credible.</p>
+        <p>Founded in 2010 by <strong>Wang Ning</strong> in Beijing, Pop Mart evolved from a general lifestyle store into a global IP platform through its pioneering blind box model. The company manages <strong>100+ IPs, operates 630 retail stores and 2,637 Robo Shops</strong> across 20+ countries, and holds <strong>97.6% proprietary product revenue</strong>. Membership base reached <strong>72.58 million</strong> with a 55.7% repurchase rate.</p>
+      </div>
+    </div>
+
+    <div class="card-grid">
+      <div class="card">
+        <h3>Revenue Growth Trajectory</h3>
+        <div class="zh-sub">营收增长轨迹 (RMB Billions)</div>
+        <div class="chart-wrap"><canvas id="chartRevGrowth"></canvas></div>
+      </div>
+      <div class="card">
+        <h3>Profitability Evolution</h3>
+        <div class="zh-sub">盈利能力演变 (%)</div>
+        <div class="chart-wrap"><canvas id="chartMargins"></canvas></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Stock Price: The 55% Decline in Three Phases</h3>
+      <div class="zh-sub">股价三阶段暴跌分析</div>
+      <div class="chart-wrap" style="height:260px;"><canvas id="chartPricePhases"></canvas></div>
+      <div class="prose" style="margin-top:16px;">
+        <p><strong>Phase 1 (Oct–Dec 2025):</strong> Bernstein initiates Underperform. Google "Labubu" searches down 90%. Stock falls 40% from ATH. 
+        <strong>Phase 2 (Jan–Feb 2026):</strong> HK$347M buyback sparks 50% rebound to HK$273. Dead-cat bounce. 
+        <strong>Phase 3 (Mar 25–Apr 2026):</strong> Despite record results, stock plunges 22.5% on results day + 10.4% next day. Conservative 20%+ 2026 guidance, worsening Labubu concentration, and inventory buildup trigger the crash.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ TAB: FINANCIALS ═══════════════ -->
+  <div class="tab-content" id="tab-financials">
+    <div class="card">
+      <h3>Income Statement Summary</h3>
+      <div class="zh-sub">利润表摘要 (RMB Billions)</div>
+      <table class="data-table">
+        <thead>
+          <tr><th>Metric / 指标</th><th class="num">FY2023</th><th class="num">FY2024</th><th class="num">FY2025</th><th class="num">YoY Δ</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Revenue / 营收</td><td class="num">6.30</td><td class="num">13.04</td><td class="num hl">37.12</td><td class="num pos">+184.7%</td></tr>
+          <tr><td>Gross Profit / 毛利润</td><td class="num">3.86</td><td class="num">8.71</td><td class="num hl">~26.8</td><td class="num pos">+207%</td></tr>
+          <tr><td>Gross Margin / 毛利率</td><td class="num">61.3%</td><td class="num">66.8%</td><td class="num hl">72.1%</td><td class="num pos">+5.3pp</td></tr>
+          <tr><td>Operating Margin / 经营利润率</td><td class="num">~19.5%</td><td class="num">~31.9%</td><td class="num hl">~45.5%</td><td class="num pos">+13.6pp</td></tr>
+          <tr><td>Net Profit / 净利润</td><td class="num">1.08</td><td class="num">3.13</td><td class="num hl">12.78</td><td class="num pos">+308%</td></tr>
+          <tr><td>Net Margin / 净利率</td><td class="num">17.2%</td><td class="num">24.0%</td><td class="num hl">~35.2%</td><td class="num pos">+11.2pp</td></tr>
+          <tr><td>EPS (Basic) / 每股收益</td><td class="num">0.81</td><td class="num">2.36</td><td class="num hl">~9.58</td><td class="num pos">+306%</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card-grid">
+      <div class="card">
+        <h3>Margin Expansion Story</h3>
+        <div class="zh-sub">利润率扩张 — 经营杠杆释放</div>
+        <div class="chart-wrap"><canvas id="chartMarginBars"></canvas></div>
+      </div>
+      <div class="card">
+        <h3>Balance Sheet Fortress</h3>
+        <div class="zh-sub">资产负债表实力</div>
+        <table class="data-table">
+          <thead><tr><th>Metric / 指标</th><th class="num">Value</th></tr></thead>
+          <tbody>
+            <tr><td>Bank Debt / 银行借款</td><td class="num hl">Zero / 零</td></tr>
+            <tr><td>Net Cash / 净现金</td><td class="num pos">~RMB 13.5–17B</td></tr>
+            <tr><td>Current Ratio / 流动比率</td><td class="num pos">~3.0x</td></tr>
+            <tr><td>FCF Margin (FY24) / 自由现金流率</td><td class="num pos">35.1%</td></tr>
+            <tr><td>ROE / 净资产回报率</td><td class="num pos">61–74%</td></tr>
+            <tr><td>ROIC / 投入资本回报率</td><td class="num pos">44.5%</td></tr>
+            <tr><td>Inventory / 存货</td><td class="num neg">RMB 5.4B ⚠</td></tr>
+            <tr><td>Inv. Turnover Days / 存货周转天数</td><td class="num neg">123 days (↑21%)</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ TAB: IP PORTFOLIO ═══════════════ -->
+  <div class="tab-content" id="tab-ips">
+    <div class="card">
+      <h3>IP Revenue Breakdown — The Labubu Concentration Problem</h3>
+      <div class="zh-sub">IP营收分布 — LABUBU集中度问题 (FY2025)</div>
+      <div class="card-grid">
+        <div class="chart-wrap" style="height:320px;"><canvas id="chartIPPie"></canvas></div>
+        <div>
+          <table class="data-table">
+            <thead><tr><th>IP</th><th class="num">FY2025 (RMB B)</th><th class="num">YoY Growth</th><th class="num">% of Total</th></tr></thead>
+            <tbody>
+              <tr><td>THE MONSTERS (Labubu)</td><td class="num hl">14.16</td><td class="num pos">+365.7%</td><td class="num neg">38.1%</td></tr>
+              <tr><td>SKULLPANDA</td><td class="num">3.54</td><td class="num pos">+170.6%</td><td class="num">9.5%</td></tr>
+              <tr><td>CRYBABY</td><td class="num">2.93</td><td class="num pos">+151.4%</td><td class="num">7.9%</td></tr>
+              <tr><td>MOLLY</td><td class="num">2.90</td><td class="num pos">+38.4%</td><td class="num">7.8%</td></tr>
+              <tr><td>DIMOO</td><td class="num">2.78</td><td class="num pos">+205.3%</td><td class="num">7.5%</td></tr>
+              <tr><td>Xing Xing Ren ✦ New</td><td class="num">2.06</td><td class="num pos">~+1,600%</td><td class="num">5.5%</td></tr>
+              <tr><td>Others (11+ IPs >100M)</td><td class="num">8.75</td><td class="num">—</td><td class="num">23.6%</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>IP Concentration Trend: Diversifying in Absolute, Concentrating in Relative</h3>
+      <div class="zh-sub">IP集中度趋势：绝对值多元化，相对值更集中</div>
+      <div class="chart-wrap" style="height:280px;"><canvas id="chartIPTrend"></canvas></div>
+      <div class="prose" style="margin-top:14px;">
+        <p><strong>Six IPs now each exceed RMB 2 billion</strong>, up from four exceeding RMB 1B in FY2024 — demonstrating genuine portfolio diversification. Yet Labubu's share <em>increased</em> from 23% to 38%, meaning the portfolio diversified in absolute terms but became more concentrated in relative terms. This is the core tension that triggered the sell-off.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ TAB: GEOGRAPHY ═══════════════ -->
+  <div class="tab-content" id="tab-geography">
+    <div class="card">
+      <h3>Geographic Revenue: The Internationalization Megatrend</h3>
+      <div class="zh-sub">地理营收分布 — 国际化大趋势 (FY2025)</div>
+      <div class="card-grid">
+        <div class="chart-wrap" style="height:320px;"><canvas id="chartGeoPie"></canvas></div>
+        <div>
+          <table class="data-table">
+            <thead><tr><th>Region / 地区</th><th class="num">FY2025 (RMB B)</th><th class="num">YoY Growth</th><th class="num">% of Total</th></tr></thead>
+            <tbody>
+              <tr><td>Mainland China / 中国大陆</td><td class="num">20.85</td><td class="num pos">+134.6%</td><td class="num">56.2%</td></tr>
+              <tr><td>Asia-Pacific (ex-CN) / 亚太</td><td class="num">8.01</td><td class="num pos">+157.6%</td><td class="num">21.6%</td></tr>
+              <tr><td>Americas / 美洲</td><td class="num hl">6.81</td><td class="num pos">+748.4%</td><td class="num">18.3%</td></tr>
+              <tr><td>Europe & Others / 欧洲及其他</td><td class="num">1.45</td><td class="num pos">+506.3%</td><td class="num">3.9%</td></tr>
+              <tr style="border-top:2px solid var(--gold-dim)"><td><strong>Total Overseas / 海外合计</strong></td><td class="num hl"><strong>16.27</strong></td><td class="num pos"><strong>+291.9%</strong></td><td class="num hl"><strong>43.8%</strong></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Overseas Revenue Share: 9.8% → 43.8% in 3 Years</h3>
+      <div class="zh-sub">海外收入占比：三年从9.8%到43.8%</div>
+      <div class="chart-wrap" style="height:260px;"><canvas id="chartOverseasTrend"></canvas></div>
+      <div class="prose" style="margin-top:14px;">
+        <p>The Americas segment grew nearly <strong>8.5x year-over-year</strong>, driven by expansion from 22 to 64 stores with flagships planned on Times Square and Fifth Avenue. New manufacturing bases in Mexico, Indonesia, and Cambodia reduce tariff exposure. Analysts project overseas could reach <strong>69% by 2030</strong>.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ TAB: VALUATION ═══════════════ -->
+  <div class="tab-content" id="tab-valuation">
+    <div class="card">
+      <h3>Valuation Snapshot: Historically Cheap or Value Trap?</h3>
+      <div class="zh-sub">估值快照：历史性低估还是价值陷阱？</div>
+      <table class="data-table">
+        <thead><tr><th>Metric / 指标</th><th class="num">Current (Apr 2026)</th><th class="num">At ATH (Aug 2025)</th><th class="num">Peer Comparison</th></tr></thead>
+        <tbody>
+          <tr><td>Stock Price / 股价</td><td class="num hl">HK$152.70</td><td class="num">HK$339.80</td><td class="num">—</td></tr>
+          <tr><td>Market Cap / 市值</td><td class="num">~US$25.3B</td><td class="num">~US$56B</td><td class="num">Hasbro $10.6B, Mattel $6.4B</td></tr>
+          <tr><td>Forward P/E / 远期市盈率</td><td class="num pos">10.3x</td><td class="num neg">~40x+</td><td class="num">Toy avg: ~12.9x</td></tr>
+          <tr><td>Trailing P/E / 滚动市盈率</td><td class="num">~27x</td><td class="num">~111x</td><td class="num">—</td></tr>
+          <tr><td>P/B / 市净率</td><td class="num neg">16.3x</td><td class="num">—</td><td class="num">High (reflects ROE)</td></tr>
+          <tr><td>PEG Ratio / PEG比率</td><td class="num pos">0.27</td><td class="num">—</td><td class="num">&lt;1.0 = undervalued</td></tr>
+          <tr><td>EV/EBITDA</td><td class="num">13.6x</td><td class="num">—</td><td class="num">—</td></tr>
+          <tr><td>Dividend Yield / 股息率</td><td class="num">~1.8%</td><td class="num">—</td><td class="num">—</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card-grid">
+      <div class="card">
+        <h3>Analyst Target Prices vs Current</h3>
+        <div class="zh-sub">分析师目标价 vs 当前价 (HK$)</div>
+        <div class="chart-wrap" style="height:320px;"><canvas id="chartAnalysts"></canvas></div>
+      </div>
+      <div class="card">
+        <h3>P/E Compression: From Euphoria to Fear</h3>
+        <div class="zh-sub">市盈率压缩：从狂热到恐惧</div>
+        <div class="chart-wrap" style="height:320px;"><canvas id="chartPEHistory"></canvas></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Analyst Consensus</h3>
+      <div class="zh-sub">分析师共识评级</div>
+      <table class="data-table">
+        <thead><tr><th>Bank / 机构</th><th>Rating / 评级</th><th class="num">Target (HK$)</th><th class="num">Implied Upside</th></tr></thead>
+        <tbody>
+          <tr><td>Deutsche Bank</td><td class="neg">Sell</td><td class="num">157</td><td class="num">+3%</td></tr>
+          <tr><td>Bank of America</td><td>Neutral</td><td class="num">170</td><td class="num">+11%</td></tr>
+          <tr><td>Goldman Sachs</td><td>Neutral</td><td class="num">184</td><td class="num">+20%</td></tr>
+          <tr><td>Jefferies</td><td class="pos">Buy</td><td class="num">227.6</td><td class="num pos">+49%</td></tr>
+          <tr><td>Morgan Stanley</td><td class="pos">Overweight</td><td class="num">278</td><td class="num pos">+82%</td></tr>
+          <tr><td>UBS</td><td class="pos">—</td><td class="num">278</td><td class="num pos">+82%</td></tr>
+          <tr><td>SPDBI</td><td class="pos">Buy</td><td class="num">328.1</td><td class="num pos">+115%</td></tr>
+          <tr><td>Citi</td><td class="pos">Buy</td><td class="num hl">415</td><td class="num pos">+172%</td></tr>
+        </tbody>
+      </table>
+      <div class="prose" style="margin-top:12px;">
+        <p>~89% of 30+ analysts rate Buy, with a median target of HK$250–260 implying 65–70% upside. However, targets set before March may not fully reflect revised estimates.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ TAB: MOAT & RISKS ═══════════════ -->
+  <div class="tab-content" id="tab-moat">
+    <div class="card-grid">
+      <div class="card">
+        <h3>Moat Analysis (Buffett Framework)</h3>
+        <div class="zh-sub">护城河分析（巴菲特框架）</div>
+        <div class="chart-wrap" style="height:300px;"><canvas id="chartMoat"></canvas></div>
+      </div>
+      <div class="card">
+        <h3>Competitive Advantage Summary</h3>
+        <div class="zh-sub">竞争优势总结</div>
+        <div class="prose">
+          <p><strong>Intangible Assets (3/3):</strong> 100+ proprietary IPs, 1,200+ trademarks, 1,600+ copyrights. 97.6% proprietary revenue drives 72.1% gross margins — 2x+ Miniso's 32%.</p>
+          <p><strong>Switching Costs (2/3):</strong> 72.58M members, 55.7% repurchase rate. Collector psychology creates emotional lock-in, but no structural switching cost.</p>
+          <p><strong>Network Effects (2/3):</strong> Artist ecosystem creates a virtuous cycle: top designers gravitate to the platform with the best distribution, which attracts more collectors.</p>
+          <p><strong>Cost Advantages (2/3):</strong> Scale enables ~25% lower unit costs than entrants. Manufacturing diversification to Mexico/Cambodia/Indonesia.</p>
+          <p><strong>Efficient Scale (1/3):</strong> The designer toy niche doesn't have natural monopoly dynamics. Miniso's TOP TOY, 52Toys, Funko all compete.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Key Risks — Five Threats to the Thesis</h3>
+      <div class="zh-sub">关键风险 — 五大威胁</div>
+      <div class="risk-grid">
+        <div class="risk-item">
+          <div class="risk-title">Labubu Fad Risk</div>
+          <div class="risk-zh">LABUBU 潮流消退风险</div>
+          <div class="risk-desc">Google searches down 90% from peak. Resale prices collapsed 84%. Beanie Babies parallel haunts the thesis. 38% revenue concentration.</div>
+        </div>
+        <div class="risk-item">
+          <div class="risk-title">Revenue Deceleration</div>
+          <div class="risk-zh">营收增长大幅放缓</div>
+          <div class="risk-desc">Mgmt guides just 20%+ for 2026. Q4 2025 showed 9.5% sequential decline. Inventory up to RMB 5.4B with turnover days +21%.</div>
+        </div>
+        <div class="risk-item medium">
+          <div class="risk-title">China Regulatory Risk</div>
+          <div class="risk-zh">中国监管风险</div>
+          <div class="risk-desc">Blind box sales banned for under-8s. People's Daily editorial called for stricter rules. Potential pricing/marketing restrictions.</div>
+        </div>
+        <div class="risk-item medium">
+          <div class="risk-title">US Tariff Exposure</div>
+          <div class="risk-zh">美国关税风险</div>
+          <div class="risk-desc">145% cumulative tariffs on Chinese goods. Americas = 18.3% of revenue. Mitigating via Mexico/SE Asia factories but transition takes time.</div>
+        </div>
+        <div class="risk-item medium">
+          <div class="risk-title">Governance Concerns</div>
+          <div class="risk-zh">公司治理问题</div>
+          <div class="risk-desc">ISS governance score: 10/10 (worst). Founder controls ~48.7%. Dividend payout cut from 35% to 25% despite record profits.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Growth Catalysts</h3>
+      <div class="zh-sub">增长催化剂</div>
+      <div class="risk-grid">
+        <div class="risk-item low">
+          <div class="risk-title">International Expansion</div>
+          <div class="risk-zh">国际化扩张</div>
+          <div class="risk-desc">Overseas 43.8% of revenue, analysts target 69% by 2030. Americas grew 748%. 100+ US stores planned by end-2026.</div>
+        </div>
+        <div class="risk-item low">
+          <div class="risk-title">Sony Labubu Movie</div>
+          <div class="risk-zh">索尼LABUBU电影</div>
+          <div class="risk-desc">Director Paul King (Paddington, Wonka — $635M+ combined). Could transform Labubu into multi-decade entertainment franchise.</div>
+        </div>
+        <div class="risk-item low">
+          <div class="risk-title">IP Diversification</div>
+          <div class="risk-zh">IP多元化</div>
+          <div class="risk-desc">17 IPs each >RMB 100M. Xing Xing Ren surged 1,600% to RMB 2.06B. Platform's ability to incubate new hits is proven.</div>
+        </div>
+        <div class="risk-item low">
+          <div class="risk-title">Category Expansion</div>
+          <div class="risk-zh">品类拓展</div>
+          <div class="risk-desc">Theme parks (Pop Land Beijing), jewelry, apparel, home goods, small appliances launching April 2026. Broadens beyond toys.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ TAB: VERDICT ═══════════════ -->
+  <div class="tab-content" id="tab-verdict">
+    <div class="verdict-box">
+      <div class="verdict-label">Investment Verdict / 投资结论</div>
+      <div class="verdict-rating">SPECULATIVE BUY — HIGH CONVICTION WATCHLIST</div>
+      <div class="verdict-sub">投机性买入 — 高置信度观察名单</div>
+      <div class="verdict-score">
+        <div class="item"><div class="num" style="color:var(--positive)">10/10</div><div class="desc">Buffett Quality</div></div>
+        <div class="item"><div class="num" style="color:var(--warning)">5/7</div><div class="desc">Graham Safety</div></div>
+        <div class="item"><div class="num" style="color:var(--positive)">10/10</div><div class="desc">Moat Score</div></div>
+        <div class="item"><div class="num" style="color:var(--warning)">~35%</div><div class="desc">Implied MoS</div></div>
+        <div class="item"><div class="num" style="color:var(--negative)">HIGH</div><div class="desc">Uncertainty</div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>The Core Question</h3>
+      <div class="zh-sub">核心问题：耐久品牌还是一时之潮？</div>
+      <div class="prose">
+        <p>Pop Mart at HK$152.70 is a <strong>fundamentally different proposition</strong> than Pop Mart at HK$339.80. The forward P/E of 10.3x prices in substantial deceleration, and the PEG of 0.27 suggests the market may be overcorrecting. A company generating <strong>72% gross margins, 35% net margins, 44% ROIC, and sitting on RMB 13+ billion in net cash with zero bank debt</strong> deserves attention from value investors.</p>
+        <p>The <strong>bull case</strong> requires believing that Pop Mart is building a durable consumer brand platform — a "Chinese Disney for collectibles" — rather than riding a single viral IP cycle. Six IPs exceeding RMB 2B and 43.8% international revenue suggest genuine platform value.</p>
+        <p>The <strong>bear case</strong> points to 38% concentration in Labubu with clearly fading viral momentum, inventory buildup to RMB 5.4B, conservative management guidance, and the Beanie Babies historical precedent. The $25B market cap still exceeds Hasbro, Mattel, and Sanrio combined.</p>
+        <p><strong>Recommended approach:</strong> This is a high-uncertainty, high-reward setup. For value investors comfortable with consumer discretionary volatility, a <span class="highlight">half-position entry near HK$150 with a plan to add on confirmation</span> (e.g., Q1 2026 trading update showing sustained 20%+ growth, or successful IP diversification evidence) balances risk and reward. A full position requires greater conviction on the "durable platform" thesis versus the "fad at peak earnings" narrative.</p>
+        <p><strong>Key watchpoints for 2026:</strong> Q1 trading update (due May), Labubu resale price stabilization, Xing Xing Ren / CRYBABY scaling trajectory, US same-store sales trends, and Sony movie production progress.</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Position Sizing Framework (Kelly-Adjusted)</h3>
+      <div class="zh-sub">仓位管理框架（凯利公式调整）</div>
+      <table class="data-table">
+        <thead><tr><th>Scenario / 情景</th><th class="num">Probability</th><th class="num">Target Price (HK$)</th><th class="num">Return</th></tr></thead>
+        <tbody>
+          <tr><td>Bull: Durable brand, 30% growth resumes</td><td class="num">25%</td><td class="num pos">300–350</td><td class="num pos">+96% to +129%</td></tr>
+          <tr><td>Base: Platform holds, 20% growth</td><td class="num">45%</td><td class="num">200–250</td><td class="num pos">+31% to +64%</td></tr>
+          <tr><td>Bear: Labubu fades, growth stalls</td><td class="num">25%</td><td class="num neg">100–130</td><td class="num neg">−15% to −35%</td></tr>
+          <tr><td>Worst: Fad collapse</td><td class="num">5%</td><td class="num neg">50–80</td><td class="num neg">−48% to −67%</td></tr>
+        </tbody>
+      </table>
+      <div class="prose" style="margin-top:12px;">
+        <p><strong>Expected value: ~HK$210–220 (weighted average)</strong>, implying ~37–44% upside from current levels. Half Kelly suggests <strong>3–5% portfolio weight</strong> for an investor with moderate risk tolerance and existing HK/China exposure.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ FOOTER ═══════════════ -->
+  <div class="footer">
+    <p>Pop Mart International (9992.HK) — Value Investing Deep Dive | Data as of April 2026 | FY2025 Annual Results</p>
+    <p style="margin-top:4px;">This report is for informational purposes only and does not constitute investment advice. 本报告仅供参考，不构成投资建议。</p>
+  </div>
+</div>
+
+<!-- ═══════════════ CHARTS ═══════════════ -->
+<script>
+Chart.defaults.font.family = "'Source Sans 3', 'Microsoft YaHei', Arial, sans-serif";
+Chart.defaults.font.size = 12;
+Chart.defaults.color = '#94a3b8';
+Chart.defaults.plugins.legend.position = 'bottom';
+Chart.defaults.responsive = true;
+Chart.defaults.maintainAspectRatio = false;
+
+const gold = '#c9a84c';
+const goldLight = '#e4c96a';
+const navy = '#1a3055';
+const green = '#4ade80';
+const red = '#f87171';
+const blue = '#60a5fa';
+const teal = '#2dd4bf';
+const purple = '#a78bfa';
+const orange = '#fb923c';
+const zhGreen = '#7da87a';
+
+// Tab navigation
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+  });
+});
+
+// ── Revenue Growth ──
+new Chart(document.getElementById('chartRevGrowth'), {
+  type: 'bar',
+  data: {
+    labels: ['FY2019', 'FY2020', 'FY2021', 'FY2022', 'FY2023', 'FY2024', 'FY2025'],
+    datasets: [{
+      label: 'Revenue (RMB B) / 营收',
+      data: [1.68, 2.51, 4.49, 4.63, 6.30, 13.04, 37.12],
+      backgroundColor: [navy, navy, navy, navy, navy, gold, goldLight],
+      borderColor: 'transparent',
+      borderRadius: 4,
+      barPercentage: 0.7
+    }]
+  },
+  options: {
+    plugins: { legend: { display: false },
+      tooltip: { callbacks: { label: ctx => `RMB ${ctx.parsed.y.toFixed(2)}B` } }
+    },
+    scales: {
+      y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { callback: v => v + 'B' } },
+      x: { grid: { display: false } }
+    }
+  }
+});
+
+// ── Margins ──
+new Chart(document.getElementById('chartMargins'), {
+  type: 'line',
+  data: {
+    labels: ['FY2021', 'FY2022', 'FY2023', 'FY2024', 'FY2025'],
+    datasets: [
+      { label: 'Gross Margin / 毛利率', data: [63.0, 58.1, 61.3, 66.8, 72.1], borderColor: gold, backgroundColor: 'rgba(201,168,76,0.1)', fill: true, tension: 0.3 },
+      { label: 'Net Margin / 净利率', data: [21.8, 14.2, 17.2, 24.0, 35.2], borderColor: green, backgroundColor: 'rgba(74,222,128,0.1)', fill: true, tension: 0.3 },
+      { label: 'Op Margin / 经营利润率', data: [24.0, 16.5, 19.5, 31.9, 45.5], borderColor: teal, borderDash: [5,3], tension: 0.3, fill: false }
+    ]
+  },
+  options: {
+    plugins: { legend: { labels: { usePointStyle: true, pointStyle: 'circle' } } },
+    scales: {
+      y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { callback: v => v + '%' }, min: 0, max: 80 },
+      x: { grid: { display: false } }
+    }
+  }
+});
+
+// ── Price Phases ──
+new Chart(document.getElementById('chartPricePhases'), {
+  type: 'line',
+  data: {
+    labels: ['Aug 25', 'Sep 25', 'Oct 25', 'Nov 25', 'Dec 25', 'Jan 26', 'Feb 26', 'Mar 25', 'Mar 26', 'Apr 26'],
+    datasets: [{
+      label: 'HK$ Share Price / 股价',
+      data: [339.8, 310, 260, 215, 195, 220, 273, 238, 165, 152.7],
+      borderColor: gold,
+      backgroundColor: 'rgba(201,168,76,0.08)',
+      fill: true,
+      tension: 0.35,
+      pointBackgroundColor: [goldLight, gold, red, red, red, green, green, red, red, red],
+      pointRadius: [6, 3, 3, 3, 3, 3, 4, 3, 4, 6],
+      pointBorderWidth: 2
+    }]
+  },
+  options: {
+    plugins: {
+      legend: { display: false },
+      tooltip: { callbacks: { label: ctx => `HK$${ctx.parsed.y}` } },
+      annotation: {}
+    },
+    scales: {
+      y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { callback: v => 'HK$' + v } },
+      x: { grid: { display: false } }
+    }
+  }
+});
+
+// ── Margin Bars (Financials tab) ──
+new Chart(document.getElementById('chartMarginBars'), {
+  type: 'bar',
+  data: {
+    labels: ['Gross Margin\n毛利率', 'Op Margin\n经营利润率', 'Net Margin\n净利率', 'FCF Margin\n自由现金流率'],
+    datasets: [
+      { label: 'FY2023', data: [61.3, 19.5, 17.2, 25.0], backgroundColor: navy, barPercentage: 0.8, categoryPercentage: 0.7, borderRadius: 3 },
+      { label: 'FY2024', data: [66.8, 31.9, 24.0, 35.1], backgroundColor: 'rgba(201,168,76,0.5)', barPercentage: 0.8, categoryPercentage: 0.7, borderRadius: 3 },
+      { label: 'FY2025', data: [72.1, 45.5, 35.2, 38.0], backgroundColor: gold, barPercentage: 0.8, categoryPercentage: 0.7, borderRadius: 3 }
+    ]
+  },
+  options: {
+    plugins: { legend: { labels: { usePointStyle: true } } },
+    scales: {
+      y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { callback: v => v + '%' }, max: 80 },
+      x: { grid: { display: false } }
+    }
+  }
+});
+
+// ── IP Pie ──
+new Chart(document.getElementById('chartIPPie'), {
+  type: 'doughnut',
+  data: {
+    labels: ['THE MONSTERS\n(Labubu)', 'SKULLPANDA', 'CRYBABY', 'MOLLY', 'DIMOO', 'Xing Xing Ren', 'Others'],
+    datasets: [{
+      data: [38.1, 9.5, 7.9, 7.8, 7.5, 5.5, 23.6],
+      backgroundColor: [red, gold, teal, blue, purple, orange, 'rgba(148,163,184,0.4)'],
+      borderColor: 'rgba(10,22,40,0.8)',
+      borderWidth: 2
+    }]
+  },
+  options: {
+    cutout: '55%',
+    plugins: {
+      legend: { position: 'right', labels: { usePointStyle: true, pointStyle: 'circle', padding: 12, font: { size: 11 } } },
+      tooltip: { callbacks: { label: ctx => `${ctx.label}: ${ctx.parsed}%` } }
+    }
+  }
+});
+
+// ── IP Concentration Trend ──
+new Chart(document.getElementById('chartIPTrend'), {
+  type: 'bar',
+  data: {
+    labels: ['FY2023', 'FY2024', 'FY2025'],
+    datasets: [
+      { label: 'Labubu %', data: [12, 23, 38.1], backgroundColor: red, borderRadius: 3, barPercentage: 0.6 },
+      { label: 'Top 3 ex-Labubu %', data: [35, 30, 25.2], backgroundColor: gold, borderRadius: 3, barPercentage: 0.6 },
+      { label: 'Other IPs %', data: [53, 47, 36.7], backgroundColor: 'rgba(148,163,184,0.3)', borderRadius: 3, barPercentage: 0.6 }
+    ]
+  },
+  options: {
+    plugins: { legend: { labels: { usePointStyle: true } } },
+    scales: {
+      y: { stacked: true, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { callback: v => v + '%' }, max: 100 },
+      x: { stacked: true, grid: { display: false } }
+    }
+  }
+});
+
+// ── Geo Pie ──
+new Chart(document.getElementById('chartGeoPie'), {
+  type: 'doughnut',
+  data: {
+    labels: ['Mainland China\n中国大陆', 'Asia-Pacific\n亚太', 'Americas\n美洲', 'Europe & Others\n欧洲及其他'],
+    datasets: [{
+      data: [56.2, 21.6, 18.3, 3.9],
+      backgroundColor: [gold, teal, blue, purple],
+      borderColor: 'rgba(10,22,40,0.8)',
+      borderWidth: 2
+    }]
+  },
+  options: {
+    cutout: '55%',
+    plugins: {
+      legend: { position: 'right', labels: { usePointStyle: true, pointStyle: 'circle', padding: 14, font: { size: 11 } } },
+      tooltip: { callbacks: { label: ctx => `${ctx.label}: ${ctx.parsed}%` } }
+    }
+  }
+});
+
+// ── Overseas Revenue Trend ──
+new Chart(document.getElementById('chartOverseasTrend'), {
+  type: 'bar',
+  data: {
+    labels: ['FY2022', 'FY2023', 'FY2024', 'FY2025', 'FY2030E'],
+    datasets: [
+      { label: 'Domestic / 国内', data: [90.2, 83.4, 61.1, 56.2, 31], backgroundColor: navy, borderRadius: 3 },
+      { label: 'Overseas / 海外', data: [9.8, 16.6, 38.9, 43.8, 69], backgroundColor: gold, borderRadius: 3 }
+    ]
+  },
+  options: {
+    plugins: { legend: { labels: { usePointStyle: true } } },
+    scales: {
+      y: { stacked: true, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { callback: v => v + '%' }, max: 100 },
+      x: { stacked: true, grid: { display: false } }
+    }
+  }
+});
+
+// ── Analyst Targets ──
+new Chart(document.getElementById('chartAnalysts'), {
+  type: 'bar',
+  data: {
+    labels: ['Deutsche Bank', 'BofA', 'Goldman Sachs', 'Jefferies', 'Morgan Stanley', 'UBS', 'SPDBI', 'Citi'],
+    datasets: [{
+      label: 'Target Price (HK$) / 目标价',
+      data: [157, 170, 184, 227.6, 278, 278, 328.1, 415],
+      backgroundColor: ctx => ctx.parsed.y > 152.7 ? (ctx.parsed.y > 250 ? green : gold) : red,
+      borderRadius: 4,
+      barPercentage: 0.65
+    }]
+  },
+  options: {
+    indexAxis: 'y',
+    plugins: {
+      legend: { display: false },
+      tooltip: { callbacks: { label: ctx => `HK$${ctx.parsed.x} (${((ctx.parsed.x/152.7-1)*100).toFixed(0)}% upside)` } },
+      annotation: {
+        annotations: {
+          currentLine: {
+            type: 'line', xMin: 152.7, xMax: 152.7,
+            borderColor: red, borderWidth: 2, borderDash: [6,4],
+            label: { display: true, content: 'Current HK$152.7', position: 'start', color: red, font: { size: 10 } }
+          }
+        }
+      }
+    },
+    scales: {
+      x: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { callback: v => 'HK$' + v }, min: 0, max: 450 },
+      y: { grid: { display: false } }
+    }
+  }
+});
+
+// ── P/E History ──
+new Chart(document.getElementById('chartPEHistory'), {
+  type: 'line',
+  data: {
+    labels: ['IPO (Dec 20)', 'Jun 21', 'Dec 21', 'Jun 22', 'Oct 22 Low', 'Jun 23', 'Dec 23', 'Jun 24', 'Dec 24', 'Aug 25 ATH', 'Apr 26'],
+    datasets: [{
+      label: 'Trailing P/E / 滚动市盈率',
+      data: [200, 150, 70, 35, 15, 30, 40, 50, 80, 111, 27],
+      borderColor: gold,
+      backgroundColor: 'rgba(201,168,76,0.08)',
+      fill: true,
+      tension: 0.3,
+      pointBackgroundColor: ctx => ctx.dataIndex === 10 ? green : (ctx.dataIndex === 9 ? red : gold),
+      pointRadius: ctx => (ctx.dataIndex === 10 || ctx.dataIndex === 9) ? 6 : 3
+    }, {
+      label: '3yr Avg P/E / 三年平均',
+      data: [null, null, null, null, null, null, 24, 24, 24, 24, 24],
+      borderColor: 'rgba(148,163,184,0.5)',
+      borderDash: [6,4],
+      pointRadius: 0,
+      fill: false
+    }]
+  },
+  options: {
+    plugins: { legend: { labels: { usePointStyle: true } } },
+    scales: {
+      y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { callback: v => v + 'x' }, min: 0 },
+      x: { grid: { display: false }, ticks: { maxRotation: 45 } }
+    }
+  }
+});
+
+// ── Moat Radar ──
+new Chart(document.getElementById('chartMoat'), {
+  type: 'radar',
+  data: {
+    labels: ['Intangible Assets\n无形资产', 'Switching Costs\n转换成本', 'Network Effects\n网络效应', 'Cost Advantages\n成本优势', 'Efficient Scale\n规模效益'],
+    datasets: [{
+      label: 'Pop Mart / 泡泡玛特',
+      data: [3, 2, 2, 2, 1],
+      backgroundColor: 'rgba(201,168,76,0.2)',
+      borderColor: gold,
+      borderWidth: 2,
+      pointBackgroundColor: gold,
+      pointRadius: 4
+    }, {
+      label: 'Miniso TOP TOY',
+      data: [1, 1, 0.5, 1.5, 0.5],
+      backgroundColor: 'rgba(148,163,184,0.1)',
+      borderColor: 'rgba(148,163,184,0.5)',
+      borderWidth: 1,
+      borderDash: [4,3],
+      pointRadius: 3
+    }]
+  },
+  options: {
+    scales: {
+      r: {
+        min: 0, max: 3,
+        ticks: { stepSize: 1, backdropColor: 'transparent', color: '#64748b' },
+        grid: { color: 'rgba(255,255,255,0.08)' },
+        pointLabels: { color: '#94a3b8', font: { size: 11 } },
+        angleLines: { color: 'rgba(255,255,255,0.08)' }
+      }
+    },
+    plugins: { legend: { labels: { usePointStyle: true, pointStyle: 'circle' } } }
+  }
+});
+</script>
+
+</body>
+</html>
