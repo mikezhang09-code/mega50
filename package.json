@@ -1,0 +1,15 @@
+{
+  "name": "mega50",
+  "version": "1.0.0",
+  "description": "An interactive data visualization dashboard exploring financial and non-financial metrics for the world's 50 largest publicly traded companies.",
+  "main": "app.js",
+  "scripts": {
+    "dev": "live-server"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "live-server": "^1.2.2"
+  }
+}
