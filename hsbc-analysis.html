@@ -1,0 +1,1392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HSBC Holdings (0005.HK / HSBC) — Deep Value Analysis | 汇丰控股深度价值分析</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@400;500;600;700&display=swap');
+
+  :root {
+    --en-color: #1a1a2e;
+    --zh-color: #4A6741;
+    --accent: #c8102e; /* HSBC red */
+    --accent-dark: #9a0c23;
+    --navy: #0e1a2b;
+    --navy-light: #1a2d47;
+    --gold: #d4a843;
+    --gold-light: #e8c96a;
+    --positive: #1e8449;
+    --negative: #c0392b;
+    --warning: #d4ac0d;
+    --neutral: #7f8c8d;
+    --bg: #0e1117;
+    --bg-card: #161b26;
+    --bg-card-alt: #1c2333;
+    --border: #2a3345;
+    --text: #e0e4ea;
+    --text-muted: #8892a4;
+    --text-dim: #5a6377;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', 'Microsoft YaHei', Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.65;
+    min-height: 100vh;
+  }
+
+  .en { color: var(--text); font-weight: 500; }
+  .zh { color: var(--zh-color); font-size: 0.88em; font-weight: 400; }
+
+  /* HEADER */
+  .hero {
+    background: linear-gradient(135deg, var(--navy) 0%, #0a1628 50%, #0e1a2b 100%);
+    border-bottom: 3px solid var(--accent);
+    padding: 2.5rem 2rem 2rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -20%;
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, rgba(200,16,46,0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-inner { max-width: 1200px; margin: 0 auto; position: relative; z-index: 1; }
+  .hero h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 2.2rem;
+    color: #fff;
+    margin-bottom: 0.3rem;
+    letter-spacing: -0.02em;
+  }
+  .hero h1 span.hsbc-red { color: var(--accent); }
+  .hero .subtitle {
+    font-size: 1rem;
+    color: var(--zh-color);
+    margin-bottom: 1rem;
+  }
+  .hero-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    align-items: center;
+  }
+  .hero-stat {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 8px;
+    padding: 0.6rem 1.2rem;
+  }
+  .hero-stat .label { font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
+  .hero-stat .value { font-size: 1.3rem; font-weight: 700; color: #fff; }
+  .hero-stat .value.red { color: var(--accent); }
+  .hero-stat .value.green { color: var(--positive); }
+  .hero-stat .value.gold { color: var(--gold); }
+
+  .verdict-banner {
+    background: linear-gradient(90deg, rgba(212,168,67,0.15), rgba(212,168,67,0.05));
+    border: 1px solid rgba(212,168,67,0.3);
+    border-radius: 8px;
+    padding: 1rem 1.5rem;
+    margin-top: 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  .verdict-badge {
+    background: var(--gold);
+    color: var(--navy);
+    font-weight: 700;
+    font-size: 0.85rem;
+    padding: 0.3rem 0.8rem;
+    border-radius: 4px;
+    white-space: nowrap;
+  }
+  .verdict-text { font-size: 0.92rem; color: var(--text); }
+
+  /* TABS */
+  .tab-nav {
+    background: var(--bg-card);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    overflow-x: auto;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .tab-btn {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    padding: 0.85rem 1.3rem;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-family: inherit;
+    font-weight: 500;
+    white-space: nowrap;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+  }
+  .tab-btn:hover { color: var(--text); background: rgba(255,255,255,0.03); }
+  .tab-btn.active {
+    color: var(--gold);
+    border-bottom-color: var(--gold);
+    background: rgba(212,168,67,0.05);
+  }
+
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* MAIN CONTAINER */
+  .container { max-width: 1200px; margin: 0 auto; padding: 1.5rem; }
+
+  /* CARDS */
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+  .card-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.2rem;
+    color: #fff;
+    margin-bottom: 0.2rem;
+  }
+  .card-subtitle { font-size: 0.8rem; color: var(--zh-color); margin-bottom: 1rem; }
+
+  /* GRID */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.5rem; }
+  @media (max-width: 768px) {
+    .grid-2, .grid-3 { grid-template-columns: 1fr; }
+  }
+
+  /* TABLES */
+  table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+  th {
+    text-align: left;
+    padding: 0.6rem 0.8rem;
+    border-bottom: 2px solid var(--border);
+    color: var(--text-muted);
+    font-weight: 600;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  td {
+    padding: 0.55rem 0.8rem;
+    border-bottom: 1px solid rgba(42,51,69,0.5);
+  }
+  tr:hover td { background: rgba(255,255,255,0.02); }
+  .num-pos { color: var(--positive); font-weight: 600; }
+  .num-neg { color: var(--negative); font-weight: 600; }
+  .num-warn { color: var(--warning); font-weight: 600; }
+  .num-gold { color: var(--gold); font-weight: 600; }
+
+  /* CHART CONTAINERS */
+  .chart-container { position: relative; height: 320px; margin-top: 0.5rem; }
+  .chart-container.tall { height: 400px; }
+
+  /* PILLAR CARDS */
+  .pillar-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.2rem; }
+  .pillar-card {
+    background: var(--bg-card-alt);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.2rem;
+    border-left: 3px solid var(--accent);
+    transition: transform 0.15s;
+  }
+  .pillar-card:hover { transform: translateY(-2px); }
+  .pillar-num {
+    font-family: 'DM Serif Display', serif;
+    font-size: 2rem;
+    color: var(--accent);
+    line-height: 1;
+    margin-bottom: 0.3rem;
+  }
+  .pillar-title { font-weight: 700; color: #fff; font-size: 0.95rem; margin-bottom: 0.3rem; }
+  .pillar-title .zh-t { color: var(--zh-color); font-weight: 400; font-size: 0.82rem; }
+  .pillar-body { font-size: 0.82rem; color: var(--text-muted); }
+
+  /* RISK MATRIX */
+  .risk-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.8rem;
+    padding: 0.8rem 0;
+    border-bottom: 1px solid rgba(42,51,69,0.4);
+  }
+  .risk-item:last-child { border-bottom: none; }
+  .risk-severity {
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 0.2rem 0.5rem;
+    border-radius: 3px;
+    white-space: nowrap;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .risk-severity.high { background: rgba(192,57,43,0.2); color: var(--negative); border: 1px solid rgba(192,57,43,0.3); }
+  .risk-severity.med { background: rgba(212,172,13,0.15); color: var(--warning); border: 1px solid rgba(212,172,13,0.3); }
+  .risk-severity.low { background: rgba(30,132,73,0.15); color: var(--positive); border: 1px solid rgba(30,132,73,0.3); }
+  .risk-label { font-weight: 600; font-size: 0.85rem; color: #fff; }
+  .risk-desc { font-size: 0.8rem; color: var(--text-muted); }
+
+  /* DECADE OUTLOOK */
+  .scenario-card {
+    background: var(--bg-card-alt);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.3rem;
+  }
+  .scenario-header {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-bottom: 0.6rem;
+  }
+  .scenario-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    flex-shrink: 0;
+  }
+  .bull .scenario-icon { background: rgba(30,132,73,0.2); }
+  .base .scenario-icon { background: rgba(212,168,67,0.2); }
+  .bear .scenario-icon { background: rgba(192,57,43,0.2); }
+  .scenario-title { font-weight: 700; font-size: 1rem; }
+  .bull .scenario-title { color: var(--positive); }
+  .base .scenario-title { color: var(--gold); }
+  .bear .scenario-title { color: var(--negative); }
+  .scenario-body { font-size: 0.82rem; color: var(--text-muted); }
+  .scenario-body ul { list-style: none; padding: 0; margin: 0.4rem 0 0 0; }
+  .scenario-body li { padding: 0.2rem 0; }
+  .scenario-body li::before { content: '▸ '; color: var(--text-dim); }
+
+  /* FOOTER */
+  .footer {
+    text-align: center;
+    padding: 2rem;
+    font-size: 0.72rem;
+    color: var(--text-dim);
+    border-top: 1px solid var(--border);
+  }
+
+  /* SCORE BAR */
+  .score-bar { display: flex; align-items: center; gap: 0.6rem; margin: 0.3rem 0; }
+  .score-bar-label { font-size: 0.78rem; width: 140px; color: var(--text-muted); }
+  .score-bar-track { flex: 1; height: 8px; background: rgba(255,255,255,0.06); border-radius: 4px; overflow: hidden; }
+  .score-bar-fill { height: 100%; border-radius: 4px; transition: width 0.6s ease; }
+  .score-bar-value { font-size: 0.78rem; font-weight: 700; width: 40px; text-align: right; }
+
+  /* KEY INSIGHT CALLOUT */
+  .insight-box {
+    background: rgba(212,168,67,0.08);
+    border-left: 3px solid var(--gold);
+    padding: 0.8rem 1rem;
+    margin: 0.8rem 0;
+    border-radius: 0 6px 6px 0;
+    font-size: 0.85rem;
+    color: var(--text);
+  }
+  .insight-box strong { color: var(--gold); }
+
+  /* RETURN HOME BUTTON */
+  .home-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(200, 16, 46, 0.15); /* HSBC red tint */
+    border: 1px solid rgba(200, 16, 46, 0.3);
+    color: #fff;
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 8px 20px;
+    border-radius: 24px;
+    text-decoration: none;
+    margin-bottom: 2rem;
+    transition: all 0.2s;
+    border-left: 3px solid var(--accent);
+  }
+  .home-btn:hover {
+    background: rgba(200, 16, 46, 0.25);
+    border-color: var(--accent);
+    transform: translateX(-4px);
+  }
+  .home-btn svg { flex-shrink: 0; }
+</style>
+</head>
+<body>
+
+<!-- ==================== HERO ==================== -->
+<div class="hero">
+  <div class="hero-inner">
+    <a href="./index.html" class="home-btn">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+      Return to Home / 返回主页
+    </a>
+    <h1><span class="hsbc-red">HSBC</span> Holdings — The Asia Wealth Pivot</h1>
+    <div class="subtitle">汇丰控股 · 从全球信贷银行到亚洲财富整合者的蜕变 · Deep-Dive Value Analysis</div>
+    <div class="hero-meta">
+      <div class="hero-stat">
+        <div class="label">ADR Price (NYSE)</div>
+        <div class="value">$85.63</div>
+      </div>
+      <div class="hero-stat">
+        <div class="label">LSE Price (HSBA)</div>
+        <div class="value">1,340 GBX</div>
+      </div>
+      <div class="hero-stat">
+        <div class="label">Market Cap / 市值</div>
+        <div class="value gold">$230B</div>
+      </div>
+      <div class="hero-stat">
+        <div class="label">P/B Ratio / 市净率</div>
+        <div class="value red">1.57×</div>
+      </div>
+      <div class="hero-stat">
+        <div class="label">Forward P/E</div>
+        <div class="value">10.2×</div>
+      </div>
+      <div class="hero-stat">
+        <div class="label">Dividend Yield / 股息率</div>
+        <div class="value green">4.8%</div>
+      </div>
+    </div>
+    <div class="verdict-banner">
+      <div class="verdict-badge">HOLD — FAIR VALUE</div>
+      <div class="verdict-text">Remarkable transformation fully recognized by market. P/B at 85% above 10-year median. Rich for a bank, but justified if 17%+ RoTE is sustained. <span class="zh">转型成果已被市场充分定价，当前估值合理但偏高，需验证长期RoTE可持续性。</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== TABS ==================== -->
+<div class="tab-nav">
+  <button class="tab-btn active" data-tab="transformation">① Transformation / 转型</button>
+  <button class="tab-btn" data-tab="financials">② Financials / 财务</button>
+  <button class="tab-btn" data-tab="valuation">③ Valuation / 估值</button>
+  <button class="tab-btn" data-tab="moat">④ Moat / 护城河</button>
+  <button class="tab-btn" data-tab="decade">⑤ Decade Outlook / 十年展望</button>
+  <button class="tab-btn" data-tab="verdict">⑥ Verdict / 投资结论</button>
+</div>
+
+<!-- ==================== TAB 1: TRANSFORMATION ==================== -->
+<div id="transformation" class="tab-content active">
+  <div class="container">
+    <div class="card">
+      <div class="card-title">What Changed? The 6 Pillars of HSBC's Post-COVID Transformation</div>
+      <div class="card-subtitle">新冠后的六大转型支柱 — 从泥潭到亚洲财富整合者</div>
+      <p style="font-size:0.88rem; color:var(--text-muted); margin-bottom:1.2rem;">
+        In 2020, HSBC was a bloated, underperforming global bank trading at 0.39× book value — the lowest in its modern history. Six years later, it stands at 1.57× book with a market cap exceeding $230 billion. This is not a simple rate-cycle trade — it's a structural reinvention.
+      </p>
+      <div class="pillar-grid">
+        <div class="pillar-card">
+          <div class="pillar-num">01</div>
+          <div class="pillar-title">Asia-First Strategic Pivot <span class="zh-t">/ 亚洲优先战略</span></div>
+          <div class="pillar-body">Exited unprofitable Western markets (US, Canada, France, Germany) and redirected capital to Asia/MENA where 50%+ of pre-tax profits originate. HK segment alone delivers 35.5% RoTE. CEO Elhedery: "This is about playing to our core strengths."</div>
+        </div>
+        <div class="pillar-card">
+          <div class="pillar-num">02</div>
+          <div class="pillar-title">Hang Seng Bank Privatization <span class="zh-t">/ 恒生银行私有化</span></div>
+          <div class="pillar-body">Completed Jan 2026 for ~$13.7B (HK$106B). Unlocks $1.7T deposit franchise for cross-referral, eliminates minority-interest drag, enables tech & product harmonization. Hang Seng retains its brand and banking license.</div>
+        </div>
+        <div class="pillar-card">
+          <div class="pillar-num">03</div>
+          <div class="pillar-title">Wealth Management Engine <span class="zh-t">/ 财富管理引擎</span></div>
+          <div class="pillar-body">Wealth fee income grew 24% to $9.4B in FY2025. Targeting HK to overtake Switzerland as world's biggest cross-border wealth hub by 2030. $14.6B in contractual forward insurance income provides recurring revenue base.</div>
+        </div>
+        <div class="pillar-card">
+          <div class="pillar-num">04</div>
+          <div class="pillar-title">Interest Rate Tailwind + Structural Hedge <span class="zh-t">/ 利率顺风与结构性对冲</span></div>
+          <div class="pillar-body">NIM expanded from 1.19% (2021 trough) to 1.66% (2023 peak), now ~1.57%. Structural hedge provides rising NII yields through 2028 even as rates normalize. Banking NII target: $45B+ for 2026.</div>
+        </div>
+        <div class="pillar-card">
+          <div class="pillar-num">05</div>
+          <div class="pillar-title">Radical Cost Simplification <span class="zh-t">/ 激进的成本简化</span></div>
+          <div class="pillar-body">Reorganized from 3 global businesses into 4 geography/function segments. $1.5B annual cost saves by 2026 (already $1.2B actioned). 10% workforce reduction (~20,000 jobs). Cost/income ratio improved from 64.6% (2022) to ~48.7% (2025).</div>
+        </div>
+        <div class="pillar-card">
+          <div class="pillar-num">06</div>
+          <div class="pillar-title">Massive Capital Returns <span class="zh-t">/ 大规模资本回馈</span></div>
+          <div class="pillar-body">FY2024 alone: $26.9B total shareholder returns ($11B buybacks + $0.87/share dividends). FY2025: $6B buybacks + $0.75/share dividend. Shares outstanding down 4.25% YoY. 50% payout target through 2028.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Stock Price vs. Book Value — The Re-Rating Story</div>
+      <div class="card-subtitle">股价与账面价值 — 重新定价之旅</div>
+      <div class="chart-container tall">
+        <canvas id="priceVsBookChart"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== TAB 2: FINANCIALS ==================== -->
+<div id="financials" class="tab-content">
+  <div class="container">
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title">Revenue & Pre-Tax Profit (2019–2025)</div>
+        <div class="card-subtitle">收入与税前利润</div>
+        <div class="chart-container tall">
+          <canvas id="revProfitChart"></canvas>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Return on Tangible Equity (RoTE)</div>
+        <div class="card-subtitle">有形股本回报率</div>
+        <div class="chart-container tall">
+          <canvas id="roteChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Key Financial Metrics — 7-Year Snapshot</div>
+      <div class="card-subtitle">七年核心财务指标</div>
+      <div style="overflow-x:auto;">
+        <table>
+          <thead>
+            <tr>
+              <th>Metric / 指标</th>
+              <th>2019</th>
+              <th>2020</th>
+              <th>2021</th>
+              <th>2022</th>
+              <th>2023</th>
+              <th>2024</th>
+              <th>2025</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Revenue ($B)</strong></td>
+              <td>56.1</td>
+              <td>50.4</td>
+              <td>49.6</td>
+              <td>50.6</td>
+              <td>66.1</td>
+              <td>65.9</td>
+              <td>63.2</td>
+            </tr>
+            <tr>
+              <td><strong>Pre-Tax Profit ($B)</strong></td>
+              <td>13.3</td>
+              <td class="num-neg">8.8</td>
+              <td>13.3</td>
+              <td>17.1</td>
+              <td class="num-pos">30.3</td>
+              <td class="num-pos">32.3</td>
+              <td>29.9</td>
+            </tr>
+            <tr>
+              <td><strong>Net Income ($B)</strong></td>
+              <td>8.7</td>
+              <td class="num-neg">3.9</td>
+              <td>12.6</td>
+              <td>14.3</td>
+              <td class="num-pos">22.4</td>
+              <td class="num-pos">25.0</td>
+              <td>21.1</td>
+            </tr>
+            <tr>
+              <td><strong>EPS (ADR, $)</strong></td>
+              <td>2.37</td>
+              <td class="num-neg">0.95</td>
+              <td>3.15</td>
+              <td>3.70</td>
+              <td class="num-pos">5.70</td>
+              <td class="num-pos">6.25</td>
+              <td>6.05</td>
+            </tr>
+            <tr>
+              <td><strong>NIM (%)</strong></td>
+              <td>1.58</td>
+              <td>1.32</td>
+              <td>1.19</td>
+              <td>1.42</td>
+              <td class="num-pos">1.66</td>
+              <td>1.56</td>
+              <td>1.57</td>
+            </tr>
+            <tr>
+              <td><strong>Cost/Income (%)</strong></td>
+              <td>57.8</td>
+              <td class="num-neg">68.3</td>
+              <td>65.5</td>
+              <td>64.6</td>
+              <td>48.5</td>
+              <td>50.2</td>
+              <td class="num-pos">48.7</td>
+            </tr>
+            <tr>
+              <td><strong>CET1 Ratio (%)</strong></td>
+              <td>14.7</td>
+              <td>15.9</td>
+              <td>15.8</td>
+              <td>14.2</td>
+              <td>14.8</td>
+              <td>14.9</td>
+              <td>14.9</td>
+            </tr>
+            <tr>
+              <td><strong>DPS ($)</strong></td>
+              <td>0.51</td>
+              <td class="num-neg">0.15</td>
+              <td>0.25</td>
+              <td>0.32</td>
+              <td>0.61</td>
+              <td class="num-pos">0.87</td>
+              <td>0.75</td>
+            </tr>
+            <tr>
+              <td><strong>Buybacks ($B)</strong></td>
+              <td>1.0</td>
+              <td class="num-neg">—</td>
+              <td>—</td>
+              <td>—</td>
+              <td>7.0</td>
+              <td class="num-pos">11.0</td>
+              <td>6.0</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="insight-box" style="margin-top:1rem;">
+        <strong>Key Insight:</strong> HSBC's pre-tax profit nearly quadrupled from the 2020 trough ($8.8B) to the 2024 peak ($32.3B). The 2025 dip to $29.9B reflects notable items including $2.1B BoCom impairment, $1.4B legal provisions, and $0.8B restructuring costs — adjusted RoTE was still 17.2%.
+        <br><span class="zh"><strong>关键洞察：</strong>税前利润从2020年低谷$8.8B飙升至2024年峰值$32.3B，2025年回落主要受一次性项目影响，调整后RoTE仍达17.2%。</span>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title">Shareholder Returns — The Capital Machine</div>
+        <div class="card-subtitle">股东回报 — 资本回馈机器</div>
+        <div class="chart-container">
+          <canvas id="capitalReturnChart"></canvas>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Net Interest Margin Trajectory</div>
+        <div class="card-subtitle">净利差走势</div>
+        <div class="chart-container">
+          <canvas id="nimChart"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== TAB 3: VALUATION ==================== -->
+<div id="valuation" class="tab-content">
+  <div class="container">
+    <div class="card">
+      <div class="card-title">Valuation Framework — Is ATH Justified?</div>
+      <div class="card-subtitle">估值框架 — 历史新高是否合理？</div>
+
+      <div class="grid-3" style="margin-bottom:1rem;">
+        <div style="background:var(--bg-card-alt);border-radius:8px;padding:1rem;text-align:center;">
+          <div style="font-size:0.72rem;color:var(--text-muted);text-transform:uppercase;">Current P/B</div>
+          <div style="font-size:1.8rem;font-weight:700;color:var(--accent);">1.57×</div>
+          <div style="font-size:0.72rem;color:var(--text-dim);">10yr Median: 0.85×</div>
+        </div>
+        <div style="background:var(--bg-card-alt);border-radius:8px;padding:1rem;text-align:center;">
+          <div style="font-size:0.72rem;color:var(--text-muted);text-transform:uppercase;">Forward P/E</div>
+          <div style="font-size:1.8rem;font-weight:700;color:var(--gold);">10.2×</div>
+          <div style="font-size:0.72rem;color:var(--text-dim);">5yr Median: 7.8×</div>
+        </div>
+        <div style="background:var(--bg-card-alt);border-radius:8px;padding:1rem;text-align:center;">
+          <div style="font-size:0.72rem;color:var(--text-muted);text-transform:uppercase;">GF Value™</div>
+          <div style="font-size:1.8rem;font-weight:700;color:var(--negative);">$49.80</div>
+          <div style="font-size:0.72rem;color:var(--text-dim);">83% Premium</div>
+        </div>
+      </div>
+
+      <div class="chart-container tall">
+        <canvas id="valuationChart"></canvas>
+      </div>
+
+      <div class="insight-box">
+        <strong>Graham Would Say:</strong> At 1.57× book, HSBC offers zero margin of safety by Graham net-asset standards. The book value per share is $57.83 — the stock trades ~57% above book. Graham Number ≈ $57 (using EPS $6.05 and BVPS $57.83), well below the current $86 ADR price.
+        <br><strong>Buffett Would Say:</strong> If HSBC can sustain 17%+ RoTE and compound book value at 12-14% annually (through earnings retention + buybacks), then 1.5× book is actually reasonable for a quality franchise. The question is whether this RoTE is structural or cyclical.
+        <br><span class="zh"><strong>格雷厄姆视角：</strong>1.57倍市净率无安全边际。<strong>巴菲特视角：</strong>如果RoTE可持续在17%+，1.5倍市净率对优质银行合理。</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">P/B Ratio — Historical Context</div>
+      <div class="card-subtitle">市净率历史对比</div>
+      <div class="chart-container">
+        <canvas id="pbHistoryChart"></canvas>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Justified P/B Model — What RoTE Implies</div>
+      <div class="card-subtitle">合理市净率模型 — RoTE隐含估值</div>
+      <p style="font-size:0.85rem;color:var(--text-muted);margin-bottom:0.8rem;">
+        For banks, the justified P/B = (ROE - g) / (COE - g). If we assume cost of equity ~10% and sustainable growth ~3%:
+      </p>
+      <div style="overflow-x:auto;">
+        <table>
+          <thead>
+            <tr>
+              <th>Sustainable RoTE</th>
+              <th>Justified P/B</th>
+              <th>Implied Share Price (ADR)</th>
+              <th>vs Current $86</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>12%</td>
+              <td>1.29×</td>
+              <td>$74.60</td>
+              <td class="num-neg">-13%</td>
+            </tr>
+            <tr>
+              <td>14%</td>
+              <td>1.57×</td>
+              <td>$90.79</td>
+              <td class="num-warn">+6%</td>
+            </tr>
+            <tr style="background:rgba(212,168,67,0.08);">
+              <td><strong>17% (Target)</strong></td>
+              <td><strong>2.00×</strong></td>
+              <td><strong>$115.66</strong></td>
+              <td class="num-pos"><strong>+35%</strong></td>
+            </tr>
+            <tr>
+              <td>20%</td>
+              <td>2.43×</td>
+              <td>$140.52</td>
+              <td class="num-pos">+63%</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="insight-box">
+        <strong>The Market Is Pricing ~14% Sustainable RoTE.</strong> HSBC is currently delivering 17.2% (adj) and guiding for 17%+ through 2028. If the market re-rates to price in 17% structurally, there's 35% upside. If RoTE reverts to ~12% (historical norm), there's 13% downside. The asymmetry depends on whether you believe the transformation is permanent.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== TAB 4: MOAT ==================== -->
+<div id="moat" class="tab-content">
+  <div class="container">
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title">Economic Moat Radar — Buffett Framework</div>
+        <div class="card-subtitle">经济护城河雷达图 — 巴菲特框架</div>
+        <div class="chart-container tall">
+          <canvas id="moatRadarChart"></canvas>
+        </div>
+        <div style="text-align:center;margin-top:0.5rem;">
+          <span style="font-size:1.2rem;font-weight:700;color:var(--gold);">Overall: WIDE MOAT</span>
+          <span class="zh"> / 宽护城河</span>
+          <span style="display:block;font-size:0.8rem;color:var(--text-muted);">Score: 12/15 — Among the strongest in global banking</span>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Moat Breakdown</div>
+        <div class="card-subtitle">护城河分项评估</div>
+        <div class="score-bar">
+          <div class="score-bar-label">Brand / 品牌</div>
+          <div class="score-bar-track"><div class="score-bar-fill" style="width:100%;background:var(--positive);"></div></div>
+          <div class="score-bar-value num-pos">3/3</div>
+        </div>
+        <p style="font-size:0.78rem;color:var(--text-dim);margin:0 0 0.6rem 0;">160-year brand. Trusted across 57 countries. "The world's local bank" is literal competitive advantage for cross-border trade & wealth.</p>
+
+        <div class="score-bar">
+          <div class="score-bar-label">Switching Costs / 转换成本</div>
+          <div class="score-bar-track"><div class="score-bar-fill" style="width:100%;background:var(--positive);"></div></div>
+          <div class="score-bar-value num-pos">3/3</div>
+        </div>
+        <p style="font-size:0.78rem;color:var(--text-dim);margin:0 0 0.6rem 0;">Corporate/institutional clients deeply embedded via trade finance, cash management, FX, custody. Switching cost is enormous for multi-country treasury operations.</p>
+
+        <div class="score-bar">
+          <div class="score-bar-label">Network Effects / 网络效应</div>
+          <div class="score-bar-track"><div class="score-bar-fill" style="width:66%;background:var(--gold);"></div></div>
+          <div class="score-bar-value num-gold">2/3</div>
+        </div>
+        <p style="font-size:0.78rem;color:var(--text-dim);margin:0 0 0.6rem 0;">Global payment & trade network creates moderate network effects — more counterparties make the system more valuable. Not as strong as pure platform businesses.</p>
+
+        <div class="score-bar">
+          <div class="score-bar-label">Cost Advantages / 成本优势</div>
+          <div class="score-bar-track"><div class="score-bar-fill" style="width:66%;background:var(--gold);"></div></div>
+          <div class="score-bar-value num-gold">2/3</div>
+        </div>
+        <p style="font-size:0.78rem;color:var(--text-dim);margin:0 0 0.6rem 0;">$1.787T deposit franchise = lowest-cost funding. HK's banking oligopoly provides structural cost advantage. Post-restructuring cost/income ratio at industry-leading ~48.7%.</p>
+
+        <div class="score-bar">
+          <div class="score-bar-label">Efficient Scale / 规模效益</div>
+          <div class="score-bar-track"><div class="score-bar-fill" style="width:66%;background:var(--gold);"></div></div>
+          <div class="score-bar-value num-gold">2/3</div>
+        </div>
+        <p style="font-size:0.78rem;color:var(--text-dim);margin:0 0 0.6rem 0;">Dominant in HK banking (~40% mortgage market). Limited competition in cross-border Asia-Europe corridor. Efficient scale in trade finance (world's largest trade bank).</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Key Risk Factors</div>
+      <div class="card-subtitle">核心风险因素</div>
+      <div class="risk-item">
+        <div class="risk-severity high">HIGH</div>
+        <div>
+          <div class="risk-label">China / Hong Kong Property Exposure / 中国/香港房地产风险</div>
+          <div class="risk-desc">HK commercial real estate remains under stress. Full ownership of Hang Seng amplifies HSBC's sensitivity to China's economy. ECL guidance of ~40bps for 2026 is above medium-term range (30-40bps), suggesting the bank expects continued credit stress.</div>
+        </div>
+      </div>
+      <div class="risk-item">
+        <div class="risk-severity high">HIGH</div>
+        <div>
+          <div class="risk-label">Geopolitical Risk — US/China + Iran War / 地缘政治风险</div>
+          <div class="risk-desc">HSBC straddles the US-China divide. Ongoing Iran conflict disrupts Middle East operations. Western protectionism could constrain cross-border deal flow. Regulatory regimes increasingly diverge between HK/US/EU jurisdictions.</div>
+        </div>
+      </div>
+      <div class="risk-item">
+        <div class="risk-severity med">MEDIUM</div>
+        <div>
+          <div class="risk-label">Interest Rate Normalization / 利率正常化</div>
+          <div class="risk-desc">A 100bp parallel rate shock = ~$3.4B NII impact. Structural hedge cushions but doesn't eliminate risk. If rates fall faster than expected, NII may miss the $45B target.</div>
+        </div>
+      </div>
+      <div class="risk-item">
+        <div class="risk-severity med">MEDIUM</div>
+        <div>
+          <div class="risk-label">Execution Risk — Hang Seng Integration / 恒生整合执行风险</div>
+          <div class="risk-desc">No quantified synergy guidance yet. JP Morgan notes investors "cannot fully assess potential revenue synergies or cost optimization benefits." Detailed insights expected at May 2026 Investor Day.</div>
+        </div>
+      </div>
+      <div class="risk-item">
+        <div class="risk-severity low">LOW</div>
+        <div>
+          <div class="risk-label">Regulatory & Legal / 监管和法律风险</div>
+          <div class="risk-desc">$300M French "Cum-Cum" settlement. $1.4B legal provisions in FY2025. These are manageable for a bank earning $20B+ annually, but pattern of regulatory issues persists.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== TAB 5: DECADE OUTLOOK ==================== -->
+<div id="decade" class="tab-content">
+  <div class="container">
+    <div class="card">
+      <div class="card-title">Can HSBC Sustain This for a Decade?</div>
+      <div class="card-subtitle">汇丰能否在下一个十年持续成功？</div>
+      <p style="font-size:0.88rem;color:var(--text-muted);margin-bottom:1.2rem;">
+        The next decade for HSBC hinges on three structural questions: (1) Is Asian wealth growth secular or cyclical? (2) Can HSBC maintain 17%+ RoTE as rates normalize? (3) Does the HK-centric model survive US-China decoupling?
+      </p>
+    </div>
+
+    <div class="grid-3">
+      <div class="scenario-card bull">
+        <div class="scenario-header">
+          <div class="scenario-icon">🐂</div>
+          <div class="scenario-title">Bull Case — $140+ (2030)</div>
+        </div>
+        <div class="scenario-body">
+          <ul>
+            <li>HK overtakes Switzerland as #1 wealth hub by 2030</li>
+            <li>Hang Seng synergies deliver $2B+ annual savings</li>
+            <li>Wealth AUM compounds 15%+ annually</li>
+            <li>MENA infrastructure boom (Neom, Red Sea, Saudi Vision 2030) generates massive fee income</li>
+            <li>AI-driven efficiency pushes cost/income below 45%</li>
+            <li>RoTE sustains 18-20%, P/B re-rates to 2.0×+</li>
+          </ul>
+          <div style="margin-top:0.6rem;font-weight:600;color:var(--positive);">10-Year Total Return: ~15% CAGR (incl. dividends)</div>
+        </div>
+      </div>
+      <div class="scenario-card base">
+        <div class="scenario-header">
+          <div class="scenario-icon">📊</div>
+          <div class="scenario-title">Base Case — $95-110 (2030)</div>
+        </div>
+        <div class="scenario-body">
+          <ul>
+            <li>Wealth growth continues but competition intensifies (StanChart, DBS, UOB)</li>
+            <li>Rates normalize, NIM settles at ~1.45-1.55%</li>
+            <li>Hang Seng integration delivers moderate synergies</li>
+            <li>Geopolitical tensions manageable but constrain growth</li>
+            <li>RoTE settles at 14-16%, P/B holds 1.3-1.5×</li>
+            <li>Buybacks resume 2026/27, shrinking share count 3-4%/yr</li>
+          </ul>
+          <div style="margin-top:0.6rem;font-weight:600;color:var(--gold);">10-Year Total Return: ~8-10% CAGR (incl. dividends)</div>
+        </div>
+      </div>
+      <div class="scenario-card bear">
+        <div class="scenario-header">
+          <div class="scenario-icon">🐻</div>
+          <div class="scenario-title">Bear Case — $45-60 (2030)</div>
+        </div>
+        <div class="scenario-body">
+          <ul>
+            <li>US-China hard decoupling forces HSBC to choose sides</li>
+            <li>HK property collapse triggers major ECL cycle</li>
+            <li>Global recession compresses NIM below 1.20%</li>
+            <li>Wealth inflows dry up amid capital controls</li>
+            <li>RoTE reverts to 10-12%, P/B falls to 0.7-0.9×</li>
+            <li>Iran war escalation disrupts MENA growth thesis</li>
+          </ul>
+          <div style="margin-top:0.6rem;font-weight:600;color:var(--negative);">10-Year Total Return: ~-2% CAGR (capital loss offsets dividends)</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:1.5rem;">
+      <div class="card-title">Structural Tailwinds vs. Headwinds</div>
+      <div class="card-subtitle">结构性顺风 vs 逆风</div>
+      <div class="chart-container tall">
+        <canvas id="tailwindChart"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== TAB 6: VERDICT ==================== -->
+<div id="verdict" class="tab-content">
+  <div class="container">
+    <div class="card">
+      <div class="card-title">Investment Verdict — Graham-Buffett Scorecard</div>
+      <div class="card-subtitle">投资结论 — 格雷厄姆-巴菲特综合评分</div>
+
+      <div class="grid-2" style="margin-bottom:1.2rem;">
+        <div>
+          <h3 style="color:var(--text);font-size:0.95rem;margin-bottom:0.6rem;">Graham Criteria / 格雷厄姆标准</h3>
+          <div class="score-bar">
+            <div class="score-bar-label">Earnings Stability</div>
+            <div class="score-bar-track"><div class="score-bar-fill" style="width:85%;background:var(--positive);"></div></div>
+            <div class="score-bar-value num-pos">✓</div>
+          </div>
+          <div class="score-bar">
+            <div class="score-bar-label">Dividend Record</div>
+            <div class="score-bar-track"><div class="score-bar-fill" style="width:60%;background:var(--warning);"></div></div>
+            <div class="score-bar-value num-warn">~</div>
+          </div>
+          <div class="score-bar">
+            <div class="score-bar-label">Adequate Size</div>
+            <div class="score-bar-track"><div class="score-bar-fill" style="width:100%;background:var(--positive);"></div></div>
+            <div class="score-bar-value num-pos">✓</div>
+          </div>
+          <div class="score-bar">
+            <div class="score-bar-label">Current Ratio</div>
+            <div class="score-bar-track"><div class="score-bar-fill" style="width:70%;background:var(--positive);"></div></div>
+            <div class="score-bar-value num-pos">✓</div>
+          </div>
+          <div class="score-bar">
+            <div class="score-bar-label">P/E < 15</div>
+            <div class="score-bar-track"><div class="score-bar-fill" style="width:85%;background:var(--positive);"></div></div>
+            <div class="score-bar-value num-pos">✓</div>
+          </div>
+          <div class="score-bar">
+            <div class="score-bar-label">P/B < 1.5</div>
+            <div class="score-bar-track"><div class="score-bar-fill" style="width:20%;background:var(--negative);"></div></div>
+            <div class="score-bar-value num-neg">✗</div>
+          </div>
+          <div class="score-bar">
+            <div class="score-bar-label">P/E × P/B < 22.5</div>
+            <div class="score-bar-track"><div class="score-bar-fill" style="width:55%;background:var(--warning);"></div></div>
+            <div class="score-bar-value num-warn">~</div>
+          </div>
+          <div style="margin-top:0.6rem;font-size:0.85rem;">
+            <strong>Graham Score: <span class="num-warn">4.5 / 7</span></strong> — Passes on earnings quality but fails on valuation
+          </div>
+        </div>
+
+        <div>
+          <h3 style="color:var(--text);font-size:0.95rem;margin-bottom:0.6rem;">Buffett Criteria / 巴菲特标准</h3>
+          <div class="score-bar">
+            <div class="score-bar-label">Understandable Business</div>
+            <div class="score-bar-track"><div class="score-bar-fill" style="width:85%;background:var(--positive);"></div></div>
+            <div class="score-bar-value num-pos">✓</div>
+          </div>
+          <div class="score-bar">
+            <div class="score-bar-label">Durable Moat</div>
+            <div class="score-bar-track"><div class="score-bar-fill" style="width:80%;background:var(--positive);"></div></div>
+            <div class="score-bar-value num-pos">✓</div>
+          </div>
+          <div class="score-bar">
+            <div class="score-bar-label">Quality Management</div>
+            <div class="score-bar-track"><div class="score-bar-fill" style="width:80%;background:var(--positive);"></div></div>
+            <div class="score-bar-value num-pos">✓</div>
+          </div>
+          <div class="score-bar">
+            <div class="score-bar-label">High ROIC / RoTE</div>
+            <div class="score-bar-track"><div class="score-bar-fill" style="width:90%;background:var(--positive);"></div></div>
+            <div class="score-bar-value num-pos">✓</div>
+          </div>
+          <div class="score-bar">
+            <div class="score-bar-label">Owner Earnings Growth</div>
+            <div class="score-bar-track"><div class="score-bar-fill" style="width:75%;background:var(--positive);"></div></div>
+            <div class="score-bar-value num-pos">✓</div>
+          </div>
+          <div class="score-bar">
+            <div class="score-bar-label">Fair Price</div>
+            <div class="score-bar-track"><div class="score-bar-fill" style="width:40%;background:var(--warning);"></div></div>
+            <div class="score-bar-value num-warn">~</div>
+          </div>
+          <div class="score-bar">
+            <div class="score-bar-label">Margin of Safety</div>
+            <div class="score-bar-track"><div class="score-bar-fill" style="width:15%;background:var(--negative);"></div></div>
+            <div class="score-bar-value num-neg">✗</div>
+          </div>
+          <div style="margin-top:0.6rem;font-size:0.85rem;">
+            <strong>Buffett Score: <span class="num-pos">5.5 / 7</span></strong> — Quality business but premium price
+          </div>
+        </div>
+      </div>
+
+      <div style="background:var(--bg-card-alt);border-radius:8px;padding:1.5rem;border:1px solid var(--gold);margin-bottom:1.2rem;">
+        <h3 style="color:var(--gold);font-size:1.1rem;margin-bottom:0.6rem;">📋 Final Verdict: HOLD — Wait for Better Entry</h3>
+        <h3 style="color:var(--zh-color);font-size:0.95rem;margin-bottom:0.8rem;">最终判断：持有观望 — 等待更好的入场时机</h3>
+        <div style="font-size:0.88rem;color:var(--text-muted);">
+          <p style="margin-bottom:0.6rem;"><strong style="color:var(--text);">The Transformation Is Real.</strong> HSBC under CEO Elhedery has executed one of the most impressive bank turnarounds in modern history — exiting unprofitable markets, pivoting to Asia wealth, privatizing Hang Seng, and driving RoTE from <5% to 17%+. This is not a rate trade; it's a structural repositioning.</p>
+          <p style="margin-bottom:0.6rem;"><strong style="color:var(--text);">But The Market Knows.</strong> At 1.57× P/B (85% above 10-year median, near all-time high of 1.61×), the stock has fully priced in the transformation. The forward P/E of 10.2× is reasonable for a global bank, but the P/B tells the real story — the market is pricing perfection. Goldman added HSBC to its European Conviction List (Buy, PT 1,540 GBp), while JPMorgan and UBS maintain Hold ratings.</p>
+          <p style="margin-bottom:0.6rem;"><strong style="color:var(--text);">The Risk/Reward at ATH.</strong> If HSBC sustains 17% RoTE, the justified P/B is ~2.0× — implying 28% upside. But if RoTE mean-reverts to 12-14% (as rates normalize and the wealth cycle matures), the stock faces 15-25% downside. The asymmetry is not in your favor at current prices.</p>
+          <p style="margin-bottom:0.6rem;"><strong style="color:var(--text);">Suggested Strategy:</strong></p>
+          <p style="margin-bottom:0.2rem;">▸ <strong>New position:</strong> Wait for pullback to 1.2-1.3× P/B (~$70-75 ADR), which would restore a meaningful margin of safety. Geopolitical shocks or rate surprises could provide this opportunity.</p>
+          <p style="margin-bottom:0.2rem;">▸ <strong>Existing holders:</strong> Hold. Collect the ~4.8% dividend yield. The structural story is intact. Trim above 1.7× P/B.</p>
+          <p style="margin-bottom:0.2rem;">▸ <strong>Watch for:</strong> May 2026 Investor Day for quantified Hang Seng synergy targets, which could catalyze the next re-rating.</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Target Entry Zones</div>
+        <div class="card-subtitle">目标买入区间</div>
+        <div class="chart-container">
+          <canvas id="entryZoneChart"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== FOOTER ==================== -->
+<div class="footer">
+  <strong>HSBC Holdings (0005.HK / HSBC) Deep Value Analysis</strong> | Data as of April 2026<br>
+  Sources: HSBC Annual Reports, SEC EDGAR, Yahoo Finance, GuruFocus, S&P Global, Goldman Sachs, Asian Banker<br>
+  <span class="zh">数据来源：汇丰年报、SEC EDGAR、雅虎财经、GuruFocus、标普全球、高盛、亚洲银行家</span><br>
+  <em>This is independent research for educational purposes. Not financial advice. / 仅供研究参考，非投资建议。</em>
+</div>
+
+<script>
+// ===== GLOBAL CHART DEFAULTS =====
+Chart.defaults.font.family = "'DM Sans', 'Microsoft YaHei', Arial, sans-serif";
+Chart.defaults.font.size = 11;
+Chart.defaults.color = '#8892a4';
+Chart.defaults.plugins.legend.position = 'bottom';
+Chart.defaults.responsive = true;
+Chart.defaults.maintainAspectRatio = false;
+
+const COLORS = {
+  accent: '#c8102e',
+  gold: '#d4a843',
+  navy: '#1a5276',
+  positive: '#1e8449',
+  negative: '#c0392b',
+  blue: '#3498db',
+  purple: '#8e44ad',
+  teal: '#16a085',
+  border: '#2a3345',
+  gridColor: 'rgba(42,51,69,0.6)',
+};
+
+const gridOpts = {
+  color: COLORS.gridColor,
+  drawBorder: false,
+};
+
+// ===== TAB NAVIGATION =====
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById(btn.dataset.tab).classList.add('active');
+    // Trigger resize for chart rendering
+    window.dispatchEvent(new Event('resize'));
+  });
+});
+
+// ===== CHART 1: Price vs Book Value =====
+new Chart(document.getElementById('priceVsBookChart'), {
+  type: 'line',
+  data: {
+    labels: ['2016','2017','2018','2019','2020','2021','2022','2023','2024','2025','2026*'],
+    datasets: [
+      {
+        label: 'ADR Price ($)',
+        data: [38,47,39,37,24,30,29,39,54,70,86],
+        borderColor: COLORS.accent,
+        backgroundColor: 'rgba(200,16,46,0.08)',
+        fill: true,
+        tension: 0.3,
+        yAxisID: 'y',
+        pointRadius: 4,
+        pointBackgroundColor: COLORS.accent,
+      },
+      {
+        label: 'BVPS ($)',
+        data: [52,56,55,54,53,54,50,52,54,56,58],
+        borderColor: COLORS.gold,
+        borderDash: [5,5],
+        tension: 0.3,
+        yAxisID: 'y',
+        pointRadius: 3,
+      },
+      {
+        label: 'P/B Ratio',
+        data: [0.73,0.84,0.71,0.69,0.45,0.56,0.58,0.75,1.00,1.25,1.57],
+        borderColor: COLORS.blue,
+        backgroundColor: 'rgba(52,152,219,0.1)',
+        fill: true,
+        tension: 0.3,
+        yAxisID: 'y1',
+        pointRadius: 3,
+      }
+    ]
+  },
+  options: {
+    plugins: {
+      title: { display: false },
+      annotation: {}
+    },
+    scales: {
+      y: { position: 'left', title: { display: true, text: 'Price / BVPS ($)' }, grid: gridOpts },
+      y1: { position: 'right', title: { display: true, text: 'P/B Ratio' }, grid: { display: false }, min: 0, max: 2.0 },
+      x: { grid: { display: false } }
+    }
+  }
+});
+
+// ===== CHART 2: Revenue & Pre-Tax Profit =====
+new Chart(document.getElementById('revProfitChart'), {
+  type: 'bar',
+  data: {
+    labels: ['2019','2020','2021','2022','2023','2024','2025'],
+    datasets: [
+      {
+        label: 'Revenue ($B)',
+        data: [56.1,50.4,49.6,50.6,66.1,65.9,63.2],
+        backgroundColor: 'rgba(26,82,118,0.7)',
+        borderRadius: 3,
+      },
+      {
+        label: 'Pre-Tax Profit ($B)',
+        data: [13.3,8.8,13.3,17.1,30.3,32.3,29.9],
+        backgroundColor: 'rgba(200,16,46,0.7)',
+        borderRadius: 3,
+      }
+    ]
+  },
+  options: {
+    scales: {
+      y: { grid: gridOpts, title: { display: true, text: 'USD Billions' } },
+      x: { grid: { display: false } }
+    }
+  }
+});
+
+// ===== CHART 3: RoTE =====
+new Chart(document.getElementById('roteChart'), {
+  type: 'line',
+  data: {
+    labels: ['2019','2020','2021','2022','2023','2024','2025'],
+    datasets: [
+      {
+        label: 'Reported RoTE (%)',
+        data: [8.4,3.1,8.3,10.0,15.6,16.5,13.3],
+        borderColor: COLORS.accent,
+        backgroundColor: 'rgba(200,16,46,0.1)',
+        fill: true,
+        tension: 0.3,
+        pointRadius: 5,
+        pointBackgroundColor: COLORS.accent,
+      },
+      {
+        label: 'Adj. RoTE excl. Notable Items (%)',
+        data: [9.2,4.8,9.5,12.0,16.3,17.0,17.2],
+        borderColor: COLORS.gold,
+        borderWidth: 2,
+        tension: 0.3,
+        pointRadius: 4,
+        pointBackgroundColor: COLORS.gold,
+      },
+      {
+        label: 'Target (17%)',
+        data: [17,17,17,17,17,17,17],
+        borderColor: 'rgba(30,132,73,0.5)',
+        borderDash: [8,4],
+        pointRadius: 0,
+        borderWidth: 1,
+      }
+    ]
+  },
+  options: {
+    scales: {
+      y: { grid: gridOpts, title: { display: true, text: 'RoTE %' }, min: 0, max: 22 },
+      x: { grid: { display: false } }
+    }
+  }
+});
+
+// ===== CHART 4: Capital Returns =====
+new Chart(document.getElementById('capitalReturnChart'), {
+  type: 'bar',
+  data: {
+    labels: ['2019','2020','2021','2022','2023','2024','2025'],
+    datasets: [
+      {
+        label: 'Dividends ($B)',
+        data: [10.3,3.0,5.0,6.5,12.0,15.9,13.5],
+        backgroundColor: 'rgba(212,168,67,0.7)',
+        borderRadius: 3,
+      },
+      {
+        label: 'Buybacks ($B)',
+        data: [1.0,0,0,0,7.0,11.0,6.0],
+        backgroundColor: 'rgba(200,16,46,0.6)',
+        borderRadius: 3,
+      }
+    ]
+  },
+  options: {
+    scales: {
+      y: { stacked: true, grid: gridOpts, title: { display: true, text: 'USD Billions' } },
+      x: { stacked: true, grid: { display: false } }
+    }
+  }
+});
+
+// ===== CHART 5: NIM =====
+new Chart(document.getElementById('nimChart'), {
+  type: 'line',
+  data: {
+    labels: ['2019','2020','2021','2022','2023','2024','2025','2026E'],
+    datasets: [{
+      label: 'Net Interest Margin (%)',
+      data: [1.58,1.32,1.19,1.42,1.66,1.56,1.57,1.55],
+      borderColor: COLORS.teal,
+      backgroundColor: 'rgba(22,160,133,0.15)',
+      fill: true,
+      tension: 0.3,
+      pointRadius: 5,
+      pointBackgroundColor: COLORS.teal,
+    }]
+  },
+  options: {
+    scales: {
+      y: { grid: gridOpts, min: 1.0, max: 1.8, title: { display: true, text: 'NIM %' } },
+      x: { grid: { display: false } }
+    }
+  }
+});
+
+// ===== CHART 6: Valuation Bar =====
+new Chart(document.getElementById('valuationChart'), {
+  type: 'bar',
+  data: {
+    labels: [
+      'Current Price\n当前价格',
+      'Graham Number\n格雷厄姆数',
+      'Book Value\n账面价值',
+      'GF Fair Value\nGF公允价值',
+      'Justified P/B @14% RoTE',
+      'Justified P/B @17% RoTE',
+    ],
+    datasets: [{
+      data: [86, 57, 58, 50, 91, 116],
+      backgroundColor: [
+        COLORS.accent,
+        COLORS.blue,
+        COLORS.navy,
+        COLORS.negative,
+        COLORS.gold,
+        COLORS.positive,
+      ],
+      borderRadius: 4,
+    }]
+  },
+  options: {
+    indexAxis: 'y',
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        callbacks: {
+          label: ctx => `$${ctx.raw} per ADR share`
+        }
+      }
+    },
+    scales: {
+      x: { grid: gridOpts, title: { display: true, text: 'USD per ADR Share' } },
+      y: { grid: { display: false } }
+    }
+  }
+});
+
+// ===== CHART 7: P/B History =====
+new Chart(document.getElementById('pbHistoryChart'), {
+  type: 'bar',
+  data: {
+    labels: ['2016','2017','2018','2019','2020 (Low)','2021','2022','2023','2024','2025','Apr 2026'],
+    datasets: [{
+      label: 'P/B Ratio',
+      data: [0.73,0.84,0.71,0.69,0.39,0.56,0.58,0.75,1.00,1.25,1.57],
+      backgroundColor: function(ctx) {
+        const v = ctx.raw;
+        if (v > 1.4) return 'rgba(192,57,43,0.7)';
+        if (v > 1.0) return 'rgba(212,172,13,0.7)';
+        if (v > 0.7) return 'rgba(52,152,219,0.6)';
+        return 'rgba(30,132,73,0.7)';
+      },
+      borderRadius: 4,
+    }]
+  },
+  options: {
+    plugins: {
+      legend: { display: false },
+      annotation: {}
+    },
+    scales: {
+      y: { grid: gridOpts, title: { display: true, text: 'P/B Ratio' }, min: 0, max: 2.0 },
+      x: { grid: { display: false } }
+    }
+  }
+});
+
+// ===== CHART 8: Moat Radar =====
+new Chart(document.getElementById('moatRadarChart'), {
+  type: 'radar',
+  data: {
+    labels: [
+      'Brand / Intangibles\n品牌/无形资产',
+      'Switching Costs\n转换成本',
+      'Network Effects\n网络效应',
+      'Cost Advantages\n成本优势',
+      'Efficient Scale\n规模效益'
+    ],
+    datasets: [{
+      label: 'HSBC Holdings',
+      data: [3, 3, 2, 2, 2],
+      fill: true,
+      backgroundColor: 'rgba(200,16,46,0.15)',
+      borderColor: COLORS.accent,
+      borderWidth: 2,
+      pointBackgroundColor: COLORS.accent,
+      pointRadius: 5,
+    }]
+  },
+  options: {
+    scales: {
+      r: {
+        min: 0,
+        max: 3,
+        ticks: { stepSize: 1, color: '#8892a4', backdropColor: 'transparent' },
+        grid: { color: 'rgba(42,51,69,0.5)' },
+        angleLines: { color: 'rgba(42,51,69,0.5)' },
+        pointLabels: { font: { size: 11 }, color: '#8892a4' }
+      }
+    }
+  }
+});
+
+// ===== CHART 9: Tailwind vs Headwind =====
+new Chart(document.getElementById('tailwindChart'), {
+  type: 'bar',
+  data: {
+    labels: [
+      'Asia Wealth Growth',
+      'HK Wealth Hub Status',
+      'Structural Hedge NII',
+      'AI Cost Efficiencies',
+      'MENA Infrastructure',
+      'Hang Seng Synergies',
+      'Rate Normalization',
+      'China Property Risk',
+      'US-China Decoupling',
+      'Iran War / MENA Risk',
+      'Competition (DBS etc)',
+      'Regulatory Burden',
+    ],
+    datasets: [{
+      label: 'Impact Score',
+      data: [9, 8, 7, 6, 7, 6, -5, -7, -8, -6, -4, -3],
+      backgroundColor: function(ctx) {
+        return ctx.raw >= 0 ? 'rgba(30,132,73,0.7)' : 'rgba(192,57,43,0.7)';
+      },
+      borderRadius: 3,
+    }]
+  },
+  options: {
+    indexAxis: 'y',
+    plugins: { legend: { display: false } },
+    scales: {
+      x: {
+        grid: gridOpts,
+        title: { display: true, text: '← Headwinds | Tailwinds →' },
+        min: -10,
+        max: 10,
+      },
+      y: { grid: { display: false } }
+    }
+  }
+});
+
+// ===== CHART 10: Entry Zone =====
+new Chart(document.getElementById('entryZoneChart'), {
+  type: 'bar',
+  data: {
+    labels: [
+      'Deep Value Zone\n(P/B < 0.8×)',
+      'Attractive Entry\n(P/B 0.9-1.1×)',
+      'Fair Value\n(P/B 1.2-1.4×)',
+      'Current Price\n(P/B 1.57×)',
+      'Overvalued\n(P/B > 1.7×)',
+    ],
+    datasets: [{
+      label: 'ADR Price Range ($)',
+      data: [46, 58, 75, 86, 98],
+      backgroundColor: [
+        'rgba(30,132,73,0.8)',
+        'rgba(30,132,73,0.5)',
+        'rgba(212,168,67,0.6)',
+        'rgba(200,16,46,0.6)',
+        'rgba(192,57,43,0.8)',
+      ],
+      borderRadius: 4,
+    }]
+  },
+  options: {
+    indexAxis: 'y',
+    plugins: { legend: { display: false } },
+    scales: {
+      x: { grid: gridOpts, title: { display: true, text: 'ADR Price ($)' }, min: 0, max: 120 },
+      y: { grid: { display: false } }
+    }
+  }
+});
+</script>
+</body>
+</html>
