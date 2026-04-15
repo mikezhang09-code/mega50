@@ -138,6 +138,7 @@ var CATEGORIES = {
           { id: "xiaomi-intrinsic", label: "Xiaomi Intrinsic Value", url: "./xiaomi-1810hk-intrinsic-value-report.html", icon: "doc" },
           { id: "popmart", label: "Pop Mart (9992.HK)", url: "./popmart-9992hk-report-202604.html", icon: "doc" },
           { id: "hsbc-analysis", label: "HSBC Holdings (0005.HK)", url: "./hsbc-analysis.html", icon: "doc" },
+          { id: "alibaba-dashboard", label: "Alibaba (BABA / 9988.HK)", url: "./alibaba-dashboard.html", icon: "doc" },
           { id: "hk-ai-beneficiaries", label: "HK AI Beneficiaries Top 10", url: "./hk-ai-beneficiaries-top10.html", icon: "chart" },
         ],
       },

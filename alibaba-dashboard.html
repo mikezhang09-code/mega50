@@ -1,0 +1,1018 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Alibaba (BABA) Value Investing Analysis | 阿里巴巴价值投资分析</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    :root {
+      --en-color: #333333;
+      --zh-color: #4A6741;
+      --accent: #0f2b46;
+      --accent-light: #1a4a7a;
+      --gold: #c9a84c;
+      --gold-light: #e8d48b;
+      --positive: #1e8449;
+      --negative: #c0392b;
+      --warning: #d4ac0d;
+      --neutral: #7f8c8d;
+      --bg: #0a0e17;
+      --bg-secondary: #111827;
+      --card-bg: #1a2236;
+      --card-border: #2a3a5c;
+      --text-primary: #e8e8e8;
+      --text-secondary: #9ca3af;
+      --border: #2a3a5c;
+      --tab-hover: #253352;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Microsoft YaHei', 'Segoe UI', Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text-primary);
+      line-height: 1.6;
+    }
+    .en { color: var(--text-primary); font-weight: 500; }
+    .zh { color: var(--zh-color); font-size: 0.88em; font-weight: 400; }
+    .bi-label .zh { display: block; }
+
+    /* Header */
+    .header {
+      background: linear-gradient(135deg, var(--accent) 0%, #0d1f35 100%);
+      border-bottom: 3px solid var(--gold);
+      padding: 28px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .header-left h1 {
+      font-size: 1.8rem;
+      color: #fff;
+      letter-spacing: 0.5px;
+    }
+    .header-left h1 span.ticker { color: var(--gold); }
+    .header-left .subtitle { color: var(--zh-color); font-size: 1rem; margin-top: 2px; }
+    .header-right {
+      display: flex;
+      gap: 24px;
+      align-items: center;
+    }
+    .price-box {
+      text-align: center;
+      background: rgba(201, 168, 76, 0.1);
+      border: 1px solid var(--gold);
+      border-radius: 10px;
+      padding: 12px 24px;
+    }
+    .price-box .label { font-size: 0.75rem; color: var(--gold-light); text-transform: uppercase; letter-spacing: 1px; }
+    .price-box .value { font-size: 1.8rem; color: var(--gold); font-weight: 700; }
+    .price-box .sub { font-size: 0.75rem; color: var(--text-secondary); }
+    .verdict-badge {
+      background: linear-gradient(135deg, #1a3a2a, #0d2b1a);
+      border: 1px solid var(--warning);
+      color: var(--warning);
+      padding: 10px 20px;
+      border-radius: 10px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      text-align: center;
+      min-width: 120px;
+    }
+    .verdict-badge .zh-verdict { font-size: 0.8rem; color: var(--zh-color); font-weight: 400; }
+
+    /* Tabs */
+    .tabs {
+      display: flex;
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border);
+      overflow-x: auto;
+      padding: 0 20px;
+    }
+    .tab {
+      padding: 14px 24px;
+      cursor: pointer;
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      font-weight: 500;
+      border-bottom: 3px solid transparent;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+    .tab:hover { background: var(--tab-hover); color: var(--text-primary); }
+    .tab.active {
+      color: var(--gold);
+      border-bottom-color: var(--gold);
+      background: rgba(201, 168, 76, 0.05);
+    }
+    .tab-content { display: none; padding: 24px 32px; max-width: 1400px; margin: 0 auto; }
+    .tab-content.active { display: block; }
+
+    /* Cards */
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 20px;
+    }
+    .card-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--gold);
+      margin-bottom: 16px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+    }
+    .card-title .zh { color: var(--zh-color); font-size: 0.85em; margin-left: 8px; }
+
+    /* Grid */
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+    @media (max-width: 900px) {
+      .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+      .header { padding: 20px; }
+      .tab-content { padding: 16px; }
+    }
+
+    /* KPI Cards */
+    .kpi-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      padding: 16px 20px;
+      text-align: center;
+    }
+    .kpi-label { font-size: 0.75rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px; }
+    .kpi-label .zh { color: var(--zh-color); display: block; text-transform: none; letter-spacing: 0; }
+    .kpi-value { font-size: 1.5rem; font-weight: 700; margin: 6px 0; }
+    .kpi-sub { font-size: 0.75rem; color: var(--text-secondary); }
+    .kpi-pass { color: var(--positive); }
+    .kpi-fail { color: var(--negative); }
+    .kpi-warn { color: var(--warning); }
+
+    /* Tables */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+    }
+    th {
+      text-align: left;
+      padding: 10px 12px;
+      background: rgba(201, 168, 76, 0.08);
+      color: var(--gold);
+      font-weight: 600;
+      border-bottom: 2px solid var(--border);
+    }
+    td {
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-primary);
+    }
+    tr:hover td { background: rgba(255,255,255,0.02); }
+    .pass { color: var(--positive); font-weight: 600; }
+    .fail { color: var(--negative); font-weight: 600; }
+    .warn { color: var(--warning); font-weight: 600; }
+
+    /* Chart containers */
+    .chart-container {
+      position: relative;
+      height: 320px;
+      width: 100%;
+    }
+    .chart-container-sm {
+      position: relative;
+      height: 260px;
+      width: 100%;
+    }
+
+    /* Score bars */
+    .score-bar-container { margin: 8px 0; }
+    .score-bar-label { font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 4px; }
+    .score-bar-track {
+      height: 24px;
+      background: #1a2236;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+    }
+    .score-bar-fill {
+      height: 100%;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding-right: 10px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #fff;
+      transition: width 1s ease;
+    }
+
+    /* MoS Gauge */
+    .mos-indicator {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 32px;
+      padding: 20px;
+    }
+    .mos-zone {
+      text-align: center;
+      padding: 16px 24px;
+      border-radius: 10px;
+      min-width: 120px;
+    }
+    .mos-zone.current {
+      border: 2px solid var(--gold);
+      background: rgba(201,168,76,0.1);
+    }
+    .mos-zone .zone-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px; }
+    .mos-zone .zone-range { font-size: 1.1rem; font-weight: 700; margin: 4px 0; }
+
+    /* Risk meter */
+    .risk-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .risk-item:last-child { border-bottom: none; }
+    .risk-level {
+      padding: 3px 12px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+    .risk-high { background: rgba(192,57,43,0.2); color: #e74c3c; border: 1px solid rgba(192,57,43,0.3); }
+    .risk-med { background: rgba(212,172,13,0.2); color: #f1c40f; border: 1px solid rgba(212,172,13,0.3); }
+    .risk-low { background: rgba(30,132,73,0.2); color: #2ecc71; border: 1px solid rgba(30,132,73,0.3); }
+
+    /* Position sizing */
+    .zone-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+    }
+    .zone-card {
+      text-align: center;
+      padding: 16px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+    }
+    .zone-card.avoid { background: rgba(192,57,43,0.1); border-color: rgba(192,57,43,0.3); }
+    .zone-card.watch { background: rgba(212,172,13,0.1); border-color: rgba(212,172,13,0.3); }
+    .zone-card.half { background: rgba(46,204,113,0.1); border-color: rgba(46,204,113,0.3); }
+    .zone-card.full { background: rgba(30,132,73,0.15); border-color: rgba(30,132,73,0.4); }
+    .zone-card .zone-price { font-size: 1.2rem; font-weight: 700; }
+    .zone-card .zone-action { font-size: 0.8rem; margin-top: 4px; }
+
+    .footer {
+      text-align: center;
+      padding: 20px;
+      color: var(--text-secondary);
+      font-size: 0.75rem;
+      border-top: 1px solid var(--border);
+      margin-top: 40px;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="header">
+  <div class="header-left">
+    <a href="./index.html" id="homeBtn" style="display:inline-flex;align-items:center;gap:8px;color:var(--gold-light);text-decoration:none;font-size:0.8rem;font-weight:500;margin-bottom:10px;opacity:0.8;transition:opacity 0.2s;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.8'">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+      Return to Home
+    </a>
+    <h1><span class="ticker">BABA</span> / 9988.HK — Alibaba Group</h1>
+    <div class="subtitle">阿里巴巴集团 — Graham-Buffett Value Investing Analysis / 格雷厄姆-巴菲特价值投资分析</div>
+  </div>
+  <div class="header-right">
+    <div class="price-box">
+      <div class="label">Current Price / 当前股价</div>
+      <div class="value">$131.35</div>
+      <div class="sub">NYSE ADR | Apr 14, 2026</div>
+    </div>
+    <div class="price-box">
+      <div class="label">Base IV / 基准内在价值</div>
+      <div class="value" style="color:#2ecc71;">$130</div>
+      <div class="sub">MoS: −0.8%</div>
+    </div>
+    <div class="verdict-badge">
+      HOLD ⏸️
+      <div class="zh-verdict">持有 / 观察名单</div>
+    </div>
+  </div>
+</div>
+
+<!-- Tabs -->
+<div class="tabs">
+  <div class="tab active" onclick="showTab('overview')">Overview / 概览</div>
+  <div class="tab" onclick="showTab('screens')">Screening / 筛选</div>
+  <div class="tab" onclick="showTab('valuation')">Valuation / 估值</div>
+  <div class="tab" onclick="showTab('moat')">Moat / 护城河</div>
+  <div class="tab" onclick="showTab('risks')">Risks / 风险</div>
+  <div class="tab" onclick="showTab('verdict')">Verdict / 结论</div>
+</div>
+
+<!-- Tab: Overview -->
+<div id="overview" class="tab-content active">
+  <div class="grid-4">
+    <div class="kpi-card">
+      <div class="kpi-label">Market Cap<span class="zh">市值</span></div>
+      <div class="kpi-value">$313B</div>
+      <div class="kpi-sub">EV: ~$300B</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">P/E (TTM)<span class="zh">市盈率</span></div>
+      <div class="kpi-value kpi-warn">17.8×</div>
+      <div class="kpi-sub">10yr avg: ~32×</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">P/B Ratio<span class="zh">市净率</span></div>
+      <div class="kpi-value">2.16×</div>
+      <div class="kpi-sub">Tangible P/B: ~3.3×</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">EPS (TTM, ADS)<span class="zh">每股收益</span></div>
+      <div class="kpi-value">$7.35</div>
+      <div class="kpi-sub">Non-GAAP: ~$9.01</div>
+    </div>
+  </div>
+
+  <div class="grid-4" style="margin-top:16px;">
+    <div class="kpi-card">
+      <div class="kpi-label">Revenue (FY2025)<span class="zh">收入</span></div>
+      <div class="kpi-value">$137.3B</div>
+      <div class="kpi-sub">+6% YoY</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Net Income<span class="zh">净利润</span></div>
+      <div class="kpi-value">$17.4B</div>
+      <div class="kpi-sub">+77% YoY</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">FCF (FY2025)<span class="zh">自由现金流</span></div>
+      <div class="kpi-value kpi-fail">$10.2B</div>
+      <div class="kpi-sub">−53% YoY (AI capex)</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-label">Cash & Liquid<span class="zh">现金及流动资产</span></div>
+      <div class="kpi-value kpi-pass">$80B</div>
+      <div class="kpi-sub">Net Cash: $10B</div>
+    </div>
+  </div>
+
+  <div class="grid-2" style="margin-top:20px;">
+    <div class="card">
+      <div class="card-title">Revenue Trend / 收入趋势</div>
+      <div class="chart-container"><canvas id="revenueChart"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Net Income & FCF Trend / 净利润与自由现金流趋势</div>
+      <div class="chart-container"><canvas id="profitChart"></canvas></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Business Summary / 业务概要</div>
+    <p style="color:var(--text-secondary); font-size:0.9rem; line-height:1.8;">
+      Alibaba is the world's largest e-commerce company by GMV, operating China's dominant Taobao (C2C) and Tmall (B2C) marketplaces. 
+      The company is undergoing a strategic pivot under CEO Eddie Wu's "user first, AI-driven" strategy, heavily investing in 
+      <strong style="color:var(--gold)">AI + Cloud</strong> (RMB 120B+ capex in 4 quarters) and <strong style="color:var(--gold)">quick commerce</strong> 
+      (Taobao Instant Commerce). Alibaba Cloud is China's #1 public cloud provider with 36% revenue growth and 10 consecutive quarters of 
+      triple-digit AI revenue growth. The Qwen AI platform has surpassed 300M MAU. Core commerce faces intensifying competition from 
+      PDD/Temu, JD, and Douyin, while the AI pivot suppresses near-term profitability and FCF.
+    </p>
+    <p style="color:var(--zh-color); font-size:0.85rem; line-height:1.8; margin-top:8px;">
+      阿里巴巴是全球最大的电子商务公司，运营中国主导的淘宝和天猫平台。公司正在进行AI战略转型，大力投资AI+云计算基础设施和即时零售业务。
+      阿里云是中国最大的公有云服务商，AI相关产品收入连续十个季度保持三位数增长。核心电商面临拼多多、京东和抖音的激烈竞争。
+    </p>
+  </div>
+</div>
+
+<!-- Tab: Screening -->
+<div id="screens" class="tab-content">
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">Graham Defensive Screen (7 Criteria) <span class="zh">格雷厄姆防御筛选</span></div>
+      <table>
+        <tr><th>#</th><th>Criterion</th><th>Threshold</th><th>BABA</th><th>Pass?</th></tr>
+        <tr><td>1</td><td>Size (Revenue)</td><td>> $500M</td><td>$137.3B</td><td class="pass">✅</td></tr>
+        <tr><td>2</td><td>Current Ratio / 流动比率</td><td>≥ 2.0</td><td>1.46</td><td class="fail">❌</td></tr>
+        <tr><td>3</td><td>LT Debt < NCA</td><td>Debt < NCA</td><td>$42.5B > $27B</td><td class="fail">❌</td></tr>
+        <tr><td>4</td><td>EPS Stability (10yr)</td><td>All positive</td><td>GAAP volatile</td><td class="fail">❌</td></tr>
+        <tr><td>5</td><td>Dividend Record (10yr)</td><td>Paid every year</td><td>Started 2024</td><td class="fail">❌</td></tr>
+        <tr><td>6</td><td>EPS Growth ≥ 33%</td><td>10yr cumulative</td><td>Massive growth</td><td class="pass">✅</td></tr>
+        <tr><td>7</td><td>P/E × P/B ≤ 22.5</td><td>P/E ≤ 15</td><td>17.8 × 2.16 = 38.4</td><td class="fail">❌</td></tr>
+      </table>
+      <div style="margin-top:16px;">
+        <div class="score-bar-label">Graham Defensive: 2 / 7</div>
+        <div class="score-bar-track"><div class="score-bar-fill" style="width:28.6%; background: linear-gradient(90deg, #c0392b, #e74c3c);">2/7</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Graham Enterprising Screen (6 Criteria) <span class="zh">格雷厄姆进取筛选</span></div>
+      <table>
+        <tr><th>#</th><th>Criterion</th><th>Threshold</th><th>BABA</th><th>Pass?</th></tr>
+        <tr><td>1</td><td>P/B Ratio</td><td>< 1.2</td><td>2.16</td><td class="fail">❌</td></tr>
+        <tr><td>2</td><td>P/E Ratio</td><td>< 9×</td><td>17.8×</td><td class="fail">❌</td></tr>
+        <tr><td>3</td><td>Debt/Equity / 债务权益比</td><td>< 1.1</td><td>0.27</td><td class="pass">✅</td></tr>
+        <tr><td>4</td><td>Earnings Growth</td><td>> Prior year</td><td>+77% YoY</td><td class="pass">✅</td></tr>
+        <tr><td>5</td><td>Any Dividend / 股息</td><td>Paid once</td><td>Yes (2024)</td><td class="pass">✅</td></tr>
+        <tr><td>6</td><td>Net-Net / 净净值</td><td>< 1.5× NNWC</td><td>No</td><td class="fail">❌</td></tr>
+      </table>
+      <div style="margin-top:16px;">
+        <div class="score-bar-label">Graham Enterprising: 3 / 6</div>
+        <div class="score-bar-track"><div class="score-bar-fill" style="width:50%; background: linear-gradient(90deg, #d4ac0d, #f1c40f);">3/6</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Buffett Quality Screen (10 Points) <span class="zh">巴菲特品质筛选</span></div>
+    <table>
+      <tr><th>#</th><th>Criterion</th><th>Threshold</th><th>BABA</th><th>Points</th></tr>
+      <tr><td>1</td><td>ROIC Consistency / 投入资本回报率</td><td>> 12% every yr, 10yr</td><td>~9.4%, inconsistent</td><td class="fail">0 / 2</td></tr>
+      <tr><td>2</td><td>Revenue Growth CAGR (10yr)</td><td>> 5%</td><td>~25%+ since IPO</td><td class="pass">1 / 1</td></tr>
+      <tr><td>3</td><td>EPS Growth CAGR (10yr)</td><td>> 7%</td><td>Strong growth</td><td class="pass">1 / 1</td></tr>
+      <tr><td>4</td><td>FCF Conversion / 自由现金流转换</td><td>FCF/NI > 80%</td><td>59% (AI capex)</td><td class="fail">0 / 1</td></tr>
+      <tr><td>5</td><td>Gross Margin Stability</td><td>< 3pp variance, 5yr</td><td>~4pp variance</td><td class="fail">0 / 1</td></tr>
+      <tr><td>6</td><td>Debt/EBITDA</td><td>< 3×</td><td>~1.9×</td><td class="pass">1 / 1</td></tr>
+      <tr><td>7</td><td>Owner Earnings Yield / 所有者收益率</td><td>> 6%</td><td>~4.8%</td><td class="fail">0 / 1</td></tr>
+      <tr><td>8</td><td>Moat Score / 护城河评分</td><td>≥ 9/15</td><td>10/15</td><td class="pass">2 / 2</td></tr>
+    </table>
+    <div style="margin-top:16px;">
+      <div class="score-bar-label">Buffett Quality: 5 / 10</div>
+      <div class="score-bar-track"><div class="score-bar-fill" style="width:50%; background: linear-gradient(90deg, #d4ac0d, #f1c40f);">5/10</div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Combined Graham-Buffett Score <span class="zh">综合评分</span></div>
+    <div class="grid-3" style="text-align:center;">
+      <div>
+        <div style="font-size:0.8rem; color:var(--text-secondary);">Graham Weight (40%)</div>
+        <div style="font-size:2rem; font-weight:700; color:var(--negative);">11.4</div>
+        <div style="font-size:0.75rem; color:var(--text-secondary);">2/7 × 40</div>
+      </div>
+      <div>
+        <div style="font-size:0.8rem; color:var(--text-secondary);">Buffett Weight (60%)</div>
+        <div style="font-size:2rem; font-weight:700; color:var(--warning);">30.0</div>
+        <div style="font-size:0.75rem; color:var(--text-secondary);">5/10 × 60</div>
+      </div>
+      <div>
+        <div style="font-size:0.8rem; color:var(--text-secondary);">Combined / 综合</div>
+        <div style="font-size:2.5rem; font-weight:700; color:var(--warning);">41</div>
+        <div style="font-size:0.75rem; color:var(--text-secondary);">Below 50 threshold — needs deep discount</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Tab: Valuation -->
+<div id="valuation" class="tab-content">
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">Intrinsic Value Comparison / 内在价值对比</div>
+      <div class="chart-container"><canvas id="ivChart"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">DCF Sensitivity / 折现敏感性分析</div>
+      <table>
+        <tr><th></th><th style="text-align:center">Growth 5%</th><th style="text-align:center">Growth 8%</th><th style="text-align:center">Growth 12%</th></tr>
+        <tr>
+          <td><strong>DR = 9%</strong></td>
+          <td style="text-align:center; color:var(--warning);">$120</td>
+          <td style="text-align:center; color:var(--positive);">$163</td>
+          <td style="text-align:center; color:var(--positive);">$193</td>
+        </tr>
+        <tr>
+          <td><strong>DR = 10%</strong></td>
+          <td style="text-align:center; color:var(--negative);">$103</td>
+          <td style="text-align:center; color:var(--warning);">$130</td>
+          <td style="text-align:center; color:var(--positive);">$158</td>
+        </tr>
+        <tr>
+          <td><strong>DR = 11%</strong></td>
+          <td style="text-align:center; color:var(--negative);">$91</td>
+          <td style="text-align:center; color:var(--negative);">$109</td>
+          <td style="text-align:center; color:var(--warning);">$130</td>
+        </tr>
+      </table>
+      <p style="margin-top:12px; font-size:0.8rem; color:var(--text-secondary);">
+        Green = price below IV (MoS exists) | Yellow = near fair value | Red = overvalued at current price $131
+      </p>
+      <p style="font-size:0.78rem; color:var(--zh-color); margin-top:4px;">
+        绿色 = 价格低于内在价值 | 黄色 = 接近公允价值 | 红色 = 当前价格$131高于内在价值
+      </p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Owner Earnings DCF — Three Scenarios / 所有者收益折现 — 三种情景</div>
+    <table>
+      <tr>
+        <th>Scenario</th>
+        <th>Growth Yr 1–5</th>
+        <th>Growth Yr 6–10</th>
+        <th>Terminal Growth</th>
+        <th>Discount Rate</th>
+        <th>IV / ADS</th>
+        <th>ADR-Adj Target (−15%)</th>
+        <th>MoS at $131</th>
+      </tr>
+      <tr>
+        <td><strong style="color:var(--negative);">Bear / 悲观</strong></td>
+        <td>5%</td><td>3%</td><td>2.5%</td><td>11%</td>
+        <td><strong>$91</strong></td>
+        <td><strong>$77</strong></td>
+        <td class="fail">−44%</td>
+      </tr>
+      <tr>
+        <td><strong style="color:var(--warning);">Base / 基准</strong></td>
+        <td>8%</td><td>5%</td><td>3.0%</td><td>10%</td>
+        <td><strong>$130</strong></td>
+        <td><strong>$111</strong></td>
+        <td class="fail">−1%</td>
+      </tr>
+      <tr>
+        <td><strong style="color:var(--positive);">Bull / 乐观</strong></td>
+        <td>12%</td><td>7%</td><td>3.0%</td><td>9%</td>
+        <td><strong>$193</strong></td>
+        <td><strong>$164</strong></td>
+        <td class="pass">+32%</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">Valuation Multiples / 估值倍数</div>
+      <table>
+        <tr><th>Metric</th><th>BABA</th><th>Graham Range</th><th>Buffett Range</th></tr>
+        <tr><td>P/E (TTM)</td><td class="warn">17.8×</td><td>< 15×</td><td>< 20× ✅</td></tr>
+        <tr><td>P/B</td><td>2.16×</td><td>< 1.5×</td><td>< 3× ✅</td></tr>
+        <tr><td>P/S</td><td>2.2×</td><td>< 1.5×</td><td>Varies</td></tr>
+        <tr><td>EV/EBIT</td><td class="warn">~17.6×</td><td>< 10×</td><td>< 15×</td></tr>
+        <tr><td>FCF Yield</td><td class="fail">3.3%</td><td>> 7%</td><td>> 5%</td></tr>
+        <tr><td>Earnings Yield</td><td>5.6%</td><td>≥ 2× 10yr Tsy</td><td>≥ 6%</td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <div class="card-title">Reverse DCF — Implied Growth / 反向DCF</div>
+      <div style="text-align:center; padding:20px;">
+        <div style="font-size:0.85rem; color:var(--text-secondary);">At $131/ADS, the market implies:</div>
+        <div style="font-size:2.5rem; font-weight:700; color:var(--gold); margin:12px 0;">~8% → 5%</div>
+        <div style="font-size:0.85rem; color:var(--text-secondary);">Two-stage OE growth (base case assumptions)</div>
+        <div style="font-size:0.8rem; color:var(--zh-color); margin-top:8px;">市场隐含约8%→5%的两阶段增长 — 基本符合基准预期</div>
+      </div>
+      <div style="padding:12px; background:rgba(212,172,13,0.08); border-radius:8px; border:1px solid rgba(212,172,13,0.2);">
+        <p style="font-size:0.85rem; color:var(--warning);">⚠️ The market is not demanding heroic growth assumptions, but neither is it offering a meaningful discount for China/VIE risk.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Tab: Moat -->
+<div id="moat" class="tab-content">
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">Economic Moat Radar / 经济护城河雷达图</div>
+      <div class="chart-container"><canvas id="moatRadar"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Moat Breakdown / 护城河详解</div>
+      <table>
+        <tr><th>Moat Type</th><th>Score</th><th>Assessment</th></tr>
+        <tr>
+          <td>Intangible Assets<br><span class="zh">无形资产</span></td>
+          <td class="pass">2/3</td>
+          <td style="font-size:0.85rem;">Taobao/Tmall brands powerful domestically; Alibaba Cloud #1 in China. Globally less recognized.</td>
+        </tr>
+        <tr>
+          <td>Switching Costs<br><span class="zh">转换成本</span></td>
+          <td class="pass">2/3</td>
+          <td style="font-size:0.85rem;">Merchants deeply embedded (logistics, payments, data). Cloud customers face moderate switching friction.</td>
+        </tr>
+        <tr>
+          <td>Network Effects<br><span class="zh">网络效应</span></td>
+          <td class="pass" style="font-weight:800; font-size:1.1em;">3/3</td>
+          <td style="font-size:0.85rem;"><strong>Strongest moat.</strong> Massive buyer/seller marketplace network effects. 900M+ active consumers. Alipay ecosystem amplifies.</td>
+        </tr>
+        <tr>
+          <td>Cost Advantages<br><span class="zh">成本优势</span></td>
+          <td class="pass">2/3</td>
+          <td style="font-size:0.85rem;">Scale economies in logistics (Cainiao), cloud infra, AI compute. Not unassailable — JD, PDD competitive.</td>
+        </tr>
+        <tr>
+          <td>Efficient Scale<br><span class="zh">规模效益</span></td>
+          <td class="warn">1/3</td>
+          <td style="font-size:0.85rem;">China e-commerce supports multiple large players. No natural monopoly dynamics.</td>
+        </tr>
+      </table>
+      <div style="margin-top:16px;">
+        <div class="score-bar-label">Total Moat: 10/15 — Narrow Moat (Strong End) / 窄护城河（偏强）</div>
+        <div class="score-bar-track"><div class="score-bar-fill" style="width:66.7%; background: linear-gradient(90deg, #1a5276, #2980b9);">10/15</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Moat Durability Test / 护城河持久性测试</div>
+    <div class="grid-3">
+      <div style="padding:16px; background:rgba(30,132,73,0.08); border-radius:8px; border:1px solid rgba(30,132,73,0.2);">
+        <div style="color:var(--positive); font-weight:600; margin-bottom:8px;">Durable (10+ years)</div>
+        <ul style="font-size:0.85rem; color:var(--text-secondary); padding-left:16px;">
+          <li>Marketplace network effects (Taobao/Tmall)</li>
+          <li>Cloud switching costs (enterprise lock-in)</li>
+          <li>Qwen AI ecosystem (if adoption scales)</li>
+        </ul>
+      </div>
+      <div style="padding:16px; background:rgba(212,172,13,0.08); border-radius:8px; border:1px solid rgba(212,172,13,0.2);">
+        <div style="color:var(--warning); font-weight:600; margin-bottom:8px;">Eroding (5–10 years)</div>
+        <ul style="font-size:0.85rem; color:var(--text-secondary); padding-left:16px;">
+          <li>Brand premium — PDD/Douyin competition</li>
+          <li>Cost advantage — JD investing in logistics</li>
+          <li>Lower-tier city market share declining</li>
+        </ul>
+      </div>
+      <div style="padding:16px; background:rgba(192,57,43,0.08); border-radius:8px; border:1px solid rgba(192,57,43,0.2);">
+        <div style="color:var(--negative); font-weight:600; margin-bottom:8px;">Key Threats / 关键威胁</div>
+        <ul style="font-size:0.85rem; color:var(--text-secondary); padding-left:16px;">
+          <li>Douyin entering search-based e-commerce</li>
+          <li>PDD/Temu undercutting internationally</li>
+          <li>Regulatory intervention (VIE, antitrust)</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Tab: Risks -->
+<div id="risks" class="tab-content">
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">Balance Sheet Health / 资产负债表健康度</div>
+      <table>
+        <tr><th>Metric</th><th>Value</th><th>Status</th></tr>
+        <tr><td>Current Ratio / 流动比率</td><td>1.46</td><td class="warn">⚠️ Below Graham 2.0</td></tr>
+        <tr><td>Debt/Equity / 债务权益比</td><td>0.27</td><td class="pass">✅ Conservative</td></tr>
+        <tr><td>Debt/EBITDA</td><td>~1.9×</td><td class="pass">✅ Manageable</td></tr>
+        <tr><td>Cash & Liquid Inv.</td><td>~$80B</td><td class="pass">✅ Fortress</td></tr>
+        <tr><td>Net Cash Position</td><td>~$10B</td><td class="pass">✅ Net cash positive</td></tr>
+        <tr><td>Interest Coverage</td><td>Well-covered</td><td class="pass">✅ Earns > pays</td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <div class="card-title">Quality Ratios / 品质指标</div>
+      <table>
+        <tr><th>Metric</th><th>Value</th><th>Grade</th></tr>
+        <tr><td>Gross Margin / 毛利率</td><td>40.0%</td><td class="pass">Good</td></tr>
+        <tr><td>Operating Margin / 经营利润率</td><td>14.1%</td><td class="pass">Good</td></tr>
+        <tr><td>Net Margin / 净利率</td><td>13.1%</td><td class="pass">Good</td></tr>
+        <tr><td>ROE / 净资产收益率</td><td>11.2%</td><td class="warn">Average</td></tr>
+        <tr><td>ROIC / 投入资本回报率</td><td>9.4%</td><td class="warn">Below cost of equity</td></tr>
+        <tr><td>FCF/Net Income</td><td>59%</td><td class="fail">Below 80% threshold</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Risk Assessment / 风险评估</div>
+    <div class="risk-item">
+      <div>
+        <strong>VIE Structure / 可变利益实体结构</strong>
+        <div style="font-size:0.8rem; color:var(--text-secondary);">ADR holders own Cayman entity, not operating company. HK listing mitigates but doesn't eliminate.</div>
+      </div>
+      <span class="risk-level risk-high">HIGH</span>
+    </div>
+    <div class="risk-item">
+      <div>
+        <strong>Regulatory & Geopolitical / 监管与地缘政治</strong>
+        <div style="font-size:0.8rem; color:var(--text-secondary);">"Common prosperity" overhang. HFCAA delisting tail risk. US-China tech decoupling.</div>
+      </div>
+      <span class="risk-level risk-high">HIGH</span>
+    </div>
+    <div class="risk-item">
+      <div>
+        <strong>Competitive Erosion / 竞争侵蚀</strong>
+        <div style="font-size:0.8rem; color:var(--text-secondary);">PDD, Douyin, JD aggressively competing. Domestic GMV share declining.</div>
+      </div>
+      <span class="risk-level risk-high">HIGH</span>
+    </div>
+    <div class="risk-item">
+      <div>
+        <strong>AI Capex Cycle — Earnings Suppression / AI资本支出周期</strong>
+        <div style="font-size:0.8rem; color:var(--text-secondary);">RMB 120B+ in AI/cloud capex. FY2025 FCF −53%, Q3 FY2026 FCF −71%. Pressure through FY2027–28.</div>
+      </div>
+      <span class="risk-level risk-med">MEDIUM</span>
+    </div>
+    <div class="risk-item">
+      <div>
+        <strong>Quick Commerce Cash Burn / 即时零售现金消耗</strong>
+        <div style="font-size:0.8rem; color:var(--text-secondary);">Taobao Instant Commerce positive cash flow not expected until FY2028.</div>
+      </div>
+      <span class="risk-level risk-med">MEDIUM</span>
+    </div>
+    <div class="risk-item">
+      <div>
+        <strong>Earnings Quality / 盈利质量</strong>
+        <div style="font-size:0.8rem; color:var(--text-secondary);">GAAP earnings volatile from mark-to-market equity investment swings.</div>
+      </div>
+      <span class="risk-level risk-med">MEDIUM</span>
+    </div>
+  </div>
+</div>
+
+<!-- Tab: Verdict -->
+<div id="verdict" class="tab-content">
+  <div class="card" style="border-color:var(--warning); border-width:2px;">
+    <div style="text-align:center; padding:20px 0;">
+      <div style="font-size:3rem; font-weight:800; color:var(--warning);">HOLD ⏸️</div>
+      <div style="font-size:1.4rem; color:var(--zh-color); margin-top:4px;">持有 / 观察名单</div>
+      <div style="font-size:0.9rem; color:var(--text-secondary); margin-top:12px; max-width:700px; margin-left:auto; margin-right:auto;">
+        Alibaba is a narrow-moat business trading at roughly fair value. The AI pivot thesis is promising but unproven. 
+        VIE/regulatory risk requires an additional 15% margin of safety that the current price does not offer.
+        Wait for a pullback to $100–110 for a comfortable entry.
+      </div>
+      <div style="font-size:0.85rem; color:var(--zh-color); margin-top:8px; max-width:700px; margin-left:auto; margin-right:auto;">
+        阿里巴巴是一家窄护城河企业，当前股价接近公允价值。AI战略转型前景乐观但尚未验证。
+        VIE/监管风险需要额外15%安全边际，当前价格不满足。建议等待回调至$100-110区间再入场。
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Position Sizing Zones / 仓位区间建议</div>
+    <div class="zone-grid">
+      <div class="zone-card avoid">
+        <div style="font-size:0.75rem; color:var(--negative);">AVOID / 回避</div>
+        <div class="zone-price" style="color:var(--negative);">> $140</div>
+        <div class="zone-action" style="color:var(--text-secondary);">Overvalued vs risk-adjusted IV</div>
+      </div>
+      <div class="zone-card watch" style="border-width:2px;">
+        <div style="font-size:0.75rem; color:var(--warning);">◀ CURRENT $131</div>
+        <div class="zone-price" style="color:var(--warning);">$120–$140</div>
+        <div class="zone-action" style="color:var(--text-secondary);">Fair value — wait for catalysts</div>
+      </div>
+      <div class="zone-card half">
+        <div style="font-size:0.75rem; color:#2ecc71;">HALF POSITION / 半仓</div>
+        <div class="zone-price" style="color:#2ecc71;">$100–$120</div>
+        <div class="zone-action" style="color:var(--text-secondary);">Buy zone with adequate MoS</div>
+      </div>
+      <div class="zone-card full">
+        <div style="font-size:0.75rem; color:var(--positive);">FULL POSITION / 全仓</div>
+        <div class="zone-price" style="color:var(--positive);">< $100</div>
+        <div class="zone-action" style="color:var(--text-secondary);">Deep discount — compelling R/R</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">Bull Case / 乐观情景</div>
+      <ul style="font-size:0.88rem; color:var(--text-secondary); padding-left:20px; line-height:2;">
+        <li>Alibaba Cloud AI revenue sustains 100%+ growth, reaching $25B+ by FY2028</li>
+        <li>Qwen AI ecosystem (300M MAU) monetizes through commerce integration</li>
+        <li>Core commerce stabilizes; international (AliExpress, Trendyol) scales profitably</li>
+        <li>Capex cycle normalizes FY2027; FCF rebounds to $20B+</li>
+        <li>Ant Financial restructuring creates unlocked value</li>
+      </ul>
+      <div style="margin-top:12px; text-align:center;">
+        <span style="font-size:1.5rem; font-weight:700; color:var(--positive);">Target: $164–$193</span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Bear Case / 悲观情景</div>
+      <ul style="font-size:0.88rem; color:var(--text-secondary); padding-left:20px; line-height:2;">
+        <li>AI capex doesn't translate to durable competitive advantage</li>
+        <li>PDD/Douyin continue taking domestic commerce share</li>
+        <li>Regulatory crackdown re-intensifies or VIE challenge materializes</li>
+        <li>Quick commerce remains a cash drain beyond FY2028</li>
+        <li>Macro weakness in China consumer spending persists</li>
+      </ul>
+      <div style="margin-top:12px; text-align:center;">
+        <span style="font-size:1.5rem; font-weight:700; color:var(--negative);">Target: $77–$91</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Catalysts to Watch / 关注催化剂</div>
+    <div class="grid-2">
+      <div>
+        <div style="font-size:0.85rem; color:var(--text-secondary); line-height:2;">
+          <strong style="color:var(--gold);">📅 Q4 FY2026 Earnings</strong> (June 2026) — Cloud growth trend, quick commerce losses<br>
+          <strong style="color:var(--gold);">📅 FY2027 Guidance</strong> — Capex normalization, FCF recovery signal<br>
+          <strong style="color:var(--gold);">🏦 Ant Financial</strong> — Restructuring / IPO timeline clarity<br>
+        </div>
+      </div>
+      <div>
+        <div style="font-size:0.85rem; color:var(--text-secondary); line-height:2;">
+          <strong style="color:var(--gold);">🌐 US-China Policy</strong> — Trade/tech decoupling developments<br>
+          <strong style="color:var(--gold);">🤖 Qwen AI Monetization</strong> — Commerce integration revenue<br>
+          <strong style="color:var(--gold);">📊 Cloud Profitability</strong> — EBITA margin expansion toward 20% target<br>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Footer -->
+<div class="footer">
+  <p>Graham-Buffett Value Investing Analysis | Data: SEC EDGAR, StockAnalysis, Yahoo Finance, Macrotrends | Prices as of Apr 14, 2026</p>
+  <p>This analysis is for educational and research purposes only. It does not constitute investment advice.</p>
+  <p style="color:var(--zh-color); margin-top:4px;">格雷厄姆-巴菲特价值投资分析 | 仅供教育和研究目的，不构成投资建议</p>
+</div>
+
+<script>
+// Chart.js defaults
+Chart.defaults.font.family = 'Microsoft YaHei, Segoe UI, Arial, sans-serif';
+Chart.defaults.font.size = 12;
+Chart.defaults.color = '#9ca3af';
+Chart.defaults.plugins.legend.position = 'bottom';
+Chart.defaults.responsive = true;
+Chart.defaults.maintainAspectRatio = false;
+
+// Tab navigation
+function showTab(tabId) {
+  document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
+  document.getElementById(tabId).classList.add('active');
+  event.target.classList.add('active');
+}
+
+// Revenue Chart
+new Chart(document.getElementById('revenueChart'), {
+  type: 'bar',
+  data: {
+    labels: ['FY2020', 'FY2021', 'FY2022', 'FY2023', 'FY2024', 'FY2025'],
+    datasets: [{
+      label: 'Revenue ($B)',
+      data: [71.9, 109.5, 134.6, 126.5, 130.3, 137.3],
+      backgroundColor: 'rgba(26, 74, 122, 0.7)',
+      borderColor: '#1a5276',
+      borderWidth: 1,
+      borderRadius: 4
+    }]
+  },
+  options: {
+    plugins: {
+      legend: { display: false },
+      title: { display: false }
+    },
+    scales: {
+      y: {
+        beginAtZero: true,
+        grid: { color: 'rgba(255,255,255,0.05)' },
+        ticks: { callback: v => '$' + v + 'B' }
+      },
+      x: { grid: { display: false } }
+    }
+  }
+});
+
+// Profit & FCF Chart
+new Chart(document.getElementById('profitChart'), {
+  type: 'line',
+  data: {
+    labels: ['FY2020', 'FY2021', 'FY2022', 'FY2023', 'FY2024', 'FY2025'],
+    datasets: [
+      {
+        label: 'Net Income ($B)',
+        data: [21.1, 22.2, 7.4, 10.0, 9.8, 17.4],
+        borderColor: '#c9a84c',
+        backgroundColor: 'rgba(201, 168, 76, 0.1)',
+        borderWidth: 2,
+        fill: true,
+        tension: 0.3
+      },
+      {
+        label: 'Free Cash Flow ($B)',
+        data: [18.2, 22.6, 14.8, 22.4, 21.5, 10.2],
+        borderColor: '#2ecc71',
+        backgroundColor: 'rgba(46, 204, 113, 0.05)',
+        borderWidth: 2,
+        borderDash: [5, 5],
+        fill: false,
+        tension: 0.3
+      }
+    ]
+  },
+  options: {
+    plugins: {
+      legend: { labels: { usePointStyle: true, padding: 16 } }
+    },
+    scales: {
+      y: {
+        grid: { color: 'rgba(255,255,255,0.05)' },
+        ticks: { callback: v => '$' + v + 'B' }
+      },
+      x: { grid: { display: false } }
+    }
+  }
+});
+
+// Intrinsic Value Chart
+new Chart(document.getElementById('ivChart'), {
+  type: 'bar',
+  data: {
+    labels: [
+      'Current Price\n当前股价',
+      'Graham # (Tangible)\n格雷厄姆数',
+      'Graham # (Total BV)\n格雷厄姆数',
+      'EPV\n收益能力价值',
+      'DCF Bear\n悲观',
+      'DCF Base\n基准',
+      'DCF Bull\n乐观',
+      'ADR-Adj Base\nADR调整基准'
+    ],
+    datasets: [{
+      data: [131, 81, 100, 54, 91, 130, 193, 111],
+      backgroundColor: [
+        '#e74c3c',
+        '#3498db',
+        '#2980b9',
+        '#8e44ad',
+        '#c0392b',
+        '#d4ac0d',
+        '#1e8449',
+        '#e67e22'
+      ],
+      borderWidth: 0,
+      borderRadius: 4
+    }]
+  },
+  options: {
+    indexAxis: 'y',
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        callbacks: {
+          label: ctx => '$' + ctx.raw + ' per ADS'
+        }
+      }
+    },
+    scales: {
+      x: {
+        grid: { color: 'rgba(255,255,255,0.05)' },
+        ticks: { callback: v => '$' + v }
+      },
+      y: {
+        grid: { display: false },
+        ticks: { font: { size: 11 } }
+      }
+    }
+  }
+});
+
+// Moat Radar Chart
+new Chart(document.getElementById('moatRadar'), {
+  type: 'radar',
+  data: {
+    labels: [
+      'Intangible Assets\n无形资产',
+      'Switching Costs\n转换成本',
+      'Network Effects\n网络效应',
+      'Cost Advantages\n成本优势',
+      'Efficient Scale\n规模效益'
+    ],
+    datasets: [{
+      label: 'Alibaba',
+      data: [2, 2, 3, 2, 1],
+      fill: true,
+      backgroundColor: 'rgba(201, 168, 76, 0.15)',
+      borderColor: '#c9a84c',
+      borderWidth: 2,
+      pointBackgroundColor: '#c9a84c',
+      pointBorderColor: '#c9a84c',
+      pointRadius: 5
+    }]
+  },
+  options: {
+    plugins: {
+      legend: { display: false }
+    },
+    scales: {
+      r: {
+        min: 0,
+        max: 3,
+        ticks: { stepSize: 1, color: '#666', backdropColor: 'transparent' },
+        grid: { color: 'rgba(255,255,255,0.08)' },
+        angleLines: { color: 'rgba(255,255,255,0.08)' },
+        pointLabels: { font: { size: 11 }, color: '#9ca3af' }
+      }
+    }
+  }
+});
+</script>
+</body>
+</html>
