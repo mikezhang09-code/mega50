@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tencent (0700.HK) — Intrinsic Value Analysis | 腾讯内在价值分析</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+  :root {
+    --en-color: #333333;
+    --zh-color: #4A6741;
+    --accent: #0A1628;
+    --accent-light: #1a3a5c;
+    --gold: #C9A84C;
+    --gold-light: #E8D48B;
+    --positive: #1e8449;
+    --negative: #c0392b;
+    --neutral: #7f8c8d;
+    --bg: #f4f5f7;
+    --card-bg: #ffffff;
+    --border: #dee2e6;
+    --header-bg: linear-gradient(135deg, #0A1628 0%, #1a3a5c 50%, #0A1628 100%);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Microsoft YaHei', 'Segoe UI', Arial, sans-serif;
+    background: var(--bg);
+    color: var(--en-color);
+    line-height: 1.6;
+  }
+
+  .header {
+    background: var(--header-bg);
+    color: #fff;
+    padding: 32px 24px 20px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .header::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(ellipse at 30% 50%, rgba(201,168,76,0.08) 0%, transparent 60%);
+    pointer-events: none;
+  }
+  .header h1 {
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    margin-bottom: 4px;
+  }
+  .header .subtitle {
+    font-size: 14px;
+    color: var(--gold-light);
+    font-weight: 400;
+  }
+  .header .price-bar {
+    display: flex;
+    justify-content: center;
+    gap: 32px;
+    margin-top: 16px;
+    flex-wrap: wrap;
+  }
+  .price-bar .item {
+    text-align: center;
+  }
+  .price-bar .item .label {
+    font-size: 11px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.6);
+    letter-spacing: 0.5px;
+  }
+  .price-bar .item .value {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--gold);
+  }
+  .price-bar .item .value.green { color: #2ecc71; }
+  .price-bar .item .value.red { color: #e74c3c; }
+
+  .tabs {
+    display: flex;
+    justify-content: center;
+    background: #fff;
+    border-bottom: 2px solid var(--border);
+    gap: 0;
+    flex-wrap: wrap;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  }
+  .tab-btn {
+    padding: 12px 20px;
+    cursor: pointer;
+    border: none;
+    background: none;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--neutral);
+    border-bottom: 3px solid transparent;
+    transition: all 0.2s;
+    font-family: inherit;
+  }
+  .tab-btn:hover { color: var(--accent); }
+  .tab-btn.active {
+    color: var(--accent);
+    border-bottom-color: var(--gold);
+  }
+
+  .tab-content { display: none; padding: 24px; max-width: 1200px; margin: 0 auto; }
+  .tab-content.active { display: block; }
+
+  .card {
+    background: var(--card-bg);
+    border-radius: 10px;
+    padding: 24px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+    border: 1px solid var(--border);
+  }
+  .card h2 {
+    font-size: 18px;
+    color: var(--accent);
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid var(--gold);
+    display: inline-block;
+  }
+  .card h2 .zh {
+    color: var(--zh-color);
+    font-size: 0.85em;
+    font-weight: 500;
+  }
+
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+  @media (max-width: 768px) {
+    .grid-2, .grid-3 { grid-template-columns: 1fr; }
+    .tab-btn { font-size: 11px; padding: 10px 12px; }
+  }
+
+  .chart-box { height: 320px; position: relative; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th {
+    background: var(--accent);
+    color: #fff;
+    padding: 10px 12px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 12px;
+  }
+  td { padding: 9px 12px; border-bottom: 1px solid #eee; }
+  tr:hover { background: #f8f9fa; }
+  .pass { color: var(--positive); font-weight: 700; }
+  .fail { color: var(--negative); font-weight: 700; }
+
+  .score-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    font-size: 20px;
+    font-weight: 700;
+    color: #fff;
+  }
+  .score-green { background: var(--positive); }
+  .score-yellow { background: #d4ac0d; }
+  .score-red { background: var(--negative); }
+
+  .metric-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid #f0f0f0;
+    font-size: 13.5px;
+  }
+  .metric-row:last-child { border-bottom: none; }
+  .metric-label { color: #555; }
+  .metric-label .zh { color: var(--zh-color); font-size: 0.88em; }
+  .metric-value { font-weight: 600; }
+
+  .verdict-box {
+    background: linear-gradient(135deg, #0A1628, #1a3a5c);
+    color: #fff;
+    border-radius: 12px;
+    padding: 28px;
+    text-align: center;
+  }
+  .verdict-box .verdict-label {
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: rgba(255,255,255,0.6);
+    margin-bottom: 8px;
+  }
+  .verdict-box .verdict-main {
+    font-size: 36px;
+    font-weight: 800;
+    color: var(--gold);
+    margin-bottom: 4px;
+  }
+  .verdict-box .verdict-sub {
+    font-size: 14px;
+    color: rgba(255,255,255,0.8);
+  }
+
+  .mos-gauge {
+    text-align: center;
+    padding: 20px;
+  }
+  .mos-gauge canvas { max-width: 220px; }
+
+  .portfolio-bar {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+    font-size: 13px;
+  }
+  .portfolio-bar .name { width: 140px; flex-shrink: 0; font-weight: 500; }
+  .portfolio-bar .bar-track {
+    flex: 1;
+    height: 22px;
+    background: #f0f0f0;
+    border-radius: 4px;
+    overflow: hidden;
+    position: relative;
+  }
+  .portfolio-bar .bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    padding-left: 8px;
+    font-size: 11px;
+    color: #fff;
+    font-weight: 600;
+    min-width: 40px;
+  }
+  .portfolio-bar .value-label {
+    width: 80px;
+    text-align: right;
+    font-weight: 600;
+    flex-shrink: 0;
+    padding-left: 8px;
+  }
+
+  .sensitivity td, .sensitivity th { text-align: center; padding: 10px; }
+  .sensitivity .cell-green { background: #d5f5e3; color: #1e8449; font-weight: 600; }
+  .sensitivity .cell-yellow { background: #fef9e7; color: #9a7d0a; font-weight: 600; }
+  .sensitivity .cell-red { background: #fadbd8; color: #c0392b; font-weight: 600; }
+
+  .risk-item {
+    padding: 12px 0;
+    border-bottom: 1px solid #eee;
+  }
+  .risk-item:last-child { border-bottom: none; }
+  .risk-item .risk-title { font-weight: 700; font-size: 14px; color: var(--accent); }
+  .risk-item .risk-level {
+    display: inline-block;
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-weight: 600;
+    margin-left: 8px;
+  }
+  .risk-high { background: #fadbd8; color: #c0392b; }
+  .risk-med { background: #fef9e7; color: #9a7d0a; }
+  .risk-low { background: #d5f5e3; color: #1e8449; }
+  .risk-item .risk-desc { font-size: 13px; color: #555; margin-top: 4px; }
+
+  .stars { color: var(--gold); letter-spacing: 2px; }
+
+  .footer {
+    text-align: center;
+    padding: 20px;
+    font-size: 11px;
+    color: #999;
+    border-top: 1px solid var(--border);
+    margin-top: 24px;
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <a href="./index.html" style="display:inline-flex;align-items:center;gap:7px;color:rgba(255,255,255,0.6);text-decoration:none;font-size:12px;font-weight:500;margin-bottom:12px;transition:color 0.2s;letter-spacing:0.3px;" onmouseover="this.style.color='#E8D48B'" onmouseout="this.style.color='rgba(255,255,255,0.6)'">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+    Return to Home
+  </a>
+  <h1>TENCENT HOLDINGS 腾讯控股</h1>
+  <div class="subtitle">0700.HK | Graham-Buffett Intrinsic Value Analysis | 格雷厄姆-巴菲特内在价值分析</div>
+  <div class="price-bar">
+    <div class="item"><div class="label">Current Price / 现价</div><div class="value">HKD 499</div></div>
+    <div class="item"><div class="label">Base IV / 内在价值</div><div class="value green">HKD 898</div></div>
+    <div class="item"><div class="label">Margin of Safety / 安全边际</div><div class="value green">44.4%</div></div>
+    <div class="item"><div class="label">Market Cap / 市值</div><div class="value">HKD 4.45T</div></div>
+    <div class="item"><div class="label">Verdict / 评级</div><div class="value green">BUY 买入</div></div>
+  </div>
+</div>
+
+<!-- TABS -->
+<div class="tabs">
+  <button class="tab-btn active" onclick="showTab('overview')">Overview 概览</button>
+  <button class="tab-btn" onclick="showTab('financials')">Financials 财务</button>
+  <button class="tab-btn" onclick="showTab('portfolio')">Portfolio 投资组合</button>
+  <button class="tab-btn" onclick="showTab('valuation')">Valuation 估值</button>
+  <button class="tab-btn" onclick="showTab('moat')">Moat 护城河</button>
+  <button class="tab-btn" onclick="showTab('risks')">Risks & Verdict</button>
+</div>
+
+<!-- TAB 1: OVERVIEW -->
+<div id="overview" class="tab-content active">
+  <div class="grid-2">
+    <div class="card">
+      <h2>Scorecard <span class="zh">综合评分</span></h2>
+      <div style="display:flex;gap:24px;align-items:center;margin-bottom:16px;">
+        <div style="text-align:center;">
+          <div class="score-badge score-green">83</div>
+          <div style="font-size:11px;color:#777;margin-top:4px;">Combined / 综合</div>
+        </div>
+        <div style="text-align:center;">
+          <div class="score-badge score-yellow" style="width:48px;height:48px;font-size:16px;">4/7</div>
+          <div style="font-size:11px;color:#777;margin-top:4px;">Graham / 格雷厄姆</div>
+        </div>
+        <div style="text-align:center;">
+          <div class="score-badge score-green" style="width:48px;height:48px;font-size:16px;">10</div>
+          <div style="font-size:11px;color:#777;margin-top:4px;">Buffett / 巴菲特</div>
+        </div>
+        <div style="text-align:center;">
+          <div class="score-badge score-green" style="width:48px;height:48px;font-size:16px;">12</div>
+          <div style="font-size:11px;color:#777;margin-top:4px;">Moat / 护城河</div>
+        </div>
+      </div>
+      <div class="metric-row"><span class="metric-label">P/E (Non-IFRS) <span class="zh">市盈率</span></span><span class="metric-value">15.8×</span></div>
+      <div class="metric-row"><span class="metric-label">P/B <span class="zh">市净率</span></span><span class="metric-value">3.54×</span></div>
+      <div class="metric-row"><span class="metric-label">ROE <span class="zh">净资产收益率</span></span><span class="metric-value" style="color:var(--positive)">21%</span></div>
+      <div class="metric-row"><span class="metric-label">ROIC <span class="zh">投入资本回报率</span></span><span class="metric-value" style="color:var(--positive)">~22%</span></div>
+      <div class="metric-row"><span class="metric-label">FCF Yield <span class="zh">自由现金流收益率</span></span><span class="metric-value">4.5%</span></div>
+      <div class="metric-row"><span class="metric-label">Gross Margin <span class="zh">毛利率</span></span><span class="metric-value" style="color:var(--positive)">56.2%</span></div>
+      <div class="metric-row"><span class="metric-label">Debt/EBITDA</span><span class="metric-value">1.3×</span></div>
+      <div class="metric-row"><span class="metric-label">Dividend Yield <span class="zh">股息率</span></span><span class="metric-value">~1.1%</span></div>
+    </div>
+    <div class="card">
+      <h2>Revenue Breakdown <span class="zh">营收分解</span></h2>
+      <div class="chart-box"><canvas id="revenueChart"></canvas></div>
+    </div>
+  </div>
+  <div class="card">
+    <h2>Intrinsic Value Range <span class="zh">内在价值区间</span></h2>
+    <div class="chart-box" style="height:220px;"><canvas id="ivRangeChart"></canvas></div>
+  </div>
+</div>
+
+<!-- TAB 2: FINANCIALS -->
+<div id="financials" class="tab-content">
+  <div class="grid-2">
+    <div class="card">
+      <h2>Revenue & Profit Trend <span class="zh">收入与利润趋势</span></h2>
+      <div class="chart-box"><canvas id="revProfitChart"></canvas></div>
+    </div>
+    <div class="card">
+      <h2>Margin Expansion <span class="zh">利润率扩张</span></h2>
+      <div class="chart-box"><canvas id="marginChart"></canvas></div>
+    </div>
+  </div>
+  <div class="grid-2">
+    <div class="card">
+      <h2>FY2025 Segment Revenue <span class="zh">分部收入</span></h2>
+      <table>
+        <tr><th>Segment / 业务板块</th><th>RMB B</th><th>YoY</th></tr>
+        <tr><td>Domestic Games / 国内游戏</td><td>164.2</td><td class="pass">+18%</td></tr>
+        <tr><td>International Games / 海外游戏</td><td>77.4</td><td class="pass">+33%</td></tr>
+        <tr><td>Social Networks / 社交网络</td><td>127.7</td><td>+5%</td></tr>
+        <tr><td>Marketing Services / 营销服务</td><td>145.0</td><td class="pass">+19%</td></tr>
+        <tr><td>FinTech & Biz Services</td><td>229.4</td><td>+8%</td></tr>
+        <tr><td>Others / 其他</td><td>8.1</td><td>+4%</td></tr>
+        <tr style="font-weight:700;background:#f0f8ff;"><td>Total / 总计</td><td>751.8</td><td class="pass">+14%</td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <h2>Balance Sheet Snapshot <span class="zh">资产负债表</span></h2>
+      <div class="metric-row"><span class="metric-label">Total Assets <span class="zh">总资产</span></span><span class="metric-value">RMB 2,039B</span></div>
+      <div class="metric-row"><span class="metric-label">Cash & ST Investments <span class="zh">现金</span></span><span class="metric-value" style="color:var(--positive)">RMB 427B</span></div>
+      <div class="metric-row"><span class="metric-label">Total Debt <span class="zh">总负债</span></span><span class="metric-value">RMB 406B</span></div>
+      <div class="metric-row"><span class="metric-label">Net Cash <span class="zh">净现金</span></span><span class="metric-value" style="color:var(--positive)">RMB 20.4B</span></div>
+      <div class="metric-row"><span class="metric-label">Total Equity <span class="zh">股东权益</span></span><span class="metric-value">RMB 1,154B</span></div>
+      <div class="metric-row"><span class="metric-label">LT Investments <span class="zh">长期投资</span></span><span class="metric-value" style="color:var(--positive)">RMB 984B</span></div>
+      <div class="metric-row"><span class="metric-label">Current Ratio <span class="zh">流动比率</span></span><span class="metric-value">1.44</span></div>
+      <div class="metric-row"><span class="metric-label">Book Value/Share <span class="zh">每股账面值</span></span><span class="metric-value">RMB 127.44</span></div>
+      <div class="metric-row"><span class="metric-label">Shares Outstanding <span class="zh">已发行股份</span></span><span class="metric-value">9,056M</span></div>
+      <div class="metric-row"><span class="metric-label">FY2025 Buybacks</span><span class="metric-value">HKD 80B (153M shares)</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- TAB 3: PORTFOLIO -->
+<div id="portfolio" class="tab-content">
+  <div class="card">
+    <h2>Investment Portfolio Summary <span class="zh">投资组合概览</span></h2>
+    <div class="grid-3" style="margin-bottom:20px;">
+      <div style="text-align:center;padding:16px;background:#f0f8ff;border-radius:8px;">
+        <div style="font-size:11px;color:#777;text-transform:uppercase;">Listed Fair Value / 上市公司公允价值</div>
+        <div style="font-size:28px;font-weight:700;color:var(--accent);">RMB 673B</div>
+      </div>
+      <div style="text-align:center;padding:16px;background:#f0fff0;border-radius:8px;">
+        <div style="font-size:11px;color:#777;text-transform:uppercase;">Unlisted Book Value / 非上市账面值</div>
+        <div style="font-size:28px;font-weight:700;color:var(--positive);">RMB 363B</div>
+      </div>
+      <div style="text-align:center;padding:16px;background:#fffaf0;border-radius:8px;">
+        <div style="font-size:11px;color:#777;text-transform:uppercase;">Total / 投资总额</div>
+        <div style="font-size:28px;font-weight:700;color:var(--gold);">RMB 1,036B</div>
+        <div style="font-size:12px;color:#999;">~25% of Market Cap</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h2>Top Listed Holdings <span class="zh">主要上市持仓</span></h2>
+      <div id="portfolioBars"></div>
+    </div>
+    <div class="card">
+      <h2>Portfolio Composition <span class="zh">组合构成</span></h2>
+      <div class="chart-box"><canvas id="portfolioPieChart"></canvas></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Gaming Empire (Unlisted/Subsidiaries) <span class="zh">游戏帝国</span></h2>
+    <table>
+      <tr><th>Company / 公司</th><th>Stake</th><th>Key IP</th><th>Est. Value</th><th>Notes</th></tr>
+      <tr><td><strong>Riot Games</strong></td><td>100%</td><td>League of Legends, VALORANT</td><td>>RMB 200B</td><td>Consolidated subsidiary</td></tr>
+      <tr><td><strong>Supercell</strong></td><td>81.4%</td><td>Clash of Clans, Clash Royale</td><td>~RMB 80-100B</td><td>Consolidated subsidiary</td></tr>
+      <tr><td><strong>Epic Games</strong></td><td>~28%</td><td>Fortnite, Unreal Engine</td><td>~RMB 65-85B</td><td>Under CFIUS review</td></tr>
+      <tr><td><strong>Ubisoft</strong></td><td>~35%</td><td>Assassin's Creed, R6 Siege</td><td>~RMB 25-40B</td><td>Largest shareholder</td></tr>
+      <tr><td><strong>WeBank / 微众银行</strong></td><td>30%</td><td>Digital banking</td><td>~RMB 50-80B</td><td>400M+ clients</td></tr>
+      <tr><td><strong>FromSoftware</strong></td><td>16.25%</td><td>Elden Ring, Dark Souls</td><td>~RMB 10-15B</td><td>Premium IP</td></tr>
+      <tr><td>Other 800+ companies</td><td>Various</td><td>AI, SaaS, FinTech</td><td>~RMB 80-150B</td><td>Deep value optionality</td></tr>
+    </table>
+    <p style="margin-top:12px;font-size:12px;color:#777;font-style:italic;">* Unlisted book value of RMB 363B likely understates true fair value by 50-100%. Epic Games stake alone (~$9B at private valuation) represents ~18% of stated book.</p>
+  </div>
+
+  <div class="card">
+    <h2>Portfolio Fair Value Tracker (Quarterly) <span class="zh">投资公允价值追踪</span></h2>
+    <div class="chart-box" style="height:260px;"><canvas id="portfolioTrendChart"></canvas></div>
+  </div>
+</div>
+
+<!-- TAB 4: VALUATION -->
+<div id="valuation" class="tab-content">
+  <div class="card">
+    <h2>Sum-of-the-Parts (SOTP) <span class="zh">分部加总估值</span></h2>
+    <div class="chart-box" style="height:280px;"><canvas id="sotpChart"></canvas></div>
+  </div>
+  <div class="grid-2">
+    <div class="card">
+      <h2>DCF Assumptions <span class="zh">DCF假设</span></h2>
+      <table>
+        <tr><th>Parameter</th><th>Bear</th><th>Base</th><th>Bull</th></tr>
+        <tr><td>Owner Earnings (RMB B)</td><td>260</td><td>260</td><td>260</td></tr>
+        <tr><td>Phase 1 Growth (Yr 1-5)</td><td>8%</td><td>12%</td><td>15%</td></tr>
+        <tr><td>Phase 2 Growth (Yr 6-10)</td><td>5%</td><td>7%</td><td>9%</td></tr>
+        <tr><td>Terminal Growth</td><td>2.5%</td><td>3.0%</td><td>3.0%</td></tr>
+        <tr><td>Discount Rate</td><td>12%</td><td>10%</td><td>9%</td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <h2>Sensitivity Table <span class="zh">敏感性分析</span></h2>
+      <table class="sensitivity">
+        <tr><th>HKD/share</th><th>Growth 8%</th><th>Growth 12%</th><th>Growth 15%</th></tr>
+        <tr><td><strong>DR = 9%</strong></td><td class="cell-green">715</td><td class="cell-green">943</td><td class="cell-green">1,132</td></tr>
+        <tr><td><strong>DR = 10%</strong></td><td class="cell-green">625</td><td class="cell-green">838</td><td class="cell-green">983</td></tr>
+        <tr><td><strong>DR = 12%</strong></td><td class="cell-yellow">527</td><td class="cell-green">651</td><td class="cell-green">755</td></tr>
+      </table>
+      <p style="margin-top:8px;font-size:11px;color:#999;">* Includes investment portfolio at base scenario. Current price: HKD 499. Green = above current price.</p>
+    </div>
+  </div>
+  <div class="card">
+    <h2>Reverse DCF — What's Priced In? <span class="zh">反向DCF分析</span></h2>
+    <div style="padding:16px;background:#fff8e1;border-radius:8px;border-left:4px solid var(--gold);">
+      <p style="font-size:14px;"><strong>At HKD 499</strong>, backing out the investment portfolio (~RMB 1,036B), the core business is valued at ~RMB 3,122B against RMB 260B owner earnings = <strong>12× earnings</strong>.</p>
+      <p style="font-size:14px;margin-top:8px;">This implies the market is pricing <strong>~4-5% perpetual growth</strong> — far below Tencent's demonstrated 14-17% trajectory. The market is essentially valuing a world-class tech platform as a no-growth utility.</p>
+    </div>
+  </div>
+</div>
+
+<!-- TAB 5: MOAT -->
+<div id="moat" class="tab-content">
+  <div class="grid-2">
+    <div class="card">
+      <h2>Moat Radar <span class="zh">护城河雷达图</span></h2>
+      <div class="chart-box"><canvas id="moatChart"></canvas></div>
+    </div>
+    <div class="card">
+      <h2>Moat Analysis Detail <span class="zh">护城河分析</span></h2>
+      <table>
+        <tr><th>Moat Type / 护城河类型</th><th>Score</th><th>Key Evidence</th></tr>
+        <tr><td>Intangible Assets / 无形资产</td><td class="pass">3/3</td><td>WeChat brand, global gaming IP, HunYuan AI</td></tr>
+        <tr><td>Switching Costs / 转换成本</td><td class="pass">3/3</td><td>WeChat deeply embedded in 1.3B users' daily life</td></tr>
+        <tr><td>Network Effects / 网络效应</td><td class="pass">3/3</td><td>Strongest network effects of any app globally</td></tr>
+        <tr><td>Cost Advantages / 成本优势</td><td style="color:#d4ac0d;font-weight:700;">2/3</td><td>Scale in cloud, payments, ad tech, game distribution</td></tr>
+        <tr><td>Efficient Scale / 规模效益</td><td>1/3</td><td>Large market allows multiple players</td></tr>
+        <tr style="font-weight:700;background:#f0f8ff;"><td>Total / 总分</td><td class="pass">12/15</td><td><strong>Wide Moat / 宽护城河</strong></td></tr>
+      </table>
+      <div style="margin-top:16px;padding:12px;background:#f0fff0;border-radius:8px;font-size:13px;">
+        <strong>Durability Assessment / 持久性评估:</strong> Network effects and switching costs in WeChat are among the most durable in global tech. Gaming IP has 10-20 year lifecycles. AI capabilities are an emerging moat layer. Primary threat: regulatory intervention, not competition.
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <h2>Capital Allocation Track Record <span class="zh">资本配置能力</span></h2>
+    <table>
+      <tr><th>Channel / 渠道</th><th>Grade</th><th>Evidence / 证据</th></tr>
+      <tr><td>Organic Reinvestment</td><td class="pass">A+</td><td>AI infra, game dev, WeChat ecosystem</td></tr>
+      <tr><td>Strategic Acquisitions</td><td class="pass">A+</td><td>Riot (~$630M→$30B+), Supercell, Epic</td></tr>
+      <tr><td>Share Buybacks</td><td class="pass">A</td><td>HKD 80B in FY2025; systematic & value-accretive</td></tr>
+      <tr><td>Divestitures</td><td class="pass">A</td><td>JD ($16.4B) & Meituan ($20.3B) special dividends</td></tr>
+      <tr><td>Cash Dividends</td><td>B+</td><td>HKD 5.30/share (+18% YoY); low payout but growing</td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- TAB 6: RISKS & VERDICT -->
+<div id="risks" class="tab-content">
+  <div class="grid-2">
+    <div class="card">
+      <h2>Risk Assessment <span class="zh">风险评估</span></h2>
+      <div class="risk-item">
+        <span class="risk-title">China Regulatory Risk</span><span class="risk-level risk-high">HIGH</span>
+        <div class="risk-desc">Antitrust, data regulation remain unpredictable. Game license approvals remain a chokepoint.</div>
+      </div>
+      <div class="risk-item">
+        <span class="risk-title">US CFIUS Review (Gaming)</span><span class="risk-level risk-high">HIGH</span>
+        <div class="risk-desc">Extended review of Riot/Epic/Supercell stakes. Forced divestment possible but unlikely; would paradoxically unlock value.</div>
+      </div>
+      <div class="risk-item">
+        <span class="risk-title">AI CapEx Intensity</span><span class="risk-level risk-med">MEDIUM</span>
+        <div class="risk-desc">Plans to "more than double" AI spend in 2026. May pressure near-term FCF if monetization lags.</div>
+      </div>
+      <div class="risk-item">
+        <span class="risk-title">Portfolio Concentration (PDD)</span><span class="risk-level risk-med">MEDIUM</span>
+        <div class="risk-desc">PDD (~26% of listed portfolio) creates single-stock risk. Temu faces regulatory challenges globally.</div>
+      </div>
+      <div class="risk-item">
+        <span class="risk-title">China Macro Slowdown</span><span class="risk-level risk-med">MEDIUM</span>
+        <div class="risk-desc">Consumer weakness could slow gaming/ads/payments. Intl games (+33% growth) provides partial offset.</div>
+      </div>
+      <div class="risk-item">
+        <span class="risk-title">VIE Structure / 可变利益实体</span><span class="risk-level risk-low">LOW-MED</span>
+        <div class="risk-desc">Standard for all offshore-listed Chinese tech. Legal uncertainty unlikely to materialize given systemic importance.</div>
+      </div>
+    </div>
+    <div>
+      <div class="verdict-box" style="margin-bottom:20px;">
+        <div class="verdict-label">Investment Verdict / 投资评级</div>
+        <div class="verdict-main">★ BUY 买入 ★</div>
+        <div class="verdict-sub">Graham-Buffett Score: 82.9 | Margin of Safety: 44.4%</div>
+        <div style="margin-top:16px;font-size:13px;color:rgba(255,255,255,0.7);text-align:left;">
+          Tencent at HKD 499 is a rare opportunity to own the highest-quality internet platform in Asia at a price implying near-zero credit for a trillion-RMB investment portfolio and minimal growth for the core business.
+        </div>
+      </div>
+      <div class="card">
+        <h2>Rating Breakdown <span class="zh">评级分解</span></h2>
+        <div class="metric-row"><span class="metric-label">Business Quality <span class="zh">业务质量</span></span><span class="stars">★★★★★</span></div>
+        <div class="metric-row"><span class="metric-label">Moat Durability <span class="zh">护城河持久性</span></span><span class="stars">★★★★★</span></div>
+        <div class="metric-row"><span class="metric-label">Management <span class="zh">管理层</span></span><span class="stars">★★★★★</span></div>
+        <div class="metric-row"><span class="metric-label">Valuation <span class="zh">估值吸引力</span></span><span class="stars">★★★★☆</span></div>
+        <div class="metric-row"><span class="metric-label">Risk Level <span class="zh">风险水平</span></span><span class="stars">★★★☆☆</span></div>
+        <div style="margin-top:12px;padding:10px;background:#f0f8ff;border-radius:6px;font-size:12px;">
+          <strong>Position Sizing:</strong> Full position justified. Kelly Criterion supports concentrated allocation given wide moat + deep discount. HK blue-chip +5% MoS adjustment cleared (39% effective MoS > 25% Buffett threshold).
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="footer">
+  Tencent (0700.HK) Intrinsic Value Analysis | Data: FY2025 Annual Report, CMBI Research | Report Date: April 16, 2026<br>
+  <span style="color:var(--zh-color)">数据来源: 腾讯FY2025年报 | 仅供研究参考，不构成投资建议</span>
+</div>
+
+<script>
+// ============================================================
+// CHART.JS GLOBAL DEFAULTS
+// ============================================================
+Chart.defaults.font.family = 'Microsoft YaHei, Segoe UI, Arial, sans-serif';
+Chart.defaults.font.size = 12;
+Chart.defaults.color = '#333';
+Chart.defaults.plugins.legend.position = 'bottom';
+Chart.defaults.responsive = true;
+Chart.defaults.maintainAspectRatio = false;
+
+// ============================================================
+// TAB NAVIGATION
+// ============================================================
+function showTab(id) {
+  document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  event.target.classList.add('active');
+  // Re-render charts that might not have sized correctly
+  setTimeout(() => { Object.values(Chart.instances).forEach(c => c.resize()); }, 50);
+}
+
+// ============================================================
+// 1. REVENUE BREAKDOWN PIE
+// ============================================================
+new Chart(document.getElementById('revenueChart'), {
+  type: 'doughnut',
+  data: {
+    labels: ['Domestic Games\n国内游戏', 'Intl Games\n海外游戏', 'Social Networks\n社交网络', 'Marketing\n营销服务', 'FinTech & Biz\n金融科技', 'Others'],
+    datasets: [{
+      data: [164.2, 77.4, 127.7, 145.0, 229.4, 8.1],
+      backgroundColor: ['#0A1628','#1a3a5c','#2e6b8a','#C9A84C','#4A6741','#bdc3c7'],
+      borderWidth: 2,
+      borderColor: '#fff'
+    }]
+  },
+  options: {
+    plugins: {
+      legend: { position: 'right', labels: { font: { size: 11 }, padding: 10 } },
+      tooltip: { callbacks: { label: ctx => `RMB ${ctx.parsed}B (${(ctx.parsed/751.8*100).toFixed(1)}%)` } }
+    }
+  }
+});
+
+// ============================================================
+// 2. INTRINSIC VALUE RANGE BAR
+// ============================================================
+new Chart(document.getElementById('ivRangeChart'), {
+  type: 'bar',
+  data: {
+    labels: ['Current Price\n现价', 'Bear SOTP\n悲观', 'Base SOTP\n基准', 'Bull SOTP\n乐观', 'Analyst Target\n分析师目标'],
+    datasets: [{
+      data: [499, 551, 898, 1257, 722],
+      backgroundColor: ['#e74c3c', '#d4ac0d', '#1e8449', '#16a085', '#3498db'],
+      borderRadius: 4,
+      barThickness: 36
+    }]
+  },
+  options: {
+    indexAxis: 'y',
+    plugins: {
+      legend: { display: false },
+      tooltip: { callbacks: { label: ctx => `HKD ${ctx.parsed.x}` } }
+    },
+    scales: {
+      x: { title: { display: true, text: 'HKD per share' }, beginAtZero: true }
+    }
+  }
+});
+
+// ============================================================
+// 3. REVENUE & PROFIT TREND
+// ============================================================
+new Chart(document.getElementById('revProfitChart'), {
+  type: 'bar',
+  data: {
+    labels: ['FY2021', 'FY2022', 'FY2023', 'FY2024', 'FY2025'],
+    datasets: [
+      { label: 'Revenue / 收入 (RMB B)', data: [560.1, 554.6, 609.0, 660.3, 751.8], backgroundColor: '#0A1628', borderRadius: 3 },
+      { label: 'Non-IFRS NI / 经调整净利 (RMB B)', data: [123.8, 115.6, 157.7, 222.5, 259.6], backgroundColor: '#C9A84C', borderRadius: 3 },
+      { label: 'FCF / 自由现金流 (RMB B)', data: [115.9, 83.3, 159.6, 154.9, 182.6], backgroundColor: '#4A6741', borderRadius: 3 }
+    ]
+  },
+  options: {
+    plugins: { legend: { labels: { font: { size: 11 } } } },
+    scales: { y: { beginAtZero: true, title: { display: true, text: 'RMB Billion' } } }
+  }
+});
+
+// ============================================================
+// 4. MARGIN CHART
+// ============================================================
+new Chart(document.getElementById('marginChart'), {
+  type: 'line',
+  data: {
+    labels: ['FY2021', 'FY2022', 'FY2023', 'FY2024', 'FY2025'],
+    datasets: [
+      { label: 'Gross Margin / 毛利率', data: [44, 43, 48, 53, 56.2], borderColor: '#0A1628', fill: false, tension: 0.3, pointRadius: 5 },
+      { label: 'Non-IFRS Op Margin / 经调整经营利润率', data: [29, 28, 31, 36, 37.3], borderColor: '#C9A84C', fill: false, tension: 0.3, pointRadius: 5 },
+      { label: 'Net Margin / 净利率', data: [22, 21, 26, 34, 29.9], borderColor: '#4A6741', fill: false, tension: 0.3, pointRadius: 5 }
+    ]
+  },
+  options: {
+    scales: { y: { min: 15, max: 65, ticks: { callback: v => v + '%' } } },
+    plugins: { tooltip: { callbacks: { label: ctx => `${ctx.dataset.label}: ${ctx.parsed.y}%` } } }
+  }
+});
+
+// ============================================================
+// 5. PORTFOLIO PIE CHART
+// ============================================================
+new Chart(document.getElementById('portfolioPieChart'), {
+  type: 'doughnut',
+  data: {
+    labels: ['PDD 拼多多', 'Sea Limited', 'Spotify', 'Nu Holdings', 'Kuaishou 快手', 'Snap', 'Futu 富途', 'KE 贝壳', 'Others 其他'],
+    datasets: [{
+      data: [174, 87, 55, 48, 34, 25, 23, 22, 205],
+      backgroundColor: ['#0A1628','#1a3a5c','#1DB954','#820AD1','#FF4906','#FFFC00','#C9A84C','#2e6b8a','#bdc3c7'],
+      borderWidth: 2,
+      borderColor: '#fff'
+    }]
+  },
+  options: {
+    plugins: {
+      legend: { position: 'right', labels: { font: { size: 10 }, padding: 6 } },
+      tooltip: { callbacks: { label: ctx => `RMB ${ctx.parsed}B (${(ctx.parsed/673*100).toFixed(1)}%)` } }
+    }
+  }
+});
+
+// ============================================================
+// 6. PORTFOLIO BARS
+// ============================================================
+(function() {
+  const holdings = [
+    { name: 'PDD 拼多多', value: 174, stake: '14.1%', color: '#0A1628' },
+    { name: 'Sea Limited', value: 87, stake: '18.2%', color: '#1a3a5c' },
+    { name: 'Spotify', value: 55, stake: '8.4%', color: '#1DB954' },
+    { name: 'Nu Holdings', value: 48, stake: '8.1%', color: '#820AD1' },
+    { name: 'Kuaishou 快手', value: 34, stake: '15.7%', color: '#FF4906' },
+    { name: 'Snap', value: 25, stake: '16.7%', color: '#FFFC00' },
+    { name: 'Futu 富途', value: 23, stake: '22.4%', color: '#C9A84C' },
+    { name: 'KE 贝壳', value: 22, stake: '11.4%', color: '#2e6b8a' },
+    { name: 'Meituan 美团', value: 18, stake: '1.7%', color: '#4A6741' },
+    { name: 'JD.com 京东', value: 12, stake: '2.7%', color: '#7f8c8d' }
+  ];
+  const max = holdings[0].value;
+  const container = document.getElementById('portfolioBars');
+  holdings.forEach(h => {
+    const pct = (h.value / max * 100).toFixed(0);
+    container.innerHTML += `
+      <div class="portfolio-bar">
+        <span class="name">${h.name}</span>
+        <div class="bar-track"><div class="bar-fill" style="width:${pct}%;background:${h.color};">${h.stake}</div></div>
+        <span class="value-label">RMB ${h.value}B</span>
+      </div>`;
+  });
+})();
+
+// ============================================================
+// 7. PORTFOLIO TREND LINE
+// ============================================================
+new Chart(document.getElementById('portfolioTrendChart'), {
+  type: 'line',
+  data: {
+    labels: ['Q1 2024', 'Q2 2024', 'Q3 2024', 'Q4 2024', 'Q1 2025', 'Q2 2025', 'Q3 2025', 'Q4 2025'],
+    datasets: [
+      { label: 'Listed FV / 上市公司公允价值 (RMB B)', data: [510, 540, 580, 620, 653, 714, 801, 673], borderColor: '#0A1628', fill: false, tension: 0.3, pointRadius: 5 },
+      { label: 'Unlisted Book / 非上市账面值 (RMB B)', data: [310, 315, 325, 330, 338, 342, 345, 363], borderColor: '#C9A84C', fill: false, tension: 0.3, pointRadius: 5, borderDash: [5,5] }
+    ]
+  },
+  options: {
+    scales: { y: { beginAtZero: false, title: { display: true, text: 'RMB Billion' } } }
+  }
+});
+
+// ============================================================
+// 8. SOTP STACKED BAR
+// ============================================================
+new Chart(document.getElementById('sotpChart'), {
+  type: 'bar',
+  data: {
+    labels: ['Bear Case\n悲观', 'Base Case\n基准', 'Bull Case\n乐观'],
+    datasets: [
+      { label: 'Core Business DCF', data: [3758, 6329, 9066], backgroundColor: '#0A1628' },
+      { label: 'Listed Investments', data: [471, 605, 673], backgroundColor: '#C9A84C' },
+      { label: 'Unlisted Investments', data: [363, 545, 726], backgroundColor: '#4A6741' }
+    ]
+  },
+  options: {
+    scales: {
+      x: { stacked: true },
+      y: { stacked: true, title: { display: true, text: 'RMB Billion' },
+        ticks: { callback: v => (v/1000).toFixed(1) + 'T' }
+      }
+    },
+    plugins: {
+      tooltip: { callbacks: { label: ctx => `${ctx.dataset.label}: RMB ${ctx.parsed.y}B` } },
+      annotation: {
+        annotations: {
+          line1: { type: 'line', yMin: 4090, yMax: 4090, borderColor: '#e74c3c', borderWidth: 2, borderDash: [6,4],
+            label: { content: 'Current Mkt Cap: RMB 4,090B', enabled: true, position: 'end', font: { size: 10 } } }
+        }
+      }
+    }
+  }
+});
+
+// ============================================================
+// 9. MOAT RADAR
+// ============================================================
+new Chart(document.getElementById('moatChart'), {
+  type: 'radar',
+  data: {
+    labels: ['Intangible Assets\n无形资产', 'Switching Costs\n转换成本', 'Network Effects\n网络效应', 'Cost Advantages\n成本优势', 'Efficient Scale\n规模效益'],
+    datasets: [{
+      label: 'Tencent 腾讯',
+      data: [3, 3, 3, 2, 1],
+      fill: true,
+      backgroundColor: 'rgba(10, 22, 40, 0.15)',
+      borderColor: '#0A1628',
+      pointBackgroundColor: '#C9A84C',
+      pointBorderColor: '#0A1628',
+      pointRadius: 6,
+      borderWidth: 2
+    }]
+  },
+  options: {
+    scales: { r: { min: 0, max: 3, ticks: { stepSize: 1, font: { size: 10 } }, pointLabels: { font: { size: 11 } } } },
+    plugins: { legend: { display: false } }
+  }
+});
+
+</script>
+</body>
+</html>

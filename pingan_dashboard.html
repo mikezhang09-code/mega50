@@ -1,0 +1,1513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ping An (2318.HK) — Intrinsic Value Analysis / 中国平安估值分析</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+:root {
+  --navy: #0d2c54;
+  --navy-light: #1a5276;
+  --navy-lighter: #2e86c1;
+  --gold: #c9a961;
+  --gold-dark: #a48a4e;
+  --gold-light: #f4ecd6;
+  --en-color: #333333;
+  --zh-color: #4A6741;
+  --positive: #1e8449;
+  --positive-bg: #eafaf1;
+  --negative: #c0392b;
+  --negative-bg: #fdedec;
+  --neutral: #d4ac0d;
+  --neutral-bg: #fcf3cf;
+  --muted: #7f8c8d;
+  --bg: #f6f3ec;
+  --bg-panel: #ffffff;
+  --border: #e0d9c7;
+  --shadow: 0 2px 12px rgba(13,44,84,0.08);
+  --shadow-hover: 0 6px 20px rgba(13,44,84,0.14);
+}
+* { box-sizing: border-box; }
+html,body { margin:0; padding:0; }
+body {
+  font-family: 'Microsoft YaHei', 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
+  background: var(--bg);
+  color: var(--en-color);
+  line-height: 1.55;
+  font-size: 14px;
+}
+.zh { color: var(--zh-color); font-size: 0.88em; font-weight: 400; }
+.en { color: var(--en-color); font-weight: 500; }
+
+/* Header */
+.hero {
+  background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+  color: #fff;
+  padding: 36px 40px 28px;
+  border-bottom: 4px solid var(--gold);
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content: "";
+  position: absolute; inset: 0;
+  background-image: radial-gradient(circle at 85% 20%, rgba(201,169,97,0.18), transparent 45%);
+  pointer-events: none;
+}
+.hero-grid {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr;
+  gap: 30px;
+  align-items: center;
+  position: relative;
+}
+.hero h1 {
+  margin: 0 0 6px 0;
+  font-size: 28px;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+}
+.hero h1 .zh-title {
+  font-size: 24px;
+  color: var(--gold);
+  margin-left: 10px;
+  font-weight: 400;
+}
+.hero .subtitle {
+  margin: 4px 0 12px 0;
+  color: rgba(255,255,255,0.85);
+  font-size: 13px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+.hero .tags span {
+  display: inline-block;
+  background: rgba(255,255,255,0.12);
+  border: 1px solid rgba(201,169,97,0.4);
+  color: #fff;
+  padding: 3px 10px;
+  border-radius: 14px;
+  font-size: 12px;
+  margin-right: 8px;
+  margin-bottom: 6px;
+}
+.verdict-card {
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(201,169,97,0.4);
+  border-radius: 8px;
+  padding: 16px 20px;
+  backdrop-filter: blur(4px);
+}
+.verdict-card .label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--gold);
+}
+.verdict-card .value {
+  font-size: 28px;
+  font-weight: 600;
+  color: #fff;
+  margin: 4px 0;
+}
+.verdict-card .value.buy { color: #5eead4; }
+.verdict-card .detail {
+  font-size: 12px;
+  color: rgba(255,255,255,0.8);
+}
+
+/* Quick metrics bar */
+.metrics-strip {
+  background: var(--bg-panel);
+  border-bottom: 1px solid var(--border);
+  padding: 14px 40px;
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 18px;
+}
+.metric {
+  display: flex;
+  flex-direction: column;
+}
+.metric .label {
+  font-size: 10.5px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+.metric .val {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--navy);
+  margin-top: 2px;
+}
+.metric .delta {
+  font-size: 11px;
+  margin-top: 1px;
+}
+.metric .delta.pos { color: var(--positive); }
+.metric .delta.neg { color: var(--negative); }
+
+/* Tabs */
+.tabs {
+  background: var(--bg-panel);
+  border-bottom: 1px solid var(--border);
+  padding: 0 40px;
+  display: flex;
+  gap: 2px;
+  overflow-x: auto;
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  box-shadow: 0 1px 0 rgba(0,0,0,0.03);
+}
+.tab {
+  padding: 14px 22px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--muted);
+  border-bottom: 3px solid transparent;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+.tab .tab-zh {
+  color: var(--zh-color);
+  font-size: 11.5px;
+  margin-left: 6px;
+}
+.tab:hover { color: var(--navy-light); background: rgba(26,82,118,0.04); }
+.tab.active {
+  color: var(--navy);
+  border-bottom-color: var(--gold);
+  background: rgba(201,169,97,0.05);
+}
+.tab.active .tab-zh { color: var(--navy-light); }
+
+/* Main container */
+.container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 28px 40px 60px;
+}
+.panel {
+  display: none;
+}
+.panel.active {
+  display: block;
+  animation: fadeIn 0.3s ease-out;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: none; }
+}
+
+/* Section heading */
+.section-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 18px;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 8px;
+}
+.section-head h2 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--navy);
+}
+.section-head .section-zh {
+  font-size: 15px;
+  color: var(--zh-color);
+  margin-left: 10px;
+  font-weight: 400;
+}
+.section-head .stamp {
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+/* Cards */
+.card {
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 18px 20px;
+  box-shadow: var(--shadow);
+  margin-bottom: 18px;
+}
+.card h3 {
+  margin: 0 0 10px 0;
+  font-size: 15px;
+  color: var(--navy);
+  font-weight: 600;
+}
+.card h3 .zh { font-size: 13px; margin-left: 6px; }
+
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+.grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
+
+/* Tables */
+table.data {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  margin: 8px 0;
+}
+table.data th {
+  background: var(--navy);
+  color: #fff;
+  padding: 9px 12px;
+  text-align: left;
+  font-weight: 500;
+  font-size: 12px;
+  letter-spacing: 0.3px;
+}
+table.data td {
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border);
+}
+table.data tr:nth-child(even) td { background: rgba(246,243,236,0.5); }
+table.data tr:hover td { background: var(--gold-light); }
+table.data td.num { text-align: right; font-variant-numeric: tabular-nums; }
+table.data td.pos { color: var(--positive); font-weight: 600; }
+table.data td.neg { color: var(--negative); font-weight: 600; }
+table.data td.center { text-align: center; }
+.total-row td { background: var(--gold-light) !important; font-weight: 600; border-top: 2px solid var(--gold); }
+
+/* Badges */
+.badge {
+  display: inline-block;
+  padding: 2px 9px;
+  border-radius: 10px;
+  font-size: 10.5px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.badge.buy  { background: var(--positive-bg); color: var(--positive); border: 1px solid var(--positive); }
+.badge.hold { background: var(--neutral-bg); color: var(--neutral); border: 1px solid var(--neutral); }
+.badge.sell { background: var(--negative-bg); color: var(--negative); border: 1px solid var(--negative); }
+.badge.info { background: #d6eaf8; color: var(--navy-light); border: 1px solid var(--navy-lighter); }
+
+/* Chart container */
+.chart-wrap {
+  position: relative;
+  height: 320px;
+  margin: 10px 0 4px;
+}
+.chart-wrap.tall { height: 380px; }
+.chart-wrap.small { height: 240px; }
+
+/* MoS Gauge */
+.mos-gauge { text-align: center; padding: 14px 10px; }
+.mos-value {
+  font-size: 44px;
+  font-weight: 700;
+  color: var(--positive);
+  line-height: 1;
+}
+.mos-label {
+  font-size: 12px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-top: 6px;
+}
+.mos-bar-bg {
+  height: 28px;
+  background: linear-gradient(to right, var(--negative) 0%, var(--negative) 20%, var(--neutral) 20%, var(--neutral) 50%, var(--positive) 50%, var(--positive) 100%);
+  border-radius: 14px;
+  position: relative;
+  margin: 20px 30px 6px;
+  opacity: 0.3;
+}
+.mos-marker {
+  position: absolute;
+  top: -4px;
+  width: 6px;
+  height: 36px;
+  background: var(--navy);
+  border: 2px solid var(--gold);
+  border-radius: 3px;
+}
+.mos-scale {
+  display: flex;
+  justify-content: space-between;
+  margin: 0 30px;
+  font-size: 10px;
+  color: var(--muted);
+}
+
+/* Score bars */
+.score-row { display: flex; align-items: center; margin-bottom: 6px; }
+.score-row .lbl { width: 160px; font-size: 13px; }
+.score-row .lbl .zh { display: block; font-size: 11px; }
+.score-bar {
+  flex: 1;
+  height: 12px;
+  background: #eee;
+  border-radius: 6px;
+  overflow: hidden;
+  margin: 0 10px;
+}
+.score-fill {
+  height: 100%;
+  background: linear-gradient(to right, var(--navy-light), var(--gold));
+  transition: width 0.8s;
+}
+.score-val {
+  width: 42px;
+  text-align: right;
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--navy);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Thesis boxes */
+.thesis-item {
+  background: linear-gradient(to right, rgba(201,169,97,0.08), transparent 60%);
+  border-left: 3px solid var(--gold);
+  padding: 11px 14px;
+  margin-bottom: 10px;
+  border-radius: 4px;
+}
+.thesis-item .thesis-num {
+  color: var(--gold-dark);
+  font-weight: 700;
+  margin-right: 6px;
+}
+.thesis-item strong { color: var(--navy); }
+
+/* Risk severity */
+.risk-box {
+  padding: 12px 14px;
+  border-radius: 6px;
+  margin-bottom: 8px;
+  border: 1px solid;
+  font-size: 13px;
+}
+.risk-box .risk-head {
+  font-weight: 600;
+  margin-bottom: 3px;
+  display: flex;
+  justify-content: space-between;
+}
+.risk-box.high { background: var(--negative-bg); border-color: var(--negative); }
+.risk-box.high .risk-head { color: var(--negative); }
+.risk-box.med  { background: var(--neutral-bg); border-color: var(--neutral); }
+.risk-box.med  .risk-head { color: var(--neutral); }
+.risk-box.low  { background: var(--positive-bg); border-color: var(--positive); }
+.risk-box.low  .risk-head { color: var(--positive); }
+
+/* Investment portfolio highlight */
+.spotlight {
+  background: linear-gradient(135deg, rgba(13,44,84,0.04), rgba(201,169,97,0.08));
+  border: 1px solid var(--gold);
+  border-left: 5px solid var(--gold);
+  padding: 16px 20px;
+  border-radius: 6px;
+  margin: 16px 0;
+}
+.spotlight h4 {
+  margin: 0 0 6px 0;
+  color: var(--navy);
+  font-size: 15px;
+}
+
+/* Footer */
+.footer {
+  text-align: center;
+  padding: 18px 40px;
+  font-size: 11px;
+  color: var(--muted);
+  background: var(--bg-panel);
+  border-top: 1px solid var(--border);
+  line-height: 1.7;
+}
+
+/* Big number stat */
+.big-stat {
+  text-align: center;
+  padding: 10px 6px;
+}
+.big-stat .val {
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--navy);
+  line-height: 1.1;
+}
+.big-stat .val.gold { color: var(--gold-dark); }
+.big-stat .lbl {
+  font-size: 11px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  margin-top: 4px;
+}
+.big-stat .sub {
+  font-size: 11px;
+  color: var(--zh-color);
+  margin-top: 2px;
+}
+
+@media (max-width: 900px) {
+  .hero-grid { grid-template-columns: 1fr; }
+  .metrics-strip { grid-template-columns: repeat(3, 1fr); }
+  .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+  .container { padding: 20px 16px; }
+  .hero, .tabs, .metrics-strip { padding-left: 16px; padding-right: 16px; }
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<section class="hero">
+  <div class="hero-grid">
+    <div>
+      <a href="./index.html" style="display:inline-flex;align-items:center;gap:7px;color:rgba(255,255,255,0.55);text-decoration:none;font-size:12px;font-weight:500;margin-bottom:10px;transition:color 0.2s;letter-spacing:0.3px;" onmouseover="this.style.color='#f4ecd6'" onmouseout="this.style.color='rgba(255,255,255,0.55)'">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+        Return to Home
+      </a>
+      <div class="subtitle">Value Investing Deep-Dive · Graham-Buffett Framework</div>
+      <h1>Ping An Insurance (Group) <span class="zh-title">中国平安</span></h1>
+      <div class="tags">
+        <span>HKEX: 2318</span>
+        <span>SSE: 601318</span>
+        <span>OTC: PNGAY</span>
+        <span>Fortune #47 · MSCI ESG: AAA</span>
+      </div>
+      <div style="margin-top:10px; font-size:12.5px; color:rgba(255,255,255,0.9);">
+        China's 2<sup>nd</sup>-largest life and P&amp;C insurer · Integrated finance conglomerate managing RMB&nbsp;6.49T insurance float
+        <br><span style="color:var(--gold);">中国第二大寿险与财险公司 · 综合金融集团 · 管理保险资金6.49万亿元</span>
+      </div>
+    </div>
+    <div class="verdict-card">
+      <div class="label">Verdict · 投资结论</div>
+      <div class="value buy">BUY · 买入</div>
+      <div class="detail">Moderate-High Conviction · Mid-cycle entry<br>
+        Target range: <strong style="color:var(--gold);">HK$82 — HK$95</strong> <br>
+        <span style="color:rgba(255,255,255,0.7);">Margin of Safety · 安全边际: ~30-35%</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- METRICS STRIP -->
+<div class="metrics-strip">
+  <div class="metric">
+    <span class="label">Price (HK$)</span>
+    <span class="val">63.20</span>
+    <span class="delta">14 Apr 2026</span>
+  </div>
+  <div class="metric">
+    <span class="label">Market Cap</span>
+    <span class="val">HK$1.26T</span>
+    <span class="delta">~USD 162B</span>
+  </div>
+  <div class="metric">
+    <span class="label">P/E (TTM)</span>
+    <span class="val">7.3×</span>
+    <span class="delta pos">vs peers 10-14×</span>
+  </div>
+  <div class="metric">
+    <span class="label">P/B</span>
+    <span class="val">1.05×</span>
+    <span class="delta">Near book</span>
+  </div>
+  <div class="metric">
+    <span class="label">Dividend Yield</span>
+    <span class="val">4.7%</span>
+    <span class="delta pos">14 yrs of hikes</span>
+  </div>
+  <div class="metric">
+    <span class="label">Insurance Float</span>
+    <span class="val">RMB 6.49T</span>
+    <span class="delta pos">+13.2% YoY</span>
+  </div>
+</div>
+
+<!-- TABS -->
+<div class="tabs" role="tablist">
+  <div class="tab active" data-tab="overview">Overview <span class="tab-zh">概览</span></div>
+  <div class="tab" data-tab="results">FY2025 Results <span class="tab-zh">2025业绩</span></div>
+  <div class="tab" data-tab="portfolio">★ Investment Portfolio <span class="tab-zh">投资组合</span></div>
+  <div class="tab" data-tab="segments">Business Segments <span class="tab-zh">分部业务</span></div>
+  <div class="tab" data-tab="valuation">Valuation <span class="tab-zh">估值</span></div>
+  <div class="tab" data-tab="moat">Moat &amp; Scorecard <span class="tab-zh">护城河</span></div>
+  <div class="tab" data-tab="risks">Risks <span class="tab-zh">风险</span></div>
+  <div class="tab" data-tab="verdict">Verdict &amp; Entry <span class="tab-zh">买入计划</span></div>
+</div>
+
+<div class="container">
+
+<!-- TAB 1: OVERVIEW -->
+<div class="panel active" id="overview">
+  <div class="section-head">
+    <h2>Executive Summary <span class="section-zh">执行摘要</span></h2>
+    <span class="stamp">Ping An @ HK$63.20</span>
+  </div>
+
+  <div class="card">
+    <h3>Core Thesis — Three-Legged Stool <span class="zh">核心投资逻辑 · 三足鼎立</span></h3>
+    <div class="thesis-item">
+      <span class="thesis-num">1.</span> <strong>Insurance engine turning the corner</strong> / <span class="zh">保险业务拐点已现</span> — Life &amp; Health NBV rebounded <strong>+29.3% YoY</strong> in FY2025 after years of pandemic/reform drag. Bancassurance channel NBV surged <strong>+138%</strong>, riding the structural tailwind of RMB 30 trillion+ of Chinese household fixed deposits maturing 2025–2027.
+    </div>
+    <div class="thesis-item">
+      <span class="thesis-num">2.</span> <strong>Institutional-scale investment portfolio</strong> / <span class="zh">机构级投资组合</span> — RMB <strong>6.49 trillion</strong> (~USD 930B) — <em>larger than Berkshire Hathaway's total assets</em>. 6.3% comprehensive yield in 2025 vs. 4.0% EV long-run assumption. Stock allocation ramped to industry-leading 14.8%, concentrated in HK-listed Chinese banks at historically depressed valuations.
+    </div>
+    <div class="thesis-item">
+      <span class="thesis-num">3.</span> <strong>Integrated finance &amp; healthcare ecosystem</strong> / <span class="zh">综合金融+医疗生态</span> — 251M retail customers, <strong>99% retention</strong> among multi-product customers, AI handles 80% of service interactions. This is the real moat — not priced into a 7.3× P/E stock.
+    </div>
+  </div>
+
+  <div class="grid-4">
+    <div class="card"><div class="big-stat"><div class="val">RMB 134B</div><div class="lbl">Operating Profit (OPAT)</div><div class="sub">税后营运利润 · +10.3% YoY</div></div></div>
+    <div class="card"><div class="big-stat"><div class="val gold">6.3%</div><div class="lbl">Comprehensive Inv. Yield</div><div class="sub">综合投资收益率 · 5-yr high</div></div></div>
+    <div class="card"><div class="big-stat"><div class="val">RMB 1.00T</div><div class="lbl">Shareholders' Equity</div><div class="sub">归母股东权益 · First time &gt;1T</div></div></div>
+    <div class="card"><div class="big-stat"><div class="val gold">+29.3%</div><div class="lbl">Life &amp; Health NBV Growth</div><div class="sub">寿险新业务价值 · Rebound</div></div></div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>Why This Matters Now <span class="zh">时点意义</span></h3>
+      <p style="font-size:13px;line-height:1.7;margin:6px 0;">
+        Ping An currently trades at the bottom decile of its 10-year valuation history. After three tough years (COVID restructuring, property-related investment losses, life insurance reform), FY2025 marks the confirmed inflection: operating profit re-accelerated to double digits, NBV growth returned, and the investment portfolio generated its best comprehensive yield in 5 years.
+      </p>
+      <p style="font-size:12.5px;color:var(--zh-color);line-height:1.7;margin:6px 0;">
+        中国平安目前交易于近十年估值底部区间。历经三年转型阵痛后，2025财年业绩确认拐点：营运利润重回双位数增长，新业务价值强劲反弹，投资组合实现五年最佳综合收益率。
+      </p>
+    </div>
+    <div class="card">
+      <h3>Business Snapshot <span class="zh">业务快照</span></h3>
+      <table class="data">
+        <tr><td>Founded <span class="zh">成立</span></td><td class="num">1988 (Shenzhen)</td></tr>
+        <tr><td>Retail Customers <span class="zh">零售客户</span></td><td class="num">251 million</td></tr>
+        <tr><td>Sales Agents <span class="zh">销售代理</span></td><td class="num">1.30 million</td></tr>
+        <tr><td>Total Assets <span class="zh">总资产</span></td><td class="num">~RMB 14 trillion</td></tr>
+        <tr><td>Fortune 500 Rank <span class="zh">财富500强</span></td><td class="num">#47 (2025)</td></tr>
+        <tr><td>AM Best Rating <span class="zh">AM Best评级</span></td><td class="num">A (Excellent)</td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- TAB 2: FY2025 RESULTS -->
+<div class="panel" id="results">
+  <div class="section-head">
+    <h2>FY2025 Financial Results <span class="section-zh">2025年度业绩</span></h2>
+    <span class="stamp">Reported 26 March 2026</span>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>Revenue &amp; Profit Trajectory <span class="zh">营收与利润走势</span></h3>
+      <div class="chart-wrap"><canvas id="chart-profit"></canvas></div>
+    </div>
+    <div class="card">
+      <h3>Key FY2025 Metrics <span class="zh">关键指标</span></h3>
+      <table class="data">
+        <thead><tr><th>Metric</th><th class="num">FY2024</th><th class="num">FY2025</th><th class="num">YoY</th></tr></thead>
+        <tbody>
+          <tr><td>Revenue (IFRS) <span class="zh">营收</span></td><td class="num">1,141.3B</td><td class="num">1,140.3B</td><td class="num">Flat</td></tr>
+          <tr><td>OPAT attributable <span class="zh">归母营运利润</span></td><td class="num">121.9B</td><td class="num">134.4B</td><td class="num pos">+10.3%</td></tr>
+          <tr><td>Net Profit attributable <span class="zh">归母净利润</span></td><td class="num">126.6B</td><td class="num">134.8B</td><td class="num pos">+6.5%</td></tr>
+          <tr><td>NP ex non-recurring <span class="zh">归母扣非净利</span></td><td class="num">117.4B</td><td class="num">143.8B</td><td class="num pos">+22.5%</td></tr>
+          <tr><td>Shareholders' Equity <span class="zh">归母权益</span></td><td class="num">929B</td><td class="num">1,000.4B</td><td class="num pos">+7.7%</td></tr>
+          <tr><td>Dividend per Share <span class="zh">每股分红</span></td><td class="num">2.55</td><td class="num">2.70</td><td class="num pos">+5.9%</td></tr>
+          <tr><td>NBV (Life &amp; Health) <span class="zh">寿险新业务价值</span></td><td class="num">28.5B</td><td class="num">36.9B</td><td class="num pos">+29.3%</td></tr>
+          <tr><td>NBV Margin (ANP) <span class="zh">新业务价值率</span></td><td class="num">22.7%</td><td class="num">28.5%</td><td class="num pos">+5.8 pps</td></tr>
+          <tr><td>Comprehensive Inv. Yield <span class="zh">综合投资收益率</span></td><td class="num">5.8%</td><td class="num">6.3%</td><td class="num pos">+0.5 pps</td></tr>
+          <tr><td>P&amp;C Combined Ratio <span class="zh">产险综合成本率</span></td><td class="num">98.3%</td><td class="num">96.8%</td><td class="num pos">-1.5 pps</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>NBV Growth Trajectory <span class="zh">新业务价值增长轨迹</span></h3>
+      <div class="chart-wrap"><canvas id="chart-nbv"></canvas></div>
+      <p style="font-size:12px;color:var(--muted);margin:6px 0 0 0;">
+        Bancassurance NBV surged +138% YoY in 2025 as Chinese households reallocate maturing bank deposits into insurance protection/annuity products.
+      </p>
+    </div>
+    <div class="card">
+      <h3>Dividend Growth — 14 Consecutive Years <span class="zh">连续14年增派股息</span></h3>
+      <div class="chart-wrap"><canvas id="chart-dividend"></canvas></div>
+      <p style="font-size:12px;color:var(--muted);margin:6px 0 0 0;">
+        Cash dividend payout ratio based on OPAT: <strong>36.4%</strong>. Balance sheet supports higher payouts; management has consistently prioritized shareholder returns.
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- TAB 3: INVESTMENT PORTFOLIO -->
+<div class="panel" id="portfolio">
+  <div class="section-head">
+    <h2>★ Investment Portfolio Deep-Dive <span class="section-zh">投资组合深度分析</span></h2>
+    <span class="stamp">The Hidden Value Engine</span>
+  </div>
+
+  <div class="spotlight">
+    <h4>Why This Section Matters for Ping An's Intrinsic Value <span class="zh">为何投资组合决定平安内在价值</span></h4>
+    <p style="margin:4px 0;font-size:13px;line-height:1.6;">
+      For an insurance company, the investment portfolio is <strong>the primary source of intrinsic value above book</strong>. Ping An's RMB 6.49 trillion insurance funds are deployed as "float" (<span class="zh">保险浮存金</span>) — Buffett's favorite form of leverage: capital that policyholders pay the company to hold. Every 50bps improvement in comprehensive yield = ~RMB 32 billion of incremental pre-tax income, equivalent to ~6% of Ping An's annual operating profit. This is why the market's focus on headline P/E misses the real story.
+    </p>
+  </div>
+
+  <div class="grid-4">
+    <div class="card"><div class="big-stat"><div class="val gold">RMB 6.49T</div><div class="lbl">Total Insurance Portfolio</div><div class="sub">+13.2% YoY · ~USD 930B</div></div></div>
+    <div class="card"><div class="big-stat"><div class="val gold">6.3%</div><div class="lbl">Comprehensive Yield FY25</div><div class="sub">+0.5 pps · 5-yr high</div></div></div>
+    <div class="card"><div class="big-stat"><div class="val">4.9% / 4.8%</div><div class="lbl">10-yr Avg Comp / Net Yield</div><div class="sub">Both &gt; EV assumption (4.0%)</div></div></div>
+    <div class="card"><div class="big-stat"><div class="val" style="color:var(--positive);">RMB 90B+</div><div class="lbl">Unrealized FVOCI Gains</div><div class="sub">Not in current P&amp;L</div></div></div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>Asset Allocation (End-2025 est.) <span class="zh">资产配置</span></h3>
+      <div class="chart-wrap"><canvas id="chart-alloc"></canvas></div>
+      <p style="font-size:12px;color:var(--muted);margin:6px 0 0 0;">
+        Stock allocation raised to <strong>14.8%</strong> at year-end 2025, up <strong>+7.2 pps</strong> from year-end 2024 — the <strong>highest equity ratio among China's five listed insurers</strong>. Ping An deployed an estimated RMB 475B of fresh capital into equities during 2025.
+      </p>
+    </div>
+    <div class="card">
+      <h3>Portfolio Growth (RMB Trillion) <span class="zh">投资组合规模演变</span></h3>
+      <div class="chart-wrap"><canvas id="chart-portfolio-growth"></canvas></div>
+      <p style="font-size:12px;color:var(--muted);margin:6px 0 0 0;">
+        Portfolio has compounded at <strong>12–14% annually</strong> through net premium inflows and investment gains. Management targets continued expansion under the "Double Barbell" (<span class="zh">双杠铃</span>) strategy balancing long-duration bonds and risk assets.
+      </p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>The "Double Barbell" Strategy <span class="zh">双杠铃资产配置策略</span></h3>
+    <p style="font-size:13px;margin:4px 0;">Ping An's CIO Benjamin Deng has articulated a dual-ended allocation framework:</p>
+    <div class="grid-2" style="margin-top:8px;">
+      <div style="background:var(--bg);padding:12px 14px;border-radius:6px;border-left:3px solid var(--navy-light);">
+        <strong style="color:var(--navy);">End #1 — Long-duration Interest Rate Bonds</strong>
+        <p style="font-size:12.5px;margin:4px 0 0 0;">China government bonds, local government bonds, policy bank bonds. Purpose: match 12-year liability duration; lock in yields when rates are high. In 2025 the group aggressively front-loaded bond purchases as 10-yr China govt yields fell to ~1.7%.</p>
+      </div>
+      <div style="background:var(--bg);padding:12px 14px;border-radius:6px;border-left:3px solid var(--gold);">
+        <strong style="color:var(--gold-dark);">End #2 — Risk Assets</strong>
+        <p style="font-size:12.5px;margin:4px 0 0 0;">High-dividend blue-chip equities (&gt;4% yield), growth tech (AI, semis, renewables), real estate debt, infrastructure ABS, private equity. Purpose: enhance returns above liability cost in a low-rate environment.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>Major Disclosed Equity Holdings <span class="zh">主要股权持仓</span></h3>
+      <table class="data">
+        <thead><tr><th>Holding</th><th>Ticker</th><th class="num">Stake</th><th>Rationale</th></tr></thead>
+        <tbody>
+          <tr><td>ICBC <span class="zh">工商银行</span></td><td>1398.HK</td><td class="num pos">17.11%</td><td>H-share yield ~6.4%</td></tr>
+          <tr><td>China Construction Bank <span class="zh">建设银行</span></td><td>939.HK</td><td class="num">5.01% (H)</td><td>Yield ~6.7%</td></tr>
+          <tr><td>Postal Savings Bank <span class="zh">邮储银行</span></td><td>1658.HK</td><td class="num">&gt;5%</td><td>Retail-focused, high dividend</td></tr>
+          <tr><td>HSBC Holdings</td><td>5.HK</td><td class="num">Increased</td><td>Global diversification</td></tr>
+          <tr><td>Ping An Bank (subsidiary)</td><td>000001.SZ</td><td class="num">~58%</td><td>Consolidated</td></tr>
+          <tr><td>Ping An Good Doctor</td><td>1833.HK</td><td class="num">~39%</td><td>Healthcare ecosystem anchor</td></tr>
+          <tr><td>Lufax Holding</td><td>6623.HK</td><td class="num">~41%</td><td>Fintech platform</td></tr>
+          <tr><td>Autohome</td><td>2518.HK</td><td class="num">Controlling</td><td>Auto vertical</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card">
+      <h3>The FVOCI "Silent Reservoir" <span class="zh">FVOCI 隐形储备</span></h3>
+      <div class="chart-wrap small"><canvas id="chart-fvoci"></canvas></div>
+      <p style="font-size:12.5px;line-height:1.6;margin:8px 0 0 0;">
+        <strong>57% of Ping An's equity holdings</strong> are classified as FVOCI — Fair Value through <em>Other Comprehensive Income</em> rather than P&amp;L. Over <strong>RMB 90 billion of pre-tax unrealized gains</strong> sit in OCI, bypassing current net profit but building book value.
+      </p>
+      <p style="font-size:12px;line-height:1.6;margin:6px 0 0 0;color:var(--zh-color);">
+        57%的股票持仓列为FVOCI（以公允价值计量且其变动计入其他综合收益），超过RMB 900亿的税前未实现收益未计入当期损益，形成"隐形储备"。
+      </p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Investment Yield History (Net vs Comprehensive) <span class="zh">投资收益率历史</span></h3>
+    <div class="chart-wrap"><canvas id="chart-yield"></canvas></div>
+    <p style="font-size:12px;color:var(--muted);margin:8px 0 0 0;">
+      The <strong>gap between realized yields and the EV long-run assumption of 4.0%</strong> represents a hidden margin of safety — Ping An's embedded value is calculated on conservative assumptions, meaning economic EV likely exceeds reported EV.
+    </p>
+  </div>
+
+  <div class="card">
+    <h3>Why the Bank Accumulation Strategy Works <span class="zh">银行股加仓逻辑</span></h3>
+    <div class="grid-2">
+      <div>
+        <strong style="color:var(--navy);">The arbitrage:</strong>
+        <ul style="font-size:13px;line-height:1.7;padding-left:20px;margin:4px 0;">
+          <li>10-yr China government bond yield: <strong>~1.7%</strong></li>
+          <li>ICBC H-share dividend yield: <strong>~6.4%</strong></li>
+          <li>Effective spread locked in: <strong>~470 bps</strong></li>
+          <li>Classified as FVOCI → price volatility absorbed in OCI</li>
+          <li>New IFRS 9 rules allow this treatment for equity investments held long-term</li>
+        </ul>
+      </div>
+      <div>
+        <strong style="color:var(--navy);">Regulatory tailwind:</strong>
+        <ul style="font-size:13px;line-height:1.7;padding-left:20px;margin:4px 0;">
+          <li>National Financial Regulatory Administration may allow shareholders to be "major investors" (&gt;5% stake) in up to 4 banks (currently limited to 2)</li>
+          <li>Ping An, via its subsidiary Ping An Bank, is effectively blocked from further bank stakes — rule change would unlock new flexibility</li>
+          <li>JPMorgan analysis: potential beneficiaries include ICBC, CCB, PSBC, China Merchants Bank</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TAB 4: BUSINESS SEGMENTS -->
+<div class="panel" id="segments">
+  <div class="section-head">
+    <h2>Business Segment Analysis <span class="section-zh">分部业务分析</span></h2>
+    <span class="stamp">FY2025 Performance</span>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>OPAT Contribution by Segment <span class="zh">营运利润分部贡献</span></h3>
+      <div class="chart-wrap"><canvas id="chart-segment"></canvas></div>
+    </div>
+    <div class="card">
+      <h3>Life &amp; Health — NBV Channel Mix <span class="zh">寿险渠道结构</span></h3>
+      <div class="chart-wrap"><canvas id="chart-channels"></canvas></div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>Life &amp; Health Insurance <span class="zh">寿险与健康险</span> <span class="badge buy">Accelerating</span></h3>
+      <p style="font-size:13px;margin:6px 0;">Largest segment (~60% of OPAT). China's 2nd-largest life insurer with <strong>1.30 million sales agents</strong> across 330 major cities.</p>
+      <table class="data">
+        <tr><td>FY25 NBV</td><td class="num pos">RMB 36.9B (+29.3%)</td></tr>
+        <tr><td>NBV Margin (ANP)</td><td class="num">28.5% (+5.8 pps)</td></tr>
+        <tr><td>Agency NBV Growth</td><td class="num pos">+10.4%</td></tr>
+        <tr><td>NBV per Agent</td><td class="num pos">+17.2%</td></tr>
+        <tr><td>Bancassurance NBV</td><td class="num pos">+138.0%</td></tr>
+        <tr><td>13-month persistency</td><td class="num">97.4%</td></tr>
+        <tr><td>25-month persistency</td><td class="num">94.9%</td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <h3>Ping An P&amp;C <span class="zh">平安产险</span> <span class="badge buy">Underwriting profit</span></h3>
+      <p style="font-size:13px;margin:6px 0;">China's 2nd-largest P&amp;C insurer. <strong>#1 brand in auto insurance</strong> for 14 consecutive years.</p>
+      <table class="data">
+        <tr><td>Premium Income</td><td class="num pos">RMB 343.2B (+6.6%)</td></tr>
+        <tr><td>Insurance Revenue</td><td class="num">RMB 338.9B (+3.3%)</td></tr>
+        <tr><td>Overall COR</td><td class="num pos">96.8% (-1.5 pps)</td></tr>
+        <tr><td>Auto COR</td><td class="num pos">95.8% (-2.3 pps)</td></tr>
+        <tr><td>NEV Insurance COR</td><td class="num pos">&lt;100% (unique!)</td></tr>
+        <tr><td>NEV Market Share</td><td class="num">1 of 4 NEVs</td></tr>
+        <tr><td>Op Cash Flow</td><td class="num pos">+48.3% YoY</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>Ping An Bank <span class="zh">平安银行</span> <span class="badge hold">Steady</span></h3>
+      <p style="font-size:13px;margin:6px 0;">Listed subsidiary (SZ: 000001). ~58% owned. Joint-stock retail-focused commercial bank. Benefits from bancassurance synergy with parent.</p>
+      <table class="data">
+        <tr><td>Net Profit</td><td class="num">RMB 42.6B</td></tr>
+        <tr><td>NPL Ratio</td><td class="num pos">1.05%</td></tr>
+        <tr><td>Provision Coverage</td><td class="num pos">220.88%</td></tr>
+        <tr><td>Core Tier 1 CAR</td><td class="num">9.36% (+0.24 pps)</td></tr>
+        <tr><td>Corporate Loans</td><td class="num">RMB 1.69T</td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <h3>Integrated Finance &amp; Ecosystem <span class="zh">综合金融 &amp; 生态圈</span> <span class="badge buy">Moat driver</span></h3>
+      <p style="font-size:13px;margin:6px 0;">The differentiating competitive advantage. Cross-sell to own customer base at <strong>35-45% lower acquisition cost</strong>.</p>
+      <table class="data">
+        <tr><td>Retail Customers</td><td class="num pos">251M (+3.5% YTD)</td></tr>
+        <tr><td>Monthly Active Online</td><td class="num">~90M</td></tr>
+        <tr><td>Contracts per Customer</td><td class="num">2.94</td></tr>
+        <tr><td>Retention (3+ products)</td><td class="num pos">99%</td></tr>
+        <tr><td>Health ecosystem NBV share</td><td class="num pos">~70% of Life NBV</td></tr>
+        <tr><td>Hospital partnerships</td><td class="num">100% of top-100, 3A</td></tr>
+        <tr><td>AI service coverage</td><td class="num">80% interactions</td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- TAB 5: VALUATION -->
+<div class="panel" id="valuation">
+  <div class="section-head">
+    <h2>Intrinsic Value &amp; Valuation <span class="section-zh">内在价值与估值</span></h2>
+    <span class="stamp">SOTP + Multiple Methods</span>
+  </div>
+
+  <div class="card">
+    <h3>Sum-of-the-Parts (SOTP) Valuation <span class="zh">分部估值法</span></h3>
+    <table class="data">
+      <thead><tr><th>Segment</th><th>Method</th><th class="num">Value (RMB B)</th><th class="num">Value (HK$B)</th><th>Rationale</th></tr></thead>
+      <tbody>
+        <tr><td>Life &amp; Health <span class="zh">寿险</span></td><td>0.65× P/EV × RMB 900B EV</td><td class="num">585</td><td class="num">639</td><td>Realized yield &gt; EV assumption</td></tr>
+        <tr><td>Ping An P&amp;C <span class="zh">产险</span></td><td>1.2× book × RMB 120B</td><td class="num">144</td><td class="num">157</td><td>Sustained COR &lt;100%</td></tr>
+        <tr><td>Ping An Bank (58%) <span class="zh">平安银行</span></td><td>Market-based</td><td class="num">148</td><td class="num">161</td><td>Listed at modest discount</td></tr>
+        <tr><td>Asset Management <span class="zh">资管</span></td><td>10× P/E × 10B earnings</td><td class="num">100</td><td class="num">109</td><td>RMB 5.5T+ AUM</td></tr>
+        <tr><td>Fintech + Health <span class="zh">科技医疗</span></td><td>Strategic value</td><td class="num">50</td><td class="num">55</td><td>Lufax, PA Good Doctor, PKU</td></tr>
+        <tr><td>Net Cash / Other <span class="zh">净现金等</span></td><td>Net</td><td class="num">30</td><td class="num">33</td><td>Corporate-level</td></tr>
+        <tr class="total-row"><td>SOTP Total (Base)</td><td></td><td class="num">1,057</td><td class="num">1,154</td><td>Per share: <strong>HK$63.7</strong></td></tr>
+      </tbody>
+    </table>
+    <p style="font-size:12px;color:var(--muted);margin:8px 0 0 0;">
+      <em>Observation:</em> Conservative base SOTP ~ current market price, meaning the market is pricing Ping An roughly at <strong>breakup / liquidation value</strong> with <strong>no premium</strong> for the integrated ecosystem, NBV momentum, or FVOCI reserve. This is the margin of safety.
+    </p>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>Intrinsic Value Range — Triangulation <span class="zh">内在价值区间</span></h3>
+      <div class="chart-wrap"><canvas id="chart-intrinsic"></canvas></div>
+      <p style="font-size:12px;color:var(--muted);margin:8px 0 0 0;">Current HK$63.20 sits below even the most conservative intrinsic value estimate. Mid-point target HK$88 = <strong>39% upside</strong>.</p>
+    </div>
+    <div class="card">
+      <h3>Margin of Safety <span class="zh">安全边际</span></h3>
+      <div class="mos-gauge">
+        <div class="mos-value">~30–35%</div>
+        <div class="mos-label">Safety Buffer vs. Mid-point IV</div>
+        <div class="mos-bar-bg">
+          <div class="mos-marker" style="left:68%;"></div>
+        </div>
+        <div class="mos-scale">
+          <span>Overvalued</span><span>Fair</span><span>Buy zone</span><span>Strong Buy</span>
+        </div>
+      </div>
+      <div style="margin-top:14px;font-size:12.5px;">
+        <div style="display:flex;justify-content:space-between;padding:4px 0;"><span>Bear target</span><strong>HK$58 (-8%)</strong></div>
+        <div style="display:flex;justify-content:space-between;padding:4px 0;"><span>Current</span><strong style="color:var(--gold-dark);">HK$63.20</strong></div>
+        <div style="display:flex;justify-content:space-between;padding:4px 0;"><span>Low IV</span><strong>HK$82 (+30%)</strong></div>
+        <div style="display:flex;justify-content:space-between;padding:4px 0;"><span>Mid IV</span><strong>HK$88 (+39%)</strong></div>
+        <div style="display:flex;justify-content:space-between;padding:4px 0;"><span>High IV</span><strong>HK$95 (+50%)</strong></div>
+        <div style="display:flex;justify-content:space-between;padding:4px 0;"><span>Morningstar 5-star</span><strong style="color:var(--positive);">HK$87.90</strong></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Multi-Method Valuation Triangulation <span class="zh">多方法估值交叉验证</span></h3>
+    <table class="data">
+      <thead><tr><th>Method <span class="zh">方法</span></th><th class="num">Value per Share (HK$)</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr><td>Graham Number <span class="zh">格雷厄姆数</span></td><td class="num">HK$58</td><td>√(22.5 × EPS × BVPS); understates insurers</td></tr>
+        <tr><td>Dividend Discount (DDM) <span class="zh">股息贴现</span></td><td class="num">HK$72</td><td>4.5% yield, 4% growth, 9% discount rate</td></tr>
+        <tr><td>P/B 1.3× (5yr avg) <span class="zh">1.3倍市净率</span></td><td class="num">HK$78</td><td>At historical midpoint valuation</td></tr>
+        <tr><td>P/EV 0.8× <span class="zh">0.8倍内含价值</span></td><td class="num">HK$85–90</td><td>HK insurer historical midpoint</td></tr>
+        <tr><td>SOTP Base <span class="zh">分部估值</span></td><td class="num">HK$64–82</td><td>Bottom-up segment valuation</td></tr>
+        <tr><td>Analyst Consensus <span class="zh">分析师共识</span></td><td class="num">HK$83 (avg)</td><td>19 buy / 0 sell ratings</td></tr>
+        <tr><td>Morningstar Fair Value <span class="zh">晨星公允价值</span></td><td class="num">HK$87.90</td><td>5-star price; High uncertainty</td></tr>
+        <tr class="total-row"><td><strong>Central Estimate <span class="zh">综合估值</span></strong></td><td class="num"><strong>HK$82–95</strong></td><td><strong>Mid-point HK$88</strong></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- TAB 6: MOAT -->
+<div class="panel" id="moat">
+  <div class="section-head">
+    <h2>Moat &amp; Graham-Buffett Scorecard <span class="section-zh">护城河与评分</span></h2>
+    <span class="stamp">Wide Moat · 11/15</span>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>Buffett 5 Moat Dimensions <span class="zh">巴菲特五维护城河</span></h3>
+      <div class="chart-wrap"><canvas id="chart-moat"></canvas></div>
+    </div>
+    <div class="card">
+      <h3>Moat Dimension Scoring <span class="zh">护城河评分</span></h3>
+      <div class="score-row">
+        <div class="lbl"><strong>Intangible Assets</strong><span class="zh">无形资产</span></div>
+        <div class="score-bar"><div class="score-fill" style="width:100%;"></div></div>
+        <div class="score-val">3/3</div>
+      </div>
+      <div class="score-row">
+        <div class="lbl"><strong>Switching Costs</strong><span class="zh">转换成本</span></div>
+        <div class="score-bar"><div class="score-fill" style="width:67%;"></div></div>
+        <div class="score-val">2/3</div>
+      </div>
+      <div class="score-row">
+        <div class="lbl"><strong>Network Effects</strong><span class="zh">网络效应</span></div>
+        <div class="score-bar"><div class="score-fill" style="width:67%;"></div></div>
+        <div class="score-val">2/3</div>
+      </div>
+      <div class="score-row">
+        <div class="lbl"><strong>Cost Advantages</strong><span class="zh">成本优势</span></div>
+        <div class="score-bar"><div class="score-fill" style="width:67%;"></div></div>
+        <div class="score-val">2/3</div>
+      </div>
+      <div class="score-row">
+        <div class="lbl"><strong>Efficient Scale</strong><span class="zh">规模效益</span></div>
+        <div class="score-bar"><div class="score-fill" style="width:67%;"></div></div>
+        <div class="score-val">2/3</div>
+      </div>
+      <hr style="margin:14px 0;border:0;border-top:1px dashed var(--border);">
+      <div class="score-row" style="font-size:14px;">
+        <div class="lbl"><strong style="color:var(--navy);">Total Moat</strong><span class="zh">护城河合计</span></div>
+        <div class="score-bar"><div class="score-fill" style="width:73%;background:var(--gold);"></div></div>
+        <div class="score-val" style="color:var(--gold-dark);">11/15</div>
+      </div>
+      <p style="font-size:12px;color:var(--muted);margin-top:6px;">Rating: <strong>Wide Moat</strong> (11+ of 15). Durable competitive advantage across all five dimensions.</p>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>Graham Defensive Screen <span class="zh">格雷厄姆防御投资筛选</span></h3>
+      <table class="data">
+        <tr><td>Revenue &gt; USD 500M</td><td class="num">USD 162B ✓</td></tr>
+        <tr><td>Positive earnings 10yr</td><td class="num">✓</td></tr>
+        <tr><td>Dividend 20+ yrs (since IPO 2004)</td><td class="num">21 yrs ✓</td></tr>
+        <tr><td>Earnings growth (10-yr trend)</td><td class="num">✓</td></tr>
+        <tr><td>P/E &lt; 15</td><td class="num pos">7.3 ✓</td></tr>
+        <tr><td>P/B &lt; 1.5</td><td class="num pos">1.05 ✓</td></tr>
+        <tr><td>P/E × P/B &lt; 22.5</td><td class="num pos">7.7 ✓</td></tr>
+        <tr><td>Solvency ratio &gt; 150%</td><td class="num pos">200%+ ✓</td></tr>
+        <tr class="total-row"><td><strong>Graham Score</strong></td><td class="num"><strong>8/8 PASS</strong></td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <h3>Buffett Quality Screen <span class="zh">巴菲特质量筛选</span></h3>
+      <table class="data">
+        <tr><td>ROE &gt; 12% consistent</td><td class="num pos">14% ✓</td></tr>
+        <tr><td>P&amp;C Combined Ratio &lt; 100%</td><td class="num pos">96.8% ✓</td></tr>
+        <tr><td>Insurance float growing</td><td class="num pos">+13.2% ✓</td></tr>
+        <tr><td>Underwriting profit</td><td class="num pos">✓</td></tr>
+        <tr><td>Owner earnings stable</td><td class="num pos">✓</td></tr>
+        <tr><td>Wide moat (11+/15)</td><td class="num pos">11/15 ✓</td></tr>
+        <tr><td>Management integrity</td><td class="num">Acceptable ~</td></tr>
+        <tr><td>Predictable business</td><td class="num pos">✓</td></tr>
+        <tr><td>Circle of competence</td><td class="num pos">✓</td></tr>
+        <tr class="total-row"><td><strong>Buffett Score</strong></td><td class="num"><strong>8.5/9</strong></td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Key Competitive Advantages <span class="zh">关键竞争优势</span></h3>
+    <ul style="font-size:13px;line-height:1.75;padding-left:22px;margin:6px 0;">
+      <li><strong>Integrated Finance Flywheel <span class="zh">综合金融飞轮</span></strong> — Unique globally outside Japanese keiretsu. Cross-sell acquisition cost is <strong>35-45% lower</strong> than external acquisition. 2.94 products per customer; 99% retention for 3+ products.</li>
+      <li><strong>Healthcare Ecosystem <span class="zh">医疗生态</span></strong> — 100% coverage of China's top-100 and 3A hospitals. "AI + human doctor" serves 100% of retail customers. PKU Healthcare Group + Peking University International Hospital provide owned-capacity advantage. Health ecosystem customers contribute ~70% of Life NBV despite being 63% of customer base.</li>
+      <li><strong>Float Economics <span class="zh">浮存金经济学</span></strong> — RMB 6.49T float (~USD 930B) earns 6.3% comprehensive yield in 2025. This is insurance float <em>plus</em> the equivalent of massive zero-marginal-cost leverage.</li>
+      <li><strong>AI &amp; Technology <span class="zh">AI与科技</span></strong> — In 1H25, AI models called <strong>818 million times across 650 scenarios</strong>. 80% of customer service interactions handled by AI. NEV insurance COR &lt;100% (unique in industry) due to proprietary driving/claims data from Ping An Auto Owner app (251M registered users).</li>
+    </ul>
+  </div>
+</div>
+
+<!-- TAB 7: RISKS -->
+<div class="panel" id="risks">
+  <div class="section-head">
+    <h2>Risk Factors <span class="section-zh">风险因素</span></h2>
+    <span class="stamp">Comprehensive Risk Assessment</span>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>Macro / China-specific <span class="zh">宏观与中国特定风险</span></h3>
+      <div class="risk-box high">
+        <div class="risk-head"><span>Interest Rate Risk <span class="zh">利率风险</span></span><span>HIGH</span></div>
+        Declining Chinese govt bond yields (~1.7% on 10-yr) compress future reinvestment yields. <em>Mitigant:</em> 10-yr avg yield 4.8% well above EV assumption 4.0%.
+      </div>
+      <div class="risk-box high">
+        <div class="risk-head"><span>Capital Market Volatility <span class="zh">市场波动</span></span><span>HIGH</span></div>
+        14.8% equity allocation = ~RMB 960B exposed to market swings. 57% FVOCI classification insulates reported P&amp;L but not book value.
+      </div>
+      <div class="risk-box med">
+        <div class="risk-head"><span>Property Sector Overhang <span class="zh">房地产风险</span></span><span>MED</span></div>
+        Alternative investment real estate exposure. Management actively reducing; most holdings have guarantees/collaterals. Not Evergrande-scale.
+      </div>
+      <div class="risk-box med">
+        <div class="risk-head"><span>Demographic Pressure <span class="zh">人口老龄化</span></span><span>MED</span></div>
+        Aging population is double-edged: more demand for annuities/senior care (+), slower workforce reduces premium pool (-).
+      </div>
+    </div>
+    <div class="card">
+      <h3>Regulatory &amp; Governance <span class="zh">监管与治理</span></h3>
+      <div class="risk-box med">
+        <div class="risk-head"><span>Management Turnover <span class="zh">管理层变动</span></span><span>MED</span></div>
+        Co-CEO structure (Xie Yonglin + Guo Xiaotao); Morningstar flagged "frequent top management turnover." Monitor strategic continuity.
+      </div>
+      <div class="risk-box low">
+        <div class="risk-head"><span>Bancassurance Commission <span class="zh">银保佣金率</span></span><span>LOW/POS</span></div>
+        Already absorbed. Ping An Bank subsidiary (75% of own bancassurance) benefits from rate cuts vs. pure-play insurers. <strong>Net positive</strong>.
+      </div>
+      <div class="risk-box low">
+        <div class="risk-head"><span>Cross-shareholding Rule <span class="zh">交叉持股规则</span></span><span>LOW/POS</span></div>
+        Current 2-bank limit could loosen (JPMorgan). Would unlock more bank accumulation. <strong>Net positive catalyst</strong>.
+      </div>
+      <div class="risk-box low">
+        <div class="risk-head"><span>Data Privacy (PIPL) <span class="zh">数据隐私</span></span><span>LOW</span></div>
+        Affects AI/Fintech more than core insurance.
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Multi-Market Margin-of-Safety Adjustment <span class="zh">多市场安全边际调整</span></h3>
+    <table class="data">
+      <thead><tr><th>Risk Layer</th><th class="num">Additional MoS</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr><td>Base Graham/Buffett requirement</td><td class="num">20%</td><td>Standard</td></tr>
+        <tr><td>HK blue chip (HSI component)</td><td class="num">+5%</td><td>2318.HK is HSI member</td></tr>
+        <tr><td>China H-share layer</td><td class="num">+10%</td><td>Mainland-operated company</td></tr>
+        <tr class="total-row"><td><strong>Total required MoS</strong></td><td class="num"><strong>~35%</strong></td><td><strong>Must exceed to BUY</strong></td></tr>
+        <tr style="background:var(--positive-bg);"><td><strong>Actual MoS @ HK$63.20 vs mid IV HK$88</strong></td><td class="num"><strong>39% (to mid), up to 50% (to high)</strong></td><td class="pos"><strong>✓ CLEARS HURDLE</strong></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- TAB 8: VERDICT & ENTRY -->
+<div class="panel" id="verdict">
+  <div class="section-head">
+    <h2>Verdict &amp; Entry Plan <span class="section-zh">投资结论与买入计划</span></h2>
+    <span class="stamp">Position Sizing &amp; Catalysts</span>
+  </div>
+
+  <div class="card" style="background:linear-gradient(135deg, var(--positive-bg), #fff);border-left:5px solid var(--positive);">
+    <h3 style="color:var(--positive);font-size:22px;">BUY — Moderate-to-High Conviction <span class="zh">买入 — 中高确信度</span></h3>
+    <p style="font-size:13.5px;line-height:1.7;margin:8px 0;">
+      At HK$63.20, Ping An trades at the <strong>bottom decile of its 10-year valuation history</strong>: 1.05× P/B, ~7.3× P/E, ~0.60× P/EV. FY2025 results confirm the operating inflection (+29.3% NBV, 6.3% investment yield, equity crossed RMB 1 trillion). The RMB 6.49T investment portfolio contains RMB 90B+ of unrealized FVOCI gains not in current P&amp;L. Wide moat (11/15) with integrated finance + healthcare genuinely unique globally. 4.7% dividend yield with 14-year increase track record provides income while waiting for re-rating.
+    </p>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>Entry Tranche Plan <span class="zh">分批买入计划</span></h3>
+      <table class="data">
+        <tr><td>Tranche 1 (50%)</td><td class="num">HK$60-65 (current)</td><td><span class="badge buy">ACTIVE</span></td></tr>
+        <tr><td>Tranche 2 (25%)</td><td class="num">HK$50-55</td><td>On pullback</td></tr>
+        <tr><td>Tranche 3 (25%)</td><td class="num">Confirmation</td><td>Post Q1 2026 results (April 23)</td></tr>
+        <tr style="background:var(--gold-light);"><td><strong>Trim zone</strong></td><td class="num"><strong>HK$90+</strong></td><td>Take profits</td></tr>
+        <tr style="background:var(--gold-light);"><td><strong>Bull target</strong></td><td class="num"><strong>HK$100+</strong></td><td>Revisit thesis</td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <h3>Position Sizing (Kelly-informed) <span class="zh">凯利仓位法</span></h3>
+      <table class="data">
+        <tr><td>Win probability (p)</td><td class="num">60%</td></tr>
+        <tr><td>Win/Loss ratio (b)</td><td class="num">2.5</td></tr>
+        <tr><td>Full Kelly %</td><td class="num">44%</td></tr>
+        <tr><td>Quarter Kelly (practical)</td><td class="num">11%</td></tr>
+        <tr class="total-row"><td><strong>Recommended</strong></td><td class="num"><strong>8-12% of equity book</strong></td></tr>
+      </table>
+      <p style="font-size:12px;color:var(--muted);margin-top:8px;">Half-size (5-6%) if Ping An is already a holding. This is a full-conviction value position, not a starter.</p>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>Key Catalysts to Monitor <span class="zh">关键催化剂</span></h3>
+      <ul style="font-size:13px;line-height:1.7;padding-left:20px;margin:6px 0;">
+        <li><strong>Bancassurance NBV momentum</strong> — Can +138% growth sustain as RMB 30T of household deposits mature 2025-2027?</li>
+        <li><strong>Bank shareholding rule change</strong> — JPMorgan-flagged regulator move could allow &gt;2 major bank stakes. Direct Ping An benefit.</li>
+        <li><strong>Healthcare monetization</strong> — PKU Healthcare revenue RMB 4.1B in 9M25. When does it become a margin contributor?</li>
+        <li><strong>Full FY25 EV disclosure (late April 2026)</strong> — Annual report will provide detailed EV movement, sensitivity tables, and channel economics.</li>
+        <li><strong>Potential share buybacks</strong> — Past practice; repeat at current valuations would be strongly accretive.</li>
+        <li><strong>AAA MSCI ESG rating</strong> (awarded 2025) — Should attract ESG fund inflows.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Sell / Review Triggers <span class="zh">卖出/复核触发</span></h3>
+      <ul style="font-size:13px;line-height:1.7;padding-left:20px;margin:6px 0;">
+        <li>NBV growth decelerates to &lt;10% for 2 consecutive quarters (moat erosion)</li>
+        <li>Comprehensive investment yield falls below 4.5% sustained (asset allocation failure)</li>
+        <li>Property exposure materially larger than disclosed (governance concern)</li>
+        <li>Convertible bond dilution above 5% of shares</li>
+        <li>Change in co-CEO structure creating strategic uncertainty</li>
+        <li>Price exceeds HK$100 without fundamental improvement (valuation discipline)</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card" style="background:var(--navy);color:#fff;border:none;">
+    <h3 style="color:var(--gold);">The Bottom Line <span class="zh" style="color:var(--gold-light);">核心结论</span></h3>
+    <p style="font-size:14px;line-height:1.7;margin:6px 0;">
+      Ping An is <strong>not just a Chinese insurance company</strong>. It is a RMB 14 trillion balance-sheet conglomerate whose real intrinsic value rests on three under-appreciated pillars: (1) a RMB 6.49 trillion institutional investment portfolio earning above-assumption returns; (2) a wide-moat integrated finance flywheel with 251 million customers and 99% retention; (3) a healthcare ecosystem that is quietly becoming China's largest managed care operator.
+    </p>
+    <p style="font-size:14px;line-height:1.7;margin:6px 0;color:var(--gold-light);">
+      Buying below HK$65 offers the Graham combination of <strong>safety of principal</strong> (1.05× book, 4.7% dividend, wide moat) and <strong>adequate return</strong> (30-50% upside to intrinsic value). This is what "wonderful company at fair price" looks like in the HK market.
+    </p>
+    <p style="font-size:13px;color:var(--gold-light);margin:10px 0 0 0;font-style:italic;">
+      "Risk comes from not knowing what you're doing." — Warren Buffett. Knowing what Ping An really is, is the first step. <span class="zh" style="color:var(--gold);">知己知彼，百战不殆。</span>
+    </p>
+  </div>
+</div>
+
+</div><!-- /container -->
+
+<div class="footer">
+  <strong>Data Sources:</strong> Ping An FY2025 Annual Results Announcement (HKExnews, 26 Mar 2026) · group.pingan.com press releases · Morningstar · Investing.com · Stockanalysis.com · Asia Asset · 36Kr · CMBIGM research · SEC filings.
+  <br>Market data as of April 14, 2026. FX: 1 HKD ≈ 0.917 RMB · 1 USD ≈ 7.80 HKD (pegged).
+  <br><em>Analysis prepared under Graham-Buffett value investing framework. Not investment advice. Insurance companies are complex; monitor disclosures actively.</em>
+</div>
+
+<script>
+// Chart.js global defaults
+Chart.defaults.font.family = 'Microsoft YaHei, Arial, sans-serif';
+Chart.defaults.font.size = 11.5;
+Chart.defaults.color = '#333';
+Chart.defaults.plugins.legend.position = 'bottom';
+Chart.defaults.plugins.legend.labels.font = {size: 11, family: 'Microsoft YaHei, Arial, sans-serif'};
+Chart.defaults.plugins.legend.labels.padding = 10;
+Chart.defaults.plugins.legend.labels.boxWidth = 12;
+Chart.defaults.responsive = true;
+Chart.defaults.maintainAspectRatio = false;
+
+// Color palette
+const palette = {
+  navy: '#0d2c54', navyLight: '#1a5276', navyLighter: '#2e86c1',
+  gold: '#c9a961', goldDark: '#a48a4e', goldLight: '#f4ecd6',
+  positive: '#1e8449', negative: '#c0392b', neutral: '#d4ac0d',
+  muted: '#7f8c8d'
+};
+
+// ---- Tab switching ----
+document.querySelectorAll('.tab').forEach(t => {
+  t.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(x => x.classList.remove('active'));
+    t.classList.add('active');
+    document.getElementById(t.dataset.tab).classList.add('active');
+    window.scrollTo({top: document.querySelector('.tabs').offsetTop - 10, behavior: 'smooth'});
+  });
+});
+
+// ---- Chart: Profit & Revenue ----
+new Chart(document.getElementById('chart-profit'), {
+  type: 'bar',
+  data: {
+    labels: ['2020','2021','2022','2023','2024','2025'],
+    datasets: [
+      {
+        label: 'OPAT (RMB B) / 营运利润',
+        data: [139.5, 147.9, 148.4, 117.9, 121.9, 134.4],
+        backgroundColor: palette.navyLight,
+        yAxisID: 'y'
+      },
+      {
+        label: 'Net Profit (RMB B) / 净利润',
+        data: [143.1, 101.6, 83.8, 85.7, 126.6, 134.8],
+        backgroundColor: palette.gold,
+        yAxisID: 'y'
+      }
+    ]
+  },
+  options: {
+    plugins: {
+      tooltip: { callbacks: { label: c => c.dataset.label + ': RMB ' + c.parsed.y + 'B' } }
+    },
+    scales: {
+      y: { title: { display: true, text: 'RMB Billion' }, beginAtZero: true }
+    }
+  }
+});
+
+// ---- Chart: NBV trajectory ----
+new Chart(document.getElementById('chart-nbv'), {
+  type: 'line',
+  data: {
+    labels: ['2020','2021','2022','2023','2024','2025'],
+    datasets: [{
+      label: 'Life & Health NBV (RMB B) / 寿险新业务价值',
+      data: [49.6, 37.9, 28.8, 31.1, 28.5, 36.9],
+      borderColor: palette.gold,
+      backgroundColor: 'rgba(201,169,97,0.2)',
+      fill: true,
+      tension: 0.3,
+      pointRadius: 5,
+      pointBackgroundColor: palette.gold
+    }]
+  },
+  options: {
+    plugins: {
+      tooltip: { callbacks: { label: c => 'NBV: RMB ' + c.parsed.y.toFixed(1) + 'B' } }
+    },
+    scales: { y: { beginAtZero: true, title: { display: true, text: 'RMB Billion' } } }
+  }
+});
+
+// ---- Chart: Dividend growth ----
+new Chart(document.getElementById('chart-dividend'), {
+  type: 'bar',
+  data: {
+    labels: ['2016','2017','2018','2019','2020','2021','2022','2023','2024','2025'],
+    datasets: [{
+      label: 'DPS (RMB) / 每股分红',
+      data: [0.75, 1.00, 1.72, 2.05, 2.20, 2.38, 2.42, 2.43, 2.55, 2.70],
+      backgroundColor: ctx => ctx.raw >= 2.50 ? palette.gold : palette.navyLight,
+      borderRadius: 3
+    }]
+  },
+  options: {
+    plugins: {
+      tooltip: { callbacks: { label: c => 'DPS: RMB ' + c.parsed.y.toFixed(2) } }
+    },
+    scales: { y: { beginAtZero: true, title: { display: true, text: 'RMB per share' } } }
+  }
+});
+
+// ---- Chart: Asset Allocation Doughnut ----
+new Chart(document.getElementById('chart-alloc'), {
+  type: 'doughnut',
+  data: {
+    labels: [
+      'Govt & Policy Bonds / 政府及政策性债券 (~58%)',
+      'Stocks & Equity Funds / 股票及股基 (14.8%)',
+      'Alternative Investments / 另类投资 (~11%)',
+      'Corporate Bonds / 企业债 (~7%)',
+      'Cash & Deposits / 现金及存款 (~4%)',
+      'Other (Property, Deriv.) / 其他 (~5%)'
+    ],
+    datasets: [{
+      data: [58, 14.8, 11, 7, 4, 5.2],
+      backgroundColor: [
+        palette.navy, palette.gold, palette.navyLighter,
+        palette.goldDark, '#95a5a6', palette.goldLight
+      ],
+      borderWidth: 2,
+      borderColor: '#fff'
+    }]
+  },
+  options: {
+    cutout: '55%',
+    plugins: {
+      tooltip: { callbacks: { label: c => c.label + ': ' + c.parsed + '%' } },
+      legend: { position: 'right', labels: { font: {size: 10.5}, boxWidth: 10 } }
+    }
+  }
+});
+
+// ---- Chart: Portfolio growth ----
+new Chart(document.getElementById('chart-portfolio-growth'), {
+  type: 'line',
+  data: {
+    labels: ['2019','2020','2021','2022','2023','2024','2025'],
+    datasets: [{
+      label: 'Insurance Funds Portfolio (RMB Trillion) / 保险资金规模',
+      data: [3.21, 3.74, 4.05, 4.37, 4.72, 5.73, 6.49],
+      borderColor: palette.navy,
+      backgroundColor: 'rgba(13,44,84,0.15)',
+      fill: true,
+      tension: 0.3,
+      pointRadius: 5,
+      pointBackgroundColor: palette.gold,
+      pointBorderColor: palette.navy,
+      pointBorderWidth: 2
+    }]
+  },
+  options: {
+    plugins: {
+      tooltip: { callbacks: { label: c => 'RMB ' + c.parsed.y.toFixed(2) + 'T' } }
+    },
+    scales: { y: { beginAtZero: false, title: { display: true, text: 'RMB Trillion' } } }
+  }
+});
+
+// ---- Chart: FVOCI composition ----
+new Chart(document.getElementById('chart-fvoci'), {
+  type: 'doughnut',
+  data: {
+    labels: ['FVOCI (gains in OCI) / 计入其他综合收益', 'FVTPL (gains in P&L) / 计入当期损益', 'Other / 其他'],
+    datasets: [{
+      data: [57, 38, 5],
+      backgroundColor: [palette.gold, palette.navyLight, '#bdc3c7'],
+      borderWidth: 2,
+      borderColor: '#fff'
+    }]
+  },
+  options: {
+    plugins: {
+      tooltip: { callbacks: { label: c => c.label + ': ' + c.parsed + '%' } },
+      legend: { position: 'bottom', labels: { font: {size: 10.5}, boxWidth: 10 } }
+    }
+  }
+});
+
+// ---- Chart: Investment yields ----
+new Chart(document.getElementById('chart-yield'), {
+  type: 'line',
+  data: {
+    labels: ['2020','2021','2022','2023','2024','2025'],
+    datasets: [
+      {
+        label: 'Comprehensive Yield / 综合投资收益率',
+        data: [6.2, 4.0, 3.7, 3.6, 5.8, 6.3],
+        borderColor: palette.gold,
+        backgroundColor: 'rgba(201,169,97,0.15)',
+        tension: 0.3,
+        pointRadius: 5,
+        fill: false
+      },
+      {
+        label: 'Net Investment Yield / 净投资收益率',
+        data: [5.1, 4.6, 4.7, 4.2, 3.8, 3.7],
+        borderColor: palette.navyLight,
+        backgroundColor: 'rgba(26,82,118,0.1)',
+        tension: 0.3,
+        pointRadius: 5,
+        fill: false
+      },
+      {
+        label: 'EV Long-Run Assumption / 内含价值长期假设',
+        data: [5.0, 5.0, 5.0, 4.5, 4.0, 4.0],
+        borderColor: palette.negative,
+        borderDash: [6, 4],
+        tension: 0,
+        pointRadius: 3,
+        fill: false
+      }
+    ]
+  },
+  options: {
+    plugins: {
+      tooltip: { callbacks: { label: c => c.dataset.label + ': ' + c.parsed.y.toFixed(1) + '%' } }
+    },
+    scales: { y: { title: { display: true, text: 'Yield %' }, min: 0, max: 8 } }
+  }
+});
+
+// ---- Chart: Segment OPAT ----
+new Chart(document.getElementById('chart-segment'), {
+  type: 'bar',
+  data: {
+    labels: [
+      'Life & Health\n寿险与健康险',
+      'P&C\n产险',
+      'Ping An Bank\n平安银行',
+      'Asset Mgmt\n资管',
+      'Fintech+Health\n科技+医疗',
+      'Other'
+    ],
+    datasets: [{
+      label: 'FY2025 OPAT Contribution (RMB B, est.)',
+      data: [81, 16, 16, 9, 12, 0.4],
+      backgroundColor: [
+        palette.navy, palette.navyLight, palette.navyLighter,
+        palette.gold, palette.goldDark, palette.muted
+      ],
+      borderRadius: 3
+    }]
+  },
+  options: {
+    indexAxis: 'y',
+    plugins: {
+      legend: { display: false },
+      tooltip: { callbacks: { label: c => 'RMB ' + c.parsed.x + 'B' } }
+    },
+    scales: { x: { title: { display: true, text: 'RMB Billion (estimated)' }, beginAtZero: true } }
+  }
+});
+
+// ---- Chart: Channel mix ----
+new Chart(document.getElementById('chart-channels'), {
+  type: 'doughnut',
+  data: {
+    labels: ['Agency / 代理人渠道 (~65%)', 'Bancassurance / 银保渠道 (~25%)', 'Community Finance / 社区金融 (~6%)', 'Other / 其他 (~4%)'],
+    datasets: [{
+      data: [65, 25, 6, 4],
+      backgroundColor: [palette.navy, palette.gold, palette.navyLighter, palette.muted],
+      borderWidth: 2,
+      borderColor: '#fff'
+    }]
+  },
+  options: {
+    cutout: '50%',
+    plugins: {
+      tooltip: { callbacks: { label: c => c.label } },
+      legend: { position: 'right', labels: { font: {size: 10.5}, boxWidth: 10 } }
+    }
+  }
+});
+
+// ---- Chart: Intrinsic Value Range ----
+new Chart(document.getElementById('chart-intrinsic'), {
+  type: 'bar',
+  data: {
+    labels: [
+      'Current Price / 当前价',
+      'Graham Number',
+      'DDM Model / 股息贴现',
+      'SOTP Base / 分部估值',
+      'P/B 1.3× (5yr avg)',
+      'P/EV 0.8× / 0.8倍内含价值',
+      'Analyst Consensus',
+      'Morningstar 5-star',
+      'Bull Case / 乐观情景'
+    ],
+    datasets: [{
+      label: 'HK$ per share',
+      data: [63.2, 58, 72, 82, 78, 88, 83, 87.9, 100],
+      backgroundColor: [
+        palette.gold, palette.navyLighter, palette.navyLight,
+        palette.navyLight, palette.navyLight, palette.navy,
+        palette.navy, palette.positive, palette.positive
+      ],
+      borderColor: '#fff',
+      borderWidth: 2,
+      borderRadius: 3
+    }]
+  },
+  options: {
+    indexAxis: 'y',
+    plugins: {
+      legend: { display: false },
+      tooltip: { callbacks: { label: c => 'HK$ ' + c.parsed.x.toFixed(1) } }
+    },
+    scales: {
+      x: {
+        title: { display: true, text: 'HK$ per share' },
+        beginAtZero: false, suggestedMin: 50,
+        grid: { color: ctx => ctx.tick.value === 63.2 ? '#c9a961' : '#eee' }
+      }
+    }
+  }
+});
+
+// ---- Chart: Moat Radar ----
+new Chart(document.getElementById('chart-moat'), {
+  type: 'radar',
+  data: {
+    labels: [
+      ['Intangible Assets', '无形资产'],
+      ['Switching Costs', '转换成本'],
+      ['Network Effects', '网络效应'],
+      ['Cost Advantages', '成本优势'],
+      ['Efficient Scale', '规模效益']
+    ],
+    datasets: [{
+      label: 'Ping An Moat Score (0-3)',
+      data: [3, 2, 2, 2, 2],
+      backgroundColor: 'rgba(201,169,97,0.25)',
+      borderColor: palette.gold,
+      borderWidth: 2,
+      pointBackgroundColor: palette.navy,
+      pointBorderColor: palette.gold,
+      pointRadius: 5
+    }]
+  },
+  options: {
+    scales: {
+      r: {
+        min: 0, max: 3, ticks: { stepSize: 1, font: {size: 10} },
+        pointLabels: { font: {size: 11, weight: 500} },
+        angleLines: { color: '#ddd' },
+        grid: { color: '#eee' }
+      }
+    }
+  }
+});
+
+</script>
+</body>
+</html>
