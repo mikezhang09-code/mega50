@@ -141,6 +141,8 @@ var CATEGORIES = {
           { id: "alibaba-dashboard", label: "Alibaba (BABA / 9988.HK)", url: "./alibaba-dashboard.html", icon: "doc" },
           { id: "tencent-dashboard", label: "Tencent Holdings (0700.HK)", url: "./tencent-dashboard.html", icon: "doc" },
           { id: "pingan-dashboard", label: "Ping An Insurance (2318.HK)", url: "./pingan_dashboard.html", icon: "doc" },
+          { id: "moutai-claude", label: "Kweichow Moutai (Claude)", url: "./Kweichow_Moutai_Value_Investing_Analysis_Claude.html", icon: "doc" },
+          { id: "moutai-dashboard", label: "Kweichow Moutai (Dashboard)", url: "./moutai_vi_analysis_workbuddy.html", icon: "chart" },
           { id: "hk-ai-beneficiaries", label: "HK AI Beneficiaries Top 10", url: "./hk-ai-beneficiaries-top10.html", icon: "chart" },
         ],
       },

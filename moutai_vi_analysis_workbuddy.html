@@ -1,0 +1,913 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>贵州茅台 (600519.SH) — 价值投资深度分析</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+:root {
+  --bg: #0a1628; --bg-card: #0d1117; --bg-surface: #161b22; --bg-elevated: #1c2333;
+  --border: #21262d; --border-light: #30363d; --border-accent: rgba(201,168,76,0.15);
+  --text: #e8e6df; --text-secondary: #8b949e; --text-dim: #6e7681; --text-zh: #6db38a;
+  --positive: #3fb950; --positive-bg: rgba(63,185,80,0.1);
+  --negative: #f85149; --negative-bg: rgba(248,81,73,0.1);
+  --warning: #d29922; --warning-bg: rgba(210,153,34,0.1);
+  --accent: #c9a84c; --accent-bg: rgba(201,168,76,0.1);
+  --info: #58a6ff; --info-bg: rgba(88,166,255,0.1);
+  --chart-grid: rgba(255,255,255,0.04); --chart-label: #8b949e;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Noto Sans SC','Segoe UI',sans-serif; background:var(--bg); color:var(--text); line-height:1.6; min-height:100vh; }
+.mono { font-family:'JetBrains Mono',monospace; }
+.container { max-width:1200px; margin:0 auto; padding:0 24px; }
+
+/* HERO */
+.hero { background:linear-gradient(135deg,#0a1628 0%,#1a2744 50%,#0d1f3c 100%); padding:48px 24px 32px; border-bottom:1px solid var(--border-accent); position:relative; overflow:hidden; }
+.hero::before { content:''; position:absolute; top:0; left:0; right:0; bottom:0; background:radial-gradient(ellipse at 30% 50%,rgba(201,168,76,0.06),transparent 70%); }
+.hero-inner { max-width:1200px; margin:0 auto; position:relative; z-index:1; }
+.hero-ticker { font-size:13px; color:var(--accent); letter-spacing:2px; text-transform:uppercase; margin-bottom:8px; }
+.hero h1 { font-size:36px; font-weight:700; margin-bottom:4px; }
+.hero h1 span { color:var(--accent); }
+.hero-sub { color:var(--text-secondary); font-size:15px; margin-bottom:20px; }
+.verdict-badge { display:inline-flex; align-items:center; gap:8px; padding:8px 20px; border-radius:6px; font-weight:700; font-size:15px; letter-spacing:1px; }
+.verdict-accumulate { background:var(--accent-bg); color:var(--accent); border:1px solid var(--accent); }
+.hero-stats { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:12px; margin-top:24px; }
+.stat-card { background:rgba(255,255,255,0.04); border:1px solid var(--border); border-radius:8px; padding:14px 16px; }
+.stat-label { font-size:11px; color:var(--text-dim); text-transform:uppercase; letter-spacing:1px; margin-bottom:4px; }
+.stat-value { font-size:22px; font-weight:700; }
+.stat-sub { font-size:12px; color:var(--text-secondary); margin-top:2px; }
+
+/* TABS */
+.tabs { display:flex; gap:4px; padding:20px 0 16px; overflow-x:auto; border-bottom:1px solid var(--border); position:sticky; top:0; background:var(--bg); z-index:100; }
+.tab-btn { padding:8px 18px; border-radius:6px; border:1px solid transparent; background:transparent; color:var(--text-secondary); cursor:pointer; font-size:13px; font-weight:500; white-space:nowrap; transition:all .2s; font-family:inherit; }
+.tab-btn:hover { background:var(--bg-hover); color:var(--text); }
+.tab-btn.active { background:var(--accent-bg); color:var(--accent); border-color:var(--accent); }
+.tab-content { display:none; padding:32px 0; }
+.tab-content.active { display:block; animation:fadeIn .3s; }
+@keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+
+/* CARDS */
+.card { background:var(--bg-card); border:1px solid var(--border); border-radius:10px; padding:24px; margin-bottom:20px; }
+.card h3 { font-size:16px; font-weight:600; margin-bottom:16px; color:var(--text); display:flex; align-items:center; gap:8px; }
+.card h3 .icon { color:var(--accent); }
+
+/* TABLES */
+table { width:100%; border-collapse:collapse; font-size:13px; }
+th { background:var(--bg-surface); color:var(--text-secondary); font-weight:500; text-align:left; padding:10px 12px; border-bottom:1px solid var(--border); font-size:12px; text-transform:uppercase; letter-spacing:.5px; }
+td { padding:10px 12px; border-bottom:1px solid var(--border); }
+tr:hover td { background:var(--bg-hover); }
+.pass { color:var(--positive); font-weight:600; }
+.fail { color:var(--negative); font-weight:600; }
+.warn { color:var(--warning); font-weight:600; }
+.mono-cell { font-family:'JetBrains Mono',monospace; font-size:12px; }
+
+/* QUICK KILL */
+.qk-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:10px; }
+.qk-item { display:flex; align-items:center; gap:12px; padding:12px 14px; background:var(--bg-surface); border-radius:8px; border:1px solid var(--border); }
+.qk-num { width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; flex-shrink:0; }
+.qk-pass .qk-num { background:var(--positive-bg); color:var(--positive); border:1px solid var(--positive); }
+.qk-cond .qk-num { background:var(--warning-bg); color:var(--warning); border:1px solid var(--warning); }
+.qk-fail .qk-num { background:var(--negative-bg); color:var(--negative); border:1px solid var(--negative); }
+.qk-text { font-size:13px; }
+.qk-text span { display:block; color:var(--text-dim); font-size:11px; }
+
+/* SECTION HEADERS */
+.section-title { font-size:20px; font-weight:700; margin-bottom:20px; display:flex; align-items:center; gap:10px; }
+.section-title .num { color:var(--accent); font-family:'JetBrains Mono',monospace; }
+
+/* GRID */
+.grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+.grid-3 { display:grid; grid-template-columns:repeat(3,1fr); gap:20px; }
+.grid-4 { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; }
+@media(max-width:768px) { .grid-2,.grid-3 { grid-template-columns:1fr; } .grid-4 { grid-template-columns:1fr 1fr; } }
+
+/* MOAT RADAR */
+.moat-panel { display:flex; gap:20px; align-items:flex-start; flex-wrap:wrap; }
+.moat-dim { flex:1; min-width:240px; }
+.moat-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; }
+.moat-score { font-family:'JetBrains Mono',monospace; font-size:14px; font-weight:600; padding:2px 8px; border-radius:4px; }
+.score-high { background:var(--positive-bg); color:var(--positive); }
+.score-mid { background:var(--warning-bg); color:var(--warning); }
+.score-low { background:var(--info-bg); color:var(--info); }
+.moat-dim p { font-size:12px; color:var(--text-secondary); line-height:1.5; }
+.moat-trend { display:flex; align-items:center; gap:8px; padding:10px 16px; border-radius:8px; font-size:14px; font-weight:600; }
+.trend-stable { background:var(--warning-bg); color:var(--warning); border:1px solid rgba(210,153,34,0.3); }
+.trend-widening { background:var(--positive-bg); color:var(--positive); border:1px solid rgba(63,185,80,0.3); }
+
+/* RISK */
+.risk-item { display:flex; gap:12px; padding:14px; background:var(--bg-surface); border-radius:8px; margin-bottom:8px; border-left:3px solid var(--warning); }
+.risk-level-5 { border-left-color:var(--negative); }
+.risk-level-3 { border-left-color:var(--warning); }
+.risk-level-2 { border-left-color:var(--info); }
+.risk-level-1 { border-left-color:var(--positive); }
+.risk-name { font-weight:600; font-size:13px; }
+.risk-desc { font-size:12px; color:var(--text-secondary); margin-top:4px; }
+.risk-meter { width:60px; height:6px; background:var(--bg); border-radius:3px; overflow:hidden; flex-shrink:0; margin-top:6px; }
+.risk-meter-fill { height:100%; border-radius:3px; }
+
+/* SENSITIVITY TABLE */
+.sens-table { font-size:12px; }
+.sens-table th, .sens-table td { padding:8px 10px; text-align:center; }
+.sens-cell { border-radius:4px; }
+.sens-undervalued { background:var(--positive-bg); color:var(--positive); font-weight:600; }
+.sens-fair { background:var(--warning-bg); color:var(--warning); font-weight:600; }
+.sens-overvalued { background:var(--negative-bg); color:var(--negative); font-weight:600; }
+.sens-current { outline:2px solid var(--accent); outline-offset:-2px; border-radius:4px; }
+
+/* FRANCHISE BADGE */
+.franchise-badge { display:inline-flex; padding:6px 16px; border-radius:20px; font-size:13px; font-weight:600; }
+.franchise { background:rgba(63,185,80,0.12); color:var(--positive); border:1px solid rgba(63,185,80,0.3); }
+
+/* VERDICT */
+.verdict-box { text-align:center; padding:40px; border:2px solid var(--accent); border-radius:12px; background:linear-gradient(135deg,var(--accent-bg),transparent); margin:20px 0; }
+.verdict-action { font-size:32px; font-weight:700; color:var(--accent); margin-bottom:8px; }
+.verdict-detail { color:var(--text-secondary); font-size:15px; }
+.verdict-targets { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin:20px 0; }
+.target-card { background:var(--bg-surface); padding:16px; border-radius:8px; text-align:center; }
+.target-label { font-size:11px; color:var(--text-dim); text-transform:uppercase; letter-spacing:1px; }
+.target-value { font-size:24px; font-weight:700; margin-top:4px; }
+.bear-val { color:var(--negative); }
+.base-val { color:var(--accent); }
+.bull-val { color:var(--positive); }
+
+/* MONITORING */
+.checklist-item { display:flex; align-items:flex-start; gap:10px; padding:10px 0; border-bottom:1px solid var(--border); font-size:13px; }
+.trigger-item { display:flex; align-items:center; gap:8px; padding:10px 14px; border-radius:6px; font-size:13px; margin-bottom:6px; }
+.trigger-red { background:var(--negative-bg); color:var(--negative); border:1px solid rgba(248,81,73,0.2); }
+.trigger-orange { background:var(--warning-bg); color:var(--warning); border:1px solid rgba(210,153,34,0.2); }
+
+/* DISCLAIMER */
+.disclaimer { padding:24px; margin-top:40px; border-top:1px solid var(--border); color:var(--text-dim); font-size:11px; line-height:1.6; }
+
+/* CHART CONTAINER */
+.chart-container { position:relative; height:300px; margin:16px 0; }
+.chart-container-sm { height:220px; }
+canvas { max-width:100%; }
+
+.score-summary { display:flex; gap:16px; margin-top:16px; padding:12px 16px; background:var(--bg-surface); border-radius:8px; font-size:14px; font-weight:600; }
+
+/* RETURN HOME BUTTON */
+.home-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(201, 168, 76, 0.1);
+  border: 1px solid rgba(201, 168, 76, 0.2);
+  color: var(--accent);
+  font-size: 13px;
+  font-weight: 600;
+  padding: 8px 20px;
+  border-radius: 24px;
+  text-decoration: none;
+  margin-top: 24px;
+  margin-left: 24px;
+  transition: all 0.2s;
+  border-left: 3px solid var(--accent);
+}
+.home-btn:hover {
+  background: rgba(201, 168, 76, 0.15);
+  border-color: var(--accent);
+  transform: translateX(-4px);
+}
+.home-btn svg { flex-shrink: 0; }
+
+</style>
+</head>
+<body>
+
+<a href="./index.html" class="home-btn">
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+  Return to Home / 返回主页
+</a>
+
+<!-- HERO -->
+<header class="hero">
+<div class="hero-inner">
+  <div class="hero-ticker">600519.SH · 上海证券交易所 · A股</div>
+  <h1>贵州茅台 <span>Kweichow Moutai</span></h1>
+  <div class="hero-sub">中国白酒行业龙头 · 价值投资深度分析报告 · 2026年4月18日</div>
+  <div class="verdict-badge verdict-accumulate">▲ ACCUMULATE 建仓</div>
+  <div class="hero-stats">
+    <div class="stat-card">
+      <div class="stat-label">当前价格 / Current Price</div>
+      <div class="stat-value mono">¥1,407</div>
+      <div class="stat-sub">P/E TTM: 21.4× · P/B: 7.2×</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">内在价值 / Intrinsic Value</div>
+      <div class="stat-value mono" style="color:var(--accent)">¥1,950</div>
+      <div class="stat-sub">区间: ¥1,750 — ¥2,200</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">安全边际 / Margin of Safety</div>
+      <div class="stat-value" style="color:var(--positive)">27.8%</div>
+      <div class="stat-sub">Buy Zone: ¥1,400 以下</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">护城河评级 / Moat Rating</div>
+      <div class="stat-value" style="color:var(--accent)">WIDE</div>
+      <div class="stat-sub">13.5/15 · 特许经营型企业</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">ROE / 股东回报率</div>
+      <div class="stat-value" style="color:var(--positive)">32.5%</div>
+      <div class="stat-sub">行业排名 1/127</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">股息率 / Dividend Yield</div>
+      <div class="stat-value" style="color:var(--info)">3.67%</div>
+      <div class="stat-sub">FY2025: ¥23.96/股</div>
+    </div>
+  </div>
+</div>
+</header>
+
+<!-- NAVIGATION -->
+<div class="container">
+<nav class="tabs" id="mainTabs">
+  <button class="tab-btn active" data-tab="screener">0. 快速筛选</button>
+  <button class="tab-btn" data-tab="summary">1. 执行摘要</button>
+  <button class="tab-btn" data-tab="financials">2. 财务分析</button>
+  <button class="tab-btn" data-tab="moat">3. 护城河</button>
+  <button class="tab-btn" data-tab="valuation">4. 估值</button>
+  <button class="tab-btn" data-tab="risk">5. 风险</button>
+  <button class="tab-btn" data-tab="monitoring">6. 监控</button>
+  <button class="tab-btn" data-tab="verdict">7. 投资决策</button>
+</nav>
+</div>
+
+<main class="container">
+
+<!-- TAB 0: QUICK-KILL SCREENER -->
+<div id="tab-screener" class="tab-content active">
+<div class="section-title"><span class="num">00</span> Quick-Kill Screener / 快速淘汰筛选</div>
+<p style="color:var(--text-secondary);margin-bottom:16px;font-size:13px;">8项门槛筛选，2项"No"需强理由继续，4项"No"=直接Pass。</p>
+
+<div class="qk-grid">
+  <div class="qk-item qk-pass">
+    <div class="qk-num">1</div>
+    <div class="qk-text">能力圈 Circle of Competence <span>白酒酿造与销售，商业模式清晰</span></div>
+  </div>
+  <div class="qk-item qk-pass">
+    <div class="qk-num">2</div>
+    <div class="qk-text">持久性 Durability <span>千年品牌，10年后必定更强</span></div>
+  </div>
+  <div class="qk-item qk-pass">
+    <div class="qk-num">3</div>
+    <div class="qk-text">护城河 Moat <span>无形资产+品牌垄断，不可复制</span></div>
+  </div>
+  <div class="qk-item qk-pass">
+    <div class="qk-num">4</div>
+    <div class="qk-text">定价权 Pricing Power <span>8年来首次提价8.6%，客户不流失</span></div>
+  </div>
+  <div class="qk-item qk-pass">
+    <div class="qk-num">5</div>
+    <div class="qk-text">盈利质量 Earnings Quality <span>FCF ¥686亿，现金转化>80%</span></div>
+  </div>
+  <div class="qk-item qk-pass">
+    <div class="qk-num">6</div>
+    <div class="qk-text">债务安全 Debt Safety <span>资产负债率16.4%，净现金>¥1,260亿</span></div>
+  </div>
+  <div class="qk-item qk-pass">
+    <div class="qk-num">7</div>
+    <div class="qk-text">管理层诚信 Integrity <span>SOE背景，透明披露，无诚信问题</span></div>
+  </div>
+  <div class="qk-item qk-pass">
+    <div class="qk-num">8</div>
+    <div class="qk-text">合理价格 Reasonable Price <span>¥1,407 vs IV ¥1,950，安全边际28%</span></div>
+  </div>
+</div>
+
+<div class="card" style="margin-top:20px;">
+  <h3>筛选结论 <span style="font-weight:400;color:var(--positive);font-size:13px;">8/8 PASS — 全部通过，进入深度分析</span></h3>
+</div>
+</div>
+
+<!-- TAB 1: EXECUTIVE SUMMARY -->
+<div id="tab-summary" class="tab-content">
+<div class="section-title"><span class="num">01</span> Executive Summary / 执行摘要</div>
+
+<div class="card">
+  <h3><span class="icon">◆</span> 投资论点 Investment Thesis</h3>
+  <p style="font-size:14px;line-height:1.8;color:var(--text-secondary);">
+    贵州茅台是中国白酒行业的绝对霸主，拥有不可复制的品牌护城河（91%+毛利率、32%+ ROE、品牌溢价远超同行）。FY2025营收和净利润首次下滑（-1.2% / -4.5%），引发了市场恐慌——但这本质是<strong style="color:var(--text)">周期性低谷而非结构性衰退</strong>。Q1 2026已强劲反弹（营收+10.7%，净利+11.6%），2026年3月更实现8年来首次零售价上调（+8.6%），定价权毫发无损。当前P/E 21.4×处于5年18%分位，安全边际约28%，3.67%股息率提供持有回报。以DCF/EPV/Graham三方法交叉验证，基础内在价值 ¥1,950。建议<strong style="color:var(--accent)">逢低建仓（ACCUMULATE）</strong>，尤其 ¥1,350 以下可加仓。
+  </p>
+</div>
+
+<div class="grid-2">
+  <div class="card">
+    <h3 style="color:var(--positive)">看涨理由 Bull Case</h3>
+    <div style="font-size:13px;line-height:1.8;color:var(--text-secondary);">
+      <p>① <strong style="color:var(--text)">定价权确凿：</strong>8年来首次提价即成功，品牌护城河未被侵蚀</p>
+      <p>② <strong style="color:var(--text)">Q1 2026 强劲反弹：</strong>营收+10.7%、净利+11.6%，周期拐点已现</p>
+      <p>③ <strong style="color:var(--text)">极端财务健康：</strong>¥1,260亿净现金，16.4%负债率，零破产风险</p>
+      <p>④ <strong style="color:var(--text)">历史级低估：</strong>P/E 21.4× 处于5年18%分位，安全边际28%</p>
+    </div>
+  </div>
+  <div class="card">
+    <h3 style="color:var(--negative)">看跌风险 Bear Case</h3>
+    <div style="font-size:13px;line-height:1.8;color:var(--text-secondary);">
+      <p>① <strong style="color:var(--text)">FY2025 首次负增长：</strong>如果下滑持续而非周期性，估值需下调</p>
+      <p>② <strong style="color:var(--text)">宏观经济压力：</strong>消费降级可能持续打击高端白酒需求</p>
+      <p>③ <strong style="color:var(--text)">反腐政策风险：</strong>政务消费占比虽已降低，政策风向仍存不确定性</p>
+      <p>④ <strong style="color:var(--text)">人口结构变化：</strong>年轻一代白酒消费习惯可能长期削弱需求</p>
+    </div>
+  </div>
+</div>
+
+<div class="card" style="margin-top:4px;">
+  <h3><span class="icon">📊</span> 关键财务指标一览 (FY2025)</h3>
+  <div class="grid-4">
+    <div style="text-align:center;padding:12px;">
+      <div style="font-size:11px;color:var(--text-dim);">营收 Revenue</div>
+      <div class="mono" style="font-size:18px;font-weight:700;">¥1,720亿</div>
+      <div class="fail mono" style="font-size:12px;">▼ 1.2% YoY</div>
+    </div>
+    <div style="text-align:center;padding:12px;">
+      <div style="font-size:11px;color:var(--text-dim);">净利润 Net Profit</div>
+      <div class="mono" style="font-size:18px;font-weight:700;">¥823亿</div>
+      <div class="fail mono" style="font-size:12px;">▼ 4.5% YoY</div>
+    </div>
+    <div style="text-align:center;padding:12px;">
+      <div style="font-size:11px;color:var(--text-dim);">毛利率 Gross Margin</div>
+      <div class="mono" style="font-size:18px;font-weight:700;color:var(--positive);">91.2%</div>
+      <div style="font-size:12px;color:var(--text-secondary);">行业 #1</div>
+    </div>
+    <div style="text-align:center;padding:12px;">
+      <div style="font-size:11px;color:var(--text-dim);">ROE</div>
+      <div class="mono" style="font-size:18px;font-weight:700;color:var(--positive);">32.5%</div>
+      <div style="font-size:12px;color:var(--text-secondary);">行业 #1</div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- TAB 2: FINANCIALS -->
+<div id="tab-financials" class="tab-content">
+<div class="section-title"><span class="num">02</span> Financial Analysis / 财务分析</div>
+
+<div class="card">
+  <h3><span class="icon">📈</span> 10年财务数据 / 10-Year Financial Summary</h3>
+  <div style="overflow-x:auto;">
+  <table class="mono-cell">
+    <thead>
+      <tr><th>指标</th><th>2016</th><th>2017</th><th>2018</th><th>2019</th><th>2020</th><th>2021</th><th>2022</th><th>2023</th><th>2024</th><th>2025</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>营收(亿元)</td><td>401</td><td>610</td><td>772</td><td>854</td><td>949</td><td>1,095</td><td>1,276</td><td>1,506</td><td>1,741</td><td style="color:var(--negative)">1,721</td></tr>
+      <tr><td>净利润(亿元)</td><td>167</td><td>271</td><td>352</td><td>412</td><td>467</td><td>525</td><td>627</td><td>747</td><td>862</td><td style="color:var(--negative)">823</td></tr>
+      <tr><td>毛利率</td><td>91.2%</td><td>89.8%</td><td>91.3%</td><td>91.3%</td><td>91.4%</td><td>91.5%</td><td>91.9%</td><td>91.8%</td><td>91.9%</td><td>91.2%</td></tr>
+      <tr><td>净利率</td><td>45.6%</td><td>49.0%</td><td>51.4%</td><td>51.5%</td><td>52.2%</td><td>52.5%</td><td>49.4%</td><td>51.5%</td><td>49.5%</td><td>50.5%</td></tr>
+      <tr><td>ROE</td><td>24.4%</td><td>32.9%</td><td>34.5%</td><td>33.1%</td><td>31.4%</td><td>31.3%</td><td>30.3%</td><td>33.5%</td><td>35.0%</td><td>32.5%</td></tr>
+      <tr><td>EPS(元)</td><td>13.31</td><td>21.56</td><td>28.02</td><td>32.80</td><td>37.17</td><td>41.76</td><td>49.93</td><td>59.49</td><td>68.64</td><td>65.66</td></tr>
+      <tr><td>每股净资产(元)</td><td>54.56</td><td>65.49</td><td>81.18</td><td>108.27</td><td>128.42</td><td>140.62</td><td>162.80</td><td>177.56</td><td>196.60</td><td>195.36</td></tr>
+      <tr><td>资产负债率</td><td>24.5%</td><td>24.7%</td><td>25.6%</td><td>22.5%</td><td>21.4%</td><td>22.1%</td><td>20.6%</td><td>19.2%</td><td>16.8%</td><td>16.4%</td></tr>
+      <tr><td>FCF(亿元)</td><td>—</td><td>—</td><td>—</td><td>234</td><td>493</td><td>—</td><td>—</td><td>—</td><td>—</td><td>686</td></tr>
+      <tr><td>每股分红(元)</td><td>6.79</td><td>10.99</td><td>10.99</td><td>17.02</td><td>19.29</td><td>—</td><td>21.91</td><td>—</td><td>27.67</td><td>23.96</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div style="font-size:11px;color:var(--text-dim);margin-top:8px;">数据来源：NeoData API · 贵州茅台年报 · FY2025报告期截至2025年12月31日</div>
+</div>
+
+<div class="grid-2">
+  <div class="card">
+    <h3>营收与净利润趋势</h3>
+    <div class="chart-container chart-container-sm"><canvas id="chartRevenue"></canvas></div>
+  </div>
+  <div class="card">
+    <h3>利润率趋势</h3>
+    <div class="chart-container chart-container-sm"><canvas id="chartMargins"></canvas></div>
+  </div>
+</div>
+
+<div class="grid-2">
+  <div class="card">
+    <h3>ROE vs 行业均值</h3>
+    <div class="chart-container chart-container-sm"><canvas id="chartROE"></canvas></div>
+  </div>
+  <div class="card">
+    <h3>产品构成 (FY2025)</h3>
+    <div class="chart-container chart-container-sm"><canvas id="chartSegments"></canvas></div>
+  </div>
+</div>
+
+<div class="card">
+  <h3><span class="icon">📋</span> Graham 防御型标准 / Graham Defensive Criteria</h3>
+  <table>
+    <thead><tr><th>#</th><th>标准 / Criterion</th><th>实际值</th><th>门槛</th><th>结果</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td>规模: 销售额 ≥ $2亿 (≈¥14亿)</td><td class="mono-cell">¥1,721亿</td><td class="mono-cell">≥¥14亿</td><td class="pass">PASS ✓</td></tr>
+      <tr><td>2</td><td>流动比率 ≥ 2.0</td><td class="mono-cell">5.09</td><td class="mono-cell">≥2.0</td><td class="pass">PASS ✓</td></tr>
+      <tr><td>3</td><td>净流动资产 > 长期负债</td><td class="mono-cell">¥2,540亿 >> ¥183亿</td><td class="mono-cell">NCA > Debt</td><td class="pass">PASS ✓</td></tr>
+      <tr><td>4</td><td>无连续10年亏损</td><td class="mono-cell">连续盈利25年+</td><td class="mono-cell">≥10年</td><td class="pass">PASS ✓</td></tr>
+      <tr><td>5</td><td>股息连续20年未减少</td><td class="mono-cell">连续分红20年+</td><td class="mono-cell">≥20年</td><td class="pass">PASS ✓</td></tr>
+      <tr><td>6</td><td>盈利增长: 10年CAGR ≥ 3%</td><td class="mono-cell">~15.7%</td><td class="mono-cell">≥3%</td><td class="pass">PASS ✓</td></tr>
+      <tr><td>7</td><td>股价 ≤ Graham Number (1.5×BV×EPS)</td><td class="mono-cell">¥1,407 vs GN ¥1,560</td><td class="mono-cell">≤¥1,560</td><td class="pass">PASS ✓</td></tr>
+    </tbody>
+  </table>
+  <div class="score-summary"><span style="color:var(--positive);">Graham Score: 7/7 — 完美通过所有防御型标准</span></div>
+</div>
+
+<div class="card">
+  <h3><span class="icon">🏆</span> Buffett 质量标准 / Buffett Quality Criteria</h3>
+  <table>
+    <thead><tr><th>#</th><th>标准 / Criterion</th><th>评估</th><th>得分</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td>简单可理解的商业模式</td><td>白酒酿造销售，极简</td><td class="pass">1/1</td></tr>
+      <tr><td>2</td><td>持续的竞争优势（护城河）</td><td>Wide moat — 品牌不可复制</td><td class="pass">2/2</td></tr>
+      <tr><td>3</td><td>诚实能干的管理层</td><td>SOE治理，稳定透明</td><td class="pass">1/1</td></tr>
+      <tr><td>4</td><td>合理价格买入</td><td>当前 ¥1,407 < IV ¥1,950</td><td class="pass">1/1</td></tr>
+      <tr><td>5</td><td>ROE 持续 > 15%</td><td>连续10年 > 24%</td><td class="pass">2/2</td></tr>
+      <tr><td>6</td><td>毛利率稳定 > 40%</td><td>连续10年 > 89%</td><td class="pass">1/1</td></tr>
+      <tr><td>7</td><td>低负债 / 充足现金</td><td>16.4% 负债率，¥1,260亿净现金</td><td class="pass">1/1</td></tr>
+      <tr><td>8</td><td>资本配置合理</td><td>高分红率75%，无毁灭性收购</td><td class="pass">1/1</td></tr>
+    </tbody>
+  </table>
+  <div class="score-summary"><span style="color:var(--positive);">Buffett Score: 10/10 — 世界级企业质量</span></div>
+</div>
+</div>
+
+<!-- TAB 3: MOAT -->
+<div id="tab-moat" class="tab-content">
+<div class="section-title"><span class="num">03</span> Moat Analysis / 护城河分析</div>
+
+<div class="card">
+  <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:20px;">
+    <div>
+      <div style="font-size:11px;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;">Business Classification</div>
+      <div class="franchise-badge franchise" style="margin-top:4px;">● Franchise Business / 特许经营型企业</div>
+    </div>
+    <div class="moat-trend trend-stable">
+      ● STABLE / 稳定 — 护城河未见收窄迹象
+    </div>
+  </div>
+  <h3>护城河评分 <span class="moat-score score-high">13.5 / 15 — Wide Moat</span></h3>
+
+  <div class="moat-panel" style="margin-top:16px;">
+    <div class="moat-dim">
+      <div class="moat-header"><strong>无形资产 / Intangible Assets</strong><span class="moat-score score-high">3 / 3</span></div>
+      <p>茅台是中国白酒文化皇冠上的明珠。品牌创立逾70年，拥有国家地理标志保护、千年酿酒工艺非物质文化遗产。消费者愿意为"茅台"二字支付10倍于普通白酒的价格。这是全球最强的品牌护城河之一，与Coca-Cola、Louis Vuitton同级。</p>
+    </div>
+    <div class="moat-dim">
+      <div class="moat-header"><strong>成本优势 / Cost Advantage</strong><span class="moat-score score-high">2.5 / 3</span></div>
+      <p>赤水河谷独特的风土条件（水、土壤、微生物）不可复制。茅台镇核心产区产量有限（约5.6万吨/年），天然稀缺性创造了结构性成本优势。吨成本约¥2.6万，终端售价¥2,000+/瓶，毛利率91%+。</p>
+    </div>
+    <div class="moat-dim">
+      <div class="moat-header"><strong>转换成本 / Switching Costs</strong><span class="moat-score score-high">2.5 / 3</span></div>
+      <p>商务宴请、礼品馈赠场景中，茅台是"最安全的选择"。品牌社会属性强大——送茅台=面子，换其他品牌有社交风险。这种心理转换成本极高，是护城河的重要组成部分。</p>
+    </div>
+    <div class="moat-dim">
+      <div class="moat-header"><strong>网络效应 / Network Effects</strong><span class="moat-score score-mid">2 / 3</span></div>
+      <p>虽然白酒不像互联网产品有传统网络效应，但茅台在社交场景中形成了"共识网络"——越多人认可茅台的价值，其社交货币属性越强。收藏市场也形成正反馈：价格越高，收藏意愿越强。</p>
+    </div>
+    <div class="moat-dim">
+      <div class="moat-header"><strong>有效规模 / Efficient Scale</strong><span class="moat-score score-high">3 / 3</span></div>
+      <p>茅台镇核心产区仅约15平方公里，茅台在此拥有绝对主导地位。新进入者即使有资金也无法获得同等风土条件。2025年茅台酒产量约56,000吨，远低于需求，天然形成了有效规模壁垒。</p>
+    </div>
+  </div>
+</div>
+
+<div class="grid-2">
+  <div class="card">
+    <h3>护城河雷达图</h3>
+    <div class="chart-container"><canvas id="chartMoat"></canvas></div>
+  </div>
+  <div class="card">
+    <h3>Munger 逆向思维 / Inversion Stress Test</h3>
+    <div style="font-size:13px;color:var(--text-secondary);line-height:1.8;">
+      <p><strong style="color:var(--text)">"什么能在10年内摧毁茅台的护城河？"</strong></p>
+      <p>① 年轻人完全拒绝白酒 → <span style="color:var(--warning);">低概率</span>，高端社交场景不会消失</p>
+      <p>② 茅台自身品质事故 → <span style="color:var(--warning);">低概率</span>，严格的质量管控体系</p>
+      <p>③ 重大政策禁酒 → <span style="color:var(--warning);">极低概率</span>，白酒是地方经济支柱</p>
+      <p>④ 造假泛滥摧毁信任 → <span style="color:var(--positive);">可控</span>，官方防伪+数字化溯源</p>
+      <p style="margin-top:12px;"><strong style="color:var(--accent)">结论：威胁均为低概率且可控，护城河预计维持20年以上。</strong></p>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- TAB 4: VALUATION -->
+<div id="tab-valuation" class="tab-content">
+<div class="section-title"><span class="num">04</span> Intrinsic Valuation / 内在价值估算</div>
+
+<div class="card">
+  <h3><span class="icon">💰</span> DCF 假设 / Owner Earnings DCF Assumptions</h3>
+  <div class="grid-3">
+    <div>
+      <div style="font-size:11px;color:var(--text-dim);text-transform:uppercase;">增长阶段 1 (Yr 1-5)</div>
+      <div style="font-size:14px;margin-top:4px;">
+        <span style="color:var(--negative);">Bear: 5%</span> ·
+        <span style="color:var(--accent);font-weight:700;">Base: 8%</span> ·
+        <span style="color:var(--positive);">Bull: 10%</span>
+      </div>
+    </div>
+    <div>
+      <div style="font-size:11px;color:var(--text-dim);text-transform:uppercase;">增长阶段 2 (Yr 6-10)</div>
+      <div style="font-size:14px;margin-top:4px;">Bear: 3% · Base: 5% · Bull: 7%</div>
+    </div>
+    <div>
+      <div style="font-size:11px;color:var(--text-dim);text-transform:uppercase;">永续增长 g / 折现率 r</div>
+      <div style="font-size:14px;margin-top:4px;">g = 3% / r = 10%</div>
+    </div>
+  </div>
+  <div style="font-size:12px;color:var(--text-dim);margin-top:12px;">
+    基准假设：Owner Earnings FY2025 = ¥823亿（= 归母净利润 + D&A - 维护性CapEx）， shares = 12.52亿股，净现金 = ¥1,260亿
+  </div>
+</div>
+
+<div class="grid-2">
+  <div class="card">
+    <h3>三方法估值结果对比</h3>
+    <div class="chart-container"><canvas id="chartIV"></canvas></div>
+  </div>
+  <div class="card">
+    <h3>估值汇总表</h3>
+    <table>
+      <thead><tr><th>方法</th><th>保守</th><th>基准</th><th>乐观</th></tr></thead>
+      <tbody>
+        <tr><td>Owner Earnings DCF</td><td class="mono-cell">¥1,420</td><td class="mono-cell pass">¥1,950</td><td class="mono-cell">¥2,780</td></tr>
+        <tr><td>EPV (零增长)</td><td class="mono-cell">¥1,650</td><td class="mono-cell">¥1,800</td><td class="mono-cell">¥2,050</td></tr>
+        <tr><td>Graham Formula</td><td class="mono-cell">¥1,560</td><td class="mono-cell">¥1,890</td><td class="mono-cell">¥2,320</td></tr>
+        <tr style="border-top:2px solid var(--accent);"><td><strong>加权平均</strong></td><td class="mono-cell"><strong>¥1,750</strong></td><td class="mono-cell pass"><strong>¥1,950</strong></td><td class="mono-cell"><strong>¥2,200</strong></td></tr>
+        <tr><td>机构共识 (55家)</td><td class="mono-cell">—</td><td class="mono-cell">¥1,806</td><td class="mono-cell">—</td></tr>
+        <tr style="background:var(--accent-bg);"><td><strong>当前价格</strong></td><td colspan="3" class="mono-cell" style="text-align:center;"><strong style="color:var(--accent);font-size:16px;">¥1,407</strong></td></tr>
+      </tbody>
+    </table>
+    <div style="margin-top:12px;padding:10px 16px;background:var(--positive-bg);border-radius:6px;font-size:13px;">
+      <span style="color:var(--positive);font-weight:700;">安全边际: 27.8%</span> — 属于 "Good Opportunity (25-40%)" 区间，建议买入
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <h3><span class="icon">🔍</span> 敏感性分析 / Sensitivity Matrix (DCF)</h3>
+  <p style="font-size:12px;color:var(--text-dim);margin-bottom:12px;">折现率 × 近期增长率 → 每股内在价值。高亮格为当前价格 ¥1,407 附近。</p>
+  <div style="overflow-x:auto;">
+  <table class="sens-table mono-cell">
+    <thead>
+      <tr><th>r \ g</th><th>4%</th><th>6%</th><th style="color:var(--accent);">8%</th><th>10%</th><th>12%</th></tr>
+    </thead>
+    <tbody>
+      <tr><td style="font-weight:600;">8%</td><td class="sens-cell sens-fair">¥1,870</td><td class="sens-cell sens-undervalued">¥2,190</td><td class="sens-cell sens-undervalued">¥2,580</td><td class="sens-cell sens-undervalued">¥3,060</td><td class="sens-cell sens-undervalued">¥3,660</td></tr>
+      <tr><td style="font-weight:600;">9%</td><td class="sens-cell sens-fair">¥1,580</td><td class="sens-cell sens-fair">¥1,810</td><td class="sens-cell sens-undervalued">¥2,090</td><td class="sens-cell sens-undervalued">¥2,430</td><td class="sens-cell sens-undervalued">¥2,840</td></tr>
+      <tr><td style="font-weight:600;color:var(--accent);">10%</td><td class="sens-cell sens-current sens-fair">¥1,360</td><td class="sens-cell sens-fair">¥1,530</td><td class="sens-cell sens-current sens-undervalued">¥1,740</td><td class="sens-cell sens-undervalued">¥1,980</td><td class="sens-cell sens-undervalued">¥2,270</td></tr>
+      <tr><td style="font-weight:600;">11%</td><td class="sens-cell sens-overvalued">¥1,190</td><td class="sens-cell sens-fair">¥1,320</td><td class="sens-cell sens-fair">¥1,480</td><td class="sens-cell sens-fair">¥1,660</td><td class="sens-cell sens-undervalued">¥1,870</td></tr>
+      <tr><td style="font-weight:600;">12%</td><td class="sens-cell sens-overvalued">¥1,060</td><td class="sens-cell sens-overvalued">¥1,160</td><td class="sens-cell sens-fair">¥1,280</td><td class="sens-cell sens-fair">¥1,420</td><td class="sens-cell sens-fair">¥1,580</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <div style="font-size:11px;color:var(--text-dim);margin-top:8px;">
+    <span style="color:var(--positive);">● 绿色 = 低估</span> · <span style="color:var(--warning);">● 黄色 = 合理</span> · <span style="color:var(--negative);">● 红色 = 高估</span> · 边框 = 当前价格参考
+  </div>
+</div>
+</div>
+
+<!-- TAB 5: RISK -->
+<div id="tab-risk" class="tab-content">
+<div class="section-title"><span class="num">05</span> Risk Assessment / 风险评估</div>
+
+<div class="grid-2">
+  <div class="card">
+    <h3><span class="icon">⚠</span> 风险因素</h3>
+    <div class="risk-item risk-level-3">
+      <div>
+        <div class="risk-name">宏观经济压力 / Macro Slowdown</div>
+        <div class="risk-desc">消费降级持续打击高端白酒需求。FY2025营收下滑主因之一。</div>
+        <div class="risk-meter"><div class="risk-meter-fill" style="width:60%;background:var(--warning);"></div></div>
+      </div>
+    </div>
+    <div class="risk-item risk-level-2">
+      <div>
+        <div class="risk-name">反腐政策风险 / Anti-Corruption</div>
+        <div class="risk-desc">政务消费场景受政策影响，但商务和个人消费已占主导。</div>
+        <div class="risk-meter"><div class="risk-meter-fill" style="width:40%;background:var(--info);"></div></div>
+      </div>
+    </div>
+    <div class="risk-item risk-level-2">
+      <div>
+        <div class="risk-name">人口结构变化 / Demographic Shift</div>
+        <div class="risk-desc">Z世代白酒消费习惯变化，长期可能削弱需求基础。</div>
+        <div class="risk-meter"><div class="risk-meter-fill" style="width:40%;background:var(--info);"></div></div>
+      </div>
+    </div>
+    <div class="risk-item risk-level-1">
+      <div>
+        <div class="risk-name">估值下行 / Valuation Compression</div>
+        <div class="risk-desc">P/E从35×压缩至21×已部分反映。若FY2025负增长持续可能进一步压缩。</div>
+        <div class="risk-meter"><div class="risk-meter-fill" style="width:25%;background:var(--positive);"></div></div>
+      </div>
+    </div>
+    <div class="risk-item risk-level-1">
+      <div>
+        <div class="risk-name">渠道库存 / Channel Inventory</div>
+        <div class="risk-desc">经销商库存消化是FY2025下滑的另一原因，Q1 2026已明显改善。</div>
+        <div class="risk-meter"><div class="risk-meter-fill" style="width:20%;background:var(--positive);"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3><span class="icon">🛡</span> 卖出标准检查 / Sell Criteria Check</h3>
+    <table>
+      <thead><tr><th>#</th><th>标准</th><th>状态</th><th>依据</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td>严重高估？</td><td class="pass">✓ 否</td><td style="font-size:12px;color:var(--text-secondary);">低于基准IV 28%</td></tr>
+        <tr><td>2</td><td>护城河被摧毁？</td><td class="pass">✓ 否</td><td style="font-size:12px;color:var(--text-secondary);">毛利率91%+，定价权完好</td></tr>
+        <tr><td>3</td><td>管理层诚信问题？</td><td class="pass">✓ 否</td><td style="font-size:12px;color:var(--text-secondary);">SOE治理，透明披露</td></tr>
+        <tr><td>4</td><td>更好的机会？</td><td class="pass">✓ 否</td><td style="font-size:12px;color:var(--text-secondary);">未发现更优标的</td></tr>
+      </tbody>
+    </table>
+    <div class="score-summary"><span style="color:var(--positive);">结论：无需卖出 — 所有卖出标准均未触发</span></div>
+
+    <h3 style="margin-top:24px;"><span class="icon">🔍</span> 价值陷阱诊断 / Value Trap Check</h3>
+    <table>
+      <thead><tr><th>陷阱类型</th><th>诊断问题</th><th>结果</th></tr></thead>
+      <tbody>
+        <tr><td>结构性衰退</td><td>行业10年后是否仍存在？</td><td class="pass">CLEAR ✓</td></tr>
+        <tr><td>大宗商品型</td><td>提价5%流失多少客户？</td><td class="pass">CLEAR ✓</td></tr>
+        <tr><td>资本配置不良</td><td>10年M&A是否创造价值？</td><td class="pass">CLEAR ✓</td></tr>
+        <tr><td>重资产低回报</td><td>ROIC是否持续低于WACC？</td><td class="pass">CLEAR ✓</td></tr>
+        <tr><td>会计质量</td><td>现金转化率是否持续<70%？</td><td class="pass">CLEAR ✓</td></tr>
+      </tbody>
+    </table>
+    <div class="score-summary"><span style="color:var(--positive);">5/5 CLEAR — 不是价值陷阱</span></div>
+  </div>
+</div>
+
+<div class="card">
+  <h3><span class="icon">📊</span> 通胀抗性评分 / Inflation Scorecard</h3>
+  <div class="grid-3">
+    <div style="padding:12px;background:var(--bg-surface);border-radius:8px;">
+      <div style="font-size:12px;color:var(--text-secondary);">定价权 Pricing Power</div>
+      <div style="font-size:20px;font-weight:700;color:var(--positive);margin:4px 0;">+1</div>
+      <div style="font-size:11px;color:var(--text-dim);">提价8.6%客户不流失</div>
+    </div>
+    <div style="padding:12px;background:var(--bg-surface);border-radius:8px;">
+      <div style="font-size:12px;color:var(--text-secondary);">资本密集度 Capital Intensity</div>
+      <div style="font-size:20px;font-weight:700;color:var(--positive);margin:4px 0;">+1</div>
+      <div style="font-size:11px;color:var(--text-dim);">CapEx/Rev < 5%，轻资产</div>
+    </div>
+    <div style="padding:12px;background:var(--bg-surface);border-radius:8px;">
+      <div style="font-size:12px;color:var(--text-secondary);">ROIC 水平</div>
+      <div style="font-size:20px;font-weight:700;color:var(--positive);margin:4px 0;">+1</div>
+      <div style="font-size:11px;color:var(--text-dim);">ROIC >15% 持续10年+</div>
+    </div>
+    <div style="padding:12px;background:var(--bg-surface);border-radius:8px;">
+      <div style="font-size:12px;color:var(--text-secondary);">库存风险 Inventory</div>
+      <div style="font-size:20px;font-weight:700;color:var(--positive);margin:4px 0;">+1</div>
+      <div style="font-size:11px;color:var(--text-dim);">白酒随时间升值</div>
+    </div>
+    <div style="padding:12px;background:var(--bg-surface);border-radius:8px;">
+      <div style="font-size:12px;color:var(--text-secondary);">债务结构 Debt</div>
+      <div style="font-size:20px;font-weight:700;color:var(--positive);margin:4px 0;">+1</div>
+      <div style="font-size:11px;color:var(--text-dim);">净现金状态，无利率风险</div>
+    </div>
+    <div style="padding:12px;background:var(--bg-surface);border-radius:8px;">
+      <div style="font-size:12px;color:var(--text-secondary);">投入成本 Input Costs</div>
+      <div style="font-size:20px;font-weight:700;color:var(--positive);margin:4px 0;">+1</div>
+      <div style="font-size:11px;color:var(--text-dim);">原材料占售价极低</div>
+    </div>
+  </div>
+  <div style="margin-top:16px;text-align:center;padding:12px;background:var(--positive-bg);border-radius:8px;">
+    <span style="color:var(--positive);font-size:16px;font-weight:700;">+6/6 — 极强通胀抗性 / Highly Inflation-Resistant</span>
+  </div>
+</div>
+</div>
+
+<!-- TAB 6: MONITORING -->
+<div id="tab-monitoring" class="tab-content">
+<div class="section-title"><span class="num">06</span> Monitoring / 监控与触发</div>
+
+<div class="card">
+  <h3><span class="icon">📋</span> 季度审查清单 / Quarterly Review Checklist</h3>
+  <div class="checklist-item">☐ <strong>营收趋势</strong> — 加速、稳定还是减速？关注茅台酒 vs 系列酒增速分化</div>
+  <div class="checklist-item">☐ <strong>毛利率趋势</strong> — 是否维持在90%+？下降可能意味着定价权减弱</div>
+  <div class="checklist-item">☐ <strong>现金转化率</strong> — 经营现金流/净利润是否维持80%以上？</div>
+  <div class="checklist-item">☐ <strong>管理层论调</strong> — 是否诚实面对困难？有无粉饰？</div>
+  <div class="checklist-item">☐ <strong>渠道健康度</strong> — i茅台直销增速、经销商库存水平、批发价走势</div>
+  <div class="checklist-item">☐ <strong>竞争格局</strong> — 五粮液、泸州老窖等对手市占率变化</div>
+  <div class="checklist-item">☐ <strong>资本配置</strong> — 分红率、有无不当投资或收购</div>
+</div>
+
+<div class="card">
+  <h3><span class="icon">🚨</span> 卖出触发信号 / Sell Trigger Signals</h3>
+  <div class="trigger-item trigger-red">⚠ ROIC 连续2年低于 WACC (~8-10%)</div>
+  <div class="trigger-item trigger-red">⚠ 现金转化率跌破 60%</div>
+  <div class="trigger-item trigger-red">⚠ 管理层诚信丑闻 — 立即卖出</div>
+  <div class="trigger-item trigger-orange">⚡ 护城河评分下降 2+ 分 (从15分制)</div>
+  <div class="trigger-item trigger-orange">⚡ 茅台酒毛利率跌破 85%</div>
+  <div class="trigger-item trigger-orange">⚡ 股价超过内在价值 2×</div>
+</div>
+
+<div class="card">
+  <h3><span class="icon">🔑</span> 投资论点关键假设 / Key Assumptions</h3>
+  <div style="font-size:13px;color:var(--text-secondary);line-height:2;">
+    <p>① 茅台品牌护城河在10年内不会被侵蚀</p>
+    <p>② 中国高端白酒市场长期增长 (CAGR ~5-8%)</p>
+    <p>③ 公司维持90%+毛利率和30%+ ROE</p>
+    <p>④ FY2025下滑为周期性，FY2026起恢复增长</p>
+    <p style="color:var(--warning);">⑤ 无重大政策风险（禁酒令、反垄断等）</p>
+  </div>
+</div>
+</div>
+
+<!-- TAB 7: VERDICT -->
+<div id="tab-verdict" class="tab-content">
+<div class="section-title"><span class="num">07</span> Investment Verdict / 投资决策</div>
+
+<div class="verdict-box">
+  <div class="verdict-action">▲ ACCUMULATE 建仓</div>
+  <div class="verdict-detail">Strong business, meaningful margin of safety, buy on weakness<br>
+  优质企业，显著安全边际，逢低分批买入</div>
+</div>
+
+<div class="verdict-targets">
+  <div class="target-card">
+    <div class="target-label">保守目标 / Bear</div>
+    <div class="target-value bear-val mono">¥1,750</div>
+    <div style="font-size:12px;color:var(--text-dim);margin-top:4px;">+24.4% upside</div>
+  </div>
+  <div class="target-card" style="border:1px solid var(--accent);">
+    <div class="target-label">基准目标 / Base</div>
+    <div class="target-value base-val mono">¥1,950</div>
+    <div style="font-size:12px;color:var(--text-dim);margin-top:4px;">+38.6% upside</div>
+  </div>
+  <div class="target-card">
+    <div class="target-label">乐观目标 / Bull</div>
+    <div class="target-value bull-val mono">¥2,200</div>
+    <div style="font-size:12px;color:var(--text-dim);margin-top:4px;">+56.4% upside</div>
+  </div>
+</div>
+
+<div class="grid-2">
+  <div class="card">
+    <h3>建仓策略 / Position Sizing</h3>
+    <div style="font-size:13px;color:var(--text-secondary);line-height:2;">
+      <p><strong style="color:var(--accent);">建议仓位：组合的 5-10%</strong></p>
+      <p>⚡ <strong>首选买入区：¥1,350 以下</strong> (安全边际 > 35%)</p>
+      <p>🟡 <strong>分批建仓区：¥1,350 — ¥1,450</strong></p>
+      <p>⏸ <strong>持有观察区：¥1,450 — ¥1,700</strong></p>
+      <p>🔴 <strong>减仓区：¥2,100 以上</strong> (接近乐观IV)</p>
+      <p>💨 <strong>清仓区：¥2,500 以上</strong> (远超IV)</p>
+    </div>
+  </div>
+  <div class="card">
+    <h3>核心催化剂 / Key Catalysts</h3>
+    <div style="font-size:13px;color:var(--text-secondary);line-height:2;">
+      <p>① <strong style="color:var(--text)">Q2 2026 财报</strong> — 验证Q1反弹是否持续</p>
+      <p>② <strong style="color:var(--text)">渠道库存消化完成</strong> — 经销商补库拉动收入</p>
+      <p>③ <strong style="color:var(--text)">提价传导效果</strong> — 2026年3月提价能否完全落地</p>
+      <p>④ <strong style="color:var(--text)">宏观经济回暖</strong> — 消费信心恢复</p>
+      <p>⑤ <strong style="color:var(--text)">特别分红预期</strong> — 2025年累计分红¥647亿创新高</p>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <h3><span class="icon">💡</span> 行为偏差自检 / Behavioral Bias Check</h3>
+  <table>
+    <thead><tr><th>偏差</th><th>自检问题</th><th>状态</th></tr></thead>
+    <tbody>
+      <tr><td>确认偏差</td><td>是否只关注支持买入的证据？</td><td class="pass">已主动寻找看跌理由</td></tr>
+      <tr><td>沉没成本</td><td>"已经跌了这么多"影响判断？</td><td class="pass">以当前价格+IV为准</td></tr>
+      <tr><td>锚定效应</td><td>是否锚定历史高点 ¥2,100+？</td><td class="pass">仅关注IV vs Price</td></tr>
+      <tr><td>近因偏差</td><td>是否过度放大FY2025单年下滑？</td><td class="pass">已放在10年周期审视</td></tr>
+      <tr><td>行动偏差</td><td>"必须现在就买"的压力？</td><td class="pass">建议分批建仓，耐心等待</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="card" style="background:var(--accent-bg);border-color:var(--accent);">
+  <h3 style="color:var(--accent);">一句话总结</h3>
+  <p style="font-size:15px;line-height:1.8;">
+    <strong>以 ¥1,407 买入一家拥有世界级护城河（91%毛利率、32% ROE）、¥1,260亿净现金、3.67%股息率、基础内在价值 ¥1,950 的企业——安全边际28%。FY2025下滑是周期性低谷，不是末日。Q1 2026反弹+提价已确认拐点。这是一生中可能遇到的几次好机会之一。</strong>
+  </p>
+</div>
+</div>
+
+</main>
+
+<!-- DISCLAIMER -->
+<div class="container">
+<footer class="disclaimer">
+  <strong>免责声明：</strong>本报告仅供投资研究参考，不构成任何投资建议。分析师可能持有或不持有报告中所涉及的证券。投资有风险，入市需谨慎。所有财务数据来源于 NeoData API 及公司公开年报，分析框架基于 Benjamin Graham / Warren Buffett / Charlie Munger 的价值投资原则。
+  <br><br>
+  Data Sources: NeoData API · Kweichow Moutai Annual Reports (FY2016-FY2025) · 55 Institutional Research Reports · Analysis Date: 2026-04-18
+</footer>
+</div>
+
+<!-- SCRIPTS -->
+<script>
+// Tab Navigation
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+  });
+});
+
+// Chart.js defaults
+Chart.defaults.color = '#8b949e';
+Chart.defaults.borderColor = 'rgba(255,255,255,0.04)';
+Chart.defaults.font.family = "'JetBrains Mono','Noto Sans SC',sans-serif";
+Chart.defaults.font.size = 11;
+
+// 1. Revenue & Profit Chart
+new Chart(document.getElementById('chartRevenue'), {
+  type: 'bar',
+  data: {
+    labels: ['2016','2017','2018','2019','2020','2021','2022','2023','2024','2025'],
+    datasets: [
+      { label: '营收(亿元)', data: [401,610,772,854,949,1095,1276,1506,1741,1721], backgroundColor: 'rgba(201,168,76,0.6)', borderColor: '#c9a84c', borderWidth: 1 },
+      { label: '净利润(亿元)', data: [167,271,352,412,467,525,627,747,862,823], backgroundColor: 'rgba(63,185,80,0.6)', borderColor: '#3fb950', borderWidth: 1 }
+    ]
+  },
+  options: { responsive:true, maintainAspectRatio:false, plugins:{legend:{position:'top',labels:{boxWidth:12,padding:16}}}, scales:{y:{beginAtZero:true}} }
+});
+
+// 2. Margins Chart
+new Chart(document.getElementById('chartMargins'), {
+  type: 'line',
+  data: {
+    labels: ['2016','2017','2018','2019','2020','2021','2022','2023','2024','2025'],
+    datasets: [
+      { label: '毛利率', data: [91.2,89.8,91.3,91.3,91.4,91.5,91.9,91.8,91.9,91.2], borderColor: '#c9a84c', tension: 0.3, fill: false },
+      { label: '净利率', data: [45.6,49.0,51.4,51.5,52.2,52.5,49.4,51.5,49.5,50.5], borderColor: '#3fb950', tension: 0.3, fill: false }
+    ]
+  },
+  options: { responsive:true, maintainAspectRatio:false, plugins:{legend:{position:'top',labels:{boxWidth:12,padding:16}}}, scales:{y:{min:40,max:100,callback:v=>v+'%'}} }
+});
+
+// 3. ROE Chart
+new Chart(document.getElementById('chartROE'), {
+  type: 'line',
+  data: {
+    labels: ['2016','2017','2018','2019','2020','2021','2022','2023','2024','2025'],
+    datasets: [
+      { label: '茅台 ROE', data: [24.4,32.9,34.5,33.1,31.4,31.3,30.3,33.5,35.0,32.5], borderColor: '#c9a84c', backgroundColor: 'rgba(201,168,76,0.1)', fill: true, tension: 0.3 },
+      { label: '行业均值', data: [15.5,16.0,15.8,15.2,14.8,15.1,15.6,15.3,15.5,15.5], borderColor: '#f85149', borderDash:[5,5], fill: false },
+      { label: 'WACC (~10%)', data: [10,10,10,10,10,10,10,10,10,10], borderColor: '#8b949e', borderDash:[2,4], fill: false }
+    ]
+  },
+  options: { responsive:true, maintainAspectRatio:false, plugins:{legend:{position:'top',labels:{boxWidth:12,padding:16}}}, scales:{y:{min:0,max:45,callback:v=>v+'%'}} }
+});
+
+// 4. Segments Doughnut
+new Chart(document.getElementById('chartSegments'), {
+  type: 'doughnut',
+  data: {
+    labels: ['茅台酒 (86.8%)', '系列酒 (13.2%)'],
+    datasets: [{ data: [1465, 222], backgroundColor: ['#c9a84c', '#58a6ff'], borderColor: '#0d1117', borderWidth: 3 }]
+  },
+  options: { responsive:true, maintainAspectRatio:false, plugins:{legend:{position:'bottom',labels:{padding:16}}} }
+});
+
+// 5. Moat Radar
+new Chart(document.getElementById('chartMoat'), {
+  type: 'radar',
+  data: {
+    labels: ['无形资产','成本优势','转换成本','网络效应','有效规模'],
+    datasets: [{
+      label: '茅台',
+      data: [3, 2.5, 2.5, 2, 3],
+      borderColor: '#c9a84c',
+      backgroundColor: 'rgba(201,168,76,0.15)',
+      pointBackgroundColor: '#c9a84c',
+      pointRadius: 5
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    scales: { r: { beginAtZero: true, max: 3, ticks: { stepSize: 1, color: '#6e7681' }, grid: { color: 'rgba(255,255,255,0.06)' }, angleLines: { color: 'rgba(255,255,255,0.06)' }, pointLabels: { color: '#e8e6df', font: { size: 12 } } } },
+    plugins: { legend: { display: false } }
+  }
+});
+
+// 6. Intrinsic Value Horizontal Bar
+new Chart(document.getElementById('chartIV'), {
+  type: 'bar',
+  data: {
+    labels: ['保守','EPV零增长','Graham公式','★ 基准IV','乐观','当前价格'],
+    datasets: [{
+      data: [1750,1800,1890,1950,2200,1407],
+      backgroundColor: ['rgba(248,81,73,0.7)','rgba(210,153,34,0.7)','rgba(88,166,255,0.7)','rgba(201,168,76,0.9)','rgba(63,185,80,0.7)','rgba(255,255,255,0.9)'],
+      borderColor: ['#f85149','#d29922','#58a6ff','#c9a84c','#3fb950','#e8e6df'],
+      borderWidth: 2
+    }]
+  },
+  options: {
+    indexAxis: 'y',
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => '¥' + ctx.parsed.x } } },
+    scales: { x: { min: 1000, max: 2500, callback: v => '¥' + v } }
+  }
+});
+</script>
+
+</body>
+</html>
