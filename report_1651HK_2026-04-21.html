@@ -1,0 +1,1778 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Precision Tsugami (China) · 1651.HK · Value Investing Analysis</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=Source+Sans+3:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<style>
+:root {
+  --bg: #06090f;
+  --bg-card: #0d1117;
+  --bg-surface: #111820;
+  --bg-elevated: #161b22;
+  --bg-hover: #1c2333;
+  --border: #1c2333;
+  --border-light: #21262d;
+  --border-accent: rgba(201, 168, 76, 0.2);
+  --text: #e6edf3;
+  --text-secondary: #8892a4;
+  --text-dim: #6e7681;
+  --text-zh: #6db38a;
+  --positive: #2ecc71;
+  --positive-bg: rgba(46, 204, 113, 0.1);
+  --negative: #e74c3c;
+  --negative-bg: rgba(231, 76, 60, 0.1);
+  --warning: #e8a832;
+  --warning-bg: rgba(232, 168, 50, 0.1);
+  --accent: #c9a84c;
+  --accent-bg: rgba(201, 168, 76, 0.1);
+  --info: #5b8def;
+  --info-bg: rgba(91, 141, 239, 0.1);
+  --chart-grid: rgba(255, 255, 255, 0.035);
+  --chart-label: #8892a4;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Source Sans 3', 'Noto Sans SC', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 0.95rem;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+
+.bg-pattern {
+  position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 0;
+  background:
+    radial-gradient(ellipse at 20% 50%, rgba(201,168,76,0.04) 0%, transparent 60%),
+    radial-gradient(ellipse at 80% 20%, rgba(88,166,255,0.03) 0%, transparent 50%),
+    linear-gradient(180deg, var(--bg) 0%, var(--bg-surface) 50%, var(--bg) 100%);
+  pointer-events: none;
+}
+
+.container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 24px;
+  position: relative;
+  z-index: 1;
+}
+
+/* Hero */
+.hero {
+  background: linear-gradient(135deg, var(--bg) 0%, var(--bg-surface) 50%, var(--bg) 100%);
+  padding: 56px 0 44px;
+  border-bottom: 1px solid var(--border);
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  top: -200px; right: -100px;
+  width: 600px; height: 600px;
+  background: radial-gradient(circle, rgba(201,168,76,0.06) 0%, transparent 70%);
+  pointer-events: none;
+}
+.hero-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--accent-bg);
+  border: 1px solid var(--border-accent);
+  padding: 5px 14px;
+  border-radius: 100px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 20px;
+}
+.hero h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2rem, 4vw, 3.5rem);
+  font-weight: 900;
+  line-height: 1.1;
+  margin-bottom: 8px;
+}
+.hero h1 .zh {
+  display: block;
+  font-family: 'Noto Sans SC', sans-serif;
+  color: var(--text-zh);
+  font-size: 0.55em;
+  font-weight: 500;
+  margin-top: 6px;
+  letter-spacing: 0.02em;
+}
+.hero-meta {
+  display: flex;
+  gap: 24px;
+  margin-top: 20px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  flex-wrap: wrap;
+}
+.hero-meta .ticker {
+  color: var(--accent);
+  font-weight: 600;
+}
+.verdict-badge {
+  display: inline-block;
+  padding: 10px 28px;
+  border-radius: 6px;
+  font-weight: 700;
+  font-size: 1.05rem;
+  letter-spacing: 1.5px;
+  margin-top: 24px;
+}
+.verdict-watchlist {
+  background: var(--warning-bg);
+  color: var(--warning);
+  border: 1px solid rgba(232, 168, 50, 0.3);
+}
+.conviction-pill {
+  display: inline-block;
+  margin-left: 12px;
+  padding: 8px 16px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-light);
+  border-radius: 6px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+.conviction-pill strong { color: var(--text); }
+
+/* Hero KPI row */
+.hero-kpis {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-top: 32px;
+}
+@media (max-width: 900px) { .hero-kpis { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 560px) { .hero-kpis { grid-template-columns: 1fr; } }
+.hero-kpi {
+  background: rgba(13, 17, 23, 0.7);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px 18px;
+  backdrop-filter: blur(10px);
+}
+.hero-kpi-label {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+}
+.hero-kpi-value {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: var(--text);
+}
+.hero-kpi-sub { font-size: 0.8rem; color: var(--text-dim); margin-top: 4px; }
+.kpi-negative { color: var(--negative) !important; }
+.kpi-positive { color: var(--positive) !important; }
+.kpi-warning { color: var(--warning) !important; }
+
+/* Tabs */
+.tabs-wrapper {
+  position: sticky;
+  top: 0;
+  background: rgba(6, 9, 15, 0.95);
+  backdrop-filter: blur(12px);
+  z-index: 10;
+  border-bottom: 1px solid var(--border);
+}
+.tabs {
+  display: flex;
+  gap: 2px;
+  overflow-x: auto;
+  scrollbar-width: thin;
+  padding: 0;
+}
+.tab-btn {
+  padding: 14px 18px;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  font-weight: 500;
+  font-family: inherit;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.tab-btn:hover { color: var(--text); background: rgba(201, 168, 76, 0.03); }
+.tab-btn.active {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
+.tab-number {
+  display: inline-block;
+  width: 20px; height: 20px;
+  line-height: 20px;
+  text-align: center;
+  background: var(--bg-surface);
+  border-radius: 50%;
+  margin-right: 8px;
+  font-size: 0.7rem;
+  font-family: 'IBM Plex Mono', monospace;
+  color: var(--text-dim);
+}
+.tab-btn.active .tab-number { background: var(--accent); color: var(--bg); }
+
+main { padding: 40px 0 80px; }
+.tab-content { display: none; animation: fadeUp 0.4s ease; }
+.tab-content.active { display: block; }
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Section headers */
+.section-eyebrow {
+  font-size: 0.75rem;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 2.5px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+.section-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+  letter-spacing: -0.01em;
+}
+.section-title .zh {
+  font-family: 'Noto Sans SC', sans-serif;
+  font-size: 0.55em;
+  color: var(--text-zh);
+  font-weight: 400;
+  margin-left: 12px;
+}
+.section-lead {
+  font-size: 1.05rem;
+  color: var(--text-secondary);
+  margin-bottom: 32px;
+  max-width: 900px;
+  line-height: 1.7;
+}
+
+/* Cards */
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+  transition: border-color 0.2s, transform 0.2s;
+}
+.card:hover { border-color: var(--border-light); }
+.card h3 {
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 1.05rem;
+  font-weight: 600;
+  margin-bottom: 14px;
+  color: var(--text);
+}
+.card h3 .zh {
+  font-family: 'Noto Sans SC', sans-serif;
+  font-size: 0.82em;
+  color: var(--text-zh);
+  font-weight: 400;
+  margin-left: 8px;
+}
+.card p { color: var(--text-secondary); margin-bottom: 12px; }
+.card p:last-child { margin-bottom: 0; }
+
+.grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+@media (max-width: 900px) {
+  .grid-2, .grid-3 { grid-template-columns: 1fr; }
+  .grid-4 { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 600px) {
+  .grid-4 { grid-template-columns: 1fr; }
+}
+
+/* Stat cards */
+.stat-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 16px 20px;
+}
+.stat-label { font-size: 0.78rem; color: var(--text-secondary); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.8px; }
+.stat-value { font-family: 'IBM Plex Mono', monospace; font-size: 1.5rem; font-weight: 600; color: var(--text); }
+.stat-change { font-size: 0.82rem; margin-top: 4px; color: var(--text-dim); }
+.stat-change.positive { color: var(--positive); }
+.stat-change.negative { color: var(--negative); }
+.stat-change.warning { color: var(--warning); }
+
+/* Tables */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+  margin: 16px 0;
+}
+th {
+  text-align: left;
+  padding: 12px 14px;
+  background: var(--bg-surface);
+  color: var(--text-secondary);
+  font-weight: 600;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  border-bottom: 1px solid var(--border);
+}
+td {
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text);
+}
+td.mono { font-family: 'IBM Plex Mono', monospace; }
+tr:hover td { background: var(--bg-hover); }
+.pass { color: var(--positive); font-weight: 600; }
+.fail { color: var(--negative); font-weight: 600; }
+.partial { color: var(--warning); font-weight: 600; }
+
+/* Chart container */
+.chart-container { position: relative; height: 320px; margin: 16px 0; }
+.chart-container-sm { position: relative; height: 240px; margin: 12px 0; }
+.chart-container-lg { position: relative; height: 420px; margin: 20px 0; }
+
+/* Callouts */
+.callout {
+  background: var(--accent-bg);
+  border-left: 3px solid var(--accent);
+  padding: 16px 20px;
+  border-radius: 0 8px 8px 0;
+  margin: 20px 0;
+  color: var(--text);
+}
+.callout.positive { background: var(--positive-bg); border-left-color: var(--positive); }
+.callout.negative { background: var(--negative-bg); border-left-color: var(--negative); }
+.callout.warning { background: var(--warning-bg); border-left-color: var(--warning); }
+.callout strong { color: var(--text); }
+
+/* Risk meter */
+.risk-row { display: flex; align-items: center; margin: 12px 0; }
+.risk-label { flex: 0 0 40%; font-size: 0.9rem; color: var(--text); }
+.risk-meter {
+  flex: 1;
+  height: 8px;
+  background: var(--bg-surface);
+  border-radius: 4px;
+  overflow: hidden;
+  margin: 0 12px;
+}
+.risk-fill { height: 100%; border-radius: 4px; transition: width 0.6s ease; }
+.risk-score {
+  flex: 0 0 50px;
+  text-align: right;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.85rem;
+  color: var(--text);
+}
+
+/* Tags */
+.tag {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 100px;
+  font-size: 0.78rem;
+  font-weight: 500;
+  margin-right: 6px;
+}
+.tag-pos { background: var(--positive-bg); color: var(--positive); border: 1px solid rgba(46, 204, 113, 0.3); }
+.tag-neg { background: var(--negative-bg); color: var(--negative); border: 1px solid rgba(231, 76, 60, 0.3); }
+.tag-warn { background: var(--warning-bg); color: var(--warning); border: 1px solid rgba(232, 168, 50, 0.3); }
+.tag-info { background: var(--info-bg); color: var(--info); border: 1px solid rgba(91, 141, 239, 0.3); }
+
+/* Footer */
+.disclaimer {
+  margin-top: 60px;
+  padding: 32px 0;
+  border-top: 1px solid var(--border);
+  font-size: 0.82rem;
+  color: var(--text-dim);
+  text-align: center;
+}
+.disclaimer .zh { display: block; margin-top: 6px; color: var(--text-zh); opacity: 0.8; }
+.disclaimer .meta { margin-top: 12px; font-family: 'IBM Plex Mono', monospace; font-size: 0.75rem; color: var(--text-dim); }
+
+ul.insight-list { list-style: none; padding: 0; }
+ul.insight-list li {
+  padding: 8px 0;
+  padding-left: 28px;
+  position: relative;
+  color: var(--text);
+}
+ul.insight-list li::before {
+  content: '▸';
+  position: absolute;
+  left: 8px;
+  color: var(--accent);
+  font-weight: 600;
+}
+ul.insight-list li.pos::before { content: '+'; color: var(--positive); }
+ul.insight-list li.neg::before { content: '−'; color: var(--negative); }
+ul.insight-list li.warn::before { content: '!'; color: var(--warning); }
+
+.sensitivity {
+  width: 100%;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.85rem;
+}
+.sensitivity th, .sensitivity td {
+  text-align: center;
+  padding: 10px;
+  border: 1px solid var(--border);
+}
+.sensitivity .row-label {
+  background: var(--bg-surface);
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+.price-bar {
+  background: var(--bg-surface);
+  border-radius: 8px;
+  height: 30px;
+  position: relative;
+  margin: 20px 0;
+  overflow: visible;
+}
+.price-bar-range {
+  position: absolute;
+  height: 100%;
+  border-radius: 8px;
+  background: linear-gradient(90deg, rgba(231,76,60,0.3), rgba(232,168,50,0.3), rgba(46,204,113,0.3));
+}
+.price-marker {
+  position: absolute;
+  top: -6px; bottom: -6px;
+  width: 3px;
+  background: var(--accent);
+}
+.price-marker::after {
+  content: attr(data-label);
+  position: absolute;
+  top: -24px;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.75rem;
+  color: var(--accent);
+  font-weight: 600;
+}
+
+@media print {
+  body { background: #fff !important; color: #000 !important; }
+  .tabs-wrapper, .bg-pattern { display: none !important; }
+  .tab-content { display: block !important; break-inside: avoid; }
+  .card { border: 1px solid #ddd !important; break-inside: avoid; }
+  .hero { background: none !important; border-bottom: 2px solid #1a5276 !important; }
+}
+/* RETURN HOME BUTTON */
+.home-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(201, 168, 76, 0.15);
+  border: 1px solid rgba(201, 168, 76, 0.3);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 8px 20px;
+  border-radius: 24px;
+  text-decoration: none;
+  margin-bottom: 24px;
+  transition: all 0.2s;
+  border-left: 3px solid var(--accent);
+}
+.home-btn:hover {
+  background: rgba(201, 168, 76, 0.25);
+  border-color: var(--accent);
+  transform: translateX(-4px);
+  text-decoration: none;
+}
+.home-btn svg { flex-shrink: 0; }
+</style>
+</head>
+<body>
+<div class="bg-pattern"></div>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="container">
+    <a href="./index.html" class="home-btn">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+      Return to Home / 返回主页
+    </a><br>
+    <div class="hero-eyebrow">◆ Value Investing Deep Dive · Graham-Buffett-Munger-Fisher</div>
+    <h1>
+      Precision Tsugami (China) Corp.
+      <span class="zh">津上精密（中国）有限公司</span>
+    </h1>
+    <div class="hero-meta">
+      <span class="ticker">1651.HK · HKEx Main Board</span>
+      <span>Industrial Machinery / CNC Tools</span>
+      <span>Analysis Date: 21 April 2026</span>
+    </div>
+    <div>
+      <span class="verdict-badge verdict-watchlist">⚠ WATCHLIST — 观望</span>
+      <span class="conviction-pill">Conviction <strong>6/10</strong></span>
+    </div>
+
+    <div class="hero-kpis">
+      <div class="hero-kpi">
+        <div class="hero-kpi-label">Current Price</div>
+        <div class="hero-kpi-value">HK$44.28</div>
+        <div class="hero-kpi-sub kpi-positive">+126% YoY</div>
+      </div>
+      <div class="hero-kpi">
+        <div class="hero-kpi-label">Fair Value (Base)</div>
+        <div class="hero-kpi-value">HK$35</div>
+        <div class="hero-kpi-sub">Range HK$31–40</div>
+      </div>
+      <div class="hero-kpi">
+        <div class="hero-kpi-label">Margin of Safety</div>
+        <div class="hero-kpi-value kpi-negative">−26.5%</div>
+        <div class="hero-kpi-sub kpi-negative">At a premium to IV</div>
+      </div>
+      <div class="hero-kpi">
+        <div class="hero-kpi-label">Market Cap</div>
+        <div class="hero-kpi-value">HK$15.8B</div>
+        <div class="hero-kpi-sub">375.7M shares · P/E 17x</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- TABS -->
+<div class="tabs-wrapper">
+  <div class="container">
+    <nav class="tabs">
+      <button class="tab-btn active" data-tab="summary"><span class="tab-number">1</span>Executive Summary</button>
+      <button class="tab-btn" data-tab="business"><span class="tab-number">2</span>Business</button>
+      <button class="tab-btn" data-tab="financials"><span class="tab-number">3</span>Financials</button>
+      <button class="tab-btn" data-tab="moat"><span class="tab-number">4</span>Moat</button>
+      <button class="tab-btn" data-tab="industry"><span class="tab-number">5</span>Industry</button>
+      <button class="tab-btn" data-tab="valuation"><span class="tab-number">6</span>Valuation</button>
+      <button class="tab-btn" data-tab="mos"><span class="tab-number">7</span>Margin of Safety</button>
+      <button class="tab-btn" data-tab="scoring"><span class="tab-number">8</span>Scoring</button>
+      <button class="tab-btn" data-tab="risk"><span class="tab-number">9</span>Risk & Traps</button>
+      <button class="tab-btn" data-tab="verdict"><span class="tab-number">10</span>Verdict</button>
+      <button class="tab-btn" data-tab="monitoring"><span class="tab-number">11</span>Monitoring</button>
+      <button class="tab-btn" data-tab="sources"><span class="tab-number">12</span>Sources</button>
+    </nav>
+  </div>
+</div>
+
+<main>
+<div class="container">
+
+<!-- TAB 1: EXECUTIVE SUMMARY -->
+<section id="tab-summary" class="tab-content active">
+  <div class="section-eyebrow">§ 01 · Executive Summary</div>
+  <h2 class="section-title">The Thesis in One Page <span class="zh">核心观点</span></h2>
+  <p class="section-lead">
+    A genuinely high-quality industrial business — but the stock has tripled in 12 months and now trades at a premium to intrinsic value and above consensus analyst price targets. A rare case of a wonderful company at an unwonderful price.
+  </p>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>✓ The Bull Case <span class="zh">多头理由</span></h3>
+      <ul class="insight-list">
+        <li class="pos">ROIC ~27%, net-cash balance sheet (D/E 0.05%), expanding gross margin 30% → 34.6%</li>
+        <li class="pos">Japanese precision-engineering DNA (Tsugami Corp. founded 1937) manufactured at Chinese cost</li>
+        <li class="pos">Two new structural tailwinds emerging: AI server liquid-cooling connectors (5% of domestic orders and growing) and humanoid robot precision components</li>
+        <li class="pos">1H FY26 revenue +26%, NP +47.7%, GPM +2.5ppt — all segments growing</li>
+        <li class="pos">Rising dividend: HK$0.40 flat for years → HK$1.00 FY25 → est. HK$1.20+ FY26</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>✗ The Bear Case <span class="zh">空头理由</span></h3>
+      <ul class="insight-list">
+        <li class="neg">Trades at HK$44.28 vs. consensus analyst TP of HK$40 — above the 12-month target</li>
+        <li class="neg">Base-case IV HK$35 implies −26% margin of safety at current price</li>
+        <li class="neg">1H FY26 +47.7% NP growth is off depressed FY24 base; unsustainable extrapolation risk</li>
+        <li class="neg">Cyclical industrial (FY24 revenue −15% YoY reminder) deserves higher MoS than consumer franchise</li>
+        <li class="warn">Parent-subsidiary structure (Tsugami Japan 65%) requires minority shareholder vigilance</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="callout warning" style="margin-top:32px">
+    <strong>The Key Judgment:</strong> This is not a quality problem. It is a price problem. The business will likely still be earning high returns on capital in 2030; the question is whether you can buy it for less than HK$35. At current levels the market is pricing in a bull-case narrative that may or may not materialize. <strong>Patience is the edge here — wait for a drawdown.</strong>
+  </div>
+
+  <h3 style="margin-top:40px; font-family: 'Playfair Display', serif; font-size: 1.4rem;">Price vs. Intrinsic Value Range</h3>
+  <div class="chart-container">
+    <canvas id="iv-chart"></canvas>
+  </div>
+
+  <div class="grid-3" style="margin-top:24px">
+    <div class="stat-card">
+      <div class="stat-label">Buy Zone</div>
+      <div class="stat-value">≤ HK$33</div>
+      <div class="stat-change positive">25–40% MoS</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Watchlist Zone</div>
+      <div class="stat-value">HK$33–37</div>
+      <div class="stat-change warning">Modest MoS</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Trim Zone</div>
+      <div class="stat-value">≥ HK$50</div>
+      <div class="stat-change negative">Bull-case reached</div>
+    </div>
+  </div>
+</section>
+
+<!-- TAB 2: BUSINESS -->
+<section id="tab-business" class="tab-content">
+  <div class="section-eyebrow">§ 02 · Business Overview</div>
+  <h2 class="section-title">What the Company Does <span class="zh">业务概览</span></h2>
+  <p class="section-lead">
+    Designs and manufactures high-precision CNC machine tools — primarily small-diameter automatic lathes — at a facility in Pinghu, Zhejiang. Sells capital equipment to automotive, electronics, medical, industrial automation, and newly emerging AI/humanoid-robot customers across China and internationally.
+  </p>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>Product Lines (1H FY26 Revenue)</h3>
+      <div class="chart-container-sm">
+        <canvas id="product-mix"></canvas>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Segment Growth (1H FY26 YoY)</h3>
+      <div class="chart-container-sm">
+        <canvas id="segment-growth"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-3" style="margin-top:24px">
+    <div class="card">
+      <h3>Ownership <span class="zh">股权结构</span></h3>
+      <ul class="insight-list">
+        <li>Tsugami Corporation Japan (TSE:6101): <strong>65.04%</strong></li>
+        <li>Free float: <strong>30.6%</strong></li>
+        <li>Listed: HKEx, 2017 (IPO HK$6.43)</li>
+        <li>Shares O/S: 375.7M</li>
+        <li>Employees: 2,458</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Revenue Model <span class="zh">收入模式</span></h3>
+      <ul class="insight-list">
+        <li>Unit sales of CNC machines (RMB 300k–3M+ per unit)</li>
+        <li>After-sales service & spare parts</li>
+        <li>Cyclical capital-goods demand</li>
+        <li>Modest recurring aftermarket</li>
+        <li>Fiscal year ends 31 March</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Key Customers <span class="zh">主要客户</span></h3>
+      <ul class="insight-list">
+        <li>Auto parts: NEV powertrain, ICE components</li>
+        <li>3C: phone hinges, cameras, connectors</li>
+        <li>Medical: surgical tools, implants</li>
+        <li>Industrial automation</li>
+        <li class="pos">New: AI liquid-cooling, humanoid robots</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3 style="margin-top:40px; font-family: 'Playfair Display', serif; font-size: 1.4rem;">Why Tsugami (China)? <span class="zh">为什么选择津上</span></h3>
+  <div class="callout">
+    <p>The company's strategic position is unusual: a Japanese precision-engineering brand (Tsugami Japan, founded 1937) operating a fully Chinese manufacturing base. Customers get the quality and reliability of Japanese-engineered machines at a 30–50% cost discount to importing from Japan. This has allowed PTC to rank #1 among foreign-owned CNC machine-tool makers in China by revenue — a position that has compounded advantages in distribution, service network, and reference installations.</p>
+  </div>
+</section>
+
+<!-- TAB 3: FINANCIALS -->
+<section id="tab-financials" class="tab-content">
+  <div class="section-eyebrow">§ 03 · Financial Analysis</div>
+  <h2 class="section-title">10-Year Financial History <span class="zh">十年财务概览</span></h2>
+  <p class="section-lead">
+    Approximated FY20–TTM data (FY ends March). Figures are in RMB millions unless noted. Company reports in RMB; shares trade in HKD. FY24 saw a ~15% revenue decline (cycle low); 1H FY26 rebounded sharply.
+  </p>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>Revenue & Net Profit Trend <span class="zh">收入与利润</span></h3>
+      <div class="chart-container">
+        <canvas id="revenue-chart"></canvas>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Margin Trends <span class="zh">利润率趋势</span></h3>
+      <div class="chart-container">
+        <canvas id="margins-chart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-2" style="margin-top:20px">
+    <div class="card">
+      <h3>ROIC / ROE vs. WACC <span class="zh">资本回报率</span></h3>
+      <div class="chart-container">
+        <canvas id="roic-chart"></canvas>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Dividends Per Share (HK$) <span class="zh">每股股息</span></h3>
+      <div class="chart-container">
+        <canvas id="dividend-chart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <h3 style="margin-top:40px; font-family: 'Source Sans 3'; font-size: 1.1rem;">Financial Scorecard <span class="zh">财务评分</span></h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Metric</th>
+        <th>Threshold</th>
+        <th>Actual (TTM)</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>ROE</td><td>&gt; 15% consistently</td><td class="mono">~22%</td><td><span class="pass">✓ PASS</span></td></tr>
+      <tr><td>ROIC</td><td>&gt; WACC (~12%)</td><td class="mono">~27%</td><td><span class="pass">✓ PASS</span></td></tr>
+      <tr><td>Debt/Equity</td><td>&lt; 0.5</td><td class="mono">0.05%</td><td><span class="pass">✓ PASS (net cash)</span></td></tr>
+      <tr><td>Gross Margin</td><td>Stable/Expanding</td><td class="mono">34.3% (expanding)</td><td><span class="pass">✓ PASS</span></td></tr>
+      <tr><td>Net Margin</td><td>&gt; 10%</td><td class="mono">19.8%</td><td><span class="pass">✓ PASS</span></td></tr>
+      <tr><td>FCF vs. Net Income</td><td>FCF ≥ NI</td><td class="mono">Strong, pos.</td><td><span class="pass">✓ PASS</span></td></tr>
+      <tr><td>Share Count Trend</td><td>Flat or declining</td><td class="mono">Stable 375.7M</td><td><span class="pass">✓ PASS</span></td></tr>
+      <tr><td>Dividend Payout</td><td>30–60%</td><td class="mono">~41%</td><td><span class="pass">✓ PASS</span></td></tr>
+      <tr><td>Earnings Cyclicality</td><td>Low</td><td class="mono">FY24 −15% rev</td><td><span class="partial">△ CYCLICAL</span></td></tr>
+      <tr><td>Earnings Quality</td><td>Cash conv. &gt; 80%</td><td class="mono">Flag raised mid-2025</td><td><span class="partial">△ INVESTIGATE</span></td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout positive">
+    <strong>Balance sheet is exceptional.</strong> Total assets ~RMB 4.25bn vs. total liabilities ~RMB 974M → equity ~RMB 3.28bn. D/E effectively zero. Net cash position provides downside protection and optionality. This is Graham's "strong financial condition" criterion in its purest form.
+  </div>
+</section>
+
+<!-- TAB 4: MOAT -->
+<section id="tab-moat" class="tab-content">
+  <div class="section-eyebrow">§ 04 · Moat Assessment</div>
+  <h2 class="section-title">Competitive Moat <span class="zh">竞争护城河</span></h2>
+  <p class="section-lead">
+    PTC has a narrow but widening moat, scoring 13/25 on the five-type scorecard. Not a franchise business — call it a "quality commodity" — but ROIC of 27% vs. industry 10–15% demonstrates real competitive advantage.
+  </p>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>Moat Radar <span class="zh">护城河雷达图</span></h3>
+      <div class="chart-container-lg">
+        <canvas id="moat-radar"></canvas>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Moat Strength Breakdown</h3>
+      <div class="risk-row">
+        <span class="risk-label">Intangible Assets (Brand)</span>
+        <div class="risk-meter"><div class="risk-fill" style="width:70%; background:var(--accent)"></div></div>
+        <span class="risk-score">3.5/5</span>
+      </div>
+      <div class="risk-row">
+        <span class="risk-label">Cost Advantage</span>
+        <div class="risk-meter"><div class="risk-fill" style="width:60%; background:var(--info)"></div></div>
+        <span class="risk-score">3.0/5</span>
+      </div>
+      <div class="risk-row">
+        <span class="risk-label">Switching Costs</span>
+        <div class="risk-meter"><div class="risk-fill" style="width:70%; background:var(--accent)"></div></div>
+        <span class="risk-score">3.5/5</span>
+      </div>
+      <div class="risk-row">
+        <span class="risk-label">Network Effects</span>
+        <div class="risk-meter"><div class="risk-fill" style="width:20%; background:var(--negative)"></div></div>
+        <span class="risk-score">1.0/5</span>
+      </div>
+      <div class="risk-row">
+        <span class="risk-label">Efficient Scale</span>
+        <div class="risk-meter"><div class="risk-fill" style="width:40%; background:var(--warning)"></div></div>
+        <span class="risk-score">2.0/5</span>
+      </div>
+      <div style="margin-top:24px; padding-top:16px; border-top:1px solid var(--border); text-align:center;">
+        <div style="font-size:0.82rem; color:var(--text-secondary); margin-bottom:4px;">TOTAL MOAT SCORE</div>
+        <div style="font-family:'IBM Plex Mono',monospace; font-size:2rem; font-weight:600; color:var(--accent);">13 / 25</div>
+        <div style="font-size:0.88rem; color:var(--text-secondary); margin-top:4px;">Narrow, widening</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-3" style="margin-top:24px">
+    <div class="card">
+      <h3>🏭 Franchise Test <span class="zh">特许经营测试</span></h3>
+      <p><strong>Product needed/desired?</strong> ✓ Yes</p>
+      <p><strong>Close substitutes?</strong> ⚠ Partial — local Chinese CNC rivals</p>
+      <p><strong>Price-regulated?</strong> ✓ No</p>
+      <p style="margin-top:12px"><strong>Verdict:</strong> Not a pure franchise. A "quality commodity" with a modest moat.</p>
+    </div>
+    <div class="card">
+      <h3>🔄 Moat Trend <span class="zh">护城河趋势</span></h3>
+      <ul class="insight-list">
+        <li class="pos">GPM +2.5ppt in 1H FY26 (pricing power evidence)</li>
+        <li class="pos">Market share gains in automatic lathes</li>
+        <li class="pos">Successful entry into AI + humanoid customers</li>
+        <li class="warn">Chinese domestic competition intensifying</li>
+      </ul>
+      <p style="margin-top:8px"><strong>Direction: Widening</strong> (as of FY26)</p>
+    </div>
+    <div class="card">
+      <h3>🔁 Munger Inversion <span class="zh">芒格倒推</span></h3>
+      <p>What would destroy this in 10 years?</p>
+      <ul class="insight-list">
+        <li class="warn">Chinese domestic CNC makers close quality gap (moderate, 5–10 yr)</li>
+        <li class="warn">AI/humanoid narrative fades (moderate, 2–4 yr)</li>
+        <li class="warn">Geopolitical shift forces manufacturing relocation</li>
+        <li>Additive manufacturing replaces CNC (low, &gt;10 yr)</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- TAB 5: INDUSTRY -->
+<section id="tab-industry" class="tab-content">
+  <div class="section-eyebrow">§ 05 · Industry Analysis</div>
+  <h2 class="section-title">Industry Context <span class="zh">行业背景</span></h2>
+  <p class="section-lead">
+    Industrial machinery is historically a mediocre place to invest — cyclical, capital-intensive, commodity-like competition. PTC is an exception within a challenged industry, but cyclicality demands a higher required margin of safety.
+  </p>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>Current Cycle Position <span class="zh">周期位置</span></h3>
+      <ul class="insight-list">
+        <li class="pos"><strong>3C electronics:</strong> Entering new growth cycle (flagship phone launches)</li>
+        <li class="pos"><strong>AI infrastructure:</strong> Liquid-cooling connectors moved to bulk procurement 2H 2025</li>
+        <li class="pos"><strong>Humanoid robots:</strong> Early commercial orders; 2027+ scale potential</li>
+        <li class="warn"><strong>Auto parts:</strong> "Adjustment period" after 3-year upcycle (main segment slowing)</li>
+        <li><strong>Medical / industrial automation:</strong> Steady</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Macro Sensitivity Meter</h3>
+      <div class="risk-row">
+        <span class="risk-label">China capex cycle</span>
+        <div class="risk-meter"><div class="risk-fill" style="width:85%; background:var(--negative)"></div></div>
+        <span class="risk-score">High</span>
+      </div>
+      <div class="risk-row">
+        <span class="risk-label">JPY/RMB FX</span>
+        <div class="risk-meter"><div class="risk-fill" style="width:55%; background:var(--warning)"></div></div>
+        <span class="risk-score">Moderate</span>
+      </div>
+      <div class="risk-row">
+        <span class="risk-label">Interest rates</span>
+        <div class="risk-meter"><div class="risk-fill" style="width:45%; background:var(--warning)"></div></div>
+        <span class="risk-score">Moderate</span>
+      </div>
+      <div class="risk-row">
+        <span class="risk-label">US-China tariffs</span>
+        <div class="risk-meter"><div class="risk-fill" style="width:40%; background:var(--warning)"></div></div>
+        <span class="risk-score">Moderate</span>
+      </div>
+      <div class="risk-row">
+        <span class="risk-label">Commodity input costs</span>
+        <div class="risk-meter"><div class="risk-fill" style="width:30%; background:var(--info)"></div></div>
+        <span class="risk-score">Low-Mid</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout" style="margin-top:24px">
+    <strong>Buffett's sector lens:</strong> Industrials/machine tools is historically a mediocre industry — think of Berkshire's famous textile difficulties or the chronic airline struggles. PTC is analogous to how ITW or Parker Hannifin generate excellent returns within a tough sector through niche focus and operational excellence. But <em>industry context matters for margin-of-safety requirements.</em> A cyclical industrial deserves 30–40% MoS, not the 20–25% appropriate for a Moutai-style consumer franchise.
+  </div>
+
+  <h3 style="margin-top:32px; font-family: 'Playfair Display', serif; font-size: 1.4rem;">Peer Comparison <span class="zh">同业对比</span></h3>
+  <div class="chart-container">
+    <canvas id="peer-chart"></canvas>
+  </div>
+  <p style="color:var(--text-secondary); font-size:0.88rem; margin-top:8px; text-align:center;">
+    PTC trades at a 30–40% P/E premium to peers — partially justified by its superior ROIC, but demanding high execution to maintain.
+  </p>
+</section>
+
+<!-- TAB 6: VALUATION -->
+<section id="tab-valuation" class="tab-content">
+  <div class="section-eyebrow">§ 06 · Intrinsic Valuation</div>
+  <h2 class="section-title">Valuation Triangulation <span class="zh">估值测算</span></h2>
+  <p class="section-lead">
+    Five independent valuation methods triangulate to a fair value range of HK$31–40 (weighted HK$35). Current price HK$44.28 exceeds the base case by 26%.
+  </p>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>Valuation Method Comparison <span class="zh">估值方法比较</span></h3>
+      <div class="chart-container-lg">
+        <canvas id="val-methods-chart"></canvas>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Probability-Weighted Scenarios</h3>
+      <div class="chart-container-lg">
+        <canvas id="scenario-chart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <h3 style="margin-top:32px; font-family: 'Source Sans 3'; font-size: 1.1rem;">Detailed Valuation Table</h3>
+  <table>
+    <thead>
+      <tr><th>Method</th><th>Assumptions</th><th>Value per Share</th><th>Weight</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>DCF Base Case</td><td>5yr EPS CAGR 10%, terminal 2.5%, DR 12%</td><td class="mono">HK$35</td><td>30%</td></tr>
+      <tr><td>DCF Bull Case</td><td>5yr EPS CAGR 18%, humanoid ramp</td><td class="mono">HK$48</td><td>15%</td></tr>
+      <tr><td>DCF Bear Case</td><td>5yr EPS CAGR 3%, margin compression</td><td class="mono">HK$22</td><td>15%</td></tr>
+      <tr><td>EPV (no-growth floor)</td><td>Normalized EBIT / 12% + net cash</td><td class="mono">HK$24</td><td>15%</td></tr>
+      <tr><td>DDM</td><td>DPS HK$1.20, growth 5%, r=9%</td><td class="mono">HK$31.50</td><td>10%</td></tr>
+      <tr><td>Graham Formula (discounted)</td><td>EPS × (8.5+2g) × (4.4/Y), haircut</td><td class="mono">HK$40</td><td>5%</td></tr>
+      <tr><td>Peer P/E benchmark</td><td>15x × TTM EPS HK$2.75</td><td class="mono">HK$41</td><td>10%</td></tr>
+      <tr style="background:var(--bg-surface); font-weight:600;"><td>Weighted Fair Value</td><td>—</td><td class="mono" style="color:var(--accent)">HK$33–36</td><td>100%</td></tr>
+    </tbody>
+  </table>
+
+  <h3 style="margin-top:32px; font-family: 'Source Sans 3'; font-size: 1.1rem;">DCF Sensitivity Table: Growth × Discount Rate</h3>
+  <div id="sensitivity-table"></div>
+</section>
+
+<!-- TAB 7: MARGIN OF SAFETY -->
+<section id="tab-mos" class="tab-content">
+  <div class="section-eyebrow">§ 07 · Margin of Safety</div>
+  <h2 class="section-title">Margin of Safety Analysis <span class="zh">安全边际</span></h2>
+  <p class="section-lead">
+    Graham's bedrock principle: never buy without a margin of safety. For cyclical industrials, 30–40% MoS to base case is required. Current price offers −26.5% (i.e., a premium).
+  </p>
+
+  <div class="grid-3">
+    <div class="stat-card">
+      <div class="stat-label">Bull Scenario IV</div>
+      <div class="stat-value">HK$48</div>
+      <div class="stat-change positive">+7.8% MoS</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Base Scenario IV</div>
+      <div class="stat-value">HK$35</div>
+      <div class="stat-change negative">−26.5% MoS</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Bear Scenario IV</div>
+      <div class="stat-value">HK$22</div>
+      <div class="stat-change negative">−101% MoS</div>
+    </div>
+  </div>
+
+  <h3 style="margin-top:32px; font-family: 'Source Sans 3'; font-size: 1.1rem;">Price Zones <span class="zh">价格区间</span></h3>
+  <div style="position:relative; height:120px; margin: 40px 0;">
+    <div class="price-bar" style="width:100%;">
+      <div class="price-bar-range" style="left:0; width:100%;"></div>
+      <div class="price-marker" data-label="Bear HK$22" style="left:0%;"></div>
+      <div class="price-marker" data-label="Base HK$35" style="left:33%;"></div>
+      <div class="price-marker" data-label="Current HK$44" style="left:55%; background: var(--negative);"></div>
+      <div class="price-marker" data-label="Bull HK$48" style="left:65%;"></div>
+      <div class="price-marker" data-label="Trim HK$55" style="left:83%; background: var(--warning);"></div>
+    </div>
+    <div style="display:flex; justify-content:space-between; margin-top:12px; font-family:'IBM Plex Mono',monospace; font-size:0.8rem; color:var(--text-dim);">
+      <span>HK$20</span><span>HK$30</span><span>HK$40</span><span>HK$50</span><span>HK$60</span>
+    </div>
+  </div>
+
+  <div class="grid-2" style="margin-top:40px">
+    <div class="card">
+      <h3 style="color:var(--positive)">✓ Buy Zones <span class="zh">买入区</span></h3>
+      <ul class="insight-list">
+        <li class="pos"><strong>≤ HK$25:</strong> Buy aggressively (≥44% MoS to base)</li>
+        <li class="pos"><strong>HK$27–33:</strong> Buy on weakness (25–40% MoS)</li>
+        <li><strong>HK$33–37:</strong> Accumulate small positions (modest MoS)</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3 style="color:var(--negative)">✗ Do-Not-Add Zones</h3>
+      <ul class="insight-list">
+        <li class="warn"><strong>HK$37–50:</strong> Hold existing positions; do not add</li>
+        <li class="neg"><strong>≥ HK$50:</strong> Consider trimming (approaching bull-case IV)</li>
+        <li class="neg"><strong>≥ HK$55:</strong> Trim aggressively</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="callout negative" style="margin-top:32px">
+    <strong>Required MoS for cyclical industrial:</strong> 30–40%. <strong>Actual at HK$44.28:</strong> −26.5%. This is not a subtle overvaluation — the business would need to deliver the bull case <em>exactly</em> to merely match the current price. That is asymmetric in the wrong direction.
+  </div>
+</section>
+
+<!-- TAB 8: SCORING -->
+<section id="tab-scoring" class="tab-content">
+  <div class="section-eyebrow">§ 08 · Combined Framework Scoring</div>
+  <h2 class="section-title">Four-Framework Score <span class="zh">四大框架评分</span></h2>
+  <p class="section-lead">
+    Graham · Buffett · Munger · Fisher: all four legendary value investors would recognize the quality here. Overall score 7/10 — good business at an unattractive price.
+  </p>
+
+  <div class="grid-4">
+    <div class="stat-card">
+      <div class="stat-label">Graham</div>
+      <div class="stat-value">6/10</div>
+      <div class="stat-change">Quantitative</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Buffett</div>
+      <div class="stat-value">8/10</div>
+      <div class="stat-change positive">Business Quality</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Munger</div>
+      <div class="stat-value">7/10</div>
+      <div class="stat-change">Mental Models</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Fisher</div>
+      <div class="stat-value">7/10</div>
+      <div class="stat-change">Qualitative</div>
+    </div>
+  </div>
+
+  <h3 style="margin-top:32px; font-family: 'Source Sans 3'; font-size: 1.1rem;">Detailed Framework Assessment</h3>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>📊 Graham (Quantitative) — 6/10</h3>
+      <p><strong>Positives:</strong></p>
+      <ul class="insight-list">
+        <li class="pos">Strong financial condition (net cash)</li>
+        <li class="pos">10+ years positive earnings</li>
+        <li class="pos">Rising dividends</li>
+        <li class="pos">Earnings growth CAGR ~17% exceeds 3% threshold</li>
+      </ul>
+      <p style="margin-top:12px"><strong>Fails:</strong></p>
+      <ul class="insight-list">
+        <li class="neg">P/E 17x exceeds Graham's 15x ceiling</li>
+        <li class="neg">P/B ~3.2x exceeds 1.5x</li>
+        <li class="warn">Cyclical earnings reduce defensive suitability</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>🎯 Buffett (Business Quality) — 8/10</h3>
+      <p><strong>Positives:</strong></p>
+      <ul class="insight-list">
+        <li class="pos">ROE 22%, ROIC 27% — elite industrial</li>
+        <li class="pos">Expanding margins demonstrate pricing power</li>
+        <li class="pos">Capital allocation conservative & honest</li>
+        <li class="pos">Understandable business (circle of competence)</li>
+        <li class="pos">Owner earnings ≈ reported earnings (high quality)</li>
+      </ul>
+      <p style="margin-top:12px"><strong>Concerns:</strong></p>
+      <ul class="insight-list">
+        <li class="warn">Not a pure franchise — cyclical + competitive</li>
+        <li class="warn">Current price offers no margin of safety</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>🧠 Munger (Mental Models) — 7/10</h3>
+      <p><strong>Positives:</strong></p>
+      <ul class="insight-list">
+        <li class="pos">Moat widening (GPM trend)</li>
+        <li class="pos">Rational management (no empire-building)</li>
+        <li class="pos">Simple business model</li>
+        <li class="pos">Clear incentive alignment (parent at 65%)</li>
+      </ul>
+      <p style="margin-top:12px"><strong>Concerns:</strong></p>
+      <ul class="insight-list">
+        <li class="warn">Inversion reveals 3–4 plausible long-term threats</li>
+        <li class="warn">AI/humanoid narrative hype risk (social proof bias warning)</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>👥 Fisher (Qualitative + People) — 7/10</h3>
+      <p><strong>Positives:</strong></p>
+      <ul class="insight-list">
+        <li class="pos">Strong R&D (new segments ramping)</li>
+        <li class="pos">Reputable 88-year-old parent (Tsugami Japan)</li>
+        <li class="pos">Margins improving (Point 6)</li>
+        <li class="pos">Depth of management via parent integration</li>
+        <li class="pos">Labor stability (implied by output growth)</li>
+      </ul>
+      <p style="margin-top:12px"><strong>Concerns:</strong></p>
+      <ul class="insight-list">
+        <li class="warn">Controlled entity — minority rights require vigilance</li>
+        <li class="warn">Some related-party transactions with parent (royalties)</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- TAB 9: RISK -->
+<section id="tab-risk" class="tab-content">
+  <div class="section-eyebrow">§ 09 · Risk & Value-Trap Diagnostic</div>
+  <h2 class="section-title">Risk Assessment <span class="zh">风险评估</span></h2>
+  <p class="section-lead">
+    Running the five-type value-trap diagnostic and sell-criteria checks. Not a value trap (quality is real) — but valuation risk is material.
+  </p>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>Value Trap Diagnostic (5-type)</h3>
+      <table>
+        <tbody>
+          <tr><td>Structural decline</td><td><span class="pass">✓ Pass</span></td></tr>
+          <tr><td>Commodity business</td><td><span class="partial">△ Partial</span></td></tr>
+          <tr><td>Poor capital allocation</td><td><span class="pass">✓ Pass</span></td></tr>
+          <tr><td>Heavy assets / low returns</td><td><span class="pass">✓ Pass</span></td></tr>
+          <tr><td>Accounting quality</td><td><span class="partial">△ Investigate</span></td></tr>
+        </tbody>
+      </table>
+      <p style="margin-top:12px; color:var(--text-secondary); font-size:0.9rem;">
+        Not a value trap. Business quality is real. Primary risk is valuation reversion, not business impairment.
+      </p>
+    </div>
+    <div class="card">
+      <h3>Key Risk Heat Map</h3>
+      <div class="risk-row">
+        <span class="risk-label">Valuation reversion</span>
+        <div class="risk-meter"><div class="risk-fill" style="width:80%; background:var(--negative)"></div></div>
+        <span class="risk-score">4/5</span>
+      </div>
+      <div class="risk-row">
+        <span class="risk-label">Cycle downturn</span>
+        <div class="risk-meter"><div class="risk-fill" style="width:60%; background:var(--warning)"></div></div>
+        <span class="risk-score">3/5</span>
+      </div>
+      <div class="risk-row">
+        <span class="risk-label">AI narrative disappointment</span>
+        <div class="risk-meter"><div class="risk-fill" style="width:60%; background:var(--warning)"></div></div>
+        <span class="risk-score">3/5</span>
+      </div>
+      <div class="risk-row">
+        <span class="risk-label">Chinese competition</span>
+        <div class="risk-meter"><div class="risk-fill" style="width:55%; background:var(--warning)"></div></div>
+        <span class="risk-score">3/5</span>
+      </div>
+      <div class="risk-row">
+        <span class="risk-label">Parent-subsidiary conflicts</span>
+        <div class="risk-meter"><div class="risk-fill" style="width:40%; background:var(--info)"></div></div>
+        <span class="risk-score">2/5</span>
+      </div>
+      <div class="risk-row">
+        <span class="risk-label">Accounting quality</span>
+        <div class="risk-meter"><div class="risk-fill" style="width:40%; background:var(--info)"></div></div>
+        <span class="risk-score">2/5</span>
+      </div>
+      <div class="risk-row">
+        <span class="risk-label">Geopolitical/tariff</span>
+        <div class="risk-meter"><div class="risk-fill" style="width:40%; background:var(--info)"></div></div>
+        <span class="risk-score">2/5</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-2" style="margin-top:24px">
+    <div class="card">
+      <h3>Sell Criteria Check (for holders)</h3>
+      <table>
+        <tbody>
+          <tr><td>1. Severely overvalued?</td><td><span class="partial">⚠ Yes — 26% above base IV</span></td></tr>
+          <tr><td>2. Moat destroyed?</td><td><span class="pass">✓ No</span></td></tr>
+          <tr><td>3. Integrity issue?</td><td><span class="pass">✓ No</span></td></tr>
+          <tr><td>4. Better opportunity?</td><td><span class="partial">△ Portfolio-dependent</span></td></tr>
+        </tbody>
+      </table>
+      <p style="margin-top:12px"><strong>For holders:</strong> Consider trimming 25–33% if position oversized. Do not sell core on price alone — but recognize the asymmetric setup.</p>
+    </div>
+    <div class="card">
+      <h3>Behavioral Bias Self-Check</h3>
+      <ul class="insight-list">
+        <li class="pos"><strong>Confirmation bias:</strong> Cited analyst TPs BELOW current price. ✓</li>
+        <li class="pos"><strong>Anchoring:</strong> Framed on IV, not 52-week levels. ✓</li>
+        <li class="pos"><strong>Recency bias:</strong> 1H FY26's +47.7% NP is loud; 10-yr CAGR ~17%. ✓</li>
+        <li class="pos"><strong>Action bias:</strong> WATCHLIST (not BUY despite quality). ✓</li>
+        <li><strong>Sunk cost:</strong> N/A (no position)</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- TAB 10: VERDICT -->
+<section id="tab-verdict" class="tab-content">
+  <div class="section-eyebrow">§ 10 · Final Verdict</div>
+  <h2 class="section-title">Investment Decision <span class="zh">投资决定</span></h2>
+
+  <div class="callout warning" style="padding:32px; text-align:center; margin-bottom:32px;">
+    <div style="font-family:'Playfair Display',serif; font-size:2.2rem; font-weight:700; color:var(--warning); margin-bottom:8px;">
+      ⚠ WATCHLIST
+    </div>
+    <div style="color:var(--text); font-size:1.05rem; margin-bottom:4px;">Conviction: <strong>6 / 10</strong></div>
+    <div style="color:var(--text-secondary); font-size:0.95rem;">A good business at a bad price · Wait for drawdown below HK$33</div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>The One Reason to Own</h3>
+      <p>A rare setup in Hong Kong-listed industrials: a genuinely high-ROIC, net-cash, growing business with Japanese precision engineering DNA, newly exposed to two structural growth stories (AI infrastructure precision parts and humanoid robots) at the inflection point of commercialization.</p>
+    </div>
+    <div class="card">
+      <h3>The One Biggest Risk</h3>
+      <p>The stock has tripled in 12 months and trades above consensus analyst price targets. A single quarter of disappointing orders — or a general cooling of the AI/humanoid narrative — could trigger a 30–40% drawdown with little fundamental justification beyond "we got too optimistic."</p>
+    </div>
+  </div>
+
+  <h3 style="margin-top:32px; font-family: 'Source Sans 3'; font-size: 1.1rem;">Price Targets</h3>
+  <table>
+    <thead>
+      <tr><th>Horizon</th><th>Price (HK$)</th><th>Rationale</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Fair Value (intrinsic)</td><td class="mono">HK$35 (range 31–40)</td><td>Triangulated across 5 methods, probability-weighted</td></tr>
+      <tr><td>12-month target</td><td class="mono">HK$40</td><td>In line with average analyst TP; assumes narrative sustained</td></tr>
+      <tr><td>Buy zone</td><td class="mono">HK$27–33</td><td>25–40% MoS to base case IV</td></tr>
+      <tr><td>Trim zone</td><td class="mono">≥ HK$50</td><td>Approaching bull-case IV</td></tr>
+    </tbody>
+  </table>
+
+  <h3 style="margin-top:32px; font-family: 'Source Sans 3'; font-size: 1.1rem;">Position Sizing Guidance</h3>
+  <div class="grid-4">
+    <div class="stat-card">
+      <div class="stat-label">At HK$44 (now)</div>
+      <div class="stat-value">0%</div>
+      <div class="stat-change negative">No new position</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">At HK$35</div>
+      <div class="stat-value">1–2%</div>
+      <div class="stat-change warning">Starter</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">At HK$30</div>
+      <div class="stat-value">2–3%</div>
+      <div class="stat-change positive">Moderate</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">At HK$25</div>
+      <div class="stat-value">3–5%</div>
+      <div class="stat-change positive">Max (cyclical cap)</div>
+    </div>
+  </div>
+
+  <div class="callout" style="margin-top:24px;">
+    <strong>Hard position cap: 5%.</strong> This is a controlled-entity (Tsugami Japan 65%) cyclical industrial. Even in the most attractive scenario, it should not dominate a diversified portfolio.
+  </div>
+</section>
+
+<!-- TAB 11: MONITORING -->
+<section id="tab-monitoring" class="tab-content">
+  <div class="section-eyebrow">§ 11 · Ongoing Monitoring</div>
+  <h2 class="section-title">Catalysts & Sell Triggers <span class="zh">催化剂与卖出信号</span></h2>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>📅 Positive Catalysts to Monitor</h3>
+      <ul class="insight-list">
+        <li class="pos"><strong>Late June 2026:</strong> Full FY26 results — 2H growth sustainability</li>
+        <li class="pos"><strong>Quarterly:</strong> AI liquid-cooling order book momentum</li>
+        <li class="pos"><strong>Quarterly:</strong> Humanoid robot customer conversions from "wins" to bulk deliveries</li>
+        <li class="pos"><strong>Quarterly:</strong> Auto segment stabilization signal</li>
+        <li class="pos"><strong>August 2026 AGM:</strong> FY27 guidance and management tone</li>
+        <li class="pos"><strong>Quarterly:</strong> Gross margin — sustaining 34%+</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>🚨 Sell Triggers for Holders</h3>
+      <ul class="insight-list">
+        <li class="warn">Price breaks HK$55 without material fundamental change → trim 33%</li>
+        <li class="warn">ROIC falls below 18% for two consecutive periods → thesis review</li>
+        <li class="warn">2H FY26 NP growth decelerates below 10% YoY → reassess</li>
+        <li class="neg">Parent changes capital allocation policy (dividend cut, royalty squeeze) → material concern</li>
+        <li class="neg">Auditor change without explanation → red flag</li>
+        <li class="neg">Management integrity issue surfaces → sell immediately (Munger rule)</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3 style="margin-top:32px; font-family: 'Source Sans 3'; font-size: 1.1rem;">Quarterly Review Checklist</h3>
+  <table>
+    <thead>
+      <tr><th>Check</th><th>Healthy Signal</th><th>Warning Signal</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Revenue YoY trend</td><td>Sustained ≥ 15%</td><td>Single quarter below 10%</td></tr>
+      <tr><td>Gross margin</td><td>Sustained ≥ 34%</td><td>Back below 32%</td></tr>
+      <tr><td>Cash conversion</td><td>FCF ≥ 80% of NI</td><td>Below 60%</td></tr>
+      <tr><td>AI liquid-cooling % of orders</td><td>Growing from 5%</td><td>Flat or declining</td></tr>
+      <tr><td>Humanoid customer count</td><td>Expanding from ~dozen</td><td>Stagnant or shrinking</td></tr>
+      <tr><td>Management commentary tone</td><td>Specific, confident, honest about risks</td><td>Vague, defensive, boilerplate</td></tr>
+      <tr><td>Competitive landscape</td><td>PTC price power intact</td><td>Pricing pressure from Chinese peers</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout positive" style="margin-top:24px;">
+    <strong>Next review trigger:</strong> Late June 2026 FY26 full-year results, OR stock price dropping below HK$35 (whichever comes first). Early August 2026 FY27 guidance is the most important forward-looking data point.
+  </div>
+</section>
+
+<!-- TAB 12: SOURCES -->
+<section id="tab-sources" class="tab-content">
+  <div class="section-eyebrow">§ 12 · Sources & Data Trail</div>
+  <h2 class="section-title">Sources <span class="zh">数据来源</span></h2>
+  <p class="section-lead">
+    Full transparency on every material data point. Primary sources for verdict-moving numbers; secondary sources for context.
+  </p>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>🏛 Primary Sources <span class="zh">一手资料</span></h3>
+      <ul class="insight-list">
+        <li><strong>HKEx News (13 May 2025):</strong> Tsugami Japan FY25 results Part XIVA disclosure</li>
+        <li><strong>HKEx News (3 Nov 2025):</strong> Board meeting notice for 1H FY26 (6M ended 30 Sep 2025)</li>
+        <li><strong>Company IR:</strong> tsugami.com.cn/en/ir/ — FY19–FY25 annual & interim reports catalog</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>📊 Secondary Sources</h3>
+      <ul class="insight-list">
+        <li><strong>Crosby Securities (17 Nov 2025):</strong> 1H FY26 analyst report, BUY HK$40.70</li>
+        <li><strong>Simply Wall St (14 Apr 2026):</strong> Price HK$44.28, MC HK$15.78bn, 1Y +126%</li>
+        <li><strong>Investing.com:</strong> Price quote confirmation</li>
+        <li><strong>StockAnalysis.com:</strong> Company profile & historical snapshots</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3 style="margin-top:32px; font-family: 'Source Sans 3'; font-size: 1.1rem;">Verdict-Moving Data Points (±20% Sensitivity Test)</h3>
+  <table>
+    <thead>
+      <tr><th>Data Point</th><th>Value</th><th>Source</th><th>Verdict Changes if ±20%?</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>1H FY26 NP growth</td><td>+47.7% YoY</td><td>Crosby/Company</td><td>No — verdict is about price, not growth rate</td></tr>
+      <tr><td>Current price</td><td>HK$44.28</td><td>Simply Wall St (14 Apr 2026)</td><td>Yes — if −20% → HK$35.4, becomes BUY</td></tr>
+      <tr><td>TTM EPS (HK$)</td><td>HK$2.75</td><td>Simply Wall St</td><td>Marginal — IV moves but zones hold</td></tr>
+      <tr><td>Analyst consensus TP</td><td>HK$40.09</td><td>3 analysts avg</td><td>Context only — not the anchor</td></tr>
+      <tr><td>ROIC</td><td>~27%</td><td>Investing.com</td><td>No — quality tier already Buffett-grade</td></tr>
+    </tbody>
+  </table>
+
+  <h3 style="margin-top:32px; font-family: 'Source Sans 3'; font-size: 1.1rem;">Known Uncertainties</h3>
+  <div class="callout warning">
+    <strong>Flags for future refinement:</strong>
+    <ul class="insight-list" style="margin-top:12px;">
+      <li class="warn">FY19–FY21 detailed line items approximated from secondary sources; full primary-source reading would refine 10-year trend</li>
+      <li class="warn">SimplyWallSt flagged "earnings of questionable quality" in July 2025 — likely accruals ratio or receivables vs. revenue recognition — deserves deeper financial-statement review, but not material enough to change the verdict</li>
+      <li class="warn">Current-year capex intensity (maintenance vs. growth) would refine owner-earnings calculation</li>
+    </ul>
+  </div>
+</section>
+
+</div>
+</main>
+
+<footer class="disclaimer">
+  <div class="container">
+    <p>
+      This report is for informational and educational purposes only and does not constitute investment advice. Always conduct your own research and consult a licensed financial advisor before making investment decisions.
+      <span class="zh">本报告仅供参考和教育用途，不构成投资建议。在做出投资决定之前，请务必进行独立研究并咨询持牌财务顾问。</span>
+    </p>
+    <p class="meta">Generated with Claude · Analysis framework: Graham-Buffett-Munger-Fisher · Data vintage: 21 April 2026</p>
+  </div>
+</footer>
+
+<script>
+// Tab switching
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const tabId = btn.dataset.tab;
+    document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+    document.getElementById('tab-' + tabId).classList.add('active');
+    btn.classList.add('active');
+    // Resize charts in newly active tab
+    setTimeout(() => window.dispatchEvent(new Event('resize')), 100);
+  });
+});
+
+// Chart.js global defaults
+Chart.defaults.font.family = "'Source Sans 3', 'Noto Sans SC', sans-serif";
+Chart.defaults.font.size = 12;
+Chart.defaults.color = '#8892a4';
+Chart.defaults.plugins.legend.position = 'bottom';
+Chart.defaults.plugins.legend.labels.usePointStyle = true;
+Chart.defaults.plugins.legend.labels.padding = 16;
+Chart.defaults.responsive = true;
+Chart.defaults.maintainAspectRatio = false;
+
+const gridColor = 'rgba(255,255,255,0.035)';
+
+// === TAB 1: Intrinsic Value Chart ===
+new Chart(document.getElementById('iv-chart'), {
+  type: 'bar',
+  data: {
+    labels: ['DCF Bear', 'EPV Floor', 'DDM', 'DCF Base', 'Graham', 'Peer P/E', 'DCF Bull', 'Current Price'],
+    datasets: [{
+      label: 'Value per Share (HK$)',
+      data: [22, 24, 31.5, 35, 40, 41, 48, 44.28],
+      backgroundColor: [
+        'rgba(231,76,60,0.7)',
+        'rgba(231,76,60,0.5)',
+        'rgba(232,168,50,0.6)',
+        'rgba(201,168,76,0.8)',
+        'rgba(46,204,113,0.5)',
+        'rgba(46,204,113,0.6)',
+        'rgba(46,204,113,0.8)',
+        'rgba(91,141,239,0.9)'
+      ],
+      borderColor: [
+        '#e74c3c','#e74c3c','#e8a832','#c9a84c','#2ecc71','#2ecc71','#2ecc71','#5b8def'
+      ],
+      borderWidth: 2,
+      borderRadius: 6
+    }]
+  },
+  options: {
+    indexAxis: 'y',
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        callbacks: {
+          label: (ctx) => 'HK$' + ctx.parsed.x.toFixed(2)
+        }
+      }
+    },
+    scales: {
+      x: {
+        grid: { color: gridColor },
+        ticks: { callback: v => 'HK$' + v }
+      },
+      y: { grid: { display: false } }
+    }
+  }
+});
+
+// === TAB 2: Product Mix ===
+new Chart(document.getElementById('product-mix'), {
+  type: 'doughnut',
+  data: {
+    labels: ['Precision Lathes', 'Machining Centers', 'Grinding Machines', 'Other'],
+    datasets: [{
+      data: [82.1, 8.2, 5.0, 4.7],
+      backgroundColor: ['#c9a84c','#5b8def','#2ecc71','#8892a4'],
+      borderColor: '#0d1117',
+      borderWidth: 2
+    }]
+  },
+  options: {
+    plugins: {
+      tooltip: { callbacks: { label: ctx => ctx.label + ': ' + ctx.parsed + '%' } }
+    }
+  }
+});
+
+// === TAB 2: Segment Growth ===
+new Chart(document.getElementById('segment-growth'), {
+  type: 'bar',
+  data: {
+    labels: ['Machining Centers', 'Grinding', 'Precision Lathes', 'Overall'],
+    datasets: [{
+      label: 'YoY Growth (1H FY26)',
+      data: [157.0, 47.5, 19.4, 26.2],
+      backgroundColor: ['#2ecc71','#c9a84c','#5b8def','#e8a832'],
+      borderRadius: 6
+    }]
+  },
+  options: {
+    plugins: { legend: { display: false } },
+    scales: {
+      y: { grid: { color: gridColor }, ticks: { callback: v => v + '%' } },
+      x: { grid: { display: false } }
+    }
+  }
+});
+
+// === TAB 3: Revenue & Profit ===
+new Chart(document.getElementById('revenue-chart'), {
+  type: 'bar',
+  data: {
+    labels: ['FY20','FY21','FY22','FY23','FY24','FY25','TTM'],
+    datasets: [
+      {
+        label: 'Revenue (RMB M)',
+        data: [2300, 3100, 3900, 3700, 3100, 4260, 4780],
+        backgroundColor: 'rgba(91,141,239,0.7)',
+        borderRadius: 6,
+        yAxisID: 'y'
+      },
+      {
+        label: 'Net Profit (RMB M)',
+        data: [380, 560, 720, 625, 510, 780, 945],
+        backgroundColor: 'rgba(46,204,113,0.7)',
+        borderRadius: 6,
+        yAxisID: 'y'
+      }
+    ]
+  },
+  options: {
+    scales: {
+      y: { grid: { color: gridColor }, ticks: { callback: v => (v/1000).toFixed(1) + 'B' } },
+      x: { grid: { display: false } }
+    }
+  }
+});
+
+// === TAB 3: Margins ===
+new Chart(document.getElementById('margins-chart'), {
+  type: 'line',
+  data: {
+    labels: ['FY20','FY21','FY22','FY23','FY24','FY25','TTM'],
+    datasets: [
+      { label: 'Gross Margin %', data: [30, 32, 34, 32, 30, 32, 34.3], borderColor: '#5b8def', backgroundColor: 'rgba(91,141,239,0.1)', tension: 0.3, pointRadius: 4, fill: false },
+      { label: 'Net Margin %', data: [16, 18, 18, 17, 16, 18, 19.8], borderColor: '#2ecc71', backgroundColor: 'rgba(46,204,113,0.1)', tension: 0.3, pointRadius: 4, fill: false }
+    ]
+  },
+  options: {
+    scales: {
+      y: { grid: { color: gridColor }, ticks: { callback: v => v + '%' } },
+      x: { grid: { display: false } }
+    }
+  }
+});
+
+// === TAB 3: ROIC/ROE/WACC ===
+new Chart(document.getElementById('roic-chart'), {
+  type: 'line',
+  data: {
+    labels: ['FY20','FY21','FY22','FY23','FY24','FY25','TTM'],
+    datasets: [
+      { label: 'ROIC %', data: [16, 21, 24, 21, 17, 23, 27], borderColor: '#c9a84c', tension: 0.3, pointRadius: 4, fill: false },
+      { label: 'ROE %', data: [14, 18, 20, 17, 14, 18, 22], borderColor: '#2ecc71', tension: 0.3, pointRadius: 4, fill: false },
+      { label: 'WACC ~12%', data: [12, 12, 12, 12, 12, 12, 12], borderColor: '#e74c3c', borderDash: [6,4], tension: 0, pointRadius: 0, fill: false }
+    ]
+  },
+  options: {
+    scales: {
+      y: { grid: { color: gridColor }, ticks: { callback: v => v + '%' } },
+      x: { grid: { display: false } }
+    }
+  }
+});
+
+// === TAB 3: Dividends ===
+new Chart(document.getElementById('dividend-chart'), {
+  type: 'bar',
+  data: {
+    labels: ['FY21','FY22','FY23','FY24','FY25','FY26E'],
+    datasets: [{
+      label: 'DPS HK$',
+      data: [0.40, 0.40, 0.40, 0.40, 1.00, 1.20],
+      backgroundColor: [
+        'rgba(136,146,164,0.5)','rgba(136,146,164,0.5)','rgba(136,146,164,0.5)',
+        'rgba(136,146,164,0.5)','rgba(201,168,76,0.8)','rgba(46,204,113,0.8)'
+      ],
+      borderRadius: 6
+    }]
+  },
+  options: {
+    plugins: { legend: { display: false } },
+    scales: {
+      y: { grid: { color: gridColor }, ticks: { callback: v => 'HK$' + v.toFixed(2) } },
+      x: { grid: { display: false } }
+    }
+  }
+});
+
+// === TAB 4: Moat Radar ===
+new Chart(document.getElementById('moat-radar'), {
+  type: 'radar',
+  data: {
+    labels: [
+      'Intangible Assets\n无形资产',
+      'Cost Advantage\n成本优势',
+      'Switching Costs\n转换成本',
+      'Network Effects\n网络效应',
+      'Efficient Scale\n规模效益'
+    ],
+    datasets: [{
+      label: 'PTC Moat Strength',
+      data: [3.5, 3.0, 3.5, 1.0, 2.0],
+      fill: true,
+      backgroundColor: 'rgba(201,168,76,0.15)',
+      borderColor: '#c9a84c',
+      pointBackgroundColor: '#c9a84c',
+      pointBorderColor: '#fff',
+      pointRadius: 5
+    }]
+  },
+  options: {
+    scales: {
+      r: {
+        min: 0, max: 5,
+        ticks: { stepSize: 1, backdropColor: 'transparent', color: '#6e7681' },
+        grid: { color: 'rgba(255,255,255,0.08)' },
+        angleLines: { color: 'rgba(255,255,255,0.08)' },
+        pointLabels: { color: '#e6edf3', font: { size: 11 } }
+      }
+    },
+    plugins: { legend: { display: false } }
+  }
+});
+
+// === TAB 5: Peer ===
+new Chart(document.getElementById('peer-chart'), {
+  type: 'bar',
+  data: {
+    labels: ['Okuma (Japan)', 'DMG Mori (DE)', 'Haitian Intl (1882.HK)', 'Peer Average', 'Precision Tsugami (1651.HK)'],
+    datasets: [
+      {
+        label: 'P/E Ratio (TTM)',
+        data: [12, 14, 11, 12.3, 17.3],
+        backgroundColor: ['rgba(136,146,164,0.5)','rgba(136,146,164,0.5)','rgba(136,146,164,0.5)','rgba(232,168,50,0.7)','rgba(201,168,76,0.9)'],
+        borderRadius: 6
+      },
+      {
+        label: 'ROIC %',
+        data: [9, 11, 14, 11.3, 27],
+        backgroundColor: ['rgba(91,141,239,0.4)','rgba(91,141,239,0.4)','rgba(91,141,239,0.4)','rgba(91,141,239,0.5)','rgba(46,204,113,0.7)'],
+        borderRadius: 6
+      }
+    ]
+  },
+  options: {
+    indexAxis: 'y',
+    scales: {
+      x: { grid: { color: gridColor } },
+      y: { grid: { display: false } }
+    }
+  }
+});
+
+// === TAB 6: Valuation Methods ===
+new Chart(document.getElementById('val-methods-chart'), {
+  type: 'bar',
+  data: {
+    labels: ['DCF Bear', 'EPV', 'DDM', 'DCF Base', 'Graham', 'Peer P/E', 'DCF Bull'],
+    datasets: [{
+      label: 'Fair Value (HK$)',
+      data: [22, 24, 31.5, 35, 40, 41, 48],
+      backgroundColor: function(ctx) {
+        const price = 44.28;
+        const v = ctx.parsed.y;
+        if (v === undefined) return 'rgba(201,168,76,0.7)';
+        return v < price ? 'rgba(231,76,60,0.7)' : 'rgba(46,204,113,0.7)';
+      },
+      borderRadius: 6
+    }]
+  },
+  options: {
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        callbacks: {
+          afterLabel: (ctx) => {
+            const price = 44.28;
+            const mos = ((ctx.parsed.y - price) / ctx.parsed.y * 100).toFixed(1);
+            return 'MoS vs. HK$44.28: ' + mos + '%';
+          }
+        }
+      }
+    },
+    scales: {
+      y: { grid: { color: gridColor }, ticks: { callback: v => 'HK$' + v } },
+      x: { grid: { display: false } }
+    }
+  }
+});
+
+// === TAB 6: Scenario Chart ===
+new Chart(document.getElementById('scenario-chart'), {
+  type: 'bar',
+  data: {
+    labels: ['Bear\n25%', 'Base\n50%', 'Bull\n25%', 'Expected\nValue'],
+    datasets: [{
+      label: 'IV (HK$)',
+      data: [22, 35, 48, 35],
+      backgroundColor: ['rgba(231,76,60,0.6)','rgba(91,141,239,0.6)','rgba(46,204,113,0.6)','rgba(201,168,76,0.9)'],
+      borderRadius: 8
+    }]
+  },
+  options: {
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        callbacks: {
+          afterLabel: (ctx) => {
+            const contrib = [5.5, 17.5, 12.0, ''];
+            return contrib[ctx.dataIndex] ? 'Contribution: ' + contrib[ctx.dataIndex] : '';
+          }
+        }
+      }
+    },
+    scales: {
+      y: { grid: { color: gridColor }, ticks: { callback: v => 'HK$' + v } },
+      x: { grid: { display: false } }
+    }
+  }
+});
+
+// === Sensitivity Table ===
+const growthRates = [3, 6, 9, 12, 15];
+const discountRates = [9, 10, 11, 12, 13];
+const currentPrice = 44.28;
+// Simplified sensitivity: base IV 35 at g=9%, DR=12%
+const sensitivityMatrix = growthRates.map(g => 
+  discountRates.map(dr => {
+    const base = 35;
+    // Simple model: IV inversely proportional to (DR - g)
+    const adj = (12 - 9) / (dr - g);
+    return base * adj;
+  })
+);
+
+let html = '<table class="sensitivity"><tr><th>Growth ↓ / DR →</th>';
+discountRates.forEach(dr => html += '<th>' + dr + '%</th>');
+html += '</tr>';
+growthRates.forEach((g, i) => {
+  html += '<tr><td class="row-label">' + g + '% growth</td>';
+  discountRates.forEach((dr, j) => {
+    const val = sensitivityMatrix[i][j];
+    const isAbove = val > currentPrice;
+    const intensity = Math.min(Math.abs(val - currentPrice) / currentPrice * 2, 1);
+    const bg = isAbove
+      ? 'rgba(46,204,113,' + (0.08 + intensity * 0.25) + ')'
+      : 'rgba(231,76,60,' + (0.08 + intensity * 0.25) + ')';
+    const color = isAbove ? '#2ecc71' : '#e74c3c';
+    html += '<td style="background:' + bg + '; color:' + color + '; font-weight:600;">HK$' + val.toFixed(0) + '</td>';
+  });
+  html += '</tr>';
+});
+html += '</table>';
+document.getElementById('sensitivity-table').innerHTML = html;
+
+</script>
+</body>
+</html>

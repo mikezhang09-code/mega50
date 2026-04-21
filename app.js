@@ -146,6 +146,7 @@ var CATEGORIES = {
           { id: "hk-ai-beneficiaries", label: "HK AI Beneficiaries Top 10", url: "./hk-ai-beneficiaries-top10.html", icon: "chart" },
           { id: "ck-hutchison-asset", label: "CK Hutchison & Asset", url: "./CK_Hutchison_CK_Asset_Investment_Report.html", icon: "doc" },
           { id: "jd-report", label: "JD.com (9618.HK)", url: "./report_JD_2026-04-19.html", icon: "doc" },
+          { id: "tsugami-report", label: "Precision Tsugami (1651.HK)", url: "./report_1651HK_2026-04-21.html", icon: "doc" },
         ],
       },
       {
