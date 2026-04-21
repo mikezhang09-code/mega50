@@ -1,0 +1,911 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>JD.com (JD / 9618.HK) — Investment Report | 京东投资分析</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=Source+Sans+3:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  :root {
+    /* Dark Luxe palette */
+    --navy-deep: #0a1628;
+    --navy-primary: #0f2342;
+    --navy-secondary: #1a3558;
+    --navy-card: #14243d;
+    --navy-border: #1e3560;
+    --gold-primary: #d4af37;
+    --gold-bright: #f5d26f;
+    --gold-muted: #8a7128;
+    --cream: #e8e3d4;
+    --cream-dim: #b4ae9f;
+    --text-primary: #e8e3d4;
+    --text-secondary: #b4ae9f;
+    --text-dim: #6c7380;
+    --green-win: #7cba7c;
+    --red-loss: #cc6b6b;
+    --amber-warn: #e0a86f;
+    --chinese-green: #6b9e6b;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: radial-gradient(ellipse at top, var(--navy-primary) 0%, var(--navy-deep) 100%);
+    color: var(--text-primary);
+    font-family: 'Source Sans 3', -apple-system, sans-serif;
+    font-weight: 400;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  .chinese { font-family: 'Noto Sans SC', 'Microsoft YaHei', sans-serif; color: var(--chinese-green); font-weight: 500; }
+  .mono { font-family: 'IBM Plex Mono', monospace; font-weight: 500; font-feature-settings: 'tnum'; }
+
+  /* Typography */
+  h1, h2, h3 { font-family: 'Playfair Display', Georgia, serif; color: var(--gold-bright); font-weight: 700; }
+  h1 { font-size: 2.6rem; line-height: 1.1; letter-spacing: -0.01em; }
+  h2 { font-size: 1.7rem; margin-bottom: 0.8rem; border-bottom: 1px solid var(--gold-muted); padding-bottom: 0.5rem; }
+  h3 { font-size: 1.2rem; color: var(--cream); margin-top: 1.3rem; margin-bottom: 0.6rem; }
+  p { margin-bottom: 0.8rem; }
+
+  /* Layout */
+  .container { max-width: 1200px; margin: 0 auto; padding: 2.5rem 2rem; }
+  header { text-align: center; padding-bottom: 2rem; border-bottom: 2px solid var(--gold-muted); margin-bottom: 1.5rem; }
+  header .eyebrow { letter-spacing: 0.25em; color: var(--gold-primary); font-size: 0.75rem; text-transform: uppercase; margin-bottom: 0.8rem; }
+  header .ticker { font-family: 'IBM Plex Mono', monospace; color: var(--text-secondary); font-size: 0.9rem; margin-top: 0.3rem; }
+  header .date { color: var(--text-dim); font-size: 0.85rem; margin-top: 0.8rem; }
+
+  /* Verdict banner */
+  .verdict-banner {
+    background: linear-gradient(135deg, var(--navy-card) 0%, var(--navy-secondary) 100%);
+    border: 1px solid var(--gold-muted);
+    border-radius: 4px;
+    padding: 1.8rem 2rem;
+    margin: 2rem 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1.5rem;
+  }
+  .verdict-item { text-align: center; }
+  .verdict-item .label { color: var(--text-dim); text-transform: uppercase; font-size: 0.72rem; letter-spacing: 0.12em; margin-bottom: 0.5rem; }
+  .verdict-item .value { font-family: 'Playfair Display', serif; font-size: 1.8rem; color: var(--gold-bright); font-weight: 700; }
+  .verdict-item .subvalue { color: var(--cream-dim); font-size: 0.85rem; margin-top: 0.3rem; }
+  .verdict-item.buy .value { color: var(--amber-warn); }
+
+  /* Tabs */
+  .tabs { display: flex; flex-wrap: wrap; gap: 0; margin: 2rem 0 0; border-bottom: 1px solid var(--navy-border); }
+  .tab {
+    padding: 0.9rem 1.4rem; background: none; border: none; color: var(--text-secondary);
+    cursor: pointer; font-family: 'Source Sans 3', sans-serif; font-size: 0.9rem;
+    letter-spacing: 0.05em; transition: all 0.25s ease; border-bottom: 2px solid transparent;
+    font-weight: 500;
+  }
+  .tab:hover { color: var(--gold-bright); }
+  .tab.active { color: var(--gold-bright); border-bottom-color: var(--gold-primary); }
+  .tab-content { display: none; padding: 2rem 0; animation: fadeIn 0.35s ease; }
+  .tab-content.active { display: block; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: none; } }
+
+  /* Cards */
+  .card {
+    background: var(--navy-card); border: 1px solid var(--navy-border); border-radius: 4px;
+    padding: 1.5rem 1.8rem; margin-bottom: 1.5rem;
+  }
+  .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.2rem; margin: 1.5rem 0; }
+  .card-grid .card { margin-bottom: 0; }
+
+  /* Tables */
+  table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 0.92rem; }
+  th, td { padding: 0.75rem 0.9rem; text-align: left; border-bottom: 1px solid var(--navy-border); }
+  th { color: var(--gold-primary); text-transform: uppercase; letter-spacing: 0.08em; font-size: 0.72rem; font-weight: 600; }
+  td.num { text-align: right; font-family: 'IBM Plex Mono', monospace; font-size: 0.9rem; }
+  tr:hover td { background: rgba(212, 175, 55, 0.04); }
+  td.pass { color: var(--green-win); }
+  td.fail { color: var(--red-loss); }
+  td.warn { color: var(--amber-warn); }
+
+  /* Charts */
+  .chart-container { position: relative; height: 340px; margin: 1rem 0; background: rgba(10, 22, 40, 0.5); border-radius: 4px; padding: 1rem; }
+  .chart-small { height: 260px; }
+
+  /* Scorecard */
+  .scorecard { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 1rem; margin: 1.5rem 0; }
+  .score-item { background: var(--navy-secondary); padding: 1.2rem; border-radius: 4px; text-align: center; border-left: 3px solid var(--gold-primary); }
+  .score-item .label { color: var(--text-dim); font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; }
+  .score-item .value { font-family: 'Playfair Display', serif; font-size: 2rem; color: var(--gold-bright); font-weight: 700; margin: 0.4rem 0; }
+  .score-item .bar { height: 4px; background: var(--navy-border); border-radius: 2px; margin-top: 0.6rem; overflow: hidden; }
+  .score-item .bar-fill { height: 100%; background: linear-gradient(90deg, var(--gold-muted), var(--gold-bright)); }
+
+  /* Verdict box */
+  .verdict-box { background: linear-gradient(135deg, var(--navy-primary), var(--navy-card)); border: 2px solid var(--gold-primary); border-radius: 6px; padding: 2rem; margin: 1.5rem 0; }
+  .verdict-box h3 { color: var(--gold-bright); margin-top: 0; }
+  .verdict-box .conviction { display: flex; align-items: center; gap: 1rem; margin: 1rem 0; }
+  .conviction-bar { flex: 1; height: 12px; background: var(--navy-border); border-radius: 6px; overflow: hidden; }
+  .conviction-fill { height: 100%; background: linear-gradient(90deg, var(--red-loss), var(--amber-warn), var(--green-win)); width: 65%; }
+
+  /* Footer */
+  footer { margin-top: 3rem; padding: 2rem 0; border-top: 1px solid var(--navy-border); color: var(--text-dim); font-size: 0.78rem; text-align: center; line-height: 1.8; }
+
+  /* Highlight boxes */
+  .highlight { background: rgba(212, 175, 55, 0.08); border-left: 3px solid var(--gold-primary); padding: 1rem 1.3rem; margin: 1rem 0; border-radius: 0 4px 4px 0; }
+  .warning { background: rgba(224, 168, 111, 0.08); border-left: 3px solid var(--amber-warn); padding: 1rem 1.3rem; margin: 1rem 0; border-radius: 0 4px 4px 0; }
+  .danger { background: rgba(204, 107, 107, 0.08); border-left: 3px solid var(--red-loss); padding: 1rem 1.3rem; margin: 1rem 0; border-radius: 0 4px 4px 0; }
+  .success { background: rgba(124, 186, 124, 0.08); border-left: 3px solid var(--green-win); padding: 1rem 1.3rem; margin: 1rem 0; border-radius: 0 4px 4px 0; }
+
+  ul, ol { padding-left: 1.5rem; margin-bottom: 0.8rem; }
+  li { margin-bottom: 0.4rem; }
+
+  @media (max-width: 768px) {
+    .container { padding: 1.5rem 1rem; }
+    h1 { font-size: 1.8rem; }
+    .tabs { overflow-x: auto; flex-wrap: nowrap; }
+    .tab { white-space: nowrap; }
+  }
+
+  @media print {
+    body { background: white; color: black; }
+    .tabs { display: none; }
+    .tab-content { display: block !important; page-break-after: always; }
+  }
+  .home-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(212, 175, 55, 0.15);
+    border: 1px solid rgba(212, 175, 55, 0.3);
+    color: #fff;
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 8px 20px;
+    border-radius: 24px;
+    text-decoration: none;
+    margin-bottom: 2rem;
+    transition: all 0.2s;
+    border-left: 3px solid var(--gold-primary);
+  }
+  .home-btn:hover {
+    background: rgba(212, 175, 55, 0.25);
+    border-color: var(--gold-primary);
+    transform: translateX(-4px);
+  }
+  .home-btn svg { flex-shrink: 0; }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+<header>
+  <a href="./index.html" class="home-btn">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+    Return to Home / 返回主页
+  </a>
+  <div class="eyebrow">Weekly Value Pick · 每周价值精选</div>
+  <h1>JD.com, Inc.</h1>
+  <p class="chinese">京东集团</p>
+  <p class="ticker">NASDAQ: JD · HKEX: 9618 · RMB Counter: 89618</p>
+  <p class="date">Report Date · 报告日期: April 19, 2026 &nbsp;|&nbsp; Prices as of April 18, 2026</p>
+</header>
+
+<!-- Verdict Banner -->
+<div class="verdict-banner">
+  <div class="verdict-item buy">
+    <div class="label">Verdict · 结论</div>
+    <div class="value">BUY</div>
+    <div class="subvalue">Half position, staged entry</div>
+    <div class="subvalue chinese">半仓分批买入</div>
+  </div>
+  <div class="verdict-item">
+    <div class="label">Conviction · 信心</div>
+    <div class="value">6.5 / 10</div>
+    <div class="subvalue">Medium conviction</div>
+    <div class="subvalue chinese">中等信心</div>
+  </div>
+  <div class="verdict-item">
+    <div class="label">Fair Value · 合理估值</div>
+    <div class="value">$52</div>
+    <div class="subvalue">Per ADS (base case)</div>
+    <div class="subvalue chinese">每ADS (基准情景)</div>
+  </div>
+  <div class="verdict-item">
+    <div class="label">Current · 现价</div>
+    <div class="value">$33.50</div>
+    <div class="subvalue">Margin of Safety ~36%</div>
+    <div class="subvalue chinese">安全边际 ~36%</div>
+  </div>
+</div>
+
+<!-- Tabs -->
+<div class="tabs">
+  <button class="tab active" onclick="showTab('quickkill')">Quick-Kill · 速检</button>
+  <button class="tab" onclick="showTab('summary')">Summary · 摘要</button>
+  <button class="tab" onclick="showTab('business')">Business · 业务</button>
+  <button class="tab" onclick="showTab('management')">Management · 管理层</button>
+  <button class="tab" onclick="showTab('financials')">Financials · 财务</button>
+  <button class="tab" onclick="showTab('valuation')">Valuation · 估值</button>
+  <button class="tab" onclick="showTab('moat')">Moat · 护城河</button>
+  <button class="tab" onclick="showTab('industry')">Industry · 行业</button>
+  <button class="tab" onclick="showTab('risk')">Risk · 风险</button>
+  <button class="tab" onclick="showTab('monitoring')">Monitoring · 监控</button>
+  <button class="tab" onclick="showTab('verdict')">Verdict · 结论</button>
+  <button class="tab" onclick="showTab('sources')">Sources · 来源</button>
+</div>
+
+<!-- Tab 1: Quick-Kill Screener -->
+<div class="tab-content active" id="tab-quickkill">
+  <h2>Quick-Kill Screener · 8-Question Gateway</h2>
+  <p><span class="chinese">速检 8 问</span> — Mandatory gate before any deep analysis. Two "No" answers require strong justification; four = pass and move on. Q7 is an automatic veto.</p>
+
+  <table>
+    <thead>
+      <tr><th>#</th><th>Dimension</th><th>Question</th><th>Answer</th><th>Status</th></tr>
+    </thead>
+    <tbody>
+      <tr><td class="num">1</td><td>Circle of Competence</td><td>Can I explain this business in one paragraph?</td><td>Yes — First-party online retail + logistics + marketplace, similar to Amazon model, but focused on China.</td><td class="pass">✓ Pass</td></tr>
+      <tr><td class="num">2</td><td>Durability</td><td>Will this company still exist and be stronger in 10 years?</td><td>Yes — e-commerce is structural; JD Retail specifically is gaining scale.</td><td class="pass">✓ Pass</td></tr>
+      <tr><td class="num">3</td><td>Moat</td><td>Could a well-funded competitor replicate its core advantage?</td><td>Partially — logistics network is hard to replicate, but brand/selection is contested by PDD and Alibaba.</td><td class="warn">◐ Marginal</td></tr>
+      <tr><td class="num">4</td><td>Pricing Power</td><td>Can it raise prices 5–10% without losing customers?</td><td>Limited — e-commerce is price-competitive. JD captures premium via trust, not price.</td><td class="warn">◐ Marginal</td></tr>
+      <tr><td class="num">5</td><td>Earnings Quality</td><td>Does profit convert to cash?</td><td>Historically yes (cash conversion >90%), 2025 impacted by food delivery investment but operating CF still positive.</td><td class="pass">✓ Pass</td></tr>
+      <tr><td class="num">6</td><td>Debt Safety</td><td>Can it survive a 30% revenue decline without dilution?</td><td>Absolutely — ~$22B net cash vs. ~$46B market cap. Fortress balance sheet.</td><td class="pass">✓ Pass</td></tr>
+      <tr><td class="num">7</td><td>Management Integrity</td><td>Does management honestly confront problems? <strong>AUTOMATIC VETO</strong></td><td>Yes — Sandy Xu's communications are non-promotional and acknowledge losses openly.</td><td class="pass">✓ Pass</td></tr>
+      <tr><td class="num">8</td><td>Reasonable Price</td><td>Is the price-to-intrinsic-value gap wide enough?</td><td>Yes — ~36% margin of safety vs. base case $52 fair value.</td><td class="pass">✓ Pass</td></tr>
+    </tbody>
+  </table>
+
+  <div class="highlight">
+    <strong>Screener result: 6 Pass, 2 Marginal, 0 Fail</strong> — proceeds to deep analysis. The two marginal items (Q3 moat, Q4 pricing power) are consistent with a narrow-moat business that should trade at a discount to wide-moat peers. The depth of current discount more than compensates.
+  </div>
+</div>
+
+<!-- Tab 2: Executive Summary -->
+<div class="tab-content" id="tab-summary">
+  <h2>Executive Summary · 执行摘要</h2>
+  <p>JD.com is a classic "fog of war" value situation: a fundamentally healthy core business obscured by a large, uncertain capital deployment in food delivery.</p>
+
+  <div class="card-grid">
+    <div class="card">
+      <h3>The Positive Case</h3>
+      <ul>
+        <li><strong>JD Retail (81% of revenue)</strong> grew operating income 25% YoY in 2025, margin expanded 4.0% → 4.6%.</li>
+        <li><strong>Fortress balance sheet:</strong> ~$22B net cash = 45% of market cap.</li>
+        <li><strong>Aggressive capital return:</strong> 6.3% of shares retired in 2025 + $1.4B dividend = ~10% total shareholder yield.</li>
+        <li><strong>Service revenue mix</strong> (higher-margin) growing 23.6% YoY — structural margin tailwind.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>The Risk Case <span class="chinese">风险情景</span></h3>
+      <ul>
+        <li><strong>New Businesses</strong> lost <span class="mono">RMB 46.6B</span> in 2025 — primarily food delivery war vs. Meituan.</li>
+        <li><strong>Consolidated operating margin</strong> collapsed 3.3% → 0.2%.</li>
+        <li><strong>Free cash flow</strong> fell from <span class="mono">RMB 43.7B</span> → <span class="mono">RMB 6.5B</span>.</li>
+        <li><strong>Munger institutional imperative:</strong> is management chasing a market they cannot economically win?</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="chart-container">
+    <canvas id="chartValuationTriangulation"></canvas>
+  </div>
+
+  <div class="success">
+    <strong>Triangulated base-case fair value: ~US$52 / ADS</strong> (range $41 floor to $74 SOTP). Versus current $33.50, implied margin of safety is ~36% to base case, ~120% to SOTP upside case. <span class="chinese">基准估值约52美元,相对当前33.50美元有约36%安全边际。</span>
+  </div>
+</div>
+
+<!-- Tab 3: Business Overview -->
+<div class="tab-content" id="tab-business">
+  <h2>Business Overview · 业务概览</h2>
+  <p>JD.com operates three reportable segments: <strong>JD Retail</strong> (core e-commerce), <strong>JD Logistics</strong> (own + 3rd-party logistics), and <strong>New Businesses</strong> (food delivery, overseas, Jingxi, JD Property).</p>
+
+  <div class="chart-container">
+    <canvas id="chartSegmentRevenue"></canvas>
+  </div>
+
+  <div class="chart-container">
+    <canvas id="chartSegmentOI"></canvas>
+  </div>
+
+  <h3>Unlike Alibaba: First-Party Model <span class="chinese">自营模式</span></h3>
+  <p>JD holds inventory, operates warehouses, and runs last-mile delivery. This is structurally more capital-intensive than Alibaba's pure marketplace, but creates a higher-trust proposition that has carved out a durable niche — especially in electronics, healthcare, and categories where counterfeit risk matters.</p>
+
+  <div class="card">
+    <h3>Revenue Mix Trend (positive structural story) <span class="chinese">收入结构 —— 正向趋势</span></h3>
+    <ul>
+      <li><strong>Net product revenues FY2025:</strong> RMB 1,023.8B (+10.3% YoY)</li>
+      <li><strong>Net service revenues FY2025:</strong> RMB 285.3B (<strong>+23.6% YoY</strong>)</li>
+      <li>Within service: Marketplace & marketing +18.9%; Logistics & other services +26.6%</li>
+      <li>Service revenues carry near-zero COGS drag, driving structural margin expansion</li>
+    </ul>
+  </div>
+</div>
+
+<!-- Tab 4: Management -->
+<div class="tab-content" id="tab-management">
+  <h2>Management · 管理层评估</h2>
+
+  <div class="card-grid">
+    <div class="card">
+      <h3>CEO: Sandy Xu (徐雷接任后 Sandy Xu)</h3>
+      <p>Appointed May 2023. Previously CFO. Has maintained credible, non-promotional communication throughout the food-delivery investment cycle. Q4 2025 release openly described operating losses and explained reasoning without hedging.</p>
+    </div>
+    <div class="card">
+      <h3>Chairman: Richard Liu (刘强东)</h3>
+      <p>Founder. Stepped back from daily operations in 2022 but remains controlling shareholder. 2018 Minnesota legal matter resolved in 2022. Not operational — does not create Q7 integrity veto.</p>
+    </div>
+  </div>
+
+  <h3>Capital Allocation Scorecard (10-year lens)</h3>
+  <table>
+    <thead>
+      <tr><th>Action</th><th>Assessment</th><th>Evidence</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Share buybacks</td><td class="pass">✓ Excellent</td><td>6.3% of shares retired in 2025 at depressed prices = ~$3.0B; US$2.0B remaining on program through Aug 2027</td></tr>
+      <tr><td>Dividends</td><td class="pass">✓ Good</td><td>US$1.4B paid in 2025 (US$0.50/share, US$1.00/ADS) — steady, meaningful</td></tr>
+      <tr><td>M&amp;A</td><td class="pass">✓ Conservative</td><td>Historically no major "deal-making" acquisitions; growth has been organic</td></tr>
+      <tr><td>Spinoffs</td><td class="pass">✓ Value-creating</td><td>JD Logistics (2618.HK), JD Health, JD Industrials (7618.HK, Dec 2025) successfully unlocked hidden value</td></tr>
+      <tr><td>New business investment</td><td class="warn">◐ Under review</td><td><strong>Food delivery entry is the open question.</strong> −RMB 46.6B operating loss in 2025; need to see sequential narrowing to validate</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- Tab 5: Financial Scorecard -->
+<div class="tab-content" id="tab-financials">
+  <h2>Financial Scorecard · 财务评分卡</h2>
+
+  <div class="chart-container">
+    <canvas id="chartRevenueMargin"></canvas>
+  </div>
+
+  <div class="chart-container chart-small">
+    <canvas id="chartFCF"></canvas>
+  </div>
+
+  <h3>5-Year Summary (RMB billions) <span class="chinese">五年财务摘要</span></h3>
+  <table>
+    <thead>
+      <tr><th>Metric</th><th class="num">FY2021</th><th class="num">FY2022</th><th class="num">FY2023</th><th class="num">FY2024</th><th class="num">FY2025</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Revenue</td><td class="num">951.6</td><td class="num">1,046.2</td><td class="num">1,084.7</td><td class="num">1,158.8</td><td class="num">1,309.1</td></tr>
+      <tr><td>Gross margin</td><td class="num">13.8%</td><td class="num">14.5%</td><td class="num">14.9%</td><td class="num">15.9%</td><td class="num">16.0%</td></tr>
+      <tr><td>Operating income (GAAP)</td><td class="num">−4.1</td><td class="num">18.2</td><td class="num">26.0</td><td class="num">38.7</td><td class="num">2.8</td></tr>
+      <tr><td>Non-GAAP OI</td><td class="num">19.6</td><td class="num">28.3</td><td class="num">35.3</td><td class="num">44.0</td><td class="num">9.6</td></tr>
+      <tr><td>Non-GAAP net income</td><td class="num">17.2</td><td class="num">28.2</td><td class="num">35.2</td><td class="num">47.8</td><td class="num">27.0</td></tr>
+      <tr><td>FCF</td><td class="num">26.2</td><td class="num">35.6</td><td class="num">40.7</td><td class="num">43.7</td><td class="num">6.5</td></tr>
+    </tbody>
+  </table>
+  <p style="font-size:0.78rem; color:var(--text-dim);">FY2021–FY2023 figures are directional, synthesized from prior filings. FY2024 and FY2025 are from the March 5, 2026 Form 6-K (primary source).</p>
+
+  <h3>Financial Health Scores <span class="chinese">财务健康得分</span></h3>
+  <div class="scorecard">
+    <div class="score-item"><div class="label">Growth</div><div class="value">6/7</div><div class="bar"><div class="bar-fill" style="width:86%"></div></div></div>
+    <div class="score-item"><div class="label">Margins</div><div class="value">4/7</div><div class="bar"><div class="bar-fill" style="width:57%"></div></div></div>
+    <div class="score-item"><div class="label">Returns</div><div class="value">4/7</div><div class="bar"><div class="bar-fill" style="width:57%"></div></div></div>
+    <div class="score-item"><div class="label">Balance Sheet</div><div class="value">7/7</div><div class="bar"><div class="bar-fill" style="width:100%"></div></div></div>
+    <div class="score-item"><div class="label">Cash Flow</div><div class="value">5/7</div><div class="bar"><div class="bar-fill" style="width:71%"></div></div></div>
+    <div class="score-item"><div class="label">Capital Return</div><div class="value">7/7</div><div class="bar"><div class="bar-fill" style="width:100%"></div></div></div>
+    <div class="score-item"><div class="label">Earnings Quality</div><div class="value">6/7</div><div class="bar"><div class="bar-fill" style="width:86%"></div></div></div>
+  </div>
+  <p><strong>Overall: 39 / 49 (80%)</strong> — Strong, held back by 2025 margin compression and weakened cash flow. Would be 45/49 ex the food-delivery drag.</p>
+</div>
+
+<!-- Tab 6: Valuation -->
+<div class="tab-content" id="tab-valuation">
+  <h2>Valuation · 估值</h2>
+
+  <div class="chart-container">
+    <canvas id="chartValuationMethods"></canvas>
+  </div>
+
+  <h3>DCF Scenario Analysis <span class="chinese">DCF 情景分析</span></h3>
+  <div class="chart-container">
+    <canvas id="chartDCFScenarios"></canvas>
+  </div>
+
+  <table>
+    <thead>
+      <tr><th>Scenario</th><th class="num">Core Growth</th><th class="num">FD Path</th><th class="num">Fair Value / ADS</th><th class="num">Probability</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Bear</td><td class="num">3%</td><td class="num">Permanent drag</td><td class="num">$28</td><td class="num">25%</td></tr>
+      <tr><td>Base</td><td class="num">6%</td><td class="num">Halved by end-2026, breakeven 2027</td><td class="num">$52</td><td class="num">55%</td></tr>
+      <tr><td>Bull</td><td class="num">9%</td><td class="num">Reaches Meituan-like profit by 2028</td><td class="num">$78</td><td class="num">20%</td></tr>
+      <tr><td><strong>Prob-weighted</strong></td><td></td><td></td><td class="num"><strong>$51</strong></td><td></td></tr>
+    </tbody>
+  </table>
+
+  <h3>Margin of Safety Gauge <span class="chinese">安全边际仪表</span></h3>
+  <div class="chart-container chart-small">
+    <canvas id="chartMoS"></canvas>
+  </div>
+
+  <div class="card">
+    <h3>Valuation Summary</h3>
+    <ul>
+      <li>Current price: <strong>US$33.50 / ADS</strong></li>
+      <li>Graham Number (floor): <strong>US$41</strong> — current price already below floor</li>
+      <li>DCF prob-weighted: <strong>US$51</strong></li>
+      <li>EPV (no growth): <strong>US$52</strong></li>
+      <li>Graham Formula: <strong>US$66</strong></li>
+      <li>SOTP: <strong>US$74</strong></li>
+      <li><strong>Central estimate (median): US$52</strong> — implies ~55% upside to central fair value</li>
+    </ul>
+  </div>
+</div>
+
+<!-- Tab 7: Moat Analysis -->
+<div class="tab-content" id="tab-moat">
+  <h2>Moat Analysis · 护城河分析</h2>
+
+  <div class="chart-container">
+    <canvas id="chartMoatRadar"></canvas>
+  </div>
+
+  <table>
+    <thead>
+      <tr><th>Moat Type</th><th class="num">Score (0–5)</th><th>Evidence</th><th>Trend</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Cost advantage (scale)</td><td class="num">4</td><td>Largest first-party e-commerce logistics network in China</td><td class="pass">Stable</td></tr>
+      <tr><td>Intangible assets (brand)</td><td class="num">4</td><td>"JD trust" = authentic goods, on-time delivery</td><td class="warn">Slight erosion from PDD</td></tr>
+      <tr><td>Switching costs</td><td class="num">2</td><td>JD Plus membership, but consumers easily multi-home</td><td class="warn">Weakening</td></tr>
+      <tr><td>Network effects</td><td class="num">3</td><td>Marketplace has some 2-sided effect; Retail is mostly 1P</td><td class="pass">Stable</td></tr>
+      <tr><td>Efficient scale</td><td class="num">3</td><td>Logistics capex creates regional efficient scale</td><td class="pass">Stable</td></tr>
+      <tr><td><strong>Total</strong></td><td class="num"><strong>16/25</strong></td><td colspan="2"><strong>Narrow-medium moat, stable overall</strong></td></tr>
+    </tbody>
+  </table>
+
+  <h3>Franchise vs. Commodity Test (Buffett 1991) <span class="chinese">特许经营权测试</span></h3>
+  <table>
+    <tr><td>Product/service is needed or desired</td><td class="pass">✓ Yes</td></tr>
+    <tr><td>Customers perceive no close substitute</td><td class="warn">◐ Taobao, PDD, Douyin exist</td></tr>
+    <tr><td>Not subject to price regulation</td><td class="pass">✓ Yes</td></tr>
+  </table>
+  <p><strong>Verdict:</strong> Franchise-like but not pure franchise. Closer to Amazon than Coca-Cola.</p>
+
+  <h3>Munger Inversion: What could destroy the moat? <span class="chinese">芒格反向思考</span></h3>
+  <ul>
+    <li><strong>PDD continuing to win price-sensitive consumers</strong> — active, ongoing threat</li>
+    <li><strong>Douyin/TikTok e-commerce</strong> expanding from entertainment into transactional — meaningful threat</li>
+    <li><strong>Logistics commoditization</strong> — SF Express, YTO catching up on technology</li>
+    <li><strong>Prolonged consumption downturn</strong> — would hurt higher-ticket electronics disproportionately</li>
+  </ul>
+  <p>None catastrophic; all real. Moat is narrow-durable, not wide.</p>
+</div>
+
+<!-- Tab 8: Industry -->
+<div class="tab-content" id="tab-industry">
+  <h2>Industry Analysis · 行业分析</h2>
+  <h3>Chinese E-commerce Playbook <span class="chinese">中国电商分析框架</span></h3>
+
+  <div class="card-grid">
+    <div class="card">
+      <h3>Structural Tailwinds</h3>
+      <ul>
+        <li>Online retail share of total retail still rising</li>
+        <li>Premiumization trend favors quality-positioned JD</li>
+        <li>Post-2021 regulatory crackdown largely subsided</li>
+        <li>AI integration enhancing service quality</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Structural Headwinds</h3>
+      <ul>
+        <li>Chinese consumer spending weak post-property crisis</li>
+        <li>Fierce price competition from PDD</li>
+        <li>Douyin/TikTok expanding into e-commerce</li>
+        <li>Margins under pressure in food delivery industry-wide</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>The Food Delivery War (The Critical Question) <span class="chinese">外卖大战 —— 关键问题</span></h3>
+  <div class="warning">
+    In early 2025, JD entered food delivery, attacking Meituan's dominance. By Q4 2025, JD Food Delivery + related investments reached ~RMB 40B+ cumulative annual loss. Meituan and Ele.me responded with matching subsidies, causing industry-wide margin destruction.
+  </div>
+
+  <h3>Competitive Positioning</h3>
+  <div class="chart-container">
+    <canvas id="chartPeerComparison"></canvas>
+  </div>
+</div>
+
+<!-- Tab 9: Risk -->
+<div class="tab-content" id="tab-risk">
+  <h2>Risk Assessment · 风险评估</h2>
+
+  <h3>Value Trap Diagnostic (5-Type) <span class="chinese">价值陷阱诊断</span></h3>
+  <table>
+    <thead><tr><th>Trap Type</th><th>Test</th><th>Status</th></tr></thead>
+    <tbody>
+      <tr><td>1. Structural decline</td><td>Will e-commerce exist meaningfully in 10 years?</td><td class="pass">✓ No trap</td></tr>
+      <tr><td>2. Commodity business</td><td>If JD raises prices 5%, what % leave?</td><td class="warn">◐ Moderate risk</td></tr>
+      <tr><td>3. Poor capital allocation</td><td>Food delivery entry is the key test</td><td class="warn">◐ Active concern</td></tr>
+      <tr><td>4. Heavy assets, low returns</td><td>Is ROIC &lt; WACC?</td><td class="pass">✓ No — ex-FD, ROIC &gt; WACC</td></tr>
+      <tr><td>5. Accounting quality</td><td>Cash conversion &lt; 70%?</td><td class="pass">✓ No — historically &gt; 90%</td></tr>
+    </tbody>
+  </table>
+
+  <h3>RF-1 to RF-6 Red Flag Scan <span class="chinese">红旗扫描</span></h3>
+  <table>
+    <thead><tr><th>Flag</th><th>JD Status</th></tr></thead>
+    <tbody>
+      <tr><td>RF-1: Pending M&A in SOTP</td><td class="pass">✓ None material</td></tr>
+      <tr><td>RF-2: Unverified cross-holdings</td><td class="warn">◐ Logistics/Health/Industrials — valued via public market prices</td></tr>
+      <tr><td>RF-3: Headline loss vs cash flow</td><td class="warn">◐ Q4 2025 GAAP loss but operating CF RMB 20.9B — look-through essential</td></tr>
+      <tr><td>RF-4: Mixed vintage</td><td class="pass">✓ All data FY2024/2025 same filing</td></tr>
+      <tr><td>RF-5: Currency mismatches</td><td class="pass">✓ RMB/USD exchange verified to filing (6.9931)</td></tr>
+      <tr><td>RF-6: Share count</td><td class="pass">✓ 2,742M shares = 1,371M ADS verified</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Behavioral Bias Self-Check <span class="chinese">行为偏差自查</span></h3>
+  <ol>
+    <li><strong>Confirmation bias:</strong> Am I anchoring on low P/E and dismissing food-delivery risk? <em>Partially. Mitigation: half-position sizing.</em></li>
+    <li><strong>Sunk cost fallacy:</strong> Would I buy today at $33 with no position? <em>Yes, at half position.</em></li>
+    <li><strong>Anchoring:</strong> Am I anchored on prior-year prices? <em>No — valuation from fundamentals.</em></li>
+    <li><strong>Recency bias:</strong> Am I over-weighting 2025 weakness? <em>Trying to weight 10-year perspective.</em></li>
+    <li><strong>Action bias:</strong> Is "do nothing" better? <em>Defensible. Half-position is the compromise.</em></li>
+  </ol>
+
+  <div class="danger">
+    <strong>Top 2 Risks to Monitor:</strong>
+    <ol>
+      <li><strong>Food delivery losses failing to narrow sequentially</strong> in Q1/Q2 2026. If losses widen for 2 consecutive quarters, sell at least half.</li>
+      <li><strong>Regulatory/geopolitical:</strong> US-China PCAOB deal reversal, or new major China antitrust action against JD specifically.</li>
+    </ol>
+  </div>
+</div>
+
+<!-- Tab 10: Monitoring -->
+<div class="tab-content" id="tab-monitoring">
+  <h2>Monitoring & Triggers · 监控与触发点</h2>
+
+  <h3>Entry Zones <span class="chinese">买入区间</span></h3>
+  <table>
+    <thead><tr><th>Zone</th><th class="num">Price / ADS</th><th>Action</th></tr></thead>
+    <tbody>
+      <tr><td>Accumulate aggressive</td><td class="num">&lt; $28</td><td class="pass">Buy to full 4%</td></tr>
+      <tr><td>Initial entry</td><td class="num">$28–35</td><td class="warn">Half position (2%)</td></tr>
+      <tr><td>Hold / fair value approach</td><td class="num">$35–50</td><td>No new adds, hold existing</td></tr>
+      <tr><td>Trim</td><td class="num">&gt; $55</td><td class="warn">Trim to half position</td></tr>
+      <tr><td>Exit</td><td class="num">&gt; $70</td><td class="fail">Exit entirely</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Quarterly Checklist</h3>
+  <ul>
+    <li>☐ New Business OI loss direction (narrowing = thesis intact)</li>
+    <li>☐ JD Retail operating margin (maintaining 4.5%+ = core is healthy)</li>
+    <li>☐ Share count (continuing to decline = capital return discipline)</li>
+    <li>☐ Net cash position (maintained &gt;$20B = optionality preserved)</li>
+    <li>☐ GMV growth vs. Chinese online retail sales (outperforming = share gain)</li>
+  </ul>
+
+  <h3>Catalyst Watch — Next 6 Months <span class="chinese">催化剂观察</span></h3>
+  <ol>
+    <li><strong>Q1 2026 earnings (~May 15, 2026):</strong> Sequential change in New Business OI loss. Target: loss narrows from RMB 14.8B in Q4'25 to &lt; RMB 12B in Q1'26.</li>
+    <li><strong>Q2 2026 earnings (~Aug 2026):</strong> Second consecutive improvement is the key confirmation.</li>
+    <li><strong>Buyback pace:</strong> Remaining US$2.0B of the US$5.0B program to execute by Aug 2027.</li>
+    <li><strong>JD Industrials (7618.HK) post-IPO performance.</strong></li>
+    <li><strong>Chinese consumer retail sales data monthly.</strong></li>
+  </ol>
+
+  <h3>Sell Triggers (Absolute) <span class="chinese">绝对卖出触发</span></h3>
+  <div class="danger">
+    <ul>
+      <li><strong>Integrity:</strong> Any Sandy Xu or Richard Liu related-party transaction controversy → sell immediately</li>
+      <li><strong>Moat destruction:</strong> Market share loss &gt; 300 bps in core electronics or home appliances → re-evaluate</li>
+      <li><strong>Food delivery accelerating losses</strong> for 2 consecutive quarters → sell at least half</li>
+      <li><strong>Regulatory:</strong> Any new major antitrust action against JD specifically</li>
+    </ul>
+  </div>
+
+  <div class="highlight">
+    <strong>Next scheduled review:</strong> July 19, 2026 (90 days from report date), or earlier if any catalyst/trigger fires.
+  </div>
+</div>
+
+<!-- Tab 11: Verdict -->
+<div class="tab-content" id="tab-verdict">
+  <h2>Investment Verdict · 投资结论</h2>
+
+  <div class="verdict-box">
+    <h3>⚠️ BUY — HALF POSITION (Staged Entry) <span class="chinese">半仓买入(分批)</span></h3>
+    <div class="conviction">
+      <span style="color:var(--text-dim); font-size:0.85rem;">Conviction:</span>
+      <div class="conviction-bar"><div class="conviction-fill"></div></div>
+      <span class="mono" style="color:var(--gold-bright); font-weight:700;">6.5 / 10</span>
+    </div>
+    <p>JD.com offers a compelling asymmetric opportunity: downside is limited by a fortress balance sheet (~US$22B net cash) and a high-quality, improving core retail business; upside depends on either (a) food delivery becoming value-creating, or (b) management demonstrating discipline to cap losses. Half-position sizing captures the optionality while respecting the legitimate uncertainty.</p>
+  </div>
+
+  <h3>Combined 4-Framework Score</h3>
+  <div class="chart-container">
+    <canvas id="chart4Framework"></canvas>
+  </div>
+
+  <table>
+    <thead><tr><th>Framework</th><th class="num">Score /10</th><th>Key Positives</th><th>Key Concerns</th></tr></thead>
+    <tbody>
+      <tr><td>Graham</td><td class="num">7</td><td>Below book ex-cash; fortress balance sheet</td><td>Current ratio 1.22 &lt; 2.0 ideal</td></tr>
+      <tr><td>Buffett</td><td class="num">6</td><td>Durable core; improving mix; buybacks</td><td>ROE &lt; 15% threshold; FD capital allocation</td></tr>
+      <tr><td>Munger</td><td class="num">6</td><td>Simple to understand; inversion shows narrow-durable moat</td><td>Institutional imperative risk</td></tr>
+      <tr><td>Fisher</td><td class="num">7</td><td>Strong management communication; service-revenue growth</td><td>Tastes can shift in e-commerce</td></tr>
+      <tr><td><strong>Overall</strong></td><td class="num"><strong>6.5/10</strong></td><td colspan="2"><strong>Good business, extraordinary balance sheet, meaningful MoS, but food-delivery outcome uncertain</strong></td></tr>
+    </tbody>
+  </table>
+
+  <h3>Position Sizing Guidance <span class="chinese">仓位建议</span></h3>
+  <ul>
+    <li><strong>Target full position:</strong> 4% of portfolio</li>
+    <li><strong>Initial entry (today):</strong> 2% half-position at ~US$33-34</li>
+    <li><strong>Add to full 4%:</strong> If price drops below US$28 OR Q2 2026 confirms sequential FD loss narrowing</li>
+    <li><strong>Trim to zero:</strong> If integrity issue emerges OR Q2/Q3 2026 show FD losses still accelerating</li>
+  </ul>
+</div>
+
+<!-- Tab 12: Sources -->
+<div class="tab-content" id="tab-sources">
+  <h2>Sources & Data Trail · 数据来源</h2>
+
+  <table>
+    <thead><tr><th>Data Point</th><th>Source</th><th>Tier</th></tr></thead>
+    <tbody>
+      <tr><td>FY2025 full-year financials</td><td>JD.com Form 6-K filed March 5, 2026, SEC EDGAR</td><td class="pass">Tier 1</td></tr>
+      <tr><td>Current share price (April 2026)</td><td>Stockanalysis.com + cross-check</td><td class="warn">Tier 2</td></tr>
+      <tr><td>Share count (2,742M)</td><td>Q4 2025 filing balance sheet note</td><td class="pass">Tier 1</td></tr>
+      <tr><td>Segment breakdown</td><td>FY2025 Form 6-K Supplemental</td><td class="pass">Tier 1</td></tr>
+      <tr><td>Historical (2021–2023)</td><td>Prior annual reports, synthesized</td><td class="warn">Tier 2</td></tr>
+      <tr><td>Peer comparison (BABA, Meituan)</td><td>Stockanalysis, GuruFocus</td><td class="warn">Tier 2</td></tr>
+      <tr><td>Exchange rate (RMB 6.9931 / US$)</td><td>Federal Reserve H.10, per JD filing</td><td class="pass">Tier 1</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Verdict-Moving ±20% Rule Check</h3>
+  <ul>
+    <li>If fair value moves $52 → $42 (−19%): still BUY at $33. <strong>Robust.</strong></li>
+    <li>If fair value moves $52 → $28 (−46%): changes to HOLD. Bear-case DCF already captures this.</li>
+    <li><strong>Conclusion:</strong> Verdict is robust to reasonable analytical error. Half-position sizing further reduces risk.</li>
+  </ul>
+
+  <h3>Key References</h3>
+  <ul>
+    <li>JD.com Investor Relations: https://ir.jd.com</li>
+    <li>SEC EDGAR (JD 6-K filings): CIK 0001549802</li>
+    <li>Hong Kong Stock Exchange: HKEx 9618 / 89618</li>
+    <li>Value Investing Skill Suite: github.com/mikezhang09-code/value-investment-skills</li>
+  </ul>
+</div>
+
+<footer>
+  <p><strong>Weekly Value Pick Routine · April 19, 2026</strong></p>
+  <p>Generated using the Value Investing Skill Suite · Graham-Buffett-Munger-Fisher framework</p>
+  <p>This report is not financial advice. All information based on publicly available filings as of the report date. Individual investors should conduct their own due diligence.</p>
+  <p class="chinese">本报告由价值投资技能套件生成,非投资建议。投资者应自行尽职调查。</p>
+</footer>
+
+</div>
+
+<script>
+// Tab switching
+function showTab(tabId) {
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-' + tabId).classList.add('active');
+  event.target.classList.add('active');
+}
+
+// Chart.js global defaults
+Chart.defaults.color = '#b4ae9f';
+Chart.defaults.borderColor = '#1e3560';
+Chart.defaults.font.family = "'Source Sans 3', sans-serif";
+Chart.defaults.font.size = 12;
+
+const gold = '#d4af37';
+const goldBright = '#f5d26f';
+const goldMuted = '#8a7128';
+const navy = '#14243d';
+const navyAlt = '#1a3558';
+const green = '#7cba7c';
+const red = '#cc6b6b';
+const amber = '#e0a86f';
+
+// 1. Valuation Triangulation
+new Chart(document.getElementById('chartValuationTriangulation'), {
+  type: 'bar',
+  data: {
+    labels: ['Current', 'Bear DCF', 'Graham Number', 'Prob-weighted DCF', 'EPV', 'Base DCF', 'Graham Formula', 'SOTP'],
+    datasets: [{
+      label: 'Value per ADS (US$)',
+      data: [33.5, 28, 41, 51, 52, 52, 66, 74],
+      backgroundColor: [red, amber, goldMuted, gold, gold, goldBright, goldBright, green],
+      borderWidth: 0
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { title: { display: true, text: 'Valuation Triangulation · 估值三角验证 (US$ / ADS)', color: goldBright, font: { size: 16, family: 'Playfair Display' } }, legend: { display: false } },
+    scales: { y: { beginAtZero: true, grid: { color: '#1e3560' } }, x: { grid: { display: false } } }
+  }
+});
+
+// 2. Segment Revenue
+new Chart(document.getElementById('chartSegmentRevenue'), {
+  type: 'bar',
+  data: {
+    labels: ['FY2023', 'FY2024', 'FY2025'],
+    datasets: [
+      { label: 'JD Retail 零售', data: [1015, 1016, 1126], backgroundColor: gold },
+      { label: 'JD Logistics 物流', data: [167, 183, 217], backgroundColor: goldMuted },
+      { label: 'New Businesses 新业务', data: [20, 19, 49], backgroundColor: amber }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { title: { display: true, text: 'Segment Revenue (RMB B) · 分部收入', color: goldBright, font: { size: 15, family: 'Playfair Display' } } },
+    scales: { y: { stacked: true, grid: { color: '#1e3560' } }, x: { stacked: true, grid: { display: false } } }
+  }
+});
+
+// 3. Segment Operating Income
+new Chart(document.getElementById('chartSegmentOI'), {
+  type: 'bar',
+  data: {
+    labels: ['FY2023', 'FY2024', 'FY2025'],
+    datasets: [
+      { label: 'JD Retail OI', data: [35.9, 41.1, 51.4], backgroundColor: green },
+      { label: 'JD Logistics OI', data: [4.8, 6.3, 5.3], backgroundColor: gold },
+      { label: 'New Businesses OI', data: [-1.8, -2.9, -46.6], backgroundColor: red }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { title: { display: true, text: 'Segment Operating Income (RMB B) · 分部经营利润', color: goldBright, font: { size: 15, family: 'Playfair Display' } } },
+    scales: { y: { grid: { color: '#1e3560' } }, x: { grid: { display: false } } }
+  }
+});
+
+// 4. Revenue & Margin Combo
+new Chart(document.getElementById('chartRevenueMargin'), {
+  type: 'bar',
+  data: {
+    labels: ['FY2021', 'FY2022', 'FY2023', 'FY2024', 'FY2025'],
+    datasets: [
+      { type: 'bar', label: 'Revenue (RMB B) 收入', data: [951, 1046, 1085, 1159, 1309], backgroundColor: goldMuted, yAxisID: 'y' },
+      { type: 'line', label: 'Non-GAAP Op Margin % 非GAAP经营利润率', data: [2.1, 2.7, 3.3, 3.8, 0.7], borderColor: goldBright, backgroundColor: 'transparent', borderWidth: 3, yAxisID: 'y1', tension: 0.25 },
+      { type: 'line', label: 'Gross Margin % 毛利率', data: [13.8, 14.5, 14.9, 15.9, 16.0], borderColor: green, backgroundColor: 'transparent', borderWidth: 2, yAxisID: 'y1', tension: 0.25, borderDash: [4, 4] }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { title: { display: true, text: 'Revenue & Margin Trend · 收入与利润率趋势', color: goldBright, font: { size: 15, family: 'Playfair Display' } } },
+    scales: {
+      y: { type: 'linear', position: 'left', grid: { color: '#1e3560' }, title: { display: true, text: 'Revenue (RMB B)' } },
+      y1: { type: 'linear', position: 'right', grid: { display: false }, title: { display: true, text: 'Margin (%)' } }
+    }
+  }
+});
+
+// 5. Free Cash Flow
+new Chart(document.getElementById('chartFCF'), {
+  type: 'line',
+  data: {
+    labels: ['FY2021', 'FY2022', 'FY2023', 'FY2024', 'FY2025'],
+    datasets: [{ label: 'Free Cash Flow (RMB B) 自由现金流', data: [26.2, 35.6, 40.7, 43.7, 6.5], borderColor: gold, backgroundColor: 'rgba(212,175,55,0.15)', fill: true, tension: 0.3, borderWidth: 3, pointRadius: 5, pointBackgroundColor: goldBright }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { title: { display: true, text: 'Free Cash Flow History · 自由现金流历史', color: goldBright, font: { size: 15, family: 'Playfair Display' } }, legend: { display: false } },
+    scales: { y: { grid: { color: '#1e3560' } }, x: { grid: { display: false } } }
+  }
+});
+
+// 6. Valuation Methods
+new Chart(document.getElementById('chartValuationMethods'), {
+  type: 'bar',
+  data: {
+    labels: ['Graham Number', 'Prob-DCF', 'EPV', 'Graham Formula', 'SOTP'],
+    datasets: [{
+      label: 'Fair Value / ADS (US$)',
+      data: [41, 51, 52, 66, 74],
+      backgroundColor: [goldMuted, gold, gold, goldBright, green]
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    indexAxis: 'y',
+    plugins: { title: { display: true, text: 'Fair Value by Method · 各估值方法对比', color: goldBright, font: { size: 15, family: 'Playfair Display' } }, legend: { display: false } },
+    scales: { x: { beginAtZero: true, grid: { color: '#1e3560' } }, y: { grid: { display: false } } }
+  }
+});
+
+// 7. DCF Scenarios
+new Chart(document.getElementById('chartDCFScenarios'), {
+  type: 'bar',
+  data: {
+    labels: ['Bear (25%)', 'Base (55%)', 'Bull (20%)'],
+    datasets: [{
+      label: 'Fair Value / ADS (US$)',
+      data: [28, 52, 78],
+      backgroundColor: [red, gold, green]
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { title: { display: true, text: 'DCF Scenario Analysis · DCF 情景分析', color: goldBright, font: { size: 15, family: 'Playfair Display' } }, legend: { display: false } },
+    scales: { y: { beginAtZero: true, grid: { color: '#1e3560' } }, x: { grid: { display: false } } }
+  }
+});
+
+// 8. Margin of Safety Gauge (doughnut)
+new Chart(document.getElementById('chartMoS'), {
+  type: 'doughnut',
+  data: {
+    labels: ['Current Price $33.50', 'Margin of Safety', 'Fair Value $52'],
+    datasets: [{
+      data: [33.5, 18.5, 0.01],
+      backgroundColor: [amber, green, 'transparent'],
+      borderWidth: 0
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    circumference: 180, rotation: -90,
+    plugins: { title: { display: true, text: 'Margin of Safety Gauge · 安全边际仪表 (~36%)', color: goldBright, font: { size: 15, family: 'Playfair Display' } } },
+    cutout: '65%'
+  }
+});
+
+// 9. Moat Radar
+new Chart(document.getElementById('chartMoatRadar'), {
+  type: 'radar',
+  data: {
+    labels: ['Cost Advantage\n规模优势', 'Brand/Intangibles\n品牌', 'Switching Costs\n转换成本', 'Network Effects\n网络效应', 'Efficient Scale\n有效规模'],
+    datasets: [{ label: 'JD.com', data: [4, 4, 2, 3, 3], backgroundColor: 'rgba(212,175,55,0.25)', borderColor: gold, borderWidth: 2, pointBackgroundColor: goldBright }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { title: { display: true, text: 'Moat Radar (0–5) · 护城河雷达', color: goldBright, font: { size: 15, family: 'Playfair Display' } } },
+    scales: { r: { suggestedMin: 0, suggestedMax: 5, grid: { color: '#1e3560' }, ticks: { backdropColor: 'transparent' }, angleLines: { color: '#1e3560' } } }
+  }
+});
+
+// 10. Peer Comparison
+new Chart(document.getElementById('chartPeerComparison'), {
+  type: 'bar',
+  data: {
+    labels: ['JD.com', 'BABA', 'PDD', 'Meituan'],
+    datasets: [
+      { label: 'Forward P/E', data: [9.8, 19.5, 9.3, 17.5], backgroundColor: gold },
+      { label: 'ROE %', data: [11.7, 11.2, 28.0, 15.0], backgroundColor: green }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { title: { display: true, text: 'Peer Comparison · 同业比较', color: goldBright, font: { size: 15, family: 'Playfair Display' } } },
+    scales: { y: { beginAtZero: true, grid: { color: '#1e3560' } }, x: { grid: { display: false } } }
+  }
+});
+
+// 11. 4-Framework Score
+new Chart(document.getElementById('chart4Framework'), {
+  type: 'radar',
+  data: {
+    labels: ['Graham 格雷厄姆', 'Buffett 巴菲特', 'Munger 芒格', 'Fisher 费雪'],
+    datasets: [{ label: 'JD.com Score (/10)', data: [7, 6, 6, 7], backgroundColor: 'rgba(212,175,55,0.25)', borderColor: goldBright, borderWidth: 2, pointBackgroundColor: goldBright, pointRadius: 6 }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { title: { display: true, text: 'Combined 4-Framework Score · 四大框架综合评分', color: goldBright, font: { size: 15, family: 'Playfair Display' } } },
+    scales: { r: { suggestedMin: 0, suggestedMax: 10, grid: { color: '#1e3560' }, ticks: { backdropColor: 'transparent', stepSize: 2 }, angleLines: { color: '#1e3560' } } }
+  }
+});
+</script>
+
+</body>
+</html>

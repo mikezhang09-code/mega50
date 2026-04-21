@@ -144,6 +144,14 @@ var CATEGORIES = {
           { id: "moutai-claude", label: "Kweichow Moutai (Claude)", url: "./Kweichow_Moutai_Value_Investing_Analysis_Claude.html", icon: "doc" },
           { id: "moutai-dashboard", label: "Kweichow Moutai (Dashboard)", url: "./moutai_vi_analysis_workbuddy.html", icon: "chart" },
           { id: "hk-ai-beneficiaries", label: "HK AI Beneficiaries Top 10", url: "./hk-ai-beneficiaries-top10.html", icon: "chart" },
+          { id: "ck-hutchison-asset", label: "CK Hutchison & Asset", url: "./CK_Hutchison_CK_Asset_Investment_Report.html", icon: "doc" },
+          { id: "jd-report", label: "JD.com (9618.HK)", url: "./report_JD_2026-04-19.html", icon: "doc" },
+        ],
+      },
+      {
+        label: "United States",
+        items: [
+          { id: "pfizer", label: "Pfizer (PFE)", url: "./report_PFE_2026-04-17.html", icon: "doc" },
         ],
       },
       {

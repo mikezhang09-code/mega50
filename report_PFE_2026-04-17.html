@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pfizer (PFE) — Weekly Value Pick · 2026-04-17</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+  :root {
+    --navy-deep: #0b1a2f;
+    --navy: #112240;
+    --navy-mid: #1a3056;
+    --navy-light: #243b66;
+    --gold: #c9a961;
+    --gold-light: #e6c98a;
+    --gold-dim: #8a7540;
+    --cream: #f5f0e4;
+    --text-primary: #eae4d1;
+    --text-secondary: #b4ac95;
+    --text-muted: #7d775f;
+    --cn-green: #4a6741;
+    --cn-green-light: #7a9070;
+    --green-good: #5a8868;
+    --red-bad: #b0604a;
+    --amber-mid: #c9a961;
+    --border: #2a3f64;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Georgia', 'Microsoft YaHei', serif;
+    background: var(--navy-deep);
+    color: var(--text-primary);
+    line-height: 1.6;
+    padding: 0;
+  }
+  .wrap { max-width: 1200px; margin: 0 auto; padding: 32px 24px; }
+
+  /* Header */
+  .hero {
+    border: 1px solid var(--gold-dim);
+    border-radius: 2px;
+    padding: 36px 40px;
+    background: linear-gradient(135deg, var(--navy) 0%, var(--navy-deep) 100%);
+    margin-bottom: 24px;
+    position: relative;
+  }
+  .hero::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  }
+  .hero .badge {
+    display: inline-block;
+    color: var(--gold);
+    font-size: 11px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    border: 1px solid var(--gold-dim);
+    padding: 4px 10px;
+    margin-bottom: 14px;
+  }
+  .hero h1 {
+    font-family: 'Georgia', serif;
+    font-size: 38px;
+    font-weight: 400;
+    color: var(--cream);
+    letter-spacing: 0.02em;
+  }
+  .hero h1 .ticker { color: var(--gold); }
+  .hero .subtitle {
+    font-size: 13px;
+    color: var(--cn-green-light);
+    font-family: 'Microsoft YaHei', sans-serif;
+    margin-top: 2px;
+  }
+  .hero .meta {
+    display: flex; gap: 32px; flex-wrap: wrap;
+    margin-top: 20px; padding-top: 20px;
+    border-top: 1px solid var(--border);
+    font-size: 13px;
+  }
+  .meta .item { color: var(--text-secondary); }
+  .meta .item strong { color: var(--cream); font-weight: 600; margin-left: 6px; }
+
+  /* Verdict banner */
+  .verdict-banner {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  .vcard {
+    background: var(--navy);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--gold);
+    padding: 18px 20px;
+  }
+  .vcard .lbl {
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+  }
+  .vcard .lbl-cn {
+    font-size: 10px; color: var(--cn-green); margin-top: -4px; margin-bottom: 6px;
+    font-family: 'Microsoft YaHei', sans-serif;
+  }
+  .vcard .val {
+    font-size: 26px; color: var(--gold); font-weight: 500;
+  }
+  .vcard .sub { font-size: 12px; color: var(--text-secondary); margin-top: 4px; }
+  .vcard.warn { border-left-color: var(--amber-mid); }
+  .vcard.warn .val { color: var(--amber-mid); }
+
+  /* Sections */
+  section {
+    background: var(--navy);
+    border: 1px solid var(--border);
+    padding: 28px 32px;
+    margin-bottom: 20px;
+  }
+  h2 {
+    font-family: 'Georgia', serif;
+    color: var(--gold);
+    font-size: 20px;
+    font-weight: 400;
+    letter-spacing: 0.03em;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 10px;
+    margin-bottom: 18px;
+  }
+  h2 .cn {
+    display: block;
+    font-size: 12px;
+    color: var(--cn-green);
+    font-family: 'Microsoft YaHei', sans-serif;
+    letter-spacing: 0;
+    margin-top: 2px;
+  }
+
+  p { color: var(--text-primary); margin-bottom: 12px; font-size: 14px; }
+  p.cn { color: var(--cn-green-light); font-family: 'Microsoft YaHei', sans-serif; font-size: 13px; }
+
+  /* Tables */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    margin-top: 8px;
+  }
+  th {
+    text-align: left;
+    color: var(--gold);
+    font-weight: 500;
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--gold-dim);
+    letter-spacing: 0.04em;
+    font-size: 12px;
+    text-transform: uppercase;
+  }
+  td {
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-primary);
+  }
+  td.num { text-align: right; font-variant-numeric: tabular-nums; }
+  tr:hover td { background: var(--navy-mid); }
+  .pass { color: var(--green-good); font-weight: 600; }
+  .fail { color: var(--red-bad); font-weight: 600; }
+  .cn-text { color: var(--cn-green-light); font-family: 'Microsoft YaHei', sans-serif; font-size: 12px; }
+
+  /* Chart grid */
+  .chart-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-top: 16px;
+  }
+  .chart-box {
+    background: var(--navy-deep);
+    border: 1px solid var(--border);
+    padding: 20px;
+    min-height: 340px;
+    position: relative;
+  }
+  .chart-box h3 {
+    color: var(--gold-light);
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 4px;
+    letter-spacing: 0.04em;
+  }
+  .chart-box h3 .cn {
+    display: block;
+    font-size: 11px;
+    color: var(--cn-green);
+    font-family: 'Microsoft YaHei', sans-serif;
+    letter-spacing: 0;
+    font-weight: 400;
+  }
+  .chart-canvas-wrap { position: relative; height: 260px; margin-top: 12px; }
+
+  /* MoS Gauge */
+  .gauge-wrap {
+    display: flex; flex-direction: column; align-items: center;
+    padding: 20px 0;
+  }
+  .gauge-bar {
+    width: 100%;
+    height: 24px;
+    background: linear-gradient(90deg,
+      var(--green-good) 0%,
+      var(--green-good) 30%,
+      var(--amber-mid) 40%,
+      var(--amber-mid) 55%,
+      var(--red-bad) 75%,
+      var(--red-bad) 100%);
+    border-radius: 2px;
+    position: relative;
+    margin-top: 28px;
+  }
+  .gauge-marker {
+    position: absolute;
+    top: -8px;
+    width: 3px;
+    height: 40px;
+    background: var(--cream);
+    box-shadow: 0 0 8px var(--cream);
+  }
+  .gauge-marker::after {
+    content: '●';
+    position: absolute;
+    top: -16px; left: -7px;
+    color: var(--cream);
+    font-size: 16px;
+  }
+  .gauge-labels {
+    display: flex; justify-content: space-between;
+    width: 100%; margin-top: 8px;
+    font-size: 11px; color: var(--text-secondary);
+  }
+  .gauge-stats {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 24px; width: 100%; margin-top: 24px;
+    text-align: center;
+  }
+  .gauge-stats .s-lbl { font-size: 11px; color: var(--text-muted); letter-spacing: 0.1em; text-transform: uppercase; }
+  .gauge-stats .s-val { font-size: 22px; color: var(--gold); margin-top: 4px; font-variant-numeric: tabular-nums; }
+  .gauge-stats .s-cn { font-size: 10px; color: var(--cn-green); font-family: 'Microsoft YaHei', sans-serif; }
+
+  /* Two column layouts */
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .two-col .item h4 {
+    color: var(--gold-light); font-size: 14px;
+    margin-bottom: 8px; font-weight: 500;
+  }
+  .two-col .item h4 .cn {
+    color: var(--cn-green); font-family: 'Microsoft YaHei', sans-serif;
+    font-size: 12px; margin-left: 8px;
+  }
+  .two-col .item ul { list-style: none; padding-left: 0; }
+  .two-col .item li {
+    padding: 8px 0 8px 18px;
+    position: relative;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+    color: var(--text-primary);
+  }
+  .two-col .item li::before {
+    content: '◆';
+    position: absolute; left: 0; top: 8px;
+    color: var(--gold); font-size: 9px;
+  }
+
+  /* Footer */
+  footer {
+    text-align: center;
+    padding: 32px 0 8px;
+    color: var(--text-muted);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+  }
+
+  @media (max-width: 820px) {
+    .verdict-banner { grid-template-columns: 1fr 1fr; }
+    .chart-grid, .two-col { grid-template-columns: 1fr; }
+    .hero h1 { font-size: 28px; }
+  }
+  /* RETURN HOME BUTTON */
+  .home-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(201, 169, 97, 0.15); /* var(--gold) */
+    border: 1px solid rgba(201, 169, 97, 0.3);
+    color: #fff;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 8px 20px;
+    border-radius: 24px;
+    text-decoration: none;
+    margin-bottom: 20px;
+    transition: all 0.2s;
+    border-left: 3px solid var(--gold);
+    font-family: 'Microsoft YaHei', sans-serif;
+  }
+  .home-btn:hover {
+    background: rgba(201, 169, 97, 0.25);
+    border-color: var(--gold);
+    transform: translateX(-4px);
+  }
+  .home-btn svg { flex-shrink: 0; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- HERO -->
+  <div class="hero">
+    <a href="./index.html" class="home-btn">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+      Return to Home / 返回主页
+    </a><br>
+    <span class="badge">Weekly Value Pick · 每周价值标的</span>
+    <h1>Pfizer Inc. <span class="ticker">· PFE</span></h1>
+    <div class="subtitle">辉瑞公司 — 格雷厄姆-巴菲特深度分析</div>
+    <div class="meta">
+      <div class="item">Report Date<strong>2026-04-17</strong></div>
+      <div class="item">Price (2026-04-16)<strong>USD 27.19</strong></div>
+      <div class="item">Market Cap<strong>$154.7B</strong></div>
+      <div class="item">Sector<strong>Pharmaceuticals</strong></div>
+      <div class="item">Exchange<strong>NYSE</strong></div>
+    </div>
+  </div>
+
+  <!-- VERDICT BANNER -->
+  <div class="verdict-banner">
+    <div class="vcard warn">
+      <div class="lbl">Verdict</div>
+      <div class="lbl-cn">结论</div>
+      <div class="val">WATCHLIST</div>
+      <div class="sub">观察名单</div>
+    </div>
+    <div class="vcard">
+      <div class="lbl">Conviction</div>
+      <div class="lbl-cn">信念评分</div>
+      <div class="val">5.5 / 10</div>
+      <div class="sub">Moderate · 中等</div>
+    </div>
+    <div class="vcard">
+      <div class="lbl">Fair Value (Weighted)</div>
+      <div class="lbl-cn">加权公允价值</div>
+      <div class="val">$24.27</div>
+      <div class="sub">Range $13 – $34</div>
+    </div>
+    <div class="vcard warn">
+      <div class="lbl">Margin of Safety</div>
+      <div class="lbl-cn">安全边际</div>
+      <div class="val">-12.0%</div>
+      <div class="sub">Slightly overvalued · 略高估</div>
+    </div>
+  </div>
+
+  <!-- EXECUTIVE SUMMARY -->
+  <section>
+    <h2>Executive Summary <span class="cn">摘要</span></h2>
+    <p>Pfizer is a wide-franchise US pharmaceutical major trading at a <strong>forward P/E of 9.4×</strong> with a <strong>6.33% dividend yield</strong> covered at a safe 53% adjusted payout ratio. The stock screens strongly on both Graham (5/7) and Buffett quality (8/10) filters — a combined score of <strong>76.6 / 100</strong>, the highest in this week's shortlist.</p>
+    <p>However, triangulated intrinsic value sits at <strong>~$24</strong>, approximately <strong>12% below</strong> the current $27.19. The thesis depends on free cash flow normalizing from its current depressed $9.1B level (following the $43B Seagen acquisition). With the 2026–2028 patent cliff on Eliquis, Ibrance, Vyndaqel and Xeljanz (~$15–17B revenue at risk), prudent value buyers should wait for clearer margin of safety before building a position.</p>
+    <p class="cn">辉瑞前瞻市盈率仅9.4倍,股息率6.33%(调整后派息率53%安全覆盖)。格雷厄姆+巴菲特综合评分76.6/100,为本周候选最高。但三重估值加权内在价值约24美元,当前27.19美元略高估12%。专利悬崖(2026–2028)涉及约150–170亿美元收入,建议等待更充足安全边际再建仓。</p>
+  </section>
+
+  <!-- CHARTS -->
+  <section>
+    <h2>Valuation Dashboard <span class="cn">估值仪表板</span></h2>
+    <div class="chart-grid">
+      <div class="chart-box">
+        <h3>DCF Scenarios — 3 Cases
+          <span class="cn">现金流折现模型 · 三情景</span>
+        </h3>
+        <div class="chart-canvas-wrap"><canvas id="dcfChart"></canvas></div>
+      </div>
+      <div class="chart-box">
+        <h3>Valuation Triangulation
+          <span class="cn">估值方法三角验证</span>
+        </h3>
+        <div class="chart-canvas-wrap"><canvas id="methodChart"></canvas></div>
+      </div>
+      <div class="chart-box">
+        <h3>Graham-Buffett Scorecard
+          <span class="cn">格雷厄姆-巴菲特评分卡</span>
+        </h3>
+        <div class="chart-canvas-wrap"><canvas id="scoreChart"></canvas></div>
+      </div>
+      <div class="chart-box">
+        <h3>Margin of Safety Gauge
+          <span class="cn">安全边际仪表</span>
+        </h3>
+        <div class="gauge-wrap">
+          <div class="gauge-bar">
+            <!-- Current at $27.19 on 0-40 scale (0=$40 strong buy, 40=$12 overvalued). Position: (27.19-12)/(40-12) from right = 54% from left -->
+            <div class="gauge-marker" style="left: 62%"></div>
+          </div>
+          <div class="gauge-labels">
+            <span>Strong Buy<br>&lt; $20</span>
+            <span>Buy<br>$20–$24</span>
+            <span>Watchlist<br>$24–$28</span>
+            <span>Trim<br>&gt; $32</span>
+          </div>
+          <div class="gauge-stats">
+            <div>
+              <div class="s-lbl">Current</div>
+              <div class="s-val">$27.19</div>
+              <div class="s-cn">当前价格</div>
+            </div>
+            <div>
+              <div class="s-lbl">Fair Value</div>
+              <div class="s-val">$24.27</div>
+              <div class="s-cn">公允价值</div>
+            </div>
+            <div>
+              <div class="s-lbl">Entry Target</div>
+              <div class="s-val">$22</div>
+              <div class="s-cn">入场目标</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MOAT ANALYSIS -->
+  <section>
+    <h2>Moat Analysis <span class="cn">护城河分析</span></h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Moat Type / 类型</th>
+          <th class="num">Score</th>
+          <th>Rationale / 理由</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Intangible Assets <span class="cn-text">无形资产</span></td>
+          <td class="num"><span class="pass">3 / 3</span></td>
+          <td>Patents, global brand, Seagen oncology ADC platform</td>
+        </tr>
+        <tr>
+          <td>Switching Costs <span class="cn-text">转换成本</span></td>
+          <td class="num">1 / 3</td>
+          <td>Low once generics exist; moderate for specialty therapies</td>
+        </tr>
+        <tr>
+          <td>Network Effects <span class="cn-text">网络效应</span></td>
+          <td class="num"><span class="fail">0 / 3</span></td>
+          <td>Not applicable to pharma</td>
+        </tr>
+        <tr>
+          <td>Cost Advantages <span class="cn-text">成本优势</span></td>
+          <td class="num">2 / 3</td>
+          <td>R&amp;D scale ($10B+/yr), global manufacturing &amp; regulatory experience</td>
+        </tr>
+        <tr>
+          <td>Efficient Scale <span class="cn-text">效率规模</span></td>
+          <td class="num">1 / 3</td>
+          <td>Limited applicability; some rare-disease single-player niches</td>
+        </tr>
+        <tr style="border-top: 2px solid var(--gold-dim);">
+          <td><strong>Total Moat Score</strong></td>
+          <td class="num"><strong style="color: var(--gold);">7 / 15</strong></td>
+          <td><strong>Narrow Moat</strong> (Morningstar rates Wide)</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- FINANCIALS -->
+  <section>
+    <h2>Financial Snapshot FY2025 <span class="cn">2025财年财务概览</span></h2>
+    <div class="two-col">
+      <table>
+        <thead><tr><th>Metric / 指标</th><th class="num">Value / 数值</th></tr></thead>
+        <tbody>
+          <tr><td>Revenue <span class="cn-text">营收</span></td><td class="num">$62.6B</td></tr>
+          <tr><td>Revenue YoY <span class="cn-text">同比</span></td><td class="num"><span class="fail">-1.6%</span></td></tr>
+          <tr><td>Net Income (GAAP) <span class="cn-text">净利润</span></td><td class="num">$7.8B</td></tr>
+          <tr><td>EPS (GAAP)</td><td class="num">$1.36</td></tr>
+          <tr><td>EPS (Adjusted) <span class="cn-text">调整后</span></td><td class="num">$3.22</td></tr>
+          <tr><td>Gross Margin <span class="cn-text">毛利率</span></td><td class="num"><span class="pass">74.3%</span></td></tr>
+          <tr><td>FCF <span class="cn-text">自由现金流</span></td><td class="num">$9.1B</td></tr>
+        </tbody>
+      </table>
+      <table>
+        <thead><tr><th>Balance / Valuation</th><th class="num">Value</th></tr></thead>
+        <tbody>
+          <tr><td>Cash <span class="cn-text">现金</span></td><td class="num">$1.1B</td></tr>
+          <tr><td>Long-term Debt <span class="cn-text">长期债务</span></td><td class="num">$61.6B</td></tr>
+          <tr><td>Net Debt <span class="cn-text">净负债</span></td><td class="num"><span class="fail">$60.5B</span></td></tr>
+          <tr><td>Debt / EBITDA</td><td class="num">2.3×</td></tr>
+          <tr><td>Fwd P/E (Adj)</td><td class="num"><span class="pass">9.4×</span></td></tr>
+          <tr><td>P/B</td><td class="num">1.67×</td></tr>
+          <tr><td>Dividend Yield <span class="cn-text">股息率</span></td><td class="num"><span class="pass">6.33%</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- RISKS AND CATALYSTS -->
+  <section>
+    <h2>Risks &amp; Catalysts <span class="cn">风险与催化剂</span></h2>
+    <div class="two-col">
+      <div class="item">
+        <h4>Key Risks <span class="cn">关键风险</span></h4>
+        <ul>
+          <li><strong>Patent cliff 2026–2028:</strong> Eliquis, Ibrance, Vyndaqel, Xeljanz — ~$15–17B revenue at risk <span class="cn-text">专利悬崖</span></li>
+          <li><strong>Pipeline execution:</strong> Metsera GLP-1 unproven; Seagen oncology pipeline must deliver <span class="cn-text">管线执行风险</span></li>
+          <li><strong>Leverage:</strong> $60.5B net debt restricts buybacks/M&amp;A flexibility <span class="cn-text">高杠杆</span></li>
+          <li><strong>Regulatory:</strong> IRA drug-price negotiations expand 2026–2028 <span class="cn-text">IRA药价谈判</span></li>
+          <li><strong>Tariffs/Geopolitics:</strong> Pharma tariff discussions; limited offsets <span class="cn-text">关税地缘</span></li>
+        </ul>
+      </div>
+      <div class="item">
+        <h4>Catalysts to Watch <span class="cn">催化剂</span></h4>
+        <ul>
+          <li><strong>Q1 2026 earnings</strong> — May 5, 2026 <span class="cn-text">一季报</span></li>
+          <li><strong>Metsera Phase 3 readouts</strong> (late 2026) <span class="cn-text">GLP-1三期数据</span></li>
+          <li><strong>Seagen oncology readouts</strong> through 2026–27 <span class="cn-text">肿瘤管线读数</span></li>
+          <li><strong>De-leveraging milestone</strong> — IG metrics by YE2026 <span class="cn-text">去杠杆进度</span></li>
+          <li><strong>Buyback resumption</strong> — $3.3B authorization remains <span class="cn-text">回购重启</span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- FINAL VERDICT -->
+  <section>
+    <h2>Final Verdict <span class="cn">最终结论</span></h2>
+    <p><strong style="color: var(--gold); font-size: 16px;">WATCHLIST · Conviction 5.5 / 10 · Entry target $22 – $24</strong></p>
+    <p>Pfizer passes the screens strongly and offers an attractive 6.33% dividend yield. However, paying at or above weighted fair value (~$24) ahead of a documented 2026–2028 patent cliff does not meet Graham's margin-of-safety test. The DCF on GAAP free cash flow — the most rigorous measure — suggests equity is dragged down by the $60.5B net-debt legacy of Seagen, and today's price only makes sense if FCF normalizes to $12B+ within two years.</p>
+    <p><strong>Position sizing:</strong> quarter position at $24 · half at $22 · full only below $20. Never exceed 4% of portfolio weight given single-name patent-cliff concentration risk.</p>
+    <p class="cn">辉瑞通过格雷厄姆(5/7)与巴菲特质量(8/10)筛选,6.33%股息率具有吸引力。但当前价格高于加权公允价值(~24美元),未达安全边际要求。建议:24美元启动1/4仓位,22美元加至半仓,20美元以下再全仓。单一标的不超过投资组合4%。</p>
+  </section>
+
+  <footer>
+    Generated 2026-04-17 · Graham-Buffett Framework · value-investing + value-investing-web-report skills<br>
+    格雷厄姆-巴菲特价值投资方法论 · 数据截至 2026-04-16 收盘
+  </footer>
+</div>
+
+<script>
+// Chart.js global defaults
+Chart.defaults.color = '#b4ac95';
+Chart.defaults.font.family = 'Georgia, "Microsoft YaHei", serif';
+Chart.defaults.font.size = 11;
+Chart.defaults.borderColor = '#2a3f64';
+
+const GOLD = '#c9a961';
+const GOLD_LIGHT = '#e6c98a';
+const GOLD_DIM = '#8a7540';
+const NAVY_LIGHT = '#243b66';
+const CREAM = '#f5f0e4';
+const GREEN = '#5a8868';
+const RED = '#b0604a';
+const AMBER = '#c9a961';
+
+// 1. DCF SCENARIOS
+new Chart(document.getElementById('dcfChart'), {
+  type: 'bar',
+  data: {
+    labels: ['Bear · 悲观', 'Base · 基准', 'Bull · 乐观', 'Prob-Wtd · 加权'],
+    datasets: [
+      {
+        label: 'DCF on Adj NI · 调整后净利润口径',
+        data: [23.95, 34.43, 46.03, 34.13],
+        backgroundColor: GOLD,
+        borderColor: GOLD_LIGHT,
+        borderWidth: 1
+      },
+      {
+        label: 'DCF on GAAP FCF · GAAP自由现金流口径',
+        data: [6.54, 13.74, 20.00, 13.19],
+        backgroundColor: NAVY_LIGHT,
+        borderColor: GOLD_DIM,
+        borderWidth: 1
+      }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: { position: 'bottom', labels: { boxWidth: 12, padding: 10 } },
+      tooltip: { callbacks: { label: (c) => c.dataset.label + ': $' + c.parsed.y.toFixed(2) } }
+    },
+    scales: {
+      y: {
+        beginAtZero: true,
+        title: { display: true, text: 'Fair Value per Share (USD) · 每股公允价值', color: '#b4ac95' },
+        grid: { color: '#1a3056' }
+      },
+      x: { grid: { display: false } }
+    }
+  }
+});
+
+// 2. METHOD TRIANGULATION
+new Chart(document.getElementById('methodChart'), {
+  type: 'bar',
+  data: {
+    labels: ['DCF (Adj NI)', 'DCF (FCF)', 'DDM', 'Graham Number', 'Current Price'],
+    datasets: [{
+      label: 'Fair Value ($)',
+      data: [34.13, 13.19, 25.70, 33.78, 27.19],
+      backgroundColor: [GOLD, NAVY_LIGHT, GOLD_DIM, NAVY_LIGHT, CREAM],
+      borderColor: [GOLD_LIGHT, GOLD_DIM, GOLD, GOLD_DIM, GOLD],
+      borderWidth: 1
+    }]
+  },
+  options: {
+    indexAxis: 'y',
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: { callbacks: { label: (c) => '$' + c.parsed.x.toFixed(2) } },
+      annotation: {}
+    },
+    scales: {
+      x: {
+        beginAtZero: true,
+        title: { display: true, text: 'USD per Share · 每股美元', color: '#b4ac95' },
+        grid: { color: '#1a3056' }
+      },
+      y: { grid: { display: false } }
+    }
+  }
+});
+
+// 3. SCORECARD (radar)
+new Chart(document.getElementById('scoreChart'), {
+  type: 'radar',
+  data: {
+    labels: [
+      'Size 规模', 'Liquidity 流动性', 'Debt 负债',
+      'EPS stability 盈利稳定', 'Dividend 股息',
+      'EPS growth 盈利增长', 'Valuation 估值', 'Moat 护城河'
+    ],
+    datasets: [{
+      label: 'Pfizer Score',
+      data: [10, 4, 3, 9, 10, 8, 8, 6],
+      backgroundColor: 'rgba(201, 169, 97, 0.25)',
+      borderColor: GOLD,
+      borderWidth: 2,
+      pointBackgroundColor: GOLD_LIGHT,
+      pointBorderColor: CREAM,
+      pointRadius: 4
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: {
+      r: {
+        min: 0, max: 10,
+        angleLines: { color: '#2a3f64' },
+        grid: { color: '#1a3056' },
+        pointLabels: { color: '#b4ac95', font: { size: 10 } },
+        ticks: { color: '#7d775f', backdropColor: 'transparent', stepSize: 2 }
+      }
+    }
+  }
+});
+</script>
+
+</body>
+</html>

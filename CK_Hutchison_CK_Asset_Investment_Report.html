@@ -1,0 +1,1101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Li Ka-shing Twin Conglomerates — 0001.HK & 1113.HK Value Analysis</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=Source+Sans+3:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Noto+Serif+TC:wght@400;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<style>
+:root{
+  --bg:#0b1220;
+  --panel:#111a2e;
+  --panel-2:#17223b;
+  --line:#223052;
+  --ink:#e8edf7;
+  --muted:#9aa6bd;
+  --accent:#d4af37;        /* gold */
+  --accent-soft:#b08d2c;
+  --green:#3fb27f;
+  --red:#e06b6b;
+  --amber:#e0b34a;
+  --blue:#6aa9e9;
+  --chinese:#7fb292;       /* muted green for Chinese text */
+  --shadow: 0 6px 24px rgba(0,0,0,0.25);
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-family:'Source Sans 3', system-ui, sans-serif;line-height:1.55;}
+body{background:
+  radial-gradient(1200px 800px at 20% -10%, #142043 0%, transparent 50%),
+  radial-gradient(1000px 600px at 100% 10%, #1a2b4f 0%, transparent 55%),
+  var(--bg);
+  min-height:100vh;
+}
+a{color:var(--accent);text-decoration:none;}
+a:hover{text-decoration:underline;}
+.container{max-width:1200px;margin:0 auto;padding:28px 22px 80px;}
+header.hero{
+  border-bottom:1px solid var(--line);
+  padding:16px 0 28px;
+  margin-bottom:28px;
+}
+.eyebrow{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:11px;
+  letter-spacing:2px;
+  color:var(--accent);
+  text-transform:uppercase;
+}
+h1{
+  font-family:'Playfair Display', serif;
+  font-size:clamp(30px,4.5vw,48px);
+  font-weight:900;
+  line-height:1.1;
+  margin:8px 0 6px;
+  color:#fff;
+  letter-spacing:-0.5px;
+}
+h1 .hk{color:var(--accent);}
+.zh-title{
+  font-family:'Noto Serif TC', serif;
+  color:var(--chinese);
+  font-size:clamp(15px,1.8vw,20px);
+  font-weight:400;
+  letter-spacing:2px;
+  margin-top:6px;
+}
+.meta{
+  margin-top:14px;
+  display:flex;
+  flex-wrap:wrap;
+  gap:18px;
+  color:var(--muted);
+  font-size:13px;
+  font-family:'IBM Plex Mono', monospace;
+}
+.meta span strong{color:var(--ink); font-weight:500;}
+/* tabs */
+nav.tabs{
+  display:flex;flex-wrap:wrap;gap:4px;
+  border-bottom:1px solid var(--line);
+  margin-bottom:24px;
+  overflow-x:auto;
+}
+nav.tabs button{
+  background:transparent;
+  border:none;
+  color:var(--muted);
+  font-family:'Source Sans 3',sans-serif;
+  font-size:14px;
+  font-weight:500;
+  padding:12px 16px;
+  cursor:pointer;
+  border-bottom:2px solid transparent;
+  transition:.2s;
+  white-space:nowrap;
+  letter-spacing:0.3px;
+}
+nav.tabs button:hover{color:var(--ink);}
+nav.tabs button.active{
+  color:var(--accent);
+  border-bottom-color:var(--accent);
+}
+section.tab{display:none;}
+section.tab.active{display:block;animation:fade .3s ease;}
+@keyframes fade{from{opacity:0;transform:translateY(4px);} to{opacity:1;transform:none;}}
+
+/* panels */
+.panel{
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:10px;
+  padding:22px;
+  margin-bottom:20px;
+  box-shadow:var(--shadow);
+}
+.panel h2{
+  font-family:'Playfair Display', serif;
+  font-size:24px;
+  margin:0 0 6px;
+  color:#fff;
+  font-weight:700;
+}
+.panel h2 .zh{
+  font-family:'Noto Serif TC', serif;
+  color:var(--chinese);
+  font-weight:400;
+  font-size:16px;
+  margin-left:12px;
+  letter-spacing:1.5px;
+}
+.panel h3{
+  font-family:'Playfair Display', serif;
+  font-size:18px;
+  color:var(--accent);
+  margin:18px 0 10px;
+  font-weight:600;
+}
+.panel p{color:#d5dbe9; font-size:15px;}
+.panel .lead{font-size:16px; color:#e8edf7;}
+
+/* grid */
+.grid{display:grid;gap:18px;}
+.grid.cols-2{grid-template-columns:repeat(auto-fit,minmax(320px,1fr));}
+.grid.cols-3{grid-template-columns:repeat(auto-fit,minmax(260px,1fr));}
+.grid.cols-4{grid-template-columns:repeat(auto-fit,minmax(220px,1fr));}
+
+/* key metric cards */
+.kpi{
+  background:var(--panel-2);
+  border:1px solid var(--line);
+  border-radius:8px;
+  padding:18px 16px;
+}
+.kpi .label{
+  font-family:'IBM Plex Mono', monospace;
+  font-size:11px;
+  letter-spacing:1.5px;
+  color:var(--muted);
+  text-transform:uppercase;
+}
+.kpi .label .zh{font-family:'Noto Serif TC',serif; color:var(--chinese); letter-spacing:0.5px;text-transform:none;}
+.kpi .value{
+  font-family:'Playfair Display', serif;
+  font-size:30px;
+  font-weight:700;
+  color:#fff;
+  margin-top:6px;
+  line-height:1.1;
+}
+.kpi .sub{
+  font-size:13px;
+  color:var(--muted);
+  margin-top:4px;
+}
+.kpi .sub.pos{color:var(--green);}
+.kpi .sub.neg{color:var(--red);}
+.kpi .sub.warn{color:var(--amber);}
+
+/* Verdict banner */
+.verdict-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(330px,1fr));
+  gap:18px;
+}
+.verdict-card{
+  background:linear-gradient(135deg, var(--panel-2), #1e2b4a);
+  border:1px solid var(--line);
+  border-left:4px solid var(--accent);
+  border-radius:10px;
+  padding:22px;
+}
+.verdict-card.buy{border-left-color:var(--green);}
+.verdict-card.monitor{border-left-color:var(--amber);}
+.verdict-card h3{
+  font-family:'Playfair Display',serif;
+  font-size:20px;
+  margin:0 0 6px;
+  color:#fff;
+}
+.verdict-card .ticker{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:12px;
+  color:var(--muted);
+  letter-spacing:1px;
+}
+.verdict-card .price-row{
+  display:flex;flex-wrap:wrap;gap:24px;margin:14px 0 10px;
+}
+.verdict-card .price-row div span{
+  display:block;
+  font-family:'IBM Plex Mono',monospace;
+  font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;
+}
+.verdict-card .price-row div strong{
+  font-family:'Playfair Display',serif;
+  font-size:22px;color:#fff;font-weight:700;
+}
+.badge{
+  display:inline-block;
+  padding:6px 14px;
+  border-radius:20px;
+  font-family:'IBM Plex Mono',monospace;
+  font-size:11px;
+  letter-spacing:2px;
+  font-weight:500;
+  text-transform:uppercase;
+  margin-top:8px;
+}
+.badge.buy{background:rgba(63,178,127,.15);color:var(--green);border:1px solid rgba(63,178,127,.3);}
+.badge.monitor{background:rgba(224,179,74,.15);color:var(--amber);border:1px solid rgba(224,179,74,.3);}
+.badge.pass{background:rgba(224,107,107,.15);color:var(--red);border:1px solid rgba(224,107,107,.3);}
+
+/* tables */
+table{
+  width:100%;
+  border-collapse:collapse;
+  margin:12px 0;
+  font-size:14px;
+}
+table th, table td{
+  padding:10px 12px;
+  text-align:left;
+  border-bottom:1px solid var(--line);
+}
+table th{
+  background:var(--panel-2);
+  color:var(--accent);
+  font-family:'Source Sans 3',sans-serif;
+  font-weight:600;
+  font-size:12px;
+  letter-spacing:1.5px;
+  text-transform:uppercase;
+}
+table td{color:#d5dbe9;}
+table tr:hover td{background:rgba(212,175,55,0.04);}
+table td.num, table th.num{text-align:right; font-family:'IBM Plex Mono', monospace;}
+table td.check{text-align:center;font-family:'IBM Plex Mono',monospace;}
+.tag-pass{color:var(--green); font-weight:700;}
+.tag-fail{color:var(--red); font-weight:700;}
+.tag-partial{color:var(--amber); font-weight:700;}
+
+/* chart containers */
+.chart-wrap{
+  position:relative;
+  height:320px;
+  margin-top:10px;
+}
+.chart-wrap.tall{height:420px;}
+.chart-title{
+  font-family:'Playfair Display',serif;
+  color:#fff;
+  font-size:17px;
+  margin:0 0 6px;
+}
+.chart-title .zh{
+  font-family:'Noto Serif TC',serif;
+  color:var(--chinese);
+  font-weight:400;
+  font-size:13px;
+  margin-left:10px;
+}
+
+/* callouts */
+.callout{
+  padding:16px 18px;
+  border-radius:8px;
+  margin:16px 0;
+  border-left:3px solid var(--accent);
+  background:rgba(212,175,55,0.05);
+}
+.callout.warn{border-left-color:var(--amber);background:rgba(224,179,74,0.06);}
+.callout.danger{border-left-color:var(--red);background:rgba(224,107,107,0.06);}
+.callout.good{border-left-color:var(--green);background:rgba(63,178,127,0.06);}
+.callout strong{color:#fff;}
+.callout .zh{font-family:'Noto Serif TC',serif;color:var(--chinese);font-size:13px;letter-spacing:1px;}
+
+ul.clean{list-style:none; padding:0; margin:12px 0;}
+ul.clean li{
+  padding:8px 0 8px 20px;
+  border-bottom:1px solid var(--line);
+  position:relative;
+  color:#d5dbe9;
+  font-size:14px;
+}
+ul.clean li:before{
+  content:"▸";
+  position:absolute;
+  left:0;
+  color:var(--accent);
+  font-size:12px;
+  top:10px;
+}
+
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:22px;}
+@media(max-width:820px){.two-col{grid-template-columns:1fr;}}
+
+footer{
+  margin-top:48px;
+  padding-top:20px;
+  border-top:1px solid var(--line);
+  color:var(--muted);
+  font-size:12px;
+  font-family:'IBM Plex Mono',monospace;
+}
+footer .zh{font-family:'Noto Serif TC',serif;color:var(--chinese);}
+
+.comp-bar{
+  display:flex;
+  align-items:center;
+  margin:6px 0;
+  font-size:13px;
+}
+.comp-bar .label{width:140px;color:var(--muted);font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:1px;}
+.comp-bar .tickers{display:flex;gap:6px;flex:1;}
+.comp-bar .t{flex:1;padding:6px 10px;background:var(--panel-2);border-radius:4px;text-align:center;font-family:'IBM Plex Mono',monospace;font-size:12px;}
+.comp-bar .t.win{background:rgba(212,175,55,0.15);color:var(--accent);border:1px solid var(--accent-soft);}
+
+.fv-bar-wrap{
+  margin:16px 0;
+  padding:14px;
+  background:var(--panel-2);
+  border-radius:8px;
+}
+.fv-bar-label{
+  display:flex;
+  justify-content:space-between;
+  font-size:13px;
+  font-family:'IBM Plex Mono',monospace;
+  color:var(--muted);
+  margin-bottom:10px;
+}
+.fv-bar-label span:first-child{color:var(--ink);}
+
+.glossary-item{padding:10px 0; border-bottom:1px dashed var(--line);}
+.glossary-item strong{color:var(--accent); font-family:'Playfair Display',serif;}
+.glossary-item .zh{color:var(--chinese); font-family:'Noto Serif TC',serif; margin-left:8px;}
+.glossary-item p{font-size:13px; color:#d5dbe9; margin:4px 0 0;}
+
+/* stock select banner */
+.stock-banner{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+  gap:14px;
+  margin-top:18px;
+}
+.stock-banner > div{
+  background:var(--panel-2);
+  border:1px solid var(--line);
+  border-radius:8px;
+  padding:16px;
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:12px;
+}
+.stock-banner .name{
+  font-family:'Playfair Display',serif;
+  font-size:17px;
+  color:#fff;
+  font-weight:600;
+}
+.stock-banner .px{
+  font-family:'IBM Plex Mono',monospace;
+  color:var(--accent);
+  font-size:18px;
+  font-weight:600;
+}
+.stock-banner .ch{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:11px;
+  margin-top:2px;
+}
+
+@media(max-width:640px){
+  .panel{padding:16px;}
+  h1{font-size:28px;}
+  .container{padding:18px 14px 60px;}
+}
+.home-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(212, 175, 55, 0.15);
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 8px 20px;
+  border-radius: 24px;
+  text-decoration: none;
+  margin-bottom: 24px;
+  transition: all 0.2s;
+  border-left: 3px solid var(--accent);
+}
+.home-btn:hover {
+  background: rgba(212, 175, 55, 0.25);
+  border-color: var(--accent);
+  transform: translateX(-4px);
+  text-decoration: none;
+}
+.home-btn svg { flex-shrink: 0; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<header class="hero">
+  <a href="./index.html" class="home-btn">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+    Return to Home / 返回主頁
+  </a>
+  <div class="eyebrow">Value Investing Deep Dive · Graham–Buffett Framework</div>
+  <h1>Li Ka-shing's Twin Conglomerates: <span class="hk">0001.HK</span> &amp; <span class="hk">1113.HK</span></h1>
+  <div class="zh-title">李嘉誠系雙雄 · 長江和記 vs 長江實業 · 價值投資深度分析</div>
+  <div class="meta">
+    <span>Analysis Date / <strong>19 Apr 2026</strong></span>
+    <span>Framework / <strong>Graham-Buffett-Munger-Fisher</strong></span>
+    <span>Markets / <strong>HKEx</strong></span>
+    <span>Currency / <strong>HKD</strong></span>
+  </div>
+  <div class="stock-banner">
+    <div>
+      <div>
+        <div class="name">CK Hutchison Holdings</div>
+        <div class="ch" style="color:var(--chinese)">長江和記實業</div>
+      </div>
+      <div style="text-align:right">
+        <div class="px">HK$64.05</div>
+        <div class="ch" style="color:var(--muted)">Apr 14 · MCap HK$245B</div>
+      </div>
+    </div>
+    <div>
+      <div>
+        <div class="name">CK Asset Holdings</div>
+        <div class="ch" style="color:var(--chinese)">長江實業集團</div>
+      </div>
+      <div style="text-align:right">
+        <div class="px">HK$46.84</div>
+        <div class="ch" style="color:var(--muted)">Apr 18 · MCap HK$164B</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<nav class="tabs" role="tablist">
+  <button class="tab-btn active" data-tab="summary">Executive Summary</button>
+  <button class="tab-btn" data-tab="hutchison">0001 · Hutchison</button>
+  <button class="tab-btn" data-tab="asset">1113 · CK Asset</button>
+  <button class="tab-btn" data-tab="compare">Head-to-Head</button>
+  <button class="tab-btn" data-tab="valuation">Valuation Deep Dive</button>
+  <button class="tab-btn" data-tab="action">Action Plan</button>
+</nav>
+
+<!-- ================= SUMMARY ================= -->
+<section id="summary" class="tab active">
+  <div class="panel">
+    <h2>Executive Summary <span class="zh">執行摘要</span></h2>
+    <p class="lead">Two sister conglomerates, both controlled by the Li Ka-shing family, but trading on <strong>starkly different risk profiles</strong> in April 2026. CK Hutchison is embroiled in a high-stakes geopolitical proxy fight over its Panama ports. CK Asset offers a fortress balance sheet and a signed, dated catalyst.</p>
+
+    <div class="verdict-grid" style="margin-top:18px;">
+      <div class="verdict-card monitor">
+        <div class="ticker">0001.HK · Conglomerate · 綜合企業</div>
+        <h3>CK Hutchison Holdings</h3>
+        <div class="price-row">
+          <div><span>Current / 現價</span><strong>HK$64.05</strong></div>
+          <div><span>Fair Value / 合理估值</span><strong>HK$68</strong></div>
+          <div><span>MoS / 安全邊際</span><strong style="color:var(--amber)">~6%</strong></div>
+        </div>
+        <div class="badge monitor">◆ Monitor · 觀望</div>
+        <p style="margin-top:12px;font-size:14px;color:#c4ccdf;">Strong underlying business (7% EBITDA growth) but near 52-week high; Panama ports moat impaired; wait for HK$50–56 entry zone.</p>
+      </div>
+      <div class="verdict-card buy">
+        <div class="ticker">1113.HK · Property &amp; Recurring Income · 地產及經常性收入</div>
+        <h3>CK Asset Holdings</h3>
+        <div class="price-row">
+          <div><span>Current / 現價</span><strong>HK$46.84</strong></div>
+          <div><span>Fair Value / 合理估值</span><strong>HK$55</strong></div>
+          <div><span>MoS / 安全邊際</span><strong style="color:var(--green)">~17%</strong></div>
+        </div>
+        <div class="badge buy">● Buy Half Position · 分段買入</div>
+        <p style="margin-top:12px;font-size:14px;color:#c4ccdf;">51% discount to NAV, fortress balance sheet (net debt/cap 2.3%), HK$22B UKPN sale catalyst closing by June 2026.</p>
+      </div>
+    </div>
+
+    <div class="callout" style="margin-top:24px;">
+      <strong>Thesis differentiator:</strong> 1113.HK offers a quantifiable, event-driven value unlock (UKPN sale already signed; ~HK$8.4B gain upon completion) combined with the cheapest valuation in the Li family complex. 0001.HK has stronger underlying operations but the Panama situation creates a binary outcome for which a value investor is not being adequately compensated at HK$64. <span class="zh">簡言之：1113有已簽署催化劑且估值最低，0001則有二元風險但價格已接近合理區間。</span>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h3 class="chart-title">Key Metrics Side-by-Side <span class="zh">關鍵指標對比</span></h3>
+    <div class="chart-wrap tall"><canvas id="kpiCompareChart"></canvas></div>
+  </div>
+
+  <div class="panel">
+    <h3 class="chart-title">Margin of Safety Visualization <span class="zh">安全邊際圖示</span></h3>
+    <div class="chart-wrap"><canvas id="mosChart"></canvas></div>
+  </div>
+</section>
+
+<!-- ================= HUTCHISON ================= -->
+<section id="hutchison" class="tab">
+  <div class="panel">
+    <h2>0001.HK · CK Hutchison Holdings <span class="zh">長江和記實業</span></h2>
+    <p class="lead">Hong Kong-headquartered conglomerate operating in <strong>four core segments</strong> across 50+ countries: Ports (293 berths, 53 ports, 24 countries), Retail (A.S. Watson, ~17,000 stores, 31 markets), Infrastructure (via 75.67% CKI stake), and Telecommunications (3 Group, VodafoneThree 49%).</p>
+
+    <div class="grid cols-4" style="margin-top:16px;">
+      <div class="kpi">
+        <div class="label">Revenue 2025 <span class="zh">營收</span></div>
+        <div class="value">HK$280B</div>
+        <div class="sub">flat YoY (FX headwind)</div>
+      </div>
+      <div class="kpi">
+        <div class="label">Underlying EBITDA <span class="zh">基礎 EBITDA</span></div>
+        <div class="value">HK$55.9B</div>
+        <div class="sub pos">+7% YoY</div>
+      </div>
+      <div class="kpi">
+        <div class="label">Net Debt / Capital <span class="zh">淨負債率</span></div>
+        <div class="value">13.9%</div>
+        <div class="sub pos">down from 16.2%</div>
+      </div>
+      <div class="kpi">
+        <div class="label">Dividend Yield <span class="zh">股息率</span></div>
+        <div class="value">3.6%</div>
+        <div class="sub">DPS HK$2.31</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h3>Quick-Kill Screener (Step 0) <span class="zh">8問速決篩查</span></h3>
+    <table>
+      <thead><tr><th>#</th><th>Dimension / 維度</th><th>Assessment / 評估</th><th class="check">Pass</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td>Circle of Competence / 能力圈</td><td>Yes — tolls on global infrastructure</td><td class="check tag-pass">✓</td></tr>
+        <tr><td>2</td><td>Durability / 持久性</td><td>Long-lived assets; will exist in 10 years</td><td class="check tag-pass">✓</td></tr>
+        <tr><td>3</td><td>Moat / 護城河</td><td>Port concessions, spectrum, retail scale</td><td class="check tag-pass">✓</td></tr>
+        <tr><td>4</td><td>Pricing Power / 定價權</td><td>Mixed — ports strong, telecom competitive</td><td class="check tag-partial">≈</td></tr>
+        <tr><td>5</td><td>Earnings Quality / 盈利質量</td><td>HK$31B FCF in 2025 (merger-boosted)</td><td class="check tag-pass">✓</td></tr>
+        <tr><td>6</td><td>Debt Safety / 償債能力</td><td>Interest cover 24.7×; fortress</td><td class="check tag-pass">✓</td></tr>
+        <tr><td>7</td><td>Integrity / 管理誠信</td><td>Transparent Panama disclosures</td><td class="check tag-pass">✓</td></tr>
+        <tr><td>8</td><td>Reasonable Price / 合理估值</td><td><strong style="color:var(--red)">No — near 52-week high</strong></td><td class="check tag-fail">✗</td></tr>
+      </tbody>
+    </table>
+    <p style="margin-top:14px; color:var(--muted); font-size:13px;"><strong>Result / 結論:</strong> 7 of 8 pass — quality business, but price fails the gate.</p>
+  </div>
+
+  <div class="panel">
+    <h3 class="chart-title">Segment EBITDA Contribution (Est. 2025) <span class="zh">各業務 EBITDA 貢獻</span></h3>
+    <div class="chart-wrap"><canvas id="segmentChart"></canvas></div>
+  </div>
+
+  <div class="panel">
+    <h3 class="chart-title">Moat Quality Radar <span class="zh">護城河質量雷達</span></h3>
+    <div class="chart-wrap"><canvas id="moatChart0001"></canvas></div>
+    <p style="margin-top:14px;font-size:14px;">Overall moat: <strong style="color:var(--accent)">Wide but narrowing in ports</strong> — the Panama precedent shows concession irrevocability is no longer absolute when geopolitics intervene. This is a <strong>material structural re-rating</strong> of the ports moat.</p>
+  </div>
+
+  <div class="panel">
+    <h2>⚠ The Panama Ports Situation <span class="zh">巴拿馬港口危機</span></h2>
+    <div class="callout danger">
+      <strong>Critical issue for valuation.</strong> On January 29, 2026, Panama's Supreme Court annulled CK Hutchison's Balboa and Cristóbal port concessions as unconstitutional. Panama formally seized the ports on February 23, 2026, with Maersk (Balboa) and MSC/TiL (Cristóbal) taking interim operating control. CK Hutchison has initiated international arbitration; legal experts expect a multi-year battle with uncertain compensation. <span class="zh">巴拿馬最高法院已於2026年1月29日裁定港口特許違憲，兩港口於2月23日被政府接管。</span>
+    </div>
+
+    <table style="margin-top:16px;">
+      <thead><tr><th>Scenario / 情景</th><th>Outcome / 結果</th><th class="num">Value Impact / 對估值影響</th></tr></thead>
+      <tbody>
+        <tr><td><span style="color:var(--green)">Best Case</span></td><td>Arbitration wins + ex-Panama deal closes (41 ports)</td><td class="num">~US$19–20B proceeds + claim</td></tr>
+        <tr><td><span style="color:var(--amber)">Base Case</span></td><td>Ex-Panama deal closes; arbitration drags</td><td class="num">~US$19B proceeds + contested</td></tr>
+        <tr><td><span style="color:var(--red)">Bear Case</span></td><td>China blocks non-Panama deal too; no closure</td><td class="num">Asset retained, no premium</td></tr>
+      </tbody>
+    </table>
+    <p style="margin-top:14px;font-size:14px;"><strong>Value investor interpretation:</strong> Buffett's franchise test — needed product, no substitute, <em>no price regulation</em> — now explicitly fails on the third leg for politically-exposed ports.</p>
+  </div>
+
+  <div class="panel">
+    <h3 class="chart-title">Intrinsic Value Triangulation (0001.HK) <span class="zh">內在價值三角驗證</span></h3>
+    <div class="chart-wrap"><canvas id="ivChart0001"></canvas></div>
+    <div class="fv-bar-wrap">
+      <div class="fv-bar-label"><span>Conservative / 保守</span><span>Base / 基礎</span><span>Optimistic / 樂觀</span></div>
+      <div class="fv-bar-label" style="color:var(--ink);"><span>HK$55</span><span>HK$68</span><span>HK$78</span></div>
+      <div class="fv-bar-label" style="color:var(--muted);"><span>−14% vs price</span><span>+6%</span><span>+22%</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= CK ASSET ================= -->
+<section id="asset" class="tab">
+  <div class="panel">
+    <h2>1113.HK · CK Asset Holdings <span class="zh">長江實業集團</span></h2>
+    <p class="lead">Property-and-recurring-income vehicle spun off from Hutchison in 2015. Business mix spans <strong>property development, investment properties, hotels, UK pubs (Greene King), and infrastructure JVs</strong>. Critically, <strong>76% of 2025 revenue is now recurrent</strong> (non-development), shifting the profile away from pure property developer.</p>
+
+    <div class="grid cols-4" style="margin-top:16px;">
+      <div class="kpi">
+        <div class="label">Revenue 2025 <span class="zh">營收</span></div>
+        <div class="value">HK$57.9B</div>
+        <div class="sub pos">+27% YoY</div>
+      </div>
+      <div class="kpi">
+        <div class="label">Profit ex-Reval <span class="zh">核心利潤</span></div>
+        <div class="value">HK$12.0B</div>
+        <div class="sub pos">+2.7%</div>
+      </div>
+      <div class="kpi">
+        <div class="label">Net Debt / Capital <span class="zh">淨負債率</span></div>
+        <div class="value">2.3%</div>
+        <div class="sub pos">Fortress</div>
+      </div>
+      <div class="kpi">
+        <div class="label">Dividend Yield <span class="zh">股息率</span></div>
+        <div class="value">3.8%</div>
+        <div class="sub">DPS HK$1.78 · +2.3%</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h3>Quick-Kill Screener <span class="zh">8問速決篩查</span></h3>
+    <table>
+      <thead><tr><th>#</th><th>Dimension / 維度</th><th>Assessment / 評估</th><th class="check">Pass</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td>Circle of Competence / 能力圈</td><td>Yes — property + infrastructure rent collector</td><td class="check tag-pass">✓</td></tr>
+        <tr><td>2</td><td>Durability / 持久性</td><td>Land is durable; 10-yr NAV-discount pattern stable</td><td class="check tag-pass">✓</td></tr>
+        <tr><td>3</td><td>Moat / 護城河</td><td>Partial — HK trophy assets + oligopoly structure</td><td class="check tag-partial">≈</td></tr>
+        <tr><td>4</td><td>Pricing Power / 定價權</td><td>HK resi prices bottomed; pubs face input costs</td><td class="check tag-partial">≈</td></tr>
+        <tr><td>5</td><td>Earnings Quality / 盈利質量</td><td>76% recurrent; strong cash conversion</td><td class="check tag-pass">✓</td></tr>
+        <tr><td>6</td><td>Debt Safety / 償債能力</td><td><strong style="color:var(--green)">FORTRESS — best in HK property</strong></td><td class="check tag-pass">✓✓</td></tr>
+        <tr><td>7</td><td>Integrity / 管理誠信</td><td>Victor Li clean; 25-yr dividend record</td><td class="check tag-pass">✓</td></tr>
+        <tr><td>8</td><td>Reasonable Price / 合理估值</td><td><strong style="color:var(--green)">51% discount to NAV</strong></td><td class="check tag-pass">✓</td></tr>
+      </tbody>
+    </table>
+    <p style="margin-top:14px; color:var(--muted); font-size:13px;"><strong>Result / 結論:</strong> 7.5 of 8 pass — passes the gate. Strongest features: balance sheet + margin of safety.</p>
+  </div>
+
+  <div class="panel">
+    <h3 class="chart-title">2025 Revenue Mix: Recurrent vs Development <span class="zh">收入結構</span></h3>
+    <div class="chart-wrap"><canvas id="revMixChart"></canvas></div>
+  </div>
+
+  <div class="panel">
+    <h2>★ UK Power Networks — The Hard Catalyst <span class="zh">英國電網出售 · 硬催化劑</span></h2>
+    <div class="callout good">
+      <strong>Contracted and dated value unlock.</strong> In February 2026, CK Asset (jointly with CKI and Power Assets) signed a share purchase agreement with Engie S.A. to sell 100% of UK Power Networks for total GBP 8.4B. CK Asset's share is ~GBP 2.1B (HK$22.2B cash) + ~HK$8.4B book profit upon completion. <strong>Expected close: before June 2026</strong>, subject to regulatory and shareholder approvals. This is exactly the kind of specific, dated, contractually signed event that value investors should pay attention to. <span class="zh">2026年6月前完成的合約事件 — 套現HK$22.2B + 帳面利潤HK$8.4B。</span>
+    </div>
+
+    <div class="grid cols-3" style="margin-top:16px;">
+      <div class="kpi">
+        <div class="label">Cash to be Unlocked</div>
+        <div class="value" style="color:var(--green)">HK$22.2B</div>
+        <div class="sub">~14% of current market cap</div>
+      </div>
+      <div class="kpi">
+        <div class="label">One-Time Book Gain</div>
+        <div class="value" style="color:var(--green)">HK$8.4B</div>
+        <div class="sub">~77% of 2025 reported profit</div>
+      </div>
+      <div class="kpi">
+        <div class="label">Expected Completion</div>
+        <div class="value" style="font-size:26px;">By Jun 2026</div>
+        <div class="sub">Regulatory approvals pending</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h3 class="chart-title">NAV Breakdown (Est., HK$B) <span class="zh">資產淨值拆分</span></h3>
+    <div class="chart-wrap"><canvas id="navChart"></canvas></div>
+    <p style="margin-top:12px;font-size:14px;">Implied net NAV per share: <strong style="color:var(--accent)">~HK$96</strong>. At HK$46.84 → trading at <strong>51% discount to NAV</strong>. DBS estimates similar 52% discount vs. 10-year average of 55%.</p>
+  </div>
+
+  <div class="panel">
+    <h3 class="chart-title">NAV Discount: Current vs. 10-Year Range <span class="zh">NAV 折讓區間</span></h3>
+    <div class="chart-wrap"><canvas id="navDiscChart"></canvas></div>
+  </div>
+
+  <div class="panel">
+    <h3 class="chart-title">Intrinsic Value Triangulation (1113.HK) <span class="zh">內在價值三角驗證</span></h3>
+    <div class="chart-wrap"><canvas id="ivChart1113"></canvas></div>
+    <div class="fv-bar-wrap">
+      <div class="fv-bar-label"><span>Conservative / 保守</span><span>Base / 基礎</span><span>Optimistic / 樂觀</span></div>
+      <div class="fv-bar-label" style="color:var(--ink);"><span>HK$43</span><span>HK$55</span><span>HK$62</span></div>
+      <div class="fv-bar-label" style="color:var(--muted);"><span>−8% vs price</span><span style="color:var(--green)">+17%</span><span style="color:var(--green)">+32%</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= COMPARE ================= -->
+<section id="compare" class="tab">
+  <div class="panel">
+    <h2>Head-to-Head Comparison <span class="zh">雙雄對比</span></h2>
+    <p class="lead">Same family, same auditor, similar board — but very different risk/reward profiles right now. Below is a scorecard of who wins on each dimension.</p>
+
+    <table style="margin-top:16px;">
+      <thead><tr><th>Dimension / 維度</th><th class="num">0001.HK</th><th class="num">1113.HK</th><th>Edge / 勝者</th></tr></thead>
+      <tbody>
+        <tr><td>Market cap / 市值</td><td class="num">HK$245B</td><td class="num">HK$164B</td><td>—</td></tr>
+        <tr><td>P/E (reported TTM)</td><td class="num">20.7×</td><td class="num">15.1×</td><td><strong style="color:var(--accent)">1113</strong></td></tr>
+        <tr><td>P/E (underlying / ex-reval)</td><td class="num">13.4×</td><td class="num">13.7×</td><td>Tie</td></tr>
+        <tr><td>Price/Book</td><td class="num">~0.6×</td><td class="num">~0.4×</td><td><strong style="color:var(--accent)">1113</strong></td></tr>
+        <tr><td>Dividend yield / 股息率</td><td class="num">3.6%</td><td class="num">3.8%</td><td><strong style="color:var(--accent)">1113</strong></td></tr>
+        <tr><td>Net Debt / Capital</td><td class="num">13.9%</td><td class="num">2.3%</td><td><strong style="color:var(--accent)">1113</strong> (large)</td></tr>
+        <tr><td>Interest Coverage</td><td class="num">24.7×</td><td class="num">&gt;50×</td><td><strong style="color:var(--accent)">1113</strong></td></tr>
+        <tr><td>Business Quality / 業務質量</td><td>Wider moat</td><td>Narrower but HK oligopoly</td><td><strong style="color:var(--accent)">0001</strong></td></tr>
+        <tr><td>Near-term catalyst</td><td>Panama resolution (binary)</td><td>UKPN sale (contracted)</td><td><strong style="color:var(--accent)">1113</strong></td></tr>
+        <tr><td>Geopolitical risk</td><td><span style="color:var(--red)">High</span></td><td><span style="color:var(--amber)">Moderate</span></td><td><strong style="color:var(--accent)">1113</strong></td></tr>
+        <tr><td>Distance from 52w high</td><td class="num">−3.7%</td><td class="num">−6.2%</td><td>Tie</td></tr>
+        <tr><td><strong>Margin of Safety</strong></td><td class="num">~6%</td><td class="num">~17%</td><td><strong style="color:var(--accent)">1113</strong></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="panel">
+    <h3 class="chart-title">Valuation Metrics Side-by-Side <span class="zh">估值指標對比</span></h3>
+    <div class="chart-wrap"><canvas id="valMetricsChart"></canvas></div>
+  </div>
+
+  <div class="panel">
+    <h3 class="chart-title">Balance Sheet Strength <span class="zh">資產負債表實力</span></h3>
+    <div class="chart-wrap"><canvas id="bsChart"></canvas></div>
+  </div>
+
+  <div class="callout">
+    <strong>Conclusion / 結論:</strong> In the current pricing environment, 1113.HK is the clearer Graham-style value opportunity of the pair. You are paid to wait (3.8% yield), the balance sheet is fortress, and there is a signed, dated catalyst within 12 months. 0001.HK is a <em>better business</em> but the price offers insufficient margin of safety for the Panama binary risk. <span class="zh">"Price is what you pay; value is what you get." — Buffett</span>
+  </div>
+</section>
+
+<!-- ================= VALUATION ================= -->
+<section id="valuation" class="tab">
+  <div class="panel">
+    <h2>Valuation Deep Dive <span class="zh">估值深度分析</span></h2>
+    <p class="lead">For each stock, we triangulate across <strong>three independent methods</strong>, then weight to a base-case intrinsic value. No single valuation method is definitive — the goal is to find a price where multiple methods agree it's a bargain.</p>
+  </div>
+
+  <div class="two-col">
+    <div class="panel">
+      <h3>0001.HK — Sum of the Parts <span class="zh">分類加總</span></h3>
+      <table>
+        <thead><tr><th>Segment</th><th class="num">EBITDA (HK$B)</th><th class="num">Multiple</th><th class="num">Value</th></tr></thead>
+        <tbody>
+          <tr><td>Ports <span style="color:var(--red)">(derated)</span></td><td class="num">12.0</td><td class="num">8×</td><td class="num">96</td></tr>
+          <tr><td>Retail (A.S. Watson)</td><td class="num">13.5</td><td class="num">10×</td><td class="num">135</td></tr>
+          <tr><td>Infrastructure (CKI)</td><td class="num">8.5</td><td class="num">Mkt</td><td class="num">85</td></tr>
+          <tr><td>Telecom</td><td class="num">22.0</td><td class="num">6×</td><td class="num">132</td></tr>
+          <tr><td><strong>EV</strong></td><td></td><td></td><td class="num"><strong>448</strong></td></tr>
+          <tr><td>Less: Net debt</td><td></td><td></td><td class="num">(119)</td></tr>
+          <tr><td><strong>Equity value</strong></td><td></td><td></td><td class="num"><strong>329</strong></td></tr>
+          <tr><td>Per share (HK$)</td><td></td><td></td><td class="num">86</td></tr>
+          <tr><td>− 20% conglomerate discount</td><td></td><td></td><td class="num"><strong style="color:var(--accent)">69</strong></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="panel">
+      <h3>1113.HK — NAV Buildup <span class="zh">資產淨值法</span></h3>
+      <table>
+        <thead><tr><th>Component</th><th class="num">Value (HK$B)</th></tr></thead>
+        <tbody>
+          <tr><td>HK + Mainland development book</td><td class="num">85</td></tr>
+          <tr><td>Investment properties</td><td class="num">95</td></tr>
+          <tr><td>Hotels + serviced suites</td><td class="num">40</td></tr>
+          <tr><td>UK Pubs (Greene King)</td><td class="num">35</td></tr>
+          <tr><td>Infrastructure JVs (ex-UKPN)</td><td class="num">55</td></tr>
+          <tr><td style="color:var(--green)">+ UKPN sale proceeds</td><td class="num" style="color:var(--green)">22</td></tr>
+          <tr><td>Cash &amp; other</td><td class="num">15</td></tr>
+          <tr><td><strong>Gross NAV</strong></td><td class="num"><strong>347</strong></td></tr>
+          <tr><td>Less: Net debt</td><td class="num">(10)</td></tr>
+          <tr><td><strong>Net NAV</strong></td><td class="num"><strong style="color:var(--accent)">337</strong></td></tr>
+          <tr><td>Per share (HK$)</td><td class="num"><strong>~96</strong></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h3 class="chart-title">Sensitivity: 0001.HK Fair Value — Ports Multiple vs Panama Outcome <span class="zh">敏感度分析</span></h3>
+    <table style="font-family:'IBM Plex Mono',monospace;font-size:13px;">
+      <thead>
+        <tr><th></th><th class="num">Ports 6×</th><th class="num">Ports 8×</th><th class="num">Ports 10×</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Panama Lost Permanently</td><td class="num">55</td><td class="num">60</td><td class="num">66</td></tr>
+        <tr><td>Panama Partial Compensation</td><td class="num">58</td><td class="num" style="color:var(--accent)">68</td><td class="num">74</td></tr>
+        <tr><td>Panama Resolved Favorably</td><td class="num">62</td><td class="num">72</td><td class="num">80</td></tr>
+      </tbody>
+    </table>
+    <p style="margin-top:10px;font-size:13px;color:var(--muted);">Values in HK$ per share. Current price HK$64.05 sits near the center-cell base case.</p>
+  </div>
+</section>
+
+<!-- ================= ACTION ================= -->
+<section id="action" class="tab">
+  <div class="panel">
+    <h2>Action Plan <span class="zh">操作計劃</span></h2>
+    <p class="lead">Specific entry points, position sizing, and sell triggers — designed to be executable without further analysis.</p>
+  </div>
+
+  <div class="two-col">
+    <div class="panel" style="border-left:3px solid var(--amber);">
+      <h3>0001.HK — MONITOR <span class="zh">觀望</span></h3>
+      <ul class="clean">
+        <li><strong>Entry target zone:</strong> HK$50–56 (20–25% MoS)</li>
+        <li><strong>Aggressive buy:</strong> below HK$48 (full Panama-loss priced in)</li>
+        <li><strong>Position if triggered:</strong> 3–4% of portfolio</li>
+        <li><strong>Sell signal:</strong> Panama arbitration lost + ports deal collapses → reassess</li>
+        <li><strong>Do NOT buy at current price HK$64</strong> — insufficient margin of safety</li>
+      </ul>
+    </div>
+    <div class="panel" style="border-left:3px solid var(--green);">
+      <h3>1113.HK — BUY (Half Position) <span class="zh">分段買入</span></h3>
+      <ul class="clean">
+        <li><strong>Entry 1 (half position):</strong> current price HK$46.84 → 2.5% of portfolio</li>
+        <li><strong>Add (full position):</strong> on dip to HK$40–42 → +2.5%</li>
+        <li><strong>Target weight:</strong> 5–6% of portfolio</li>
+        <li><strong>12-month price target:</strong> HK$55 (base) / HK$62 (optimistic)</li>
+        <li><strong>Trim signal:</strong> above HK$62 (fully-valued)</li>
+        <li><strong>Sell signal:</strong> NAV discount narrows below 35% OR net debt rises materially OR Li family integrity issue</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h3>Portfolio-Level Recommendation <span class="zh">組合層面建議</span></h3>
+    <table>
+      <thead><tr><th>Situation / 情境</th><th>Recommendation / 建議</th></tr></thead>
+      <tbody>
+        <tr><td>Own neither</td><td>Buy 1113.HK half position at HK$46.84; leave room to add at HK$40–42. Add 0001.HK only below HK$55.</td></tr>
+        <tr><td>Own 0001.HK</td><td>Hold; do not add. Consider rotating some weight to 1113.HK for better risk-adjusted return.</td></tr>
+        <tr><td>Own 1113.HK</td><td>Continue accumulating on weakness. Consider partial profit-taking if UKPN catalyst drives price through HK$60.</td></tr>
+        <tr><td>Max Li-family complex exposure</td><td><strong>7–8% of portfolio ceiling</strong> (concentration-with-discipline principle)</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="panel">
+    <h3>Behavioral Bias Self-Check <span class="zh">行為偏差自檢</span></h3>
+    <table>
+      <thead><tr><th>Bias / 偏差</th><th>Check / 檢查</th></tr></thead>
+      <tbody>
+        <tr><td>Confirmation bias</td><td>Initially expected both as buys given fortress balance sheets — but forced to downgrade 0001 on Panama moat impairment</td></tr>
+        <tr><td>Anchoring</td><td>Not anchored to purchase price; using 10-year NAV-discount averages as benchmark</td></tr>
+        <tr><td>Recency bias</td><td>Panama ruling is recent (Jan 2026) but its implications are structural, not a one-quarter news event</td></tr>
+        <tr><td>Action bias</td><td>On 0001.HK, "do nothing" may be the best action — waiting for a price offering margin of safety</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="panel">
+    <h3>Key Data Sources / 關鍵數據來源</h3>
+    <ul class="clean">
+      <li>CK Hutchison 2025 Annual Results (HKEx, 19 Mar 2026)</li>
+      <li>CK Asset Holdings 2025 Annual Results (HKEx, 19 Mar 2026)</li>
+      <li>Morningstar equity research, Dan Baker, 23 Mar 2026 (00001 fair value HK$76)</li>
+      <li>DBS Bank research on CKAH (BUY target HK$51.6, 50% NAV discount)</li>
+      <li>Panama Supreme Court ruling, 29 Jan 2026</li>
+      <li>CK Asset / CKI joint announcement of UKPN sale to Engie, Feb 2026</li>
+    </ul>
+  </div>
+
+  <div class="callout warn">
+    <strong>Disclaimers / 免責聲明:</strong> This report is for educational purposes only and is not investment advice. All numerical estimates carry material uncertainty and should be independently verified against primary filings. Markets can and do move significantly in short periods. The Panama arbitration is a developing legal process whose outcome cannot be predicted. Consult a licensed advisor before making investment decisions.
+  </div>
+</section>
+
+<footer>
+  <div>Generated with the value-investing skill framework · Graham–Buffett–Munger–Fisher integrated analysis</div>
+  <div class="zh">價值投資框架 · 本報告僅供參考 · 不構成投資建議</div>
+  <div>Analysis Date: 19 April 2026 · Data cutoff: 18 April 2026</div>
+</footer>
+
+</div>
+
+<script>
+// ===== Tabs =====
+document.querySelectorAll('.tab-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('section.tab').forEach(s=>s.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById(btn.dataset.tab).classList.add('active');
+    window.scrollTo({top: 0, behavior: 'smooth'});
+  });
+});
+
+// ===== Chart.js global defaults =====
+Chart.defaults.color = '#9aa6bd';
+Chart.defaults.borderColor = 'rgba(34,48,82,0.6)';
+Chart.defaults.font.family = "'Source Sans 3', sans-serif";
+Chart.defaults.font.size = 12;
+
+const GOLD = '#d4af37';
+const GOLD_SOFT = 'rgba(212,175,55,0.3)';
+const GREEN = '#3fb27f';
+const RED = '#e06b6b';
+const AMBER = '#e0b34a';
+const BLUE = '#6aa9e9';
+const VIOLET = '#9c7fe0';
+
+// ====== Summary: KPI Compare ======
+new Chart(document.getElementById('kpiCompareChart'), {
+  type:'bar',
+  data:{
+    labels:['Div Yield %','Net Debt/Cap %','P/E TTM','P/B (×)','MoS %'],
+    datasets:[
+      {label:'0001.HK Hutchison', data:[3.6,13.9,20.7,0.6,6], backgroundColor:GOLD, borderRadius:4},
+      {label:'1113.HK CK Asset', data:[3.8,2.3,15.1,0.4,17], backgroundColor:BLUE, borderRadius:4}
+    ]
+  },
+  options:{responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{position:'top'}, tooltip:{mode:'index',intersect:false}},
+    scales:{y:{beginAtZero:true, grid:{color:'rgba(34,48,82,0.4)'}}, x:{grid:{display:false}}}
+  }
+});
+
+// ====== Summary: Margin of Safety visual ======
+new Chart(document.getElementById('mosChart'), {
+  type:'bar',
+  data:{
+    labels:['0001.HK Hutchison','1113.HK CK Asset'],
+    datasets:[
+      {label:'Current Price', data:[64.05,46.84], backgroundColor:'rgba(224,179,74,0.4)', borderColor:AMBER, borderWidth:2},
+      {label:'Conservative FV', data:[55,43], backgroundColor:'rgba(224,107,107,0.4)', borderColor:RED, borderWidth:2},
+      {label:'Base Fair Value', data:[68,55], backgroundColor:'rgba(212,175,55,0.5)', borderColor:GOLD, borderWidth:2},
+      {label:'Optimistic FV', data:[78,62], backgroundColor:'rgba(63,178,127,0.4)', borderColor:GREEN, borderWidth:2}
+    ]
+  },
+  options:{responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{position:'top'}, tooltip:{callbacks:{label:ctx=>`${ctx.dataset.label}: HK$${ctx.parsed.y}`}}},
+    scales:{y:{beginAtZero:true,grid:{color:'rgba(34,48,82,0.4)'},title:{display:true,text:'Price (HK$)'}},
+             x:{grid:{display:false}}}
+  }
+});
+
+// ====== Hutchison: Segment EBITDA ======
+new Chart(document.getElementById('segmentChart'), {
+  type:'doughnut',
+  data:{
+    labels:['Telecom','Retail','Ports','Infrastructure (CKI)'],
+    datasets:[{data:[22,13.5,12,8.5], backgroundColor:[BLUE,GOLD,VIOLET,GREEN], borderColor:'#111a2e', borderWidth:3}]
+  },
+  options:{responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{position:'right'}, tooltip:{callbacks:{label:ctx=>`${ctx.label}: HK$${ctx.parsed}B`}}}
+  }
+});
+
+// ====== Hutchison: Moat Radar ======
+new Chart(document.getElementById('moatChart0001'), {
+  type:'radar',
+  data:{
+    labels:['Intangibles','Cost Advantage','Switching Costs','Network Effects','Efficient Scale'],
+    datasets:[
+      {label:'Pre-Panama (hist)', data:[4,4,2,1,5], backgroundColor:'rgba(106,169,233,0.18)', borderColor:BLUE, borderWidth:2, pointBackgroundColor:BLUE},
+      {label:'Post-Panama (now)', data:[4,4,2,1,4], backgroundColor:'rgba(212,175,55,0.18)', borderColor:GOLD, borderWidth:2, pointBackgroundColor:GOLD}
+    ]
+  },
+  options:{responsive:true,maintainAspectRatio:false,
+    scales:{r:{min:0,max:5,angleLines:{color:'rgba(34,48,82,0.6)'},grid:{color:'rgba(34,48,82,0.6)'},pointLabels:{color:'#e8edf7',font:{size:11}}}},
+    plugins:{legend:{position:'top'}}
+  }
+});
+
+// ====== Hutchison: Intrinsic Value ======
+new Chart(document.getElementById('ivChart0001'), {
+  type:'bar',
+  data:{
+    labels:['DDM (Conserv)','SOTP (Base)','Earnings Multiple','Average','Current Price'],
+    datasets:[{
+      label:'HK$ per share',
+      data:[48,69,68,62,64.05],
+      backgroundColor:[RED,GOLD,GOLD,GREEN,AMBER],
+      borderRadius:4
+    }]
+  },
+  options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',
+    plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>`HK$${ctx.parsed.x}`}}},
+    scales:{x:{beginAtZero:true,grid:{color:'rgba(34,48,82,0.4)'}}}
+  }
+});
+
+// ====== CK Asset: Revenue Mix ======
+new Chart(document.getElementById('revMixChart'), {
+  type:'doughnut',
+  data:{
+    labels:['Recurrent (Rent, Pubs, Infra, Hotel)','Property Development'],
+    datasets:[{data:[76,24], backgroundColor:[GREEN,GOLD], borderColor:'#111a2e',borderWidth:3}]
+  },
+  options:{responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{position:'right'},tooltip:{callbacks:{label:ctx=>`${ctx.label}: ${ctx.parsed}%`}}}
+  }
+});
+
+// ====== CK Asset: NAV Breakdown ======
+new Chart(document.getElementById('navChart'), {
+  type:'bar',
+  data:{
+    labels:['Investment props','HK+China devel.','Infra JVs (ex-UKPN)','Hotels','UK Pubs','UKPN proceeds','Cash & other'],
+    datasets:[{
+      label:'HK$B',
+      data:[95,85,55,40,35,22,15],
+      backgroundColor:[GOLD, BLUE, VIOLET, '#7fb292', '#e0b34a', GREEN, '#9aa6bd'],
+      borderRadius:4
+    }]
+  },
+  options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',
+    plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>`HK$${ctx.parsed.x}B`}}},
+    scales:{x:{beginAtZero:true,grid:{color:'rgba(34,48,82,0.4)'}}}
+  }
+});
+
+// ====== CK Asset: NAV Discount over time (illustrative range) ======
+new Chart(document.getElementById('navDiscChart'), {
+  type:'bar',
+  data:{
+    labels:['10-yr Low','10-yr Avg','Current','10-yr High'],
+    datasets:[{
+      label:'NAV Discount %',
+      data:[40,55,51,65],
+      backgroundColor:[GREEN, BLUE, GOLD, RED],
+      borderRadius:4
+    }]
+  },
+  options:{responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>`${ctx.parsed.y}%`}}},
+    scales:{y:{beginAtZero:true,grid:{color:'rgba(34,48,82,0.4)'},title:{display:true,text:'Discount to NAV (%)'}},x:{grid:{display:false}}}
+  }
+});
+
+// ====== CK Asset: Intrinsic Value ======
+new Chart(document.getElementById('ivChart1113'), {
+  type:'bar',
+  data:{
+    labels:['DDM (Floor)','Earnings Multiple','NAV-based (Base)','Average','Current Price'],
+    datasets:[{
+      label:'HK$ per share',
+      data:[36,48,53,52,46.84],
+      backgroundColor:[RED,AMBER,GOLD,GREEN,BLUE],
+      borderRadius:4
+    }]
+  },
+  options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',
+    plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>`HK$${ctx.parsed.x}`}}},
+    scales:{x:{beginAtZero:true,grid:{color:'rgba(34,48,82,0.4)'}}}
+  }
+});
+
+// ====== Compare: Valuation Metrics ======
+new Chart(document.getElementById('valMetricsChart'), {
+  type:'radar',
+  data:{
+    labels:['Div Yield','Low P/E','Low P/B','Low Debt','Catalyst Clarity','Moat','Margin of Safety'],
+    datasets:[
+      {label:'0001.HK', data:[3.6,5.5,6,4,3,5,2], backgroundColor:'rgba(212,175,55,0.18)',borderColor:GOLD,borderWidth:2,pointBackgroundColor:GOLD},
+      {label:'1113.HK', data:[3.8,7,8,9,9,4,6], backgroundColor:'rgba(106,169,233,0.18)',borderColor:BLUE,borderWidth:2,pointBackgroundColor:BLUE}
+    ]
+  },
+  options:{responsive:true,maintainAspectRatio:false,
+    scales:{r:{min:0,max:10,angleLines:{color:'rgba(34,48,82,0.6)'},grid:{color:'rgba(34,48,82,0.6)'},pointLabels:{color:'#e8edf7',font:{size:11}}}},
+    plugins:{legend:{position:'top'}, tooltip:{callbacks:{label:ctx=>`${ctx.dataset.label}: ${ctx.parsed.r}/10`}}}
+  }
+});
+
+// ====== Compare: Balance Sheet ======
+new Chart(document.getElementById('bsChart'), {
+  type:'bar',
+  data:{
+    labels:['Net Debt / Capital %','Interest Coverage (×)'],
+    datasets:[
+      {label:'0001.HK', data:[13.9,24.7], backgroundColor:GOLD, borderRadius:4},
+      {label:'1113.HK', data:[2.3,50], backgroundColor:BLUE, borderRadius:4}
+    ]
+  },
+  options:{responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{position:'top'}, tooltip:{mode:'index',intersect:false}},
+    scales:{y:{beginAtZero:true,grid:{color:'rgba(34,48,82,0.4)'}},x:{grid:{display:false}}}
+  }
+});
+</script>
+
+</body>
+</html>
