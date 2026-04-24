@@ -153,6 +153,8 @@ var CATEGORIES = {
         label: "United States",
         items: [
           { id: "pfizer", label: "Pfizer (PFE)", url: "./report_PFE_2026-04-17.html", icon: "doc" },
+          { id: "cybersec-trio", label: "Cybersecurity Trio", url: "./CYBERSEC_TRIO_Dashboard.html", icon: "doc" },
+          { id: "intu", label: "Intuit (INTU)", url: "./INTU_Dashboard.html", icon: "doc" },
         ],
       },
       {

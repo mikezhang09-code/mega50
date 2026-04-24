@@ -1,0 +1,2009 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Intuit (INTU) 价值投资深度分析 · Deep Value Dashboard</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<style>
+  :root {
+    --navy-deep: #0A1628;
+    --navy: #0F1E36;
+    --navy-light: #152847;
+    --navy-card: #18325A;
+    --gold: #D4A574;
+    --gold-bright: #E8C590;
+    --gold-dim: #8A6F4A;
+    --ivory: #F5F0E6;
+    --ivory-dim: #C4BDB0;
+    --text-mute: #8A9BB0;
+    --accent-green: #5FB878;
+    --accent-red: #E85D5D;
+    --accent-amber: #E8B85D;
+    --border: rgba(212, 165, 116, 0.2);
+    --border-bright: rgba(212, 165, 116, 0.4);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Georgia', 'Songti SC', 'STSong', serif;
+    background: linear-gradient(135deg, var(--navy-deep) 0%, var(--navy) 100%);
+    color: var(--ivory);
+    line-height: 1.7;
+    min-height: 100vh;
+    padding: 20px;
+  }
+
+  .container {
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  /* Header */
+  .header {
+    text-align: center;
+    padding: 50px 20px 40px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 40px;
+  }
+
+  .logo-mark {
+    display: inline-block;
+    padding: 6px 18px;
+    border: 1px solid var(--gold);
+    color: var(--gold);
+    font-size: 11px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    font-family: 'Helvetica', 'Arial', sans-serif;
+  }
+
+  h1 {
+    font-size: 42px;
+    color: var(--ivory);
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+    font-weight: 400;
+  }
+
+  .subtitle-en {
+    color: var(--gold);
+    font-size: 16px;
+    font-style: italic;
+    letter-spacing: 1.5px;
+    margin-bottom: 20px;
+    font-family: 'Helvetica', sans-serif;
+  }
+
+  .meta-bar {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    flex-wrap: wrap;
+    color: var(--text-mute);
+    font-size: 13px;
+    margin-top: 20px;
+  }
+
+  .meta-item span { color: var(--gold); }
+
+  /* Verdict Hero */
+  .verdict-hero {
+    background: linear-gradient(135deg, var(--navy-card) 0%, var(--navy-light) 100%);
+    border: 1px solid var(--border-bright);
+    border-radius: 4px;
+    padding: 40px;
+    margin-bottom: 40px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .verdict-hero::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 4px;
+    height: 100%;
+    background: var(--gold);
+  }
+
+  .verdict-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: 30px;
+  }
+
+  .verdict-cell {
+    text-align: left;
+  }
+
+  .verdict-label {
+    font-size: 11px;
+    letter-spacing: 2px;
+    color: var(--text-mute);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    font-family: 'Helvetica', sans-serif;
+  }
+
+  .verdict-value {
+    font-size: 32px;
+    color: var(--gold);
+    font-weight: 300;
+  }
+
+  .verdict-value.big {
+    font-size: 48px;
+    color: var(--accent-green);
+  }
+
+  .verdict-sub {
+    font-size: 13px;
+    color: var(--ivory-dim);
+    margin-top: 4px;
+  }
+
+  /* Tabs */
+  .tabs {
+    display: flex;
+    gap: 2px;
+    margin-bottom: 0;
+    border-bottom: 1px solid var(--border);
+    overflow-x: auto;
+    flex-wrap: wrap;
+  }
+
+  .tab {
+    padding: 14px 22px;
+    background: transparent;
+    border: none;
+    color: var(--text-mute);
+    cursor: pointer;
+    font-family: 'Georgia', 'Songti SC', serif;
+    font-size: 14px;
+    white-space: nowrap;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+  }
+
+  .tab:hover { color: var(--gold-bright); }
+
+  .tab.active {
+    color: var(--gold);
+    border-bottom: 2px solid var(--gold);
+  }
+
+  .tab-content {
+    display: none;
+    padding: 40px 0;
+    animation: fadeIn 0.4s ease;
+  }
+
+  .tab-content.active { display: block; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Cards */
+  .card {
+    background: var(--navy-light);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 28px;
+    margin-bottom: 24px;
+  }
+
+  .card-title {
+    font-size: 20px;
+    color: var(--gold);
+    margin-bottom: 6px;
+    font-weight: 400;
+  }
+
+  .card-title-en {
+    font-size: 12px;
+    color: var(--text-mute);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    font-family: 'Helvetica', sans-serif;
+  }
+
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+  .grid-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 16px; }
+
+  @media (max-width: 900px) {
+    .verdict-grid { grid-template-columns: 1fr 1fr; }
+    .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+    h1 { font-size: 28px; }
+    .verdict-value.big { font-size: 36px; }
+  }
+
+  /* Tables */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 16px;
+    font-size: 14px;
+  }
+
+  th {
+    background: var(--navy-card);
+    color: var(--gold);
+    padding: 12px 14px;
+    text-align: left;
+    font-weight: 400;
+    letter-spacing: 1px;
+    font-size: 12px;
+    text-transform: uppercase;
+    border-bottom: 1px solid var(--border-bright);
+  }
+
+  td {
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--border);
+    color: var(--ivory);
+  }
+
+  tr:hover td { background: rgba(212, 165, 116, 0.04); }
+
+  td.num { color: var(--gold); font-family: 'Helvetica', sans-serif; text-align: right; }
+  td.pos { color: var(--accent-green); font-family: 'Helvetica', sans-serif; }
+  td.neg { color: var(--accent-red); font-family: 'Helvetica', sans-serif; }
+  td.neutral { color: var(--accent-amber); font-family: 'Helvetica', sans-serif; }
+
+  /* Metric pills */
+  .metric {
+    padding: 20px;
+    background: var(--navy-card);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+  }
+
+  .metric-label {
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    color: var(--text-mute);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+    font-family: 'Helvetica', sans-serif;
+  }
+
+  .metric-value {
+    font-size: 28px;
+    color: var(--gold);
+    font-weight: 300;
+    font-family: 'Helvetica', sans-serif;
+  }
+
+  .metric-value.green { color: var(--accent-green); }
+  .metric-value.red { color: var(--accent-red); }
+  .metric-value.amber { color: var(--accent-amber); }
+
+  .metric-sub {
+    font-size: 12px;
+    color: var(--ivory-dim);
+    margin-top: 4px;
+  }
+
+  /* Chart container */
+  .chart-wrap {
+    position: relative;
+    height: 320px;
+    margin-top: 20px;
+  }
+
+  .chart-wrap.tall { height: 420px; }
+
+  /* Timeline */
+  .timeline {
+    border-left: 2px solid var(--gold-dim);
+    padding-left: 24px;
+    margin: 20px 0;
+  }
+
+  .timeline-item {
+    position: relative;
+    padding: 12px 0 20px;
+  }
+
+  .timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -32px;
+    top: 18px;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--navy-light);
+    border: 2px solid var(--gold);
+  }
+
+  .timeline-item.red::before { border-color: var(--accent-red); }
+  .timeline-item.green::before { border-color: var(--accent-green); }
+
+  .timeline-date {
+    color: var(--gold);
+    font-family: 'Helvetica', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 1px;
+  }
+
+  .timeline-title {
+    font-size: 16px;
+    color: var(--ivory);
+    margin: 4px 0;
+  }
+
+  .timeline-desc {
+    color: var(--ivory-dim);
+    font-size: 14px;
+  }
+
+  /* Scorecard */
+  .scorecard {
+    background: var(--navy-card);
+    border: 1px solid var(--border);
+    padding: 20px;
+    border-radius: 4px;
+    margin-bottom: 16px;
+  }
+
+  .score-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(212, 165, 116, 0.1);
+  }
+
+  .score-row:last-child { border-bottom: none; }
+
+  .score-name { color: var(--ivory); font-size: 14px; }
+  .score-name small { color: var(--text-mute); display: block; font-size: 11px; margin-top: 2px; font-family: 'Helvetica', sans-serif; }
+
+  .score-dots {
+    display: flex;
+    gap: 4px;
+  }
+
+  .dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--navy-deep);
+    border: 1px solid var(--gold-dim);
+  }
+
+  .dot.filled { background: var(--gold); border-color: var(--gold); }
+
+  /* Bull/Bear box */
+  .bull-bear {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin: 20px 0;
+  }
+
+  .bull, .bear {
+    padding: 20px;
+    border-radius: 4px;
+    border: 1px solid;
+  }
+
+  .bull {
+    background: rgba(95, 184, 120, 0.06);
+    border-color: rgba(95, 184, 120, 0.3);
+  }
+
+  .bear {
+    background: rgba(232, 93, 93, 0.06);
+    border-color: rgba(232, 93, 93, 0.3);
+  }
+
+  .bull h4 { color: var(--accent-green); margin-bottom: 10px; font-weight: 400; }
+  .bear h4 { color: var(--accent-red); margin-bottom: 10px; font-weight: 400; }
+
+  .bull ul, .bear ul { list-style: none; }
+  .bull li, .bear li {
+    padding: 6px 0;
+    font-size: 13px;
+    color: var(--ivory-dim);
+    padding-left: 16px;
+    position: relative;
+  }
+  .bull li::before { content: '▲'; color: var(--accent-green); position: absolute; left: 0; font-size: 10px; top: 8px; }
+  .bear li::before { content: '▼'; color: var(--accent-red); position: absolute; left: 0; font-size: 10px; top: 8px; }
+
+  /* Risk flags */
+  .flag {
+    display: flex;
+    gap: 16px;
+    padding: 14px 18px;
+    background: rgba(232, 93, 93, 0.06);
+    border-left: 3px solid var(--accent-red);
+    margin-bottom: 10px;
+    border-radius: 2px;
+  }
+
+  .flag.amber { background: rgba(232, 184, 93, 0.06); border-left-color: var(--accent-amber); }
+
+  .flag-code {
+    color: var(--accent-red);
+    font-family: 'Helvetica', sans-serif;
+    font-weight: 600;
+    font-size: 13px;
+    letter-spacing: 1px;
+    flex-shrink: 0;
+    width: 50px;
+  }
+  .flag.amber .flag-code { color: var(--accent-amber); }
+
+  .flag-body { flex: 1; font-size: 13px; color: var(--ivory-dim); }
+  .flag-body strong { color: var(--ivory); font-weight: 600; }
+
+  /* DCF Tiles */
+  .dcf-tiles {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 16px;
+    margin: 20px 0;
+  }
+
+  .dcf-tile {
+    padding: 24px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    text-align: center;
+  }
+
+  .dcf-tile.bear { background: rgba(232, 93, 93, 0.05); border-color: rgba(232, 93, 93, 0.3); }
+  .dcf-tile.base { background: rgba(212, 165, 116, 0.05); border-color: rgba(212, 165, 116, 0.4); }
+  .dcf-tile.bull { background: rgba(95, 184, 120, 0.05); border-color: rgba(95, 184, 120, 0.3); }
+
+  .dcf-prob { font-size: 11px; letter-spacing: 2px; color: var(--text-mute); text-transform: uppercase; font-family: 'Helvetica', sans-serif; }
+  .dcf-name { font-size: 18px; color: var(--ivory); margin: 8px 0 12px; }
+  .dcf-price { font-size: 34px; color: var(--gold); font-weight: 300; font-family: 'Helvetica', sans-serif; }
+  .dcf-upside { font-size: 14px; margin-top: 6px; color: var(--ivory-dim); }
+
+  /* Section intro */
+  .intro {
+    color: var(--ivory-dim);
+    font-size: 14px;
+    margin-bottom: 24px;
+    line-height: 1.8;
+    font-style: italic;
+    padding-left: 14px;
+    border-left: 2px solid var(--gold-dim);
+  }
+
+  /* Verdict box inside tab */
+  .final-verdict {
+    background: linear-gradient(135deg, #1a2f55 0%, #0F1E36 100%);
+    border: 1px solid var(--gold);
+    padding: 36px;
+    border-radius: 4px;
+    margin-top: 30px;
+    position: relative;
+  }
+
+  .final-verdict::before {
+    content: '裁决 · VERDICT';
+    position: absolute;
+    top: -12px;
+    left: 24px;
+    background: var(--navy-deep);
+    color: var(--gold);
+    padding: 4px 14px;
+    letter-spacing: 3px;
+    font-size: 11px;
+    font-family: 'Helvetica', sans-serif;
+  }
+
+  .final-verdict h3 {
+    font-size: 22px;
+    color: var(--gold-bright);
+    margin-bottom: 14px;
+  }
+
+  .final-verdict p {
+    color: var(--ivory);
+    line-height: 1.9;
+    font-size: 15px;
+    margin-bottom: 12px;
+  }
+
+  .bilingual {
+    display: flex;
+    gap: 8px;
+    align-items: baseline;
+  }
+  .bilingual .en {
+    color: var(--text-mute);
+    font-size: 13px;
+    font-family: 'Helvetica', sans-serif;
+    letter-spacing: 1px;
+  }
+
+  /* Footer */
+  .footer {
+    margin-top: 60px;
+    padding: 30px 0;
+    border-top: 1px solid var(--border);
+    text-align: center;
+    color: var(--text-mute);
+    font-size: 12px;
+    letter-spacing: 1px;
+  }
+
+  .disclaimer {
+    max-width: 900px;
+    margin: 20px auto;
+    font-style: italic;
+    line-height: 1.7;
+    color: var(--text-mute);
+    font-size: 11px;
+  }
+
+  /* Highlight callouts */
+  .callout {
+    background: rgba(212, 165, 116, 0.08);
+    border: 1px solid var(--gold-dim);
+    padding: 16px 20px;
+    border-radius: 4px;
+    margin: 16px 0;
+    font-size: 14px;
+  }
+
+  .callout strong { color: var(--gold); }
+
+  /* Moat bar */
+  .moat-bar {
+    background: var(--navy-deep);
+    height: 10px;
+    border-radius: 2px;
+    overflow: hidden;
+    margin-top: 6px;
+  }
+  .moat-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--gold) 0%, var(--gold-bright) 100%);
+    border-radius: 2px;
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- HEADER -->
+  <header class="header">
+    <div class="logo-mark">Graham · Buffett · Framework</div>
+    <h1>Intuit Inc. (NASDAQ: INTU)</h1>
+    <div class="subtitle-en">Value Mispricing or Moat Erosion · A Deep Verdict</div>
+    <div class="meta-bar">
+      <div class="meta-item">标的 / Ticker: <span>INTU</span></div>
+      <div class="meta-item">市值 / Mkt Cap: <span>$112B</span></div>
+      <div class="meta-item">收盘 / Price: <span>$404</span> (2026-04-22)</div>
+      <div class="meta-item">报告日 / Date: <span>2026-04-23</span></div>
+    </div>
+  </header>
+
+  <!-- VERDICT HERO -->
+  <section class="verdict-hero">
+    <div class="verdict-grid">
+      <div class="verdict-cell">
+        <div class="verdict-label">裁决 · Verdict</div>
+        <div class="verdict-value big">BUY</div>
+        <div class="verdict-sub">加仓 · Accumulate</div>
+      </div>
+      <div class="verdict-cell">
+        <div class="verdict-label">入场区间 · Entry Zone</div>
+        <div class="verdict-value">$360-$420</div>
+        <div class="verdict-sub">三档分批建仓 · Tranche Strategy</div>
+      </div>
+      <div class="verdict-cell">
+        <div class="verdict-label">12月目标 · 1Y Target</div>
+        <div class="verdict-value">$520</div>
+        <div class="verdict-sub">+29% upside</div>
+      </div>
+      <div class="verdict-cell">
+        <div class="verdict-label">3年目标 · 3Y Target</div>
+        <div class="verdict-value">$650</div>
+        <div class="verdict-sub">+61% upside</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TABS -->
+  <nav class="tabs">
+    <button class="tab active" data-tab="overview">① 概览 · Overview</button>
+    <button class="tab" data-tab="selloff">② 下跌解剖 · Sell-off Anatomy</button>
+    <button class="tab" data-tab="graham">③ Graham框架 · Balance Sheet</button>
+    <button class="tab" data-tab="buffett">④ Buffett护城河 · Moat</button>
+    <button class="tab" data-tab="ai">⑤ AI韧性 · AI Resilience</button>
+    <button class="tab" data-tab="dcf">⑥ DCF情景 · Scenarios</button>
+    <button class="tab" data-tab="verdict">⑦ 裁决与监控 · Final Call</button>
+  </nav>
+
+  <!-- =============================================== -->
+  <!-- TAB 1: OVERVIEW -->
+  <!-- =============================================== -->
+  <section class="tab-content active" id="overview">
+
+    <p class="intro">
+      市场用"AI颠覆"叙事把一家 AI 胜出者打回 2018 年的估值。Forward P/E 处于 10 年 &lt; 5% 分位，
+      Agentforce-grade AI 产品已有 3M+ 用户和 85% 重复率，Anthropic 与 OpenAI 双方都已成为 Intuit 的分销伙伴而非威胁。
+      这是近五年最清晰的情绪-基本面错配。<br>
+      <em>Market has priced a genuine AI winner as if it were an AI victim — the cleanest sentiment-fundamentals mispricing in five years.</em>
+    </p>
+
+    <div class="grid-4">
+      <div class="metric">
+        <div class="metric-label">距高点 / From Peak</div>
+        <div class="metric-value red">-50%</div>
+        <div class="metric-sub">$813.70 → $404</div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">Forward P/E (FY27)</div>
+        <div class="metric-value green">15.3x</div>
+        <div class="metric-sub">10Y 历史 &lt;5 分位</div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">FCF Yield</div>
+        <div class="metric-value green">5.8%</div>
+        <div class="metric-sub">TTM $6.08B</div>
+      </div>
+      <div class="metric">
+        <div class="metric-label">概率加权公允价</div>
+        <div class="metric-value amber">$454</div>
+        <div class="metric-sub">安全边际 ~12%</div>
+      </div>
+    </div>
+
+    <div class="grid-2" style="margin-top: 24px;">
+      <div class="card">
+        <h3 class="card-title">核心指标速览</h3>
+        <div class="card-title-en">Key Metrics Snapshot</div>
+        <table>
+          <tr><td>营收 / Revenue (TTM)</td><td class="num">$18.83B</td></tr>
+          <tr><td>营收增速 / YoY Growth</td><td class="pos">+16%</td></tr>
+          <tr><td>Non-GAAP Op Margin</td><td class="num">40.2%</td></tr>
+          <tr><td>FCF / Free Cash Flow</td><td class="num">$6.08B</td></tr>
+          <tr><td>FCF Margin</td><td class="num">32.3%</td></tr>
+          <tr><td>ROIC (含商誉)</td><td class="num">16-19%</td></tr>
+          <tr><td>Net Debt / EBITDA</td><td class="pos">0.51x</td></tr>
+          <tr><td>股息年增 / DPS CAGR (5Y)</td><td class="pos">+14.6%</td></tr>
+        </table>
+      </div>
+
+      <div class="card">
+        <h3 class="card-title">估值对比 · FY27 Forward P/E</h3>
+        <div class="card-title-en">Peer Valuation Comparison</div>
+        <div class="chart-wrap">
+          <canvas id="peerValChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 class="card-title">Graham-Buffett 综合评分卡</h3>
+      <div class="card-title-en">Dual-Framework Scorecard</div>
+      <div class="grid-2" style="margin-top: 16px;">
+        <div class="scorecard">
+          <h4 style="color: var(--gold-bright); margin-bottom: 14px; font-weight: 400;">Graham 安全评分 · Safety Score</h4>
+          <div class="score-row">
+            <div class="score-name">资产负债表 <small>Balance Sheet</small></div>
+            <div class="score-dots"><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span><span class="dot"></span></div>
+          </div>
+          <div class="score-row">
+            <div class="score-name">盈利质量 <small>Earnings Quality</small></div>
+            <div class="score-dots"><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span></div>
+          </div>
+          <div class="score-row">
+            <div class="score-name">估值便宜程度 <small>Valuation</small></div>
+            <div class="score-dots"><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span><span class="dot"></span></div>
+          </div>
+          <div class="score-row">
+            <div class="score-name">股息纪律 <small>Dividend Track</small></div>
+            <div class="score-dots"><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span></div>
+          </div>
+          <div class="score-row">
+            <div class="score-name">财务保守度 <small>Conservative Finance</small></div>
+            <div class="score-dots"><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span><span class="dot"></span><span class="dot"></span></div>
+          </div>
+        </div>
+
+        <div class="scorecard">
+          <h4 style="color: var(--gold-bright); margin-bottom: 14px; font-weight: 400;">Buffett 质量评分 · Quality Score</h4>
+          <div class="score-row">
+            <div class="score-name">护城河深度 <small>Moat Depth</small></div>
+            <div class="score-dots"><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span><span class="dot"></span></div>
+          </div>
+          <div class="score-row">
+            <div class="score-name">ROIC 质量 <small>ROIC Quality</small></div>
+            <div class="score-dots"><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span><span class="dot"></span></div>
+          </div>
+          <div class="score-row">
+            <div class="score-name">管理层资本配置 <small>Capital Allocation</small></div>
+            <div class="score-dots"><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span><span class="dot"></span><span class="dot"></span></div>
+          </div>
+          <div class="score-row">
+            <div class="score-name">业务可预测性 <small>Predictability</small></div>
+            <div class="score-dots"><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span></div>
+          </div>
+          <div class="score-row">
+            <div class="score-name">AI 时代适应性 <small>AI Adaptability</small></div>
+            <div class="score-dots"><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span><span class="dot filled"></span><span class="dot"></span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 class="card-title">多牛熊论点对照</h3>
+      <div class="card-title-en">Bull vs Bear Thesis</div>
+      <div class="bull-bear">
+        <div class="bull">
+          <h4>多头 · Bull Case</h4>
+          <ul>
+            <li>Forward P/E 15x 为10年&lt;5分位，估值安全垫最厚</li>
+            <li>IRS Direct File 2025-11 被 Trump 政府取消，净利好 TurboTax</li>
+            <li>QuickBooks 62-66% 市占率 + 500K ProAdvisor 会计师生态</li>
+            <li>Intuit Assist 3M 用户、85% 重复率、Anthropic/OpenAI 双合作</li>
+            <li>Q2 FY26 营收 +17%、EPS +25%、Op Margin 33.3%（创纪录）</li>
+            <li>FCF $6.08B、15 年连续派息、FY25回购$2.77B 买在低位</li>
+          </ul>
+        </div>
+        <div class="bear">
+          <h4>空头 · Bear Case</h4>
+          <ul>
+            <li>CEO Goodarzi 2026-01-07 减仓 75%（$26.65M）时机诡异</li>
+            <li>Mailchimp FY25 实质下滑，$8-10B 商誉减值风险悬顶</li>
+            <li>Perplexity Tax Agent + Anthropic Managed Agents 叙事冲击</li>
+            <li>TurboTax 单元数已连续 2 年下滑（-1%、-2%）</li>
+            <li>SBC $1.97B / 营收 10.5%，调整后真实 FCF Yield 仅 3.7%</li>
+            <li>Wells Fargo、Goldman 等 6 个月内集中下调目标价 -28%至-50%</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- =============================================== -->
+  <!-- TAB 2: SELL-OFF ANATOMY -->
+  <!-- =============================================== -->
+  <section class="tab-content" id="selloff">
+
+    <p class="intro">
+      -50% 跌幅的真正组成：约 65% 来自估值均值回归（对 2024-25 泡沫期的修正），35% 来自 2026 Q1 AI 叙事冲击。
+      财报本身几乎毫发无损，Q2 FY26 全线超共识。这是典型的 informational cascade 式抛售。<br>
+      <em>The -50% is 65% multiple compression and 35% narrative shock. Fundamentals were never the issue.</em>
+    </p>
+
+    <div class="card">
+      <h3 class="card-title">价格路径与关键节点</h3>
+      <div class="card-title-en">Price Path & Catalyst Timeline</div>
+      <div class="chart-wrap tall">
+        <canvas id="priceChart"></canvas>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="card">
+        <h3 class="card-title">关键下跌节点</h3>
+        <div class="card-title-en">Decisive Down Moves</div>
+        <div class="timeline">
+          <div class="timeline-item red">
+            <div class="timeline-date">2025-07-30</div>
+            <div class="timeline-title">52周高点 $804 / $813.70 盘中</div>
+            <div class="timeline-desc">FY25 财报后泡沫顶点，P/E 50x+</div>
+          </div>
+          <div class="timeline-item red">
+            <div class="timeline-date">2026-01-08</div>
+            <div class="timeline-title">-6% · 分析师集体下调</div>
+            <div class="timeline-desc">Wells Fargo → Equal Weight $700; Goldman首次覆盖 Neutral $720</div>
+          </div>
+          <div class="timeline-item red">
+            <div class="timeline-date">2026-02-03</div>
+            <div class="timeline-title">-10.9% · 高基数恐慌日</div>
+            <div class="timeline-desc">RSI(14) 触及 13 投降区；7.48M 股放量抛售</div>
+          </div>
+          <div class="timeline-item red">
+            <div class="timeline-date">2026-04-09</div>
+            <div class="timeline-title">-8.5% · AI 叙事冲击日</div>
+            <div class="timeline-desc">Perplexity Computer for Taxes + Anthropic Managed Agents 同周发布</div>
+          </div>
+          <div class="timeline-item red">
+            <div class="timeline-date">2026-04-10</div>
+            <div class="timeline-title">$346.71 盘中 52 周低</div>
+            <div class="timeline-desc">整个软件板块恐慌：CF -11%、Fastly -18%、DOCN -13%</div>
+          </div>
+          <div class="timeline-item green">
+            <div class="timeline-date">2026-04-22</div>
+            <div class="timeline-title">$404 反弹企稳</div>
+            <div class="timeline-desc">分析师中位数目标价 $582-$697 暗示错杀</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3 class="card-title">空头论点逐条证伪</h3>
+        <div class="card-title-en">Bear Theses Debunked</div>
+        <table>
+          <tr>
+            <th>空头论点</th>
+            <th>事实核查</th>
+          </tr>
+          <tr>
+            <td>IRS Direct File 蚕食 TurboTax</td>
+            <td class="pos">已取消 2026+</td>
+          </tr>
+          <tr>
+            <td>Perplexity 可替代 TurboTax</td>
+            <td class="neg">仅 draft 不能 file</td>
+          </tr>
+          <tr>
+            <td>AI 原生会计软件抢 QuickBooks</td>
+            <td class="neutral">集中 YC 细分</td>
+          </tr>
+          <tr>
+            <td>Anthropic 吃掉 Intuit 利润</td>
+            <td class="pos">Intuit 付费方非被分成</td>
+          </tr>
+          <tr>
+            <td>Mailchimp 将引发重大减值</td>
+            <td class="neg">确属风险 RF-2</td>
+          </tr>
+          <tr>
+            <td>CEO 减仓 = 内部看空</td>
+            <td class="neg">真 RF-1，最严重</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 class="card-title">监管壁垒：AI 报税的真实天花板</h3>
+      <div class="card-title-en">Regulatory Moat Against AI Tax Agents</div>
+      <div class="grid-3">
+        <div class="metric">
+          <div class="metric-label">IRS Authorized e-file</div>
+          <div class="metric-value red">✗</div>
+          <div class="metric-sub">Perplexity 无授权，需 6-12 月申请</div>
+        </div>
+        <div class="metric">
+          <div class="metric-label">State Tax 支持</div>
+          <div class="metric-value red">✗</div>
+          <div class="metric-sub">"有限或不可用"</div>
+        </div>
+        <div class="metric">
+          <div class="metric-label">Broker 1099 Auto-Import</div>
+          <div class="metric-value red">✗</div>
+          <div class="metric-sub">需用户手动</div>
+        </div>
+        <div class="metric">
+          <div class="metric-label">审计代表权 · Audit Rep</div>
+          <div class="metric-value red">✗</div>
+          <div class="metric-sub">Circular 230 硬性要求</div>
+        </div>
+        <div class="metric">
+          <div class="metric-label">退税最大化保证</div>
+          <div class="metric-value red">✗</div>
+          <div class="metric-sub">法律责任无承担方</div>
+        </div>
+        <div class="metric">
+          <div class="metric-label">多年数据历史</div>
+          <div class="metric-value red">✗</div>
+          <div class="metric-sub">TurboTax 用户 3+ 年粘性</div>
+        </div>
+      </div>
+      <div class="callout" style="margin-top: 20px;">
+        <strong>结论：</strong>Perplexity Tax Agent 实质是"Turbotax 的草稿员"而非替代品。
+        IRS 认证、§7216、Circular 230、GLBA 合规共同形成 <strong>3-5年最低进入时间锁</strong>。
+        市场按"当季颠覆"定价，但基本面按"5-10年渐进侵蚀"演进——这正是错杀来源。
+      </div>
+    </div>
+
+  </section>
+
+  <!-- =============================================== -->
+  <!-- TAB 3: GRAHAM FRAMEWORK -->
+  <!-- =============================================== -->
+  <section class="tab-content" id="graham">
+
+    <p class="intro">
+      Graham 防御性六项检验：(1) 足够规模 ✓ (2) 资产负债表稳健 ✓ (3) 10年连续盈利 ✓
+      (4) 10年连续派息 ✓ (5) 合理 P/E ✓ (6) 合理 P/B ✗（软件公司普遍不满足）。
+      <strong>六项中过 5，在美股大盘科技股中极其罕见</strong>。<br>
+      <em>5 of 6 Graham defensive tests passed — a rarity among mega-cap tech.</em>
+    </p>
+
+    <div class="card">
+      <h3 class="card-title">资产负债表强度</h3>
+      <div class="card-title-en">Balance Sheet Fortress</div>
+      <div class="grid-4">
+        <div class="metric">
+          <div class="metric-label">现金 + 投资 · Cash</div>
+          <div class="metric-value">$3.0B</div>
+        </div>
+        <div class="metric">
+          <div class="metric-label">总债务 · Total Debt</div>
+          <div class="metric-value">$6.2B</div>
+        </div>
+        <div class="metric">
+          <div class="metric-label">净债务 · Net Debt</div>
+          <div class="metric-value green">$3.2B</div>
+        </div>
+        <div class="metric">
+          <div class="metric-label">Net Debt / EBITDA</div>
+          <div class="metric-value green">0.51x</div>
+        </div>
+        <div class="metric">
+          <div class="metric-label">流动比率 · Current</div>
+          <div class="metric-value amber">1.32-1.65</div>
+          <div class="metric-sub">低于 Graham 理想 2.0</div>
+        </div>
+        <div class="metric">
+          <div class="metric-label">商誉占资产</div>
+          <div class="metric-value red">55.3%</div>
+          <div class="metric-sub">$18.95B，Mailchimp 减值风险</div>
+        </div>
+        <div class="metric">
+          <div class="metric-label">Tangible Equity</div>
+          <div class="metric-value red">$101M</div>
+          <div class="metric-sub">P/TBV &gt; 500x</div>
+        </div>
+        <div class="metric">
+          <div class="metric-label">Interest Coverage</div>
+          <div class="metric-value green">&gt; 25x</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="card">
+        <h3 class="card-title">估值分位 · 10年历史</h3>
+        <div class="card-title-en">10-Year Valuation Percentile</div>
+        <div class="chart-wrap">
+          <canvas id="valHistChart"></canvas>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3 class="card-title">关键估值指标</h3>
+        <div class="card-title-en">Key Valuation Ratios</div>
+        <table>
+          <tr><th>指标 / Metric</th><th>当前</th><th>10Y 均值</th><th>分位</th></tr>
+          <tr><td>P/E (TTM)</td><td class="num">26.2</td><td class="num">48.5</td><td class="pos">&lt; 5%</td></tr>
+          <tr><td>Forward P/E (FY27)</td><td class="num">15.3</td><td class="num">35-40</td><td class="pos">&lt; 5%</td></tr>
+          <tr><td>P/FCF</td><td class="num">17.3</td><td class="num">30-35</td><td class="pos">&lt; 5%</td></tr>
+          <tr><td>EV/EBITDA</td><td class="num">19.0</td><td class="num">28-32</td><td class="pos">&lt; 10%</td></tr>
+          <tr><td>PEG Ratio</td><td class="num">1.07</td><td class="num">1.8-2.2</td><td class="pos">&lt; 10%</td></tr>
+          <tr><td>FCF Yield</td><td class="num">5.8%</td><td class="num">3.0%</td><td class="pos">90+%</td></tr>
+          <tr><td>Div Yield</td><td class="num">1.2%</td><td class="num">0.7%</td><td class="pos">85%</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 class="card-title">股东回报纪律</h3>
+      <div class="card-title-en">Capital Return Discipline</div>
+      <div class="chart-wrap">
+        <canvas id="capitalReturnChart"></canvas>
+      </div>
+      <div class="grid-3" style="margin-top: 20px;">
+        <div class="metric">
+          <div class="metric-label">5年累计回购</div>
+          <div class="metric-value">$10.7B</div>
+          <div class="metric-sub">FY21-FY25</div>
+        </div>
+        <div class="metric">
+          <div class="metric-label">FY26 H1 回购</div>
+          <div class="metric-value">$1.79B</div>
+          <div class="metric-sub">均价 ~$620，买在低位</div>
+        </div>
+        <div class="metric">
+          <div class="metric-label">剩余授权 · Auth Remaining</div>
+          <div class="metric-value">$3.5B</div>
+          <div class="metric-sub">约市值 3.1%</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 class="card-title">Non-GAAP vs GAAP vs "真实" Owner Earnings</h3>
+      <div class="card-title-en">Reality Check on FCF (Graham-Style Conservatism)</div>
+      <table>
+        <tr><th>口径 / Metric</th><th>金额</th><th>FCF Yield @$404</th></tr>
+        <tr><td>Headline Non-GAAP FCF</td><td class="num">$6.08B</td><td class="pos">5.8%</td></tr>
+        <tr><td>扣除 SBC 后 Owner Earnings</td><td class="num">$4.11B</td><td class="amber">3.7%</td></tr>
+        <tr><td>进一步扣除商誉摊销假设</td><td class="num">$3.6B</td><td class="neutral">3.3%</td></tr>
+      </table>
+      <div class="callout" style="margin-top: 20px;">
+        <strong>Graham 保守视角：</strong>调整 SBC $1.97B 后 FCF Yield 从 5.8% 降至 3.7%，
+        仍优于 S&P500 中位数约 3.0%，但不是"极限便宜"。
+        这是本次 Buy 评级属"合理买入"而非"Strong Buy"的关键原因。
+      </div>
+    </div>
+
+  </section>
+
+  <!-- =============================================== -->
+  <!-- TAB 4: BUFFETT MOAT -->
+  <!-- =============================================== -->
+  <section class="tab-content" id="buffett">
+
+    <p class="intro">
+      四分部护城河分化显著：QuickBooks 宽且深（4.5/5），TurboTax 有韧性但分层（3.5/5），
+      Credit Karma 修复中（3.5/5），Mailchimp 弱且恶化（2/5）。
+      <strong>整体加权护城河 3.8/5</strong>，足以支撑长期复利但非无懈可击。<br>
+      <em>Weighted moat score 3.8/5 — strong enough for compounding, not invincible.</em>
+    </p>
+
+    <div class="card">
+      <h3 class="card-title">四分部护城河评级</h3>
+      <div class="card-title-en">Segment Moat Rating</div>
+      <div class="chart-wrap tall">
+        <canvas id="moatChart"></canvas>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <!-- QuickBooks -->
+      <div class="card">
+        <h3 class="card-title">QuickBooks · 宽护城河 4.5/5</h3>
+        <div class="card-title-en">Small Business & Self-Employed</div>
+        <div style="margin-bottom: 16px;"><div class="moat-bar"><div class="moat-fill" style="width: 90%"></div></div></div>
+        <table>
+          <tr><td>美国 SMB 市占率</td><td class="num pos">62-66%</td></tr>
+          <tr><td>ProAdvisor 会计师网络</td><td class="num">500K+</td></tr>
+          <tr><td>Q2 FY26 QBO 增速</td><td class="num pos">+24%</td></tr>
+          <tr><td>Online Ecosystem 收入</td><td class="num">$2.5B/季</td></tr>
+          <tr><td>IES Mid-Market 合约环比</td><td class="num pos">+50%</td></tr>
+          <tr><td>IES TAM</td><td class="num">$89B</td></tr>
+        </table>
+        <div class="callout" style="margin-top: 16px;">
+          <strong>关键壁垒：</strong>多年发票/薪资/税务/银行连接历史 + 会计师渠道 + 
+          Payments/Payroll 生态嵌入 = 五重复合护城河。
+          Bench 突然关闭（2024-12）后客户回流给 QuickBooks 而非 AI 原生竞品，
+          是护城河的真实压力测试。
+        </div>
+      </div>
+
+      <!-- TurboTax -->
+      <div class="card">
+        <h3 class="card-title">TurboTax · 分层护城河 3.5/5</h3>
+        <div class="card-title-en">Consumer Group</div>
+        <div style="margin-bottom: 16px;"><div class="moat-bar"><div class="moat-fill" style="width: 70%"></div></div></div>
+        <table>
+          <tr><td>美国 DIY 税务软件市占率</td><td class="num pos">~60%</td></tr>
+          <tr><td>Q2 FY26 收入增速</td><td class="num pos">+12%</td></tr>
+          <tr><td>Live Full Service FY25</td><td class="num pos">$2.0B (+47%)</td></tr>
+          <tr><td>单元数 / Units FY25</td><td class="num neg">-2%</td></tr>
+          <tr><td>IRS Direct File 2026</td><td class="pos">已取消</td></tr>
+          <tr><td>Live Full Service 护城河</td><td class="num pos">4.5/5</td></tr>
+          <tr><td>DIY Basic 护城河</td><td class="num neutral">2.5/5</td></tr>
+        </table>
+        <div class="callout" style="margin-top: 16px;">
+          <strong>分层逻辑：</strong>高端 Live FS 有真人CPA+品牌+审计代表权护城河4.5/5；
+          低端 DIY Basic 面临 AI 威胁护城河2.5/5 — 但 DIY Basic ARPR 最低，
+          收入杀伤有限。Trump 政府取消 Direct File 是 TurboTax 的净利好。
+        </div>
+      </div>
+
+      <!-- Credit Karma -->
+      <div class="card">
+        <h3 class="card-title">Credit Karma · 修复中 3.5/5</h3>
+        <div class="card-title-en">Consumer Finance Platform</div>
+        <div style="margin-bottom: 16px;"><div class="moat-bar"><div class="moat-fill" style="width: 70%"></div></div></div>
+        <table>
+          <tr><td>会员数 · Members</td><td class="num">140M</td></tr>
+          <tr><td>MAU</td><td class="num">40M</td></tr>
+          <tr><td>数据点/用户</td><td class="num">70-80K</td></tr>
+          <tr><td>金融机构合作方</td><td class="num">100+</td></tr>
+          <tr><td>FY25 收入</td><td class="num">$2.3B</td></tr>
+          <tr><td>FY25 增速</td><td class="num pos">+32%</td></tr>
+        </table>
+        <div class="callout" style="margin-top: 16px;">
+          <strong>收购 ROI 翻案：</strong>2020年 $8.1B 收购曾被诟病，
+          但收入从 $1B → $2.3B（2.3x），与 TurboTax 的 refund advance 集成形成生态协同。
+          lead gen 模式对宏观敏感是唯一扣分。
+        </div>
+      </div>
+
+      <!-- Mailchimp -->
+      <div class="card">
+        <h3 class="card-title">Mailchimp · 弱护城河 2/5 🚩</h3>
+        <div class="card-title-en">Money Movement / Mid-Market Marketing</div>
+        <div style="margin-bottom: 16px;"><div class="moat-bar"><div class="moat-fill" style="width: 40%; background: var(--accent-red);"></div></div></div>
+        <table>
+          <tr><td>收购价 · Acquisition (2021)</td><td class="num neg">$12B</td></tr>
+          <tr><td>隐含商誉</td><td class="num neg">$8-10B</td></tr>
+          <tr><td>FY25 实质增速</td><td class="num neg">~0% or ↓</td></tr>
+          <tr><td>管理层目标恢复双位数</td><td class="neutral">FY26 底</td></tr>
+          <tr><td>核心竞争对手</td><td>Klaviyo, HubSpot, Brevo</td></tr>
+          <tr><td>占集团营收</td><td class="num">~7%</td></tr>
+        </table>
+        <div class="callout" style="margin-top: 16px; border-color: var(--accent-red);">
+          <strong>RF-2 风险红旗：</strong>这是 Intuit 资本配置的最大失误。
+          若 FY26 H2 增长仍未恢复双位数，$8-10B 商誉减值将冲击 GAAP 但不影响 FCF。
+          所幸占集团营收仅 7%，对 DCF 杀伤有限。
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 class="card-title">ROIC 质量 · 资本回报能力</h3>
+      <div class="card-title-en">ROIC Quality Metrics</div>
+      <div class="grid-3">
+        <div class="metric">
+          <div class="metric-label">含商誉 ROIC</div>
+          <div class="metric-value">16-19%</div>
+          <div class="metric-sub">反映含 Mailchimp 等收购</div>
+        </div>
+        <div class="metric">
+          <div class="metric-label">WACC</div>
+          <div class="metric-value">10.5%</div>
+        </div>
+        <div class="metric">
+          <div class="metric-label">ROIC - WACC 利差</div>
+          <div class="metric-value green">+6 to +8 ppt</div>
+          <div class="metric-sub">持续价值创造</div>
+        </div>
+        <div class="metric">
+          <div class="metric-label">扣商誉 Operating ROIC</div>
+          <div class="metric-value green">~42%</div>
+          <div class="metric-sub">核心业务极优</div>
+        </div>
+        <div class="metric">
+          <div class="metric-label">ROE</div>
+          <div class="metric-value">23%</div>
+        </div>
+        <div class="metric">
+          <div class="metric-label">Rule of 40</div>
+          <div class="metric-value green">56%</div>
+          <div class="metric-sub">增速 16% + FCF Margin 32%</div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- =============================================== -->
+  <!-- TAB 5: AI RESILIENCE -->
+  <!-- =============================================== -->
+  <section class="tab-content" id="ai">
+
+    <p class="intro">
+      市场把 Intuit 当作 AI 受害者，但证据显示它已从"被颠覆方"成功定位为 AI 赋能方。
+      Anthropic 和 OpenAI 都已成为 Intuit 的分销渠道而非威胁。
+      Intuit Assist 3M+ 用户、85% 重复率是商业模式适应性的铁证。<br>
+      <em>Intuit has successfully re-positioned from AI victim to AI enabler — evidence the market is ignoring.</em>
+    </p>
+
+    <div class="card">
+      <h3 class="card-title">AI 威胁量化评估</h3>
+      <div class="card-title-en">AI Disruption Probability & Timeline</div>
+      <div class="chart-wrap tall">
+        <canvas id="aiThreatChart"></canvas>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="card">
+        <h3 class="card-title">Perplexity Tax Agent 真实能力核查</h3>
+        <div class="card-title-en">Perplexity Computer for Taxes · Fact-Check</div>
+        <table>
+          <tr><th>能力 / Capability</th><th>Perplexity</th><th>TurboTax</th></tr>
+          <tr><td>Draft 报税草稿</td><td class="pos">✓</td><td class="pos">✓</td></tr>
+          <tr><td>IRS e-file 授权</td><td class="neg">✗</td><td class="pos">✓</td></tr>
+          <tr><td>多州税申报</td><td class="neg">Limited</td><td class="pos">50州</td></tr>
+          <tr><td>Broker 1099 自动导入</td><td class="neg">✗</td><td class="pos">✓</td></tr>
+          <tr><td>审计代表 · Audit Rep</td><td class="neg">✗</td><td class="pos">✓</td></tr>
+          <tr><td>退税最大化保证</td><td class="neg">✗</td><td class="pos">✓</td></tr>
+          <tr><td>历史数据跨年追溯</td><td class="neg">✗</td><td class="pos">3年+</td></tr>
+          <tr><td>价格 / Price</td><td class="num">$17/月</td><td class="num">$59-209</td></tr>
+        </table>
+        <div class="callout" style="margin-top: 16px;">
+          <strong>结论：</strong>Perplexity 是"报税草稿员"，
+          不是"报税替代者"。§7216、Circular 230、GLBA、IRS Authorized Provider
+          共同形成至少 3-5 年的实质性进入时间锁。
+        </div>
+      </div>
+
+      <div class="card">
+        <h3 class="card-title">Intuit 自身 AI 战略执行</h3>
+        <div class="card-title-en">Intuit's Own AI Execution</div>
+        <div class="timeline">
+          <div class="timeline-item green">
+            <div class="timeline-date">Intuit Assist 规模</div>
+            <div class="timeline-title">3M+ 用户，85% 重复率</div>
+            <div class="timeline-desc">agentic AI 的实际 PMF 证据</div>
+          </div>
+          <div class="timeline-item green">
+            <div class="timeline-date">2025-11</div>
+            <div class="timeline-title">OpenAI 合作 · ChatGPT 内执行</div>
+            <div class="timeline-desc">ChatGPT 用户直接调用 Intuit 财务操作</div>
+          </div>
+          <div class="timeline-item green">
+            <div class="timeline-date">2026-02-24</div>
+            <div class="timeline-title">Anthropic 多年战略合作</div>
+            <div class="timeline-desc">Claude Agent SDK + MCP 将 Anthropic 转为分销渠道</div>
+          </div>
+          <div class="timeline-item green">
+            <div class="timeline-date">QB Agents 家族</div>
+            <div class="timeline-title">7+ 专业 AI agent 已部署</div>
+            <div class="timeline-desc">Payroll / Sales Tax / Accounting / Customer / Supplier agent</div>
+          </div>
+          <div class="timeline-item green">
+            <div class="timeline-date">每日</div>
+            <div class="timeline-title">60B ML predictions</div>
+            <div class="timeline-desc">237M 交易分类/月</div>
+          </div>
+          <div class="timeline-item green">
+            <div class="timeline-date">IES Mid-Market</div>
+            <div class="timeline-title">AI-native ERP 填补 NetSuite 缺口</div>
+            <div class="timeline-desc">合约环比 +50%，95% 客户 30天内上线</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 class="card-title">管理层对 AI 成本结构的关键表态</h3>
+      <div class="card-title-en">Management's Framing of AI Economics</div>
+      <div class="callout">
+        Q2 FY26 电话会明确表态：
+        <em style="color: var(--gold-bright);">
+          "We're paying OpenAI and Anthropic for capabilities, not sharing revenue."
+        </em>
+        <br><br>
+        <strong>翻译为投资含义：</strong>Intuit 是 AI 价值链的<strong>需求方</strong>而非
+        <strong>被分成方</strong>。LLM 推理成本会随 token 价格下降而下降，
+        但 Intuit 对客户的定价权（by way of 数据独占、工作流嵌入、监管壁垒）保持不变。
+        这正是 Benioff 所说"AI is a commodity feature that bolsters software"的具体体现。
+      </div>
+    </div>
+
+  </section>
+
+  <!-- =============================================== -->
+  <!-- TAB 6: DCF SCENARIOS -->
+  <!-- =============================================== -->
+  <section class="tab-content" id="dcf">
+
+    <p class="intro">
+      三档 DCF 情景 + 概率加权。WACC 10.5%，5年显性期 + Gordon 终值模型。
+      关键假设在 ±20% 敏感性规则下可触发 verdict-flip 的临界点已独立验证。<br>
+      <em>3-scenario DCF with probability weighting. Verdict-flip sensitivity tested.</em>
+    </p>
+
+    <div class="dcf-tiles">
+      <div class="dcf-tile bear">
+        <div class="dcf-prob">熊市 · Bear · 30%</div>
+        <div class="dcf-name">AI 颠覆加速 · Full Disruption</div>
+        <div class="dcf-price">$268</div>
+        <div class="dcf-upside" style="color: var(--accent-red);">-34% vs $404</div>
+      </div>
+      <div class="dcf-tile base">
+        <div class="dcf-prob">基准 · Base · 40%</div>
+        <div class="dcf-name">稳态复利 · Steady Compound</div>
+        <div class="dcf-price">$454</div>
+        <div class="dcf-upside" style="color: var(--accent-green);">+12% vs $404</div>
+      </div>
+      <div class="dcf-tile bull">
+        <div class="dcf-prob">牛市 · Bull · 30%</div>
+        <div class="dcf-name">AI 货币化 · AI Monetization</div>
+        <div class="dcf-price">$640</div>
+        <div class="dcf-upside" style="color: var(--accent-green);">+58% vs $404</div>
+      </div>
+    </div>
+
+    <div class="final-verdict" style="margin-bottom: 30px;">
+      <h3>概率加权公允价 · Probability-Weighted Fair Value</h3>
+      <p style="font-size: 32px; color: var(--gold); text-align: center; margin: 20px 0;">
+        0.30 × $268 + 0.40 × $454 + 0.30 × $640 = <strong style="color: var(--gold-bright);">$454</strong>
+      </p>
+      <p style="text-align: center; color: var(--ivory-dim);">
+        当前价 $404 对应 <strong style="color: var(--accent-green);">~12% 安全边际</strong> · Safety Margin ~12%
+      </p>
+    </div>
+
+    <div class="card">
+      <h3 class="card-title">三情景关键假设对照</h3>
+      <div class="card-title-en">Scenario Assumptions Side-by-Side</div>
+      <table>
+        <tr>
+          <th>关键假设</th>
+          <th style="color: var(--accent-red);">熊市 30%</th>
+          <th style="color: var(--gold);">基准 40%</th>
+          <th style="color: var(--accent-green);">牛市 30%</th>
+        </tr>
+        <tr>
+          <td>FY26→FY30 营收 CAGR</td>
+          <td class="num">8.5%</td>
+          <td class="num">12.0%</td>
+          <td class="num">14.5%</td>
+        </tr>
+        <tr>
+          <td>终端营收增速</td>
+          <td class="num">2.0%</td>
+          <td class="num">4.0%</td>
+          <td class="num">5.0%</td>
+        </tr>
+        <tr>
+          <td>FY30 Non-GAAP Op Margin</td>
+          <td class="num">35%</td>
+          <td class="num">41%</td>
+          <td class="num">44%</td>
+        </tr>
+        <tr>
+          <td>FCF Margin (终端)</td>
+          <td class="num">27%</td>
+          <td class="num">32%</td>
+          <td class="num">35%</td>
+        </tr>
+        <tr>
+          <td>TurboTax DIY 年流失</td>
+          <td class="num">-3%</td>
+          <td class="num">0%</td>
+          <td class="num">+2%</td>
+        </tr>
+        <tr>
+          <td>QuickBooks 增速</td>
+          <td class="num">10%</td>
+          <td class="num">15%</td>
+          <td class="num">18%</td>
+        </tr>
+        <tr>
+          <td>Mailchimp 路径</td>
+          <td class="num">持续下滑 + 商誉减值</td>
+          <td class="num">FY26 末恢复高个位数</td>
+          <td class="num">双位数恢复</td>
+        </tr>
+        <tr>
+          <td>Intuit Assist 货币化</td>
+          <td class="num">0</td>
+          <td class="num">$50-100M ARR</td>
+          <td class="num">$180-360M ARR</td>
+        </tr>
+        <tr>
+          <td>IES ARR @ FY30</td>
+          <td class="num">$300M</td>
+          <td class="num">$1B</td>
+          <td class="num">$2B</td>
+        </tr>
+        <tr>
+          <td>AI 降本效果（Op%）</td>
+          <td class="num">0 bp</td>
+          <td class="num">100-200 bp</td>
+          <td class="num">300-400 bp</td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <h3 class="card-title">DCF 内在价值可视化</h3>
+      <div class="card-title-en">DCF Intrinsic Value Visualization</div>
+      <div class="chart-wrap">
+        <canvas id="dcfChart"></canvas>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 class="card-title">敏感性分析 · Verdict-Flip 临界点</h3>
+      <div class="card-title-en">Sensitivity Analysis · ±20% Rule</div>
+      <table>
+        <tr>
+          <th>变量扰动</th>
+          <th>基准值</th>
+          <th>扰动后</th>
+          <th>内在价值</th>
+          <th>Verdict</th>
+        </tr>
+        <tr>
+          <td>营收 CAGR (下调)</td>
+          <td class="num">12%</td>
+          <td class="num neg">10%</td>
+          <td class="num">$395</td>
+          <td class="neutral">临界 / Flip</td>
+        </tr>
+        <tr>
+          <td>终端增速 (下调)</td>
+          <td class="num">4%</td>
+          <td class="num neg">2%</td>
+          <td class="num">$410</td>
+          <td class="pos">仍 Buy</td>
+        </tr>
+        <tr>
+          <td>WACC (上调)</td>
+          <td class="num">10.5%</td>
+          <td class="num neg">12%</td>
+          <td class="num">$405</td>
+          <td class="neutral">临界 / Flip</td>
+        </tr>
+        <tr>
+          <td>Op Margin FY30 (下调)</td>
+          <td class="num">41%</td>
+          <td class="num neg">37%</td>
+          <td class="num">$380</td>
+          <td class="neg">Hold</td>
+        </tr>
+        <tr>
+          <td>多元组合（全部悲观）</td>
+          <td>—</td>
+          <td>—</td>
+          <td class="num">$310</td>
+          <td class="neg">接近熊市</td>
+        </tr>
+      </table>
+      <div class="callout" style="margin-top: 16px;">
+        <strong>解读：</strong>当前价 $404 已实质性定价了"营收增速下调 20% 至 10%"
+        <strong>或</strong>"WACC 上调至 12%"的悲观情景。
+        这意味着向下的保护已经嵌入价格，为分批建仓提供了基础。
+      </div>
+    </div>
+
+  </section>
+
+  <!-- =============================================== -->
+  <!-- TAB 7: FINAL VERDICT -->
+  <!-- =============================================== -->
+  <section class="tab-content" id="verdict">
+
+    <div class="final-verdict">
+      <h3>最终裁决 · Final Verdict: BUY</h3>
+      <p>
+        <strong>仓位建议：核心配置 3-5%</strong>（按 Kelly Criterion，假设年化预期回报 15%、
+        波动率 30%、胜率 60%，最优分数约 20%，取 1/4 Kelly 为 5% 核心仓位）。
+      </p>
+      <p>
+        <strong>分档建仓策略：</strong>
+        第一档 40% 于 $404 现价；
+        第二档 35% 于 $380 回调；
+        第三档 25% 于 $350 或 Q3 FY26 财报确认后。
+      </p>
+      <p>
+        <strong>价格锚点：</strong>
+        12月目标 $520（FY27 EPS $26.48 × 19.6x）；
+        3年目标 $650（FY28 EPS ~$30 × 21.5x）；
+        下行保护线 $330。
+      </p>
+    </div>
+
+    <div class="card">
+      <h3 class="card-title">风险红旗清单 · Risk Flags</h3>
+      <div class="card-title-en">Red Flag Audit Trail</div>
+
+      <div class="flag">
+        <div class="flag-code">RF-1</div>
+        <div class="flag-body">
+          <strong>CEO 巨额减仓 · CEO Heavy Selling ·</strong>
+          Sasan Goodarzi 2026-01-07 discretionary 卖出 41,000 股 @ $650.10 = <strong style="color: var(--accent-red);">$26.65M</strong>，
+          减仓 75% 至仅 13,611 股。时机正是分析师 downgrade 风暴前夕。内部人净买入为零。
+          <strong style="color: var(--gold);">最严重 red flag</strong>。
+        </div>
+      </div>
+
+      <div class="flag">
+        <div class="flag-code">RF-2</div>
+        <div class="flag-body">
+          <strong>Mailchimp 商誉减值风险 · Goodwill Impairment Risk ·</strong>
+          2021 年 $12B 收购，估计 reporting unit 商誉 $8-10B。若 FY26 H2 增长未恢复双位数，
+          非现金减值将冲击 GAAP earnings（不影响 FCF）。
+        </div>
+      </div>
+
+      <div class="flag amber">
+        <div class="flag-code">RF-3</div>
+        <div class="flag-body">
+          <strong>SBC 稀释真实 FCF · Stock-Based Comp ·</strong>
+          FY25 SBC $1.97B 占营收 10.5%。
+          Graham 式保守视角下，真实 FCF Yield = 5.8% × (1 - 10.5%/32.3%) ≈ <strong>3.7%</strong>，
+          而非 headline 5.8%。
+        </div>
+      </div>
+
+      <div class="flag amber">
+        <div class="flag-code">RF-4</div>
+        <div class="flag-body">
+          <strong>TurboTax 单元数持续下滑 · Unit Decline ·</strong>
+          FY24 -1%、FY25 -2%。被 Live Full Service +47% 的价格上行掩盖。
+          若 Live 增速减速 + 单元持续下滑，Consumer Group 可能见顶。
+        </div>
+      </div>
+
+      <div class="flag amber">
+        <div class="flag-code">RF-5</div>
+        <div class="flag-body">
+          <strong>缺乏第三方 AI 竞品基准 · No Independent Benchmark ·</strong>
+          Perplexity/Claude 对 TurboTax 的实际冲击目前依赖 Intuit 自身披露。
+          需关注独立 AI benchmark 的发布时间。
+        </div>
+      </div>
+
+      <div class="flag amber">
+        <div class="flag-code">RF-6</div>
+        <div class="flag-body">
+          <strong>LLM 推理成本结构不透明 · Opaque AI COGS ·</strong>
+          管理层付费给 OpenAI/Anthropic "for capabilities" 的长期成本结构未披露。
+          当前 Op Margin 可持续性取决于 token 价格下降速度。
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 class="card-title">监控指标清单 · Quarterly Watchlist</h3>
+      <div class="card-title-en">Items to Verify Each Quarter</div>
+      <table>
+        <tr>
+          <th>监控项</th>
+          <th>当前值</th>
+          <th>基准线</th>
+          <th>Verdict-Flip 触发</th>
+        </tr>
+        <tr>
+          <td>TurboTax 收入增速</td>
+          <td class="num pos">+12%</td>
+          <td class="num">≥ +10%</td>
+          <td class="neg">&lt; +5% → Hold</td>
+        </tr>
+        <tr>
+          <td>QuickBooks Online Ecosystem</td>
+          <td class="num pos">+21%</td>
+          <td class="num">≥ +20%</td>
+          <td class="neg">&lt; +15% → Hold</td>
+        </tr>
+        <tr>
+          <td>Mailchimp 增速</td>
+          <td class="num neg">~0%</td>
+          <td class="num">FY26末双位数</td>
+          <td class="neg">减值 &gt; $5B → Hold</td>
+        </tr>
+        <tr>
+          <td>Intuit Assist 货币化</td>
+          <td>未独立披露</td>
+          <td>FY26 H2 首次披露</td>
+          <td class="neutral">任何披露都是信号</td>
+        </tr>
+        <tr>
+          <td>Non-GAAP Op Margin</td>
+          <td class="num pos">33.3%</td>
+          <td class="num">≥ 32%</td>
+          <td class="neg">&lt; 30% → 重估</td>
+        </tr>
+        <tr>
+          <td>CEO 再次买入或卖出</td>
+          <td class="neg">近期仅卖出</td>
+          <td>任何买入</td>
+          <td class="pos">CEO 买入 → 信心加码</td>
+        </tr>
+        <tr>
+          <td>TurboTax Live Full Service</td>
+          <td class="num pos">$2.0B (+47%)</td>
+          <td class="num">≥ +30%</td>
+          <td class="neg">&lt; +15% → 重估</td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <h3 class="card-title">历史类比 · Historical Precedents</h3>
+      <div class="card-title-en">Similar Mispricing Opportunities</div>
+      <table>
+        <tr><th>时期</th><th>触发事件</th><th>3年累计回报</th></tr>
+        <tr><td>2015 Q3</td><td>SaaS 泡沫破裂，INTU -25%</td><td class="num pos">+180%</td></tr>
+        <tr><td>2018 Q4</td><td>整体市场恐慌</td><td class="num pos">+150%</td></tr>
+        <tr><td>2022 Q2</td><td>科技股熊市</td><td class="num pos">+95%</td></tr>
+        <tr><td><strong>2026 Q1</strong></td><td><strong>AI 叙事冲击，-50%</strong></td><td class="num pos"><strong>预期 +60%?</strong></td></tr>
+      </table>
+      <div class="callout" style="margin-top: 16px;">
+        <strong>三次历史前例共同特征：</strong>
+        (1) 板块系统性下跌；
+        (2) Intuit 基本面未受实质损害；
+        (3) Forward P/E 触及 10 年低分位；
+        (4) 分析师集体下调目标价；
+        (5) 3年后累计回报中位数约 +140%。
+        当前场景符合所有五项特征。
+      </div>
+    </div>
+
+    <div class="final-verdict">
+      <h3>三年结论 · Three-Year Thesis</h3>
+      <p>
+        Intuit 是一个具备<strong>宽 QuickBooks 护城河 + 有韧性的 TurboTax 护城河 + 
+        正在修复的 Credit Karma 护城河 + 问题但规模有限的 Mailchimp</strong> 的复合体。
+      </p>
+      <p>
+        市场按"全面 AI 颠覆"定价，但事实证据显示它已成功将 Anthropic 和 OpenAI 
+        从威胁转为分销伙伴——Intuit Assist 3M+ 用户、85% 重复率、237M 交易/月 ML 分类
+        提供了 agentic AI 实际 PMF 的铁证。
+      </p>
+      <p style="color: var(--gold-bright); font-size: 17px; line-height: 2;">
+        在当前 $404 价位，投资者以 <strong>17x Forward Non-GAAP P/E</strong>、
+        <strong>5.8% FCF Yield（调整后 3.7%）</strong>、<strong>Rule of 40 达 56%</strong>、
+        <strong>ROIC-WACC 利差 +8ppt</strong>、<strong>15 年连续增派股息</strong>、
+        <strong>三年内 30-40% 多重估值回归潜力</strong> 买入一家 AI 胜出者。
+      </p>
+      <p style="text-align: center; margin-top: 20px; font-size: 18px; color: var(--gold);">
+        Graham 估值触底 · Buffett 护城河未破 · 管理层资本配置（除 Mailchimp 外）基本合格
+      </p>
+      <p style="text-align: center; font-style: italic; color: var(--ivory-dim); margin-top: 10px;">
+        — 这样的组合在当前市场稀缺。<br>
+        <em>Market sold an AI winner as an AI victim. Buy, hold 3+ years.</em>
+      </p>
+    </div>
+
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div>VALUE INVESTING DASHBOARD · GRAHAM-BUFFETT FRAMEWORK</div>
+    <div style="margin-top: 8px;">Generated 2026-04-23 · Data as of Q2 FY26 (2026-01-31)</div>
+    <div class="disclaimer">
+      本报告仅为基于公开信息的研究分析，不构成投资建议。所有估值为基于假设的前瞻性估计，
+      实际结果可能存在重大差异。读者应基于自身独立判断、风险承受能力并咨询合格投资顾问后做出投资决策。
+      本报告涉及的股票和公司数据来源于 SEC 文件、公司 IR 披露及第三方研究机构，作者尽力确保准确但不保证完整性。
+      <br><em>This report is for research purposes only and does not constitute investment advice.
+      Forward-looking estimates are based on assumptions and may differ materially from actual results.</em>
+    </div>
+  </footer>
+
+</div>
+
+<script>
+// ==================== TAB SWITCHING ====================
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById(tab.dataset.tab).classList.add('active');
+    window.scrollTo({ top: document.querySelector('.tabs').offsetTop - 20, behavior: 'smooth' });
+  });
+});
+
+// ==================== CHART CONFIG ====================
+const goldColor = '#D4A574';
+const goldBright = '#E8C590';
+const navy = '#152847';
+const ivoryDim = '#C4BDB0';
+const accentGreen = '#5FB878';
+const accentRed = '#E85D5D';
+const accentAmber = '#E8B85D';
+
+Chart.defaults.color = ivoryDim;
+Chart.defaults.borderColor = 'rgba(212, 165, 116, 0.15)';
+Chart.defaults.font.family = "'Helvetica', 'Arial', sans-serif";
+Chart.defaults.font.size = 11;
+
+// ---------- Peer Valuation Chart ----------
+new Chart(document.getElementById('peerValChart'), {
+  type: 'bar',
+  data: {
+    labels: ['INTU', 'ADBE', 'CRM', 'SAP', 'ADSK', 'MSFT'],
+    datasets: [{
+      label: 'Forward P/E (FY27)',
+      data: [15.3, 10.5, 15.0, 20.8, 19.0, 22.0],
+      backgroundColor: [accentGreen, ivoryDim, ivoryDim, ivoryDim, ivoryDim, ivoryDim],
+      borderColor: [accentGreen, goldColor, goldColor, goldColor, goldColor, goldColor],
+      borderWidth: 1.5
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: { 
+        callbacks: { 
+          label: ctx => ctx.raw + 'x Forward P/E'
+        }
+      }
+    },
+    scales: {
+      y: { 
+        beginAtZero: true,
+        ticks: { color: ivoryDim }
+      },
+      x: { ticks: { color: ivoryDim } }
+    }
+  }
+});
+
+// ---------- Price Chart ----------
+new Chart(document.getElementById('priceChart'), {
+  type: 'line',
+  data: {
+    labels: ['2025-07', '2025-08', '2025-09', '2025-10', '2025-11', '2025-12', '2026-01', '2026-02', '2026-03', '2026-04', '2026-04-22'],
+    datasets: [{
+      label: 'INTU Price ($)',
+      data: [804, 770, 710, 680, 660, 680, 650, 550, 465, 420, 404],
+      borderColor: goldColor,
+      backgroundColor: 'rgba(212, 165, 116, 0.15)',
+      fill: true,
+      tension: 0.35,
+      borderWidth: 2.5,
+      pointRadius: 5,
+      pointBackgroundColor: goldBright,
+      pointBorderColor: navy
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: { callbacks: { label: ctx => '$' + ctx.raw } }
+    },
+    scales: {
+      y: { 
+        ticks: { color: ivoryDim, callback: v => '$' + v }
+      },
+      x: { ticks: { color: ivoryDim } }
+    }
+  }
+});
+
+// ---------- Valuation History Chart ----------
+new Chart(document.getElementById('valHistChart'), {
+  type: 'line',
+  data: {
+    labels: ['2016', '2017', '2018', '2019', '2020', '2021', '2022', '2023', '2024', '2025', '2026 现在'],
+    datasets: [
+      {
+        label: 'Forward P/E',
+        data: [28, 34, 32, 38, 48, 62, 40, 35, 42, 38, 15.3],
+        borderColor: goldColor,
+        backgroundColor: 'rgba(212, 165, 116, 0.1)',
+        fill: true,
+        tension: 0.3,
+        borderWidth: 2
+      },
+      {
+        label: '10Y 均值',
+        data: [38, 38, 38, 38, 38, 38, 38, 38, 38, 38, 38],
+        borderColor: accentAmber,
+        borderDash: [5, 5],
+        fill: false,
+        tension: 0,
+        borderWidth: 1.5,
+        pointRadius: 0
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      tooltip: { callbacks: { label: ctx => ctx.dataset.label + ': ' + ctx.raw + 'x' } }
+    },
+    scales: {
+      y: { 
+        ticks: { color: ivoryDim, callback: v => v + 'x' }
+      },
+      x: { ticks: { color: ivoryDim } }
+    }
+  }
+});
+
+// ---------- Capital Return Chart ----------
+new Chart(document.getElementById('capitalReturnChart'), {
+  type: 'bar',
+  data: {
+    labels: ['FY21', 'FY22', 'FY23', 'FY24', 'FY25', 'FY26 H1'],
+    datasets: [
+      {
+        label: '回购 · Buybacks ($B)',
+        data: [1.3, 2.0, 2.1, 2.0, 2.77, 1.79],
+        backgroundColor: 'rgba(212, 165, 116, 0.8)',
+        borderColor: goldColor,
+        borderWidth: 1
+      },
+      {
+        label: '分红 · Dividends ($B)',
+        data: [0.7, 0.8, 0.9, 1.0, 1.15, 0.65],
+        backgroundColor: 'rgba(95, 184, 120, 0.7)',
+        borderColor: accentGreen,
+        borderWidth: 1
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      tooltip: { callbacks: { label: ctx => ctx.dataset.label + ': $' + ctx.raw + 'B' } }
+    },
+    scales: {
+      y: { 
+        beginAtZero: true,
+        ticks: { color: ivoryDim, callback: v => '$' + v + 'B' }
+      },
+      x: { ticks: { color: ivoryDim } },
+      stacked: false
+    }
+  }
+});
+
+// ---------- Moat Chart ----------
+new Chart(document.getElementById('moatChart'), {
+  type: 'radar',
+  data: {
+    labels: [
+      '市占率 · Market Share',
+      '切换成本 · Switching Cost',
+      '网络效应 · Network Effects',
+      '品牌 · Brand',
+      '监管壁垒 · Regulatory',
+      '数据护城河 · Data Moat'
+    ],
+    datasets: [
+      {
+        label: 'QuickBooks',
+        data: [5, 5, 4.5, 4, 3, 5],
+        borderColor: accentGreen,
+        backgroundColor: 'rgba(95, 184, 120, 0.15)',
+        borderWidth: 2,
+        pointBackgroundColor: accentGreen
+      },
+      {
+        label: 'TurboTax',
+        data: [5, 3.5, 3, 5, 4.5, 4],
+        borderColor: goldColor,
+        backgroundColor: 'rgba(212, 165, 116, 0.15)',
+        borderWidth: 2,
+        pointBackgroundColor: goldColor
+      },
+      {
+        label: 'Credit Karma',
+        data: [4, 3, 4.5, 4, 2.5, 4.5],
+        borderColor: accentAmber,
+        backgroundColor: 'rgba(232, 184, 93, 0.1)',
+        borderWidth: 2,
+        pointBackgroundColor: accentAmber
+      },
+      {
+        label: 'Mailchimp',
+        data: [2, 2, 2, 3, 1, 2],
+        borderColor: accentRed,
+        backgroundColor: 'rgba(232, 93, 93, 0.1)',
+        borderWidth: 2,
+        pointBackgroundColor: accentRed
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { 
+        position: 'bottom',
+        labels: { padding: 15, color: ivoryDim }
+      }
+    },
+    scales: {
+      r: {
+        min: 0, max: 5,
+        ticks: { color: ivoryDim, backdropColor: 'transparent', stepSize: 1 },
+        grid: { color: 'rgba(212, 165, 116, 0.15)' },
+        angleLines: { color: 'rgba(212, 165, 116, 0.2)' },
+        pointLabels: { color: goldColor, font: { size: 11 } }
+      }
+    }
+  }
+});
+
+// ---------- AI Threat Chart ----------
+new Chart(document.getElementById('aiThreatChart'), {
+  type: 'bubble',
+  data: {
+    datasets: [{
+      label: 'QuickBooks',
+      data: [{x: 7, y: 10, r: 25}],
+      backgroundColor: 'rgba(95, 184, 120, 0.5)',
+      borderColor: accentGreen,
+      borderWidth: 2
+    },
+    {
+      label: 'TurboTax',
+      data: [{x: 5, y: 20, r: 22}],
+      backgroundColor: 'rgba(212, 165, 116, 0.5)',
+      borderColor: goldColor,
+      borderWidth: 2
+    },
+    {
+      label: 'Credit Karma',
+      data: [{x: 6, y: 25, r: 15}],
+      backgroundColor: 'rgba(232, 184, 93, 0.5)',
+      borderColor: accentAmber,
+      borderWidth: 2
+    },
+    {
+      label: 'Mailchimp',
+      data: [{x: 3, y: 45, r: 10}],
+      backgroundColor: 'rgba(232, 93, 93, 0.5)',
+      borderColor: accentRed,
+      borderWidth: 2
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        position: 'bottom',
+        labels: { padding: 15, color: ivoryDim }
+      },
+      tooltip: {
+        callbacks: {
+          label: ctx => ctx.dataset.label + ': 实质侵蚀时间 ' + ctx.raw.x + '年，5年内侵蚀概率 ' + ctx.raw.y + '%'
+        }
+      }
+    },
+    scales: {
+      x: {
+        title: { display: true, text: '实质侵蚀时间（年）· Time to Material Erosion (Years)', color: goldColor },
+        min: 0, max: 10,
+        ticks: { color: ivoryDim }
+      },
+      y: {
+        title: { display: true, text: '5年内实质侵蚀概率 (%)', color: goldColor },
+        min: 0, max: 60,
+        ticks: { color: ivoryDim, callback: v => v + '%' }
+      }
+    }
+  }
+});
+
+// ---------- DCF Chart ----------
+new Chart(document.getElementById('dcfChart'), {
+  type: 'bar',
+  data: {
+    labels: ['熊市 Bear\n(30%)', '基准 Base\n(40%)', '牛市 Bull\n(30%)', '概率加权\nWeighted', '当前价\nCurrent', '12月目标\n1Y Target', '3年目标\n3Y Target'],
+    datasets: [{
+      label: '每股内在价值 ($)',
+      data: [268, 454, 640, 454, 404, 520, 650],
+      backgroundColor: [
+        'rgba(232, 93, 93, 0.7)',
+        'rgba(212, 165, 116, 0.7)',
+        'rgba(95, 184, 120, 0.7)',
+        'rgba(232, 184, 93, 0.85)',
+        'rgba(138, 155, 176, 0.7)',
+        'rgba(212, 165, 116, 0.85)',
+        'rgba(95, 184, 120, 0.85)'
+      ],
+      borderColor: [
+        accentRed, goldColor, accentGreen, accentAmber, ivoryDim, goldBright, accentGreen
+      ],
+      borderWidth: 2
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: { callbacks: { label: ctx => '$' + ctx.raw } }
+    },
+    scales: {
+      y: {
+        beginAtZero: true,
+        ticks: { color: ivoryDim, callback: v => '$' + v }
+      },
+      x: { ticks: { color: ivoryDim, maxRotation: 0, autoSkip: false } }
+    }
+  }
+});
+</script>
+
+</body>
+</html>
