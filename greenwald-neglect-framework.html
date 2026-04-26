@@ -1,0 +1,1369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Greenwald Neglect × Graham-Buffett Screening Framework</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Source+Sans+3:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0F1117;
+  --bg-card: #181B24;
+  --bg-card-hover: #1E2230;
+  --border: #2A2E3B;
+  --text: #E8E9ED;
+  --text-muted: #8B8F9E;
+  --text-dim: #5A5E6E;
+  --accent: #C9A84C;
+  --accent-light: #E0C872;
+  --accent-dim: rgba(201,168,76,0.12);
+  --green: #3CB371;
+  --green-dim: rgba(60,179,113,0.12);
+  --red: #E05252;
+  --red-dim: rgba(224,82,82,0.12);
+  --blue: #5B8DEF;
+  --blue-dim: rgba(91,141,239,0.12);
+  --purple: #A07CDB;
+  --purple-dim: rgba(160,124,219,0.12);
+  --cn-green: #4A6741;
+  --stage1: #C9A84C;
+  --stage2: #5B8DEF;
+  --stage3: #3CB371;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Source Sans 3', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.65;
+  overflow-x: hidden;
+}
+
+/* Header */
+.hero {
+  padding: 60px 40px 50px;
+  max-width: 1280px;
+  margin: 0 auto;
+  position: relative;
+}
+
+.hero::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: radial-gradient(ellipse at 30% 20%, rgba(201,168,76,0.06) 0%, transparent 60%),
+              radial-gradient(ellipse at 80% 80%, rgba(91,141,239,0.04) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+.hero-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 16px;
+}
+
+.hero h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: 42px;
+  font-weight: 700;
+  line-height: 1.2;
+  margin-bottom: 8px;
+  background: linear-gradient(135deg, var(--text) 40%, var(--accent-light) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.hero-cn {
+  font-size: 22px;
+  color: var(--cn-green);
+  font-weight: 400;
+  margin-bottom: 20px;
+}
+
+.hero-subtitle {
+  font-size: 17px;
+  color: var(--text-muted);
+  max-width: 720px;
+  line-height: 1.7;
+}
+
+.hero-subtitle em {
+  color: var(--accent-light);
+  font-style: normal;
+}
+
+/* Navigation Tabs */
+.tab-nav {
+  display: flex;
+  gap: 4px;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 40px;
+  border-bottom: 1px solid var(--border);
+  overflow-x: auto;
+}
+
+.tab-btn {
+  padding: 14px 22px;
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-muted);
+  background: none;
+  border: none;
+  cursor: pointer;
+  position: relative;
+  white-space: nowrap;
+  transition: color 0.2s;
+}
+
+.tab-btn:hover { color: var(--text); }
+
+.tab-btn.active {
+  color: var(--accent);
+}
+
+.tab-btn.active::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0; right: 0;
+  height: 2px;
+  background: var(--accent);
+}
+
+.tab-cn {
+  font-size: 12px;
+  color: var(--cn-green);
+  display: block;
+  margin-top: 2px;
+}
+
+/* Content */
+.content {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 40px;
+}
+
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
+/* Section headers */
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 28px;
+}
+
+.section-number {
+  font-family: 'Playfair Display', serif;
+  font-size: 36px;
+  font-weight: 700;
+  color: var(--accent);
+  opacity: 0.5;
+  line-height: 1;
+}
+
+.section-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.section-title-cn {
+  font-size: 15px;
+  color: var(--cn-green);
+  font-weight: 400;
+}
+
+/* Principle Quote Box */
+.quote-box {
+  background: var(--accent-dim);
+  border-left: 3px solid var(--accent);
+  padding: 24px 28px;
+  margin-bottom: 36px;
+  border-radius: 0 8px 8px 0;
+}
+
+.quote-text {
+  font-family: 'Playfair Display', serif;
+  font-size: 18px;
+  color: var(--accent-light);
+  line-height: 1.6;
+  margin-bottom: 8px;
+}
+
+.quote-attr {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+/* Cards */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  gap: 20px;
+  margin-bottom: 40px;
+}
+
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 28px;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.card:hover {
+  border-color: var(--accent);
+  background: var(--bg-card-hover);
+}
+
+.card-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-bottom: 10px;
+}
+
+.card h3 {
+  font-size: 17px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.card h3 .cn {
+  font-size: 13px;
+  color: var(--cn-green);
+  font-weight: 400;
+  margin-left: 8px;
+}
+
+.card p {
+  font-size: 14px;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+/* Tables */
+.table-wrap {
+  overflow-x: auto;
+  margin-bottom: 36px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+th {
+  background: var(--bg-card);
+  padding: 14px 18px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--text-muted);
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+
+td {
+  padding: 13px 18px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text);
+}
+
+tr:last-child td { border-bottom: none; }
+
+tr:hover td { background: rgba(201,168,76,0.03); }
+
+.badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.badge-gold { background: var(--accent-dim); color: var(--accent); }
+.badge-green { background: var(--green-dim); color: var(--green); }
+.badge-blue { background: var(--blue-dim); color: var(--blue); }
+.badge-red { background: var(--red-dim); color: var(--red); }
+.badge-purple { background: var(--purple-dim); color: var(--purple); }
+
+/* Flow diagram */
+.flow {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 40px;
+  overflow-x: auto;
+  padding-bottom: 10px;
+}
+
+.flow-stage {
+  min-width: 240px;
+  flex: 1;
+  position: relative;
+}
+
+.flow-stage-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.flow-dot {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 700;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.flow-stage:nth-child(1) .flow-dot { background: rgba(201,168,76,0.2); color: var(--stage1); }
+.flow-stage:nth-child(2) .flow-dot { background: rgba(91,141,239,0.2); color: var(--stage2); }
+.flow-stage:nth-child(3) .flow-dot { background: rgba(60,179,113,0.2); color: var(--stage3); }
+
+.flow-stage-title {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.flow-stage-cn {
+  font-size: 12px;
+  color: var(--cn-green);
+}
+
+.flow-items {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.flow-item {
+  padding: 8px 0;
+  font-size: 13px;
+  color: var(--text-muted);
+  border-bottom: 1px solid rgba(42,46,59,0.6);
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.flow-item:last-child { border-bottom: none; }
+
+.flow-item .check {
+  color: var(--green);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.flow-arrow {
+  display: flex;
+  align-items: center;
+  padding-top: 40px;
+  color: var(--text-dim);
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+/* Scoring Panel */
+.score-panel {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 32px;
+  margin-bottom: 36px;
+}
+
+.score-panel h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 20px;
+  margin-bottom: 6px;
+}
+
+.score-panel .cn-sub {
+  font-size: 14px;
+  color: var(--cn-green);
+  margin-bottom: 20px;
+}
+
+.formula-block {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 20px 24px;
+  margin-bottom: 20px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  color: var(--accent-light);
+  line-height: 2;
+  overflow-x: auto;
+}
+
+.formula-note {
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 13px;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+/* Market cards */
+.market-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 36px;
+}
+
+@media (max-width: 1000px) {
+  .market-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 600px) {
+  .market-grid { grid-template-columns: 1fr; }
+  .hero h1 { font-size: 28px; }
+  .flow { flex-direction: column; }
+  .flow-arrow { transform: rotate(90deg); padding: 10px 0; align-self: center; }
+  .content { padding: 24px 16px; }
+  .hero { padding: 40px 16px 30px; }
+  .tab-nav { padding: 0 16px; }
+}
+
+.market-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 24px;
+  text-align: center;
+  transition: transform 0.2s, border-color 0.2s;
+}
+
+.market-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--accent);
+}
+
+.market-flag {
+  font-size: 32px;
+  margin-bottom: 10px;
+}
+
+.market-name {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+
+.market-name-cn {
+  font-size: 12px;
+  color: var(--cn-green);
+  margin-bottom: 12px;
+}
+
+.market-stat {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: var(--text-muted);
+  padding: 6px 0;
+  border-top: 1px solid var(--border);
+}
+
+.market-stat span:last-child {
+  font-weight: 600;
+  color: var(--text);
+}
+
+/* Checklist */
+.checklist {
+  margin-bottom: 36px;
+}
+
+.checklist-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 16px 20px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  margin-bottom: 8px;
+  transition: border-color 0.2s;
+}
+
+.checklist-item:hover { border-color: var(--accent); }
+
+.checklist-num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  color: var(--accent);
+  background: var(--accent-dim);
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-weight: 600;
+}
+
+.checklist-content h4 {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 3px;
+}
+
+.checklist-content h4 .cn {
+  font-weight: 400;
+  color: var(--cn-green);
+  font-size: 12px;
+  margin-left: 6px;
+}
+
+.checklist-content p {
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+/* Prose */
+.prose {
+  font-size: 15px;
+  color: var(--text-muted);
+  line-height: 1.75;
+  margin-bottom: 32px;
+  max-width: 800px;
+}
+
+.prose strong { color: var(--text); font-weight: 600; }
+.prose em { color: var(--accent-light); font-style: normal; }
+
+/* Separator */
+.sep {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 48px 0;
+}
+
+/* Footer */
+.footer {
+  text-align: center;
+  padding: 40px;
+  font-size: 12px;
+  color: var(--text-dim);
+  border-top: 1px solid var(--border);
+}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-label">Investment Screening Framework v1.0</div>
+  <h1>The Greenwald Neglect Screen</h1>
+  <div class="hero-cn">格林沃尔德 "被忽视价值" 筛选框架</div>
+  <p class="hero-subtitle">
+    A systematic framework for finding <em>structurally under-researched</em> companies 
+    across US, Hong Kong, China, and India markets — then validating them through 
+    Graham-Buffett quality and valuation filters. Built on Bruce Greenwald's core insight: 
+    <em>analytical effort is rewarded most where attention is scarcest</em>.
+  </p>
+</div>
+
+<nav class="tab-nav">
+  <button class="tab-btn active" data-tab="thesis">
+    Core Thesis
+    <span class="tab-cn">核心理论</span>
+  </button>
+  <button class="tab-btn" data-tab="stage1">
+    Stage 1: Neglect Filter
+    <span class="tab-cn">第一阶段：忽视过滤</span>
+  </button>
+  <button class="tab-btn" data-tab="stage2">
+    Stage 2: Quality Gate
+    <span class="tab-cn">第二阶段：质量关口</span>
+  </button>
+  <button class="tab-btn" data-tab="stage3">
+    Stage 3: Valuation
+    <span class="tab-cn">第三阶段：估值验证</span>
+  </button>
+  <button class="tab-btn" data-tab="markets">
+    Market Playbooks
+    <span class="tab-cn">各市场攻略</span>
+  </button>
+  <button class="tab-btn" data-tab="scoring">
+    Composite Scoring
+    <span class="tab-cn">综合评分</span>
+  </button>
+  <button class="tab-btn" data-tab="process">
+    Full Process
+    <span class="tab-cn">完整流程</span>
+  </button>
+</nav>
+
+<div class="content">
+
+<!-- TAB: Core Thesis -->
+<div class="tab-panel active" id="tab-thesis">
+  <div class="section-header">
+    <div class="section-number">00</div>
+    <div>
+      <div class="section-title">The Greenwald Neglect Thesis</div>
+      <div class="section-title-cn">格林沃尔德的 "被忽视价值" 理论</div>
+    </div>
+  </div>
+
+  <div class="quote-box">
+    <div class="quote-text">"The best opportunities are found not in the securities everyone is analyzing, but in the ones no one is looking at."</div>
+    <div class="quote-attr">— Bruce Greenwald, <em>Value Investing: From Graham to Buffett and Beyond</em></div>
+  </div>
+
+  <p class="prose">
+    Greenwald's insight is deceptively simple: <strong>market efficiency is a function of attention</strong>. Where dozens of analysts, quant funds, and algorithmic traders are dissecting every earnings whisper, prices tend to be tight. Move to the parts of the market where <em>nobody is paying attention</em> — and you find genuine mispricings that your analytical work can exploit.
+  </p>
+
+  <p class="prose">
+    This isn't just a small-cap bias. It's a <strong>structural information advantage thesis</strong>. The mechanism works through a clear chain: <em>low analyst coverage</em> → <em>low institutional ownership</em> → <em>thin liquidity</em> → <em>prices that can drift far from intrinsic value</em>. Your job is to fish in those waters, apply rigorous Graham-Buffett analysis, and wait for the market to re-discover what you already know.
+  </p>
+
+  <div class="card-grid">
+    <div class="card">
+      <div class="card-label">Why It Works</div>
+      <h3>The Attention Economy of Markets <span class="cn">市场的注意力经济</span></h3>
+      <p>Analyst coverage, media attention, and institutional mandates are finite resources. They concentrate on large, liquid, index-member stocks. Everything outside that spotlight is structurally under-priced for information quality — creating opportunity for the patient, independent analyst.</p>
+    </div>
+    <div class="card">
+      <div class="card-label">Key Distinction</div>
+      <h3>Neglected ≠ Bad <span class="cn">被忽视 ≠ 坏公司</span></h3>
+      <p>The critical insight: being ignored by analysts is not the same as being a poor business. Many neglected companies are profitable, well-managed, and durable — they simply lack the market cap, glamour, or narrative to attract Wall Street's attention. That's where the alpha lives.</p>
+    </div>
+    <div class="card">
+      <div class="card-label">Integration Point</div>
+      <h3>Greenwald × Graham-Buffett <span class="cn">格林沃尔德 × 格雷厄姆-巴菲特</span></h3>
+      <p>Greenwald tells you <strong>where</strong> to look. Graham-Buffett tells you <strong>what</strong> to buy. This framework uses Greenwald's neglect thesis as a first-pass universe filter, then applies rigorous value and quality analysis to the resulting candidates.</p>
+    </div>
+  </div>
+
+  <p class="prose">
+    <strong>The two-stage logic:</strong> Stage 1 asks "Is this company structurally under-researched?" — using measurable proxies for analyst neglect. Stage 2 asks "Is it actually a good business at a good price?" — using our full Graham-Buffett toolkit. Only companies that pass both stages make the watchlist. This prevents two common errors: buying well-covered stocks where you have no edge, and buying neglected junk just because it's cheap.
+  </p>
+</div>
+
+<!-- TAB: Stage 1 -->
+<div class="tab-panel" id="tab-stage1">
+  <div class="section-header">
+    <div class="section-number">01</div>
+    <div>
+      <div class="section-title">Stage 1 — The Neglect Filter</div>
+      <div class="section-title-cn">第一阶段 — 忽视过滤器</div>
+    </div>
+  </div>
+
+  <p class="prose">
+    This stage identifies companies that are <em>structurally under-researched</em> by the market. Each criterion below is a measurable proxy for "the market isn't paying attention." A company doesn't need to pass every one — the more it passes, the higher its <strong>Neglect Score</strong>, and the more likely your analytical work will produce an informational edge.
+  </p>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Neglect Signal / 忽视信号</th>
+          <th>Threshold</th>
+          <th>Points</th>
+          <th>Rationale</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="badge badge-gold">N1</span></td>
+          <td><strong>Low Analyst Coverage</strong> <br><span style="color:var(--cn-green);font-size:12px">分析师覆盖少</span></td>
+          <td>≤ 3 sell-side analysts</td>
+          <td>3</td>
+          <td>The single strongest neglect signal. Directly measures how many professionals are watching. Most S&P 500 names have 20–30; your targets should have ≤ 3, ideally 0–1.</td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-gold">N2</span></td>
+          <td><strong>Low Institutional Ownership</strong> <br><span style="color:var(--cn-green);font-size:12px">机构持股比例低</span></td>
+          <td>< 30% institutional holding</td>
+          <td>2</td>
+          <td>Low institutional ownership means fewer sophisticated eyes on the stock, and less efficient pricing. Also means less passive index-driven buying/selling.</td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-gold">N3</span></td>
+          <td><strong>Low Media Mentions</strong> <br><span style="color:var(--cn-green);font-size:12px">媒体提及少</span></td>
+          <td>< 5 articles/month in major financial press</td>
+          <td>1</td>
+          <td>Media coverage drives retail attention and narrative momentum. Absence of coverage = absence of herd behavior.</td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-gold">N4</span></td>
+          <td><strong>Not in Major Index</strong> <br><span style="color:var(--cn-green);font-size:12px">非主要指数成分</span></td>
+          <td>Not in S&P 500 / HSI / Nifty 50 / CSI 300</td>
+          <td>2</td>
+          <td>Index membership forces passive funds to own a stock, creates analyst coverage mandates, and guarantees liquidity. Non-members avoid all of this.</td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-gold">N5</span></td>
+          <td><strong>Small/Mid Cap</strong> <br><span style="color:var(--cn-green);font-size:12px">中小盘股</span></td>
+          <td>Market cap < $5B (US) / HK$40B (HK) / ₹40,000 Cr (India)</td>
+          <td>2</td>
+          <td>Most institutional mandates have minimum market-cap thresholds. Below them, you're fishing where the big boats can't go.</td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-gold">N6</span></td>
+          <td><strong>"Boring" Industry</strong> <br><span style="color:var(--cn-green);font-size:12px">"无聊"行业</span></td>
+          <td>Industrial, niche consumer, specialty chemical, regional utility, etc.</td>
+          <td>1</td>
+          <td>Glamour bias: analysts and funds flock to AI, crypto, biotech. Companies making fasteners, niche packaging, or regional insurance get structurally ignored.</td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-gold">N7</span></td>
+          <td><strong>Situational Neglect</strong> <br><span style="color:var(--cn-green);font-size:12px">特殊情境导致的忽视</span></td>
+          <td>Recent spinoff, post-crisis, lost coverage, sector rotation away, delisted from index</td>
+          <td>2</td>
+          <td>Temporary events that cause attention withdrawal. Spinoffs are classic — parent company analysts don't cover the new entity, creating a coverage orphan.</td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-gold">N8</span></td>
+          <td><strong>Language/Listing Barrier</strong> <br><span style="color:var(--cn-green);font-size:12px">语言/上市壁垒</span></td>
+          <td>Filings primarily in non-English; listed in market with low foreign participation</td>
+          <td>2</td>
+          <td>Especially powerful in HK/China. English-language coverage of mid-cap HKEx stocks is often near zero. If you can read Chinese filings, your edge is structural.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="score-panel">
+    <h3>Neglect Score Interpretation</h3>
+    <div class="cn-sub">忽视评分解读</div>
+    <div class="formula-block">
+      Neglect Score = sum of all N-criteria points met (max 15)
+      <br><br>
+      <span class="formula-note">12–15 points → Deeply neglected — maximum information edge potential</span><br>
+      <span class="formula-note">8–11 points → Moderately neglected — solid edge, proceed to Stage 2</span><br>
+      <span class="formula-note">5–7 points  → Lightly neglected — edge exists but narrower</span><br>
+      <span class="formula-note">&lt; 5 points  → Well-covered — little neglect-based edge, screen out</span>
+    </div>
+    <p style="font-size:13px;color:var(--text-muted);">
+      <strong>Minimum threshold to advance:</strong> Neglect Score ≥ 5. Below this, the company is too well-covered to offer a structural informational advantage.
+    </p>
+  </div>
+</div>
+
+<!-- TAB: Stage 2 -->
+<div class="tab-panel" id="tab-stage2">
+  <div class="section-header">
+    <div class="section-number">02</div>
+    <div>
+      <div class="section-title">Stage 2 — Quality Gate</div>
+      <div class="section-title-cn">第二阶段 — 质量关口</div>
+    </div>
+  </div>
+
+  <p class="prose">
+    Companies that pass Stage 1 are structurally neglected — but neglect alone isn't a reason to buy. Stage 2 applies a streamlined version of our Graham-Buffett quality screen. The goal is to <strong>eliminate junk</strong> — low-quality businesses that are cheap for good reason — while allowing genuinely good companies to pass through to the valuation stage.
+  </p>
+
+  <div class="quote-box">
+    <div class="quote-text">"Price is what you pay; value is what you get. But first, make sure you're getting something worth having."</div>
+    <div class="quote-attr">— Adapted from Warren Buffett</div>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Quality Gate / 质量关口</th>
+          <th>Threshold</th>
+          <th>Weight</th>
+          <th>Kill?</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="badge badge-blue">Q1</span></td>
+          <td><strong>Profitability</strong> <span style="color:var(--cn-green);font-size:12px">盈利能力</span></td>
+          <td>Positive net income ≥ 3 of last 5 years</td>
+          <td>Required</td>
+          <td><span class="badge badge-red">KILL</span></td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-blue">Q2</span></td>
+          <td><strong>Cash Generation</strong> <span style="color:var(--cn-green);font-size:12px">现金生成</span></td>
+          <td>Positive operating cash flow ≥ 4 of last 5 years</td>
+          <td>Required</td>
+          <td><span class="badge badge-red">KILL</span></td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-blue">Q3</span></td>
+          <td><strong>Balance Sheet Safety</strong> <span style="color:var(--cn-green);font-size:12px">资产负债表安全</span></td>
+          <td>Debt/Equity < 1.5 and Current Ratio > 1.2</td>
+          <td>Required</td>
+          <td><span class="badge badge-red">KILL</span></td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-blue">Q4</span></td>
+          <td><strong>Return on Capital</strong> <span style="color:var(--cn-green);font-size:12px">资本回报率</span></td>
+          <td>ROIC > 8% average over last 5 years</td>
+          <td>Preferred</td>
+          <td>—</td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-blue">Q5</span></td>
+          <td><strong>Revenue Stability</strong> <span style="color:var(--cn-green);font-size:12px">收入稳定性</span></td>
+          <td>Revenue declined > 25% YoY no more than once in 5 years</td>
+          <td>Preferred</td>
+          <td>—</td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-blue">Q6</span></td>
+          <td><strong>Insider Alignment</strong> <span style="color:var(--cn-green);font-size:12px">管理层利益一致</span></td>
+          <td>Management owns > 5% OR significant recent insider buying</td>
+          <td>Bonus</td>
+          <td>—</td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-blue">Q7</span></td>
+          <td><strong>Audit Quality</strong> <span style="color:var(--cn-green);font-size:12px">审计质量</span></td>
+          <td>Big 4 auditor (especially critical for HK/China names)</td>
+          <td>Bonus</td>
+          <td>—</td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-blue">Q8</span></td>
+          <td><strong>FCF Conversion</strong> <span style="color:var(--cn-green);font-size:12px">自由现金流转化</span></td>
+          <td>FCF / Net Income > 70% average</td>
+          <td>Preferred</td>
+          <td>—</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p class="prose">
+    <strong>Kill criteria (Q1–Q3)</strong> are non-negotiable. If a company fails any of these, it's out — no exceptions. These protect you from value traps: companies that look cheap on P/E or P/B but are cheap because the business is deteriorating. <strong>Preferred criteria (Q4, Q5, Q8)</strong> indicate quality but aren't absolute requirements. <strong>Bonus criteria (Q6, Q7)</strong> add conviction but their absence isn't disqualifying.
+  </p>
+
+  <div class="card-grid">
+    <div class="card">
+      <div class="card-label">Value Trap Protection</div>
+      <h3>Why Q1–Q3 Are Kill Gates <span class="cn">为何Q1–Q3是淘汰关</span></h3>
+      <p>Neglected stocks are disproportionately likely to include value traps — companies that are cheap and neglected because they deserve to be. The kill criteria ensure we only advance fundamentally sound businesses. The Greenwald edge comes from finding quality in neglect, not from buying distressed names blindly.</p>
+    </div>
+    <div class="card">
+      <div class="card-label">Flexibility by Market</div>
+      <h3>Adjusting for HK/China/India <span class="cn">针对港/中/印的调整</span></h3>
+      <p>For HK/China: tighten Q3 (require Current Ratio > 2.0, D/E < 1.0) and make Q7 (Big 4 audit) a required gate. For India: pay extra attention to Q6 — family conglomerates with low public governance need higher insider alignment evidence. For US small-caps: standard thresholds apply.</p>
+    </div>
+  </div>
+</div>
+
+<!-- TAB: Stage 3 -->
+<div class="tab-panel" id="tab-stage3">
+  <div class="section-header">
+    <div class="section-number">03</div>
+    <div>
+      <div class="section-title">Stage 3 — Valuation & Margin of Safety</div>
+      <div class="section-title-cn">第三阶段 — 估值与安全边际</div>
+    </div>
+  </div>
+
+  <p class="prose">
+    Companies that survive Stages 1 and 2 are neglected, quality businesses. Now we ask the final question: <em>is the price right?</em> This stage applies the full Graham-Buffett valuation toolkit, with a critical Greenwald adjustment — <strong>neglected stocks deserve a higher margin of safety requirement</strong> because their thin liquidity means you may not be able to exit quickly if your thesis is wrong.
+  </p>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Valuation Metric / 估值指标</th>
+          <th>Target Range</th>
+          <th>Notes</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="badge badge-green">V1</span></td>
+          <td><strong>P/E Ratio</strong> <span style="color:var(--cn-green);font-size:12px">市盈率</span></td>
+          <td>< 12× (vs. Graham's standard 15×)</td>
+          <td>Tighter than normal because neglected = illiquid = needs wider buffer</td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-green">V2</span></td>
+          <td><strong>P/B Ratio</strong> <span style="color:var(--cn-green);font-size:12px">市净率</span></td>
+          <td>< 1.5× (or P/E × P/B < 22.5)</td>
+          <td>Graham's classic combined test. For net-net candidates, require P/B < 0.8×</td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-green">V3</span></td>
+          <td><strong>EV/EBIT</strong> <span style="color:var(--cn-green);font-size:12px">企业价值/息税前利润</span></td>
+          <td>< 8× (vs. standard < 10×)</td>
+          <td>Captures the full capital structure. Especially useful for comparing across leveraged vs. unleveraged companies.</td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-green">V4</span></td>
+          <td><strong>FCF Yield</strong> <span style="color:var(--cn-green);font-size:12px">自由现金流收益率</span></td>
+          <td>> 8% (vs. standard > 5%)</td>
+          <td>Higher bar because your holding period may be longer (catalyst uncertainty in neglected names)</td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-green">V5</span></td>
+          <td><strong>Margin of Safety</strong> <span style="color:var(--cn-green);font-size:12px">安全边际</span></td>
+          <td>> 30% below intrinsic value estimate</td>
+          <td>Use owner earnings or EPV-based intrinsic value. Add market-specific MoS adjustments (HK +10%, China ADR +15%, India mid-cap +15%)</td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-green">V6</span></td>
+          <td><strong>Dividend Yield</strong> <span style="color:var(--cn-green);font-size:12px">股息率</span></td>
+          <td>> 3% (if applicable)</td>
+          <td>Not required for all candidates, but for neglected names, dividends provide "paid to wait" comfort. Strong signal of cash-flow reality.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="score-panel">
+    <h3>The Greenwald Valuation Adjustment</h3>
+    <div class="cn-sub">格林沃尔德的估值调整</div>
+    <div class="formula-block">
+      Required MoS = Base MoS + Neglect Premium + Market Premium
+      <br><br>
+      Base MoS:       20% (standard Graham)
+      <br>Neglect Premium: +5% if Neglect Score 8-11, +10% if Score 12-15
+      <br>Market Premium:  per cross-market table (HK +5–10%, China +10–20%, India +5–15%)
+      <br><br>
+      <span class="formula-note">Example: A deeply neglected (Score 13) HK small-cap requires 20% + 10% + 10% = 40% MoS</span>
+    </div>
+    <p style="font-size:13px;color:var(--text-muted);">
+      This higher bar reflects two realities: (1) your valuation of a neglected company has wider uncertainty bands because less public information exists, and (2) exit liquidity is thinner, so you need more cushion. It's Graham's original logic — MoS protects against both analytical error and bad luck — applied more aggressively to an inherently uncertain domain.
+    </p>
+  </div>
+</div>
+
+<!-- TAB: Markets -->
+<div class="tab-panel" id="tab-markets">
+  <div class="section-header">
+    <div class="section-number">04</div>
+    <div>
+      <div class="section-title">Market-Specific Playbooks</div>
+      <div class="section-title-cn">各市场攻略</div>
+    </div>
+  </div>
+
+  <p class="prose">
+    The neglect thesis plays out differently in each market. These playbooks map the framework's abstract principles to the <em>concrete terrain</em> of each exchange — where to look, what signals matter most, and what traps to avoid.
+  </p>
+
+  <div class="market-grid">
+    <div class="market-card">
+      <div class="market-flag">🇺🇸</div>
+      <div class="market-name">United States</div>
+      <div class="market-name-cn">美国市场</div>
+      <div class="market-stat"><span>Best Hunting Ground</span> <span>Small/Micro-Cap</span></div>
+      <div class="market-stat"><span>Neglect Richness</span> <span>★★★☆☆</span></div>
+      <div class="market-stat"><span>Data Quality</span> <span>★★★★★</span></div>
+      <div class="market-stat"><span>Liquidity Risk</span> <span>Low–Medium</span></div>
+    </div>
+    <div class="market-card">
+      <div class="market-flag">🇭🇰</div>
+      <div class="market-name">Hong Kong</div>
+      <div class="market-name-cn">香港市场</div>
+      <div class="market-stat"><span>Best Hunting Ground</span> <span>Non-HSI Mid-Cap</span></div>
+      <div class="market-stat"><span>Neglect Richness</span> <span>★★★★★</span></div>
+      <div class="market-stat"><span>Data Quality</span> <span>★★★☆☆</span></div>
+      <div class="market-stat"><span>Liquidity Risk</span> <span>High</span></div>
+    </div>
+    <div class="market-card">
+      <div class="market-flag">🇨🇳</div>
+      <div class="market-name">China A-Shares</div>
+      <div class="market-name-cn">中国A股</div>
+      <div class="market-stat"><span>Best Hunting Ground</span> <span>Non-CSI 300</span></div>
+      <div class="market-stat"><span>Neglect Richness</span> <span>★★★★☆</span></div>
+      <div class="market-stat"><span>Data Quality</span> <span>★★☆☆☆</span></div>
+      <div class="market-stat"><span>Liquidity Risk</span> <span>Medium</span></div>
+    </div>
+    <div class="market-card">
+      <div class="market-flag">🇮🇳</div>
+      <div class="market-name">India</div>
+      <div class="market-name-cn">印度市场</div>
+      <div class="market-stat"><span>Best Hunting Ground</span> <span>BSE Small/Mid</span></div>
+      <div class="market-stat"><span>Neglect Richness</span> <span>★★★★☆</span></div>
+      <div class="market-stat"><span>Data Quality</span> <span>★★★☆☆</span></div>
+      <div class="market-stat"><span>Liquidity Risk</span> <span>High</span></div>
+    </div>
+  </div>
+
+  <!-- US Playbook -->
+  <div class="score-panel" style="margin-bottom:20px;">
+    <h3>🇺🇸 US Playbook</h3>
+    <div class="cn-sub">美国攻略</div>
+    <p class="prose" style="max-width:none;margin-bottom:16px;">
+      The US market is the most efficient of the four, so neglect-based edges are narrower but still real. Focus on <strong>micro-caps ($50M–$500M)</strong>, companies recently dropped from the Russell 2000, spinoffs within the first 6 months of independent trading, and family-controlled industrials in unsexy sectors. Data quality is excellent — SEC filings, EDGAR, proxy statements — so the analytical work is about <em>interpreting</em> existing data that nobody else is reading.
+    </p>
+    <p style="font-size:13px;color:var(--text-muted);">
+      <strong>Key signals:</strong> 0–2 analysts covering · not in Russell 2000 · market cap < $500M · insider buying > 1% of float in last 6 months · boring SIC code (industrial machinery, specialty chemicals, regional distribution) · recent spinoff or index deletion.
+    </p>
+    <p style="font-size:13px;color:var(--text-muted);margin-top:8px;">
+      <strong>Traps to avoid:</strong> Pink sheet / OTC stocks with poor disclosure · micro-caps with no operating history · special acquisition vehicles (SPACs) masquerading as operating companies.
+    </p>
+  </div>
+
+  <!-- HK Playbook -->
+  <div class="score-panel" style="margin-bottom:20px;">
+    <h3>🇭🇰 Hong Kong Playbook</h3>
+    <div class="cn-sub">香港攻略</div>
+    <p class="prose" style="max-width:none;margin-bottom:16px;">
+      HK is the <strong>richest neglect hunting ground globally</strong>. Over 2,600 companies listed on HKEx, but institutional coverage concentrates on the ~80 HSI/HSCEI components. Everything else is a vast, under-researched universe. English-language coverage of non-blue-chip HK stocks is near zero. The combination of <em>language barrier + small float + China-adjacent risk perception</em> creates deep, persistent mispricings.
+    </p>
+    <p style="font-size:13px;color:var(--text-muted);">
+      <strong>Key signals:</strong> 0 English-language analyst coverage · not in HSI or HSCEI · market cap HK$2B–HK$30B · listed > 5 years with consistent dividend · Big 4 auditor · no VIE structure (prefer direct operating subsidiaries) · available in Mandarin/Cantonese filings only.
+    </p>
+    <p style="font-size:13px;color:var(--text-muted);margin-top:8px;">
+      <strong>Traps to avoid:</strong> Shell companies and financial engineering vehicles · aggressive related-party transactions · companies with frequent share dilution · non-Big 4 auditors in mainland subsidiaries · companies with <3 year listing history.
+    </p>
+  </div>
+
+  <!-- China A-share Playbook -->
+  <div class="score-panel" style="margin-bottom:20px;">
+    <h3>🇨🇳 China A-Share Playbook</h3>
+    <div class="cn-sub">中国A股攻略</div>
+    <p class="prose" style="max-width:none;margin-bottom:16px;">
+      A-shares present a paradox: the market is <strong>retail-dominated</strong>, meaning prices are often sentiment-driven and disconnected from fundamentals, but accounting quality is lower, making fundamental analysis harder. The neglect edge here comes from <em>applying rigorous Western-style value analysis to companies that Chinese retail investors trade on charts and tips</em>. Non-CSI 300 companies with solid fundamentals and low institutional ownership are prime territory.
+    </p>
+    <p style="font-size:13px;color:var(--text-muted);">
+      <strong>Key signals:</strong> Not in CSI 300 or CSI 500 · low QFII/Stock Connect holding · high retail ownership · consistent dividend payer · SOE with asset revaluation potential · provincial champion in niche industry.
+    </p>
+    <p style="font-size:13px;color:var(--text-muted);margin-top:8px;">
+      <strong>Traps to avoid:</strong> Accounting irregularities (verify FCF/NI > 70%) · ST/PT designated stocks · companies with large "other receivables" (often related-party loans) · local government financing platforms disguised as operating companies.
+    </p>
+  </div>
+
+  <!-- India Playbook -->
+  <div class="score-panel" style="margin-bottom:20px;">
+    <h3>🇮🇳 India Playbook</h3>
+    <div class="cn-sub">印度攻略</div>
+    <p class="prose" style="max-width:none;margin-bottom:16px;">
+      India's BSE lists 5,000+ companies, but meaningful coverage extends to perhaps 300–400. The BSE SmallCap index alone has ~750 companies, most with minimal or zero institutional research. The <strong>domestic economic growth story</strong> (demographics, digitization, formalization) means many of these neglected small-caps are riding genuine long-term tailwinds — they're just too small for FIIs to notice. Focus on companies benefiting from India's infrastructure buildout, consumption growth, and IT services expansion.
+    </p>
+    <p style="font-size:13px;color:var(--text-muted);">
+      <strong>Key signals:</strong> Not in Nifty 50 or Nifty Next 50 · low FII ownership · market cap ₹500–₹10,000 Cr · consistent ROE > 12% · promoter holding > 50% with good governance track record · niche domestic market leader.
+    </p>
+    <p style="font-size:13px;color:var(--text-muted);margin-top:8px;">
+      <strong>Traps to avoid:</strong> Promoter pledging (> 20% of holding pledged) · frequent related-party transactions · companies with complex cross-holding structures · shell companies in BSE micro-cap segment · accounting red flags (large intangibles, frequent goodwill write-downs).
+    </p>
+  </div>
+</div>
+
+<!-- TAB: Scoring -->
+<div class="tab-panel" id="tab-scoring">
+  <div class="section-header">
+    <div class="section-number">05</div>
+    <div>
+      <div class="section-title">Composite Greenwald-Graham-Buffett Score</div>
+      <div class="section-title-cn">综合评分体系</div>
+    </div>
+  </div>
+
+  <p class="prose">
+    The final ranking system integrates all three stages into a single composite score. This isn't a replacement for deep analysis — it's a <strong>triage tool</strong> that tells you which candidates deserve your full 7-step value investing analysis first.
+  </p>
+
+  <div class="score-panel">
+    <h3>Composite Score Formula</h3>
+    <div class="cn-sub">综合评分公式</div>
+    <div class="formula-block">
+      GGB Score = (Neglect Score / 15 × 30) + (Quality Pass Rate × 30) + (Valuation Score / 6 × 40)
+      <br><br>
+      <span class="formula-note">Neglect Score:    from Stage 1 (max 15 pts, weighted 30%)</span><br>
+      <span class="formula-note">Quality Pass Rate: # of Q-criteria met / 8 (weighted 30%)</span><br>
+      <span class="formula-note">Valuation Score:   # of V-criteria met / 6 (weighted 40%)</span><br>
+      <br>
+      <span class="formula-note">Maximum possible: 100 points</span>
+    </div>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>GGB Score</th>
+          <th>Classification / 分类</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="badge badge-green">80–100</span></td>
+          <td><strong>Prime Neglect Candidate</strong> <span style="color:var(--cn-green);font-size:12px">优质忽视标的</span></td>
+          <td>Immediately run full 7-step Graham-Buffett analysis. Highest priority for capital allocation. These are the rare gems — genuinely good businesses that the market has forgotten about.</td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-blue">60–79</span></td>
+          <td><strong>Strong Candidate</strong> <span style="color:var(--cn-green);font-size:12px">优选标的</span></td>
+          <td>Queue for full analysis. Likely passes on most dimensions with one area slightly weak (e.g., great neglect + quality but valuation only fair). May need a catalyst or patience.</td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-gold">40–59</span></td>
+          <td><strong>Watchlist</strong> <span style="color:var(--cn-green);font-size:12px">观察名单</span></td>
+          <td>Monitor for improvement. Usually the valuation isn't compelling enough yet, or quality is borderline. Set price alerts and re-screen quarterly.</td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-red">&lt; 40</span></td>
+          <td><strong>Pass</strong> <span style="color:var(--cn-green);font-size:12px">放弃</span></td>
+          <td>Does not meet the framework's threshold. Either not neglected enough (well-covered), not high enough quality (value trap risk), or not cheap enough (no margin of safety).</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card-grid">
+    <div class="card">
+      <div class="card-label">Weighting Rationale</div>
+      <h3>Why 30/30/40? <span class="cn">为何是30/30/40?</span></h3>
+      <p>Valuation gets the highest weight (40%) because ultimately, price determines returns — Graham's cardinal rule. Neglect and quality share equal weight (30% each) because you need both: neglect without quality is a junk trap, quality without neglect means no informational edge. The 30% neglect weight ensures we don't drift back to well-covered stocks just because they score well on quality and valuation.</p>
+    </div>
+    <div class="card">
+      <div class="card-label">Using the Score</div>
+      <h3>Triage, Not Gospel <span class="cn">分诊工具，非圣经</span></h3>
+      <p>The GGB score decides <strong>what to analyze first</strong>, not what to buy. Even a 90-score candidate needs the full 7-step deep dive before capital allocation. Conversely, a 55-score company might become a 75 after a price drop or earnings improvement. Screen quarterly, re-rank, and let the framework guide your research agenda.</p>
+    </div>
+  </div>
+</div>
+
+<!-- TAB: Full Process -->
+<div class="tab-panel" id="tab-process">
+  <div class="section-header">
+    <div class="section-number">06</div>
+    <div>
+      <div class="section-title">The Complete Screening Process</div>
+      <div class="section-title-cn">完整筛选流程</div>
+    </div>
+  </div>
+
+  <div class="flow">
+    <div class="flow-stage">
+      <div class="flow-stage-header">
+        <div class="flow-dot">1</div>
+        <div>
+          <div class="flow-stage-title">Neglect Filter</div>
+          <div class="flow-stage-cn">忽视过滤</div>
+        </div>
+      </div>
+      <div class="flow-items">
+        <div class="flow-item"><span class="check">→</span> Count analyst coverage (0–3 = ideal)</div>
+        <div class="flow-item"><span class="check">→</span> Check institutional ownership %</div>
+        <div class="flow-item"><span class="check">→</span> Verify non-index membership</div>
+        <div class="flow-item"><span class="check">→</span> Assess market cap tier</div>
+        <div class="flow-item"><span class="check">→</span> Scan for situational triggers</div>
+        <div class="flow-item"><span class="check">→</span> Check language/listing barriers</div>
+        <div class="flow-item"><span class="check">⊘</span> <strong>Gate: Neglect Score ≥ 5</strong></div>
+      </div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-stage">
+      <div class="flow-stage-header">
+        <div class="flow-dot">2</div>
+        <div>
+          <div class="flow-stage-title">Quality Gate</div>
+          <div class="flow-stage-cn">质量关口</div>
+        </div>
+      </div>
+      <div class="flow-items">
+        <div class="flow-item"><span class="check">→</span> Verify profitability (3/5 yrs)</div>
+        <div class="flow-item"><span class="check">→</span> Verify cash generation (4/5 yrs)</div>
+        <div class="flow-item"><span class="check">→</span> Check balance sheet safety</div>
+        <div class="flow-item"><span class="check">→</span> Score ROIC, revenue stability</div>
+        <div class="flow-item"><span class="check">→</span> Check insider alignment + audit</div>
+        <div class="flow-item"><span class="check">→</span> Apply market-specific adjustments</div>
+        <div class="flow-item"><span class="check">⊘</span> <strong>Gate: Q1–Q3 all pass</strong></div>
+      </div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-stage">
+      <div class="flow-stage-header">
+        <div class="flow-dot">3</div>
+        <div>
+          <div class="flow-stage-title">Valuation & Rank</div>
+          <div class="flow-stage-cn">估值排序</div>
+        </div>
+      </div>
+      <div class="flow-items">
+        <div class="flow-item"><span class="check">→</span> Compute P/E, P/B, EV/EBIT</div>
+        <div class="flow-item"><span class="check">→</span> Calculate FCF yield</div>
+        <div class="flow-item"><span class="check">→</span> Estimate intrinsic value (≥2 methods)</div>
+        <div class="flow-item"><span class="check">→</span> Apply Greenwald MoS adjustment</div>
+        <div class="flow-item"><span class="check">→</span> Check dividend yield (if applicable)</div>
+        <div class="flow-item"><span class="check">→</span> Compute GGB Composite Score</div>
+        <div class="flow-item"><span class="check">⊘</span> <strong>Rank → Full 7-step analysis</strong></div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="sep">
+
+  <div class="section-header">
+    <div class="section-number">07</div>
+    <div>
+      <div class="section-title">Practical Data Sources</div>
+      <div class="section-title-cn">实用数据来源</div>
+    </div>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Data Point</th>
+          <th>🇺🇸 US Source</th>
+          <th>🇭🇰 HK Source</th>
+          <th>🇨🇳 China Source</th>
+          <th>🇮🇳 India Source</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Analyst Count</td>
+          <td>Yahoo Finance, Finviz</td>
+          <td>AASTOCKS, Bloomberg</td>
+          <td>Wind, East Money (东方财富)</td>
+          <td>Screener.in, Trendlyne</td>
+        </tr>
+        <tr>
+          <td>Institutional Ownership</td>
+          <td>SEC 13F filings, WhaleWisdom</td>
+          <td>HKEx CCASS data</td>
+          <td>Wind, CSRC filings</td>
+          <td>BSE/NSE shareholding pattern</td>
+        </tr>
+        <tr>
+          <td>Financial Statements</td>
+          <td>SEC EDGAR (10-K/Q)</td>
+          <td>HKEx news, annual reports</td>
+          <td>CNINFO (巨潮资讯)</td>
+          <td>BSE filings, annual reports</td>
+        </tr>
+        <tr>
+          <td>Insider Transactions</td>
+          <td>SEC Form 4, OpenInsider</td>
+          <td>HKEx director dealings</td>
+          <td>CSRC insider filings</td>
+          <td>BSE/NSE insider trading data</td>
+        </tr>
+        <tr>
+          <td>Screening Tools</td>
+          <td>Finviz, GuruFocus, TIKR</td>
+          <td>AASTOCKS screener, Futu</td>
+          <td>East Money screener, Xueqiu (雪球)</td>
+          <td>Screener.in, Tijori Finance</td>
+        </tr>
+        <tr>
+          <td>Index Membership</td>
+          <td>S&P, Russell lists</td>
+          <td>HSI Services Ltd</td>
+          <td>CSI Index Co</td>
+          <td>NSE indices website</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <hr class="sep">
+
+  <div class="section-header">
+    <div class="section-number">08</div>
+    <div>
+      <div class="section-title">Screening Cadence & Workflow</div>
+      <div class="section-title-cn">筛选节奏与工作流</div>
+    </div>
+  </div>
+
+  <div class="checklist">
+    <div class="checklist-item">
+      <div class="checklist-num">1</div>
+      <div class="checklist-content">
+        <h4>Quarterly Universe Scan <span class="cn">季度全面扫描</span></h4>
+        <p>Run the full Stage 1 neglect filter across all four markets. Generate a raw list of 50–100 neglected candidates. Use screener tools (Finviz, AASTOCKS, Screener.in, East Money) with analyst count and market cap filters.</p>
+      </div>
+    </div>
+    <div class="checklist-item">
+      <div class="checklist-num">2</div>
+      <div class="checklist-content">
+        <h4>Quality Triage (1–2 Days) <span class="cn">质量分诊 (1-2天)</span></h4>
+        <p>Apply Stage 2 kill criteria (Q1–Q3) to the raw list. This should eliminate 60–70% of candidates. Quick-scan balance sheets and income statements — don't do deep dives yet.</p>
+      </div>
+    </div>
+    <div class="checklist-item">
+      <div class="checklist-num">3</div>
+      <div class="checklist-content">
+        <h4>Valuation Screen (1–2 Days) <span class="cn">估值筛选 (1-2天)</span></h4>
+        <p>For survivors, pull valuation ratios (P/E, P/B, EV/EBIT, FCF yield). Compute GGB Composite Score. Rank the top 10–15 candidates by score.</p>
+      </div>
+    </div>
+    <div class="checklist-item">
+      <div class="checklist-num">4</div>
+      <div class="checklist-content">
+        <h4>Deep Dive (Ongoing) <span class="cn">深度研究 (持续)</span></h4>
+        <p>Take the top 3–5 ranked candidates and run the full 7-step Graham-Buffett analysis. This is where you read the annual report, analyze the moat, compute intrinsic value via multiple methods, and formulate a thesis. Target: 1 deep dive per week.</p>
+      </div>
+    </div>
+    <div class="checklist-item">
+      <div class="checklist-num">5</div>
+      <div class="checklist-content">
+        <h4>Catalyst Watch <span class="cn">催化剂观察</span></h4>
+        <p>For watchlist names (GGB 40–59), set price alerts at your target entry zone and monitor for catalysts: earnings surprises, new analyst initiations, index inclusion rumors, insider buying spikes, or sector rotation. A catalyst can rapidly convert a neglected stock into a recognized one.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="quote-box">
+    <div class="quote-text">"In the short run, the market is a voting machine. In the long run, it is a weighing machine. The Greenwald Neglect Screen helps you find the companies that the voting machine has forgotten — so you can buy before the weighing machine does its work."</div>
+    <div class="quote-attr">— Synthesis of Graham + Greenwald</div>
+  </div>
+</div>
+
+</div><!-- /content -->
+
+<div class="footer">
+  Greenwald Neglect × Graham-Buffett Screening Framework v1.0 · Built for cross-market value investing research · April 2026
+</div>
+
+<script>
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+  });
+});
+</script>
+</body>
+</html>

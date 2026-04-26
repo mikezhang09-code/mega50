@@ -117,6 +117,7 @@ var CATEGORIES = {
       { id: "value-compass-gemini", label: "Value Compass (Gemini)", url: "./value_Gemini.html", icon: "sparkle", desc: "AI-powered value stock screening" },
       { id: "economic-moats", label: "Economic Moats", url: "./economic-moats.html", icon: "shield", desc: "Analyzing the Tech Giants' moats" },
       { id: "moat-claude", label: "Moat Analysis (Claude)", url: "./moat-analysis.html", icon: "fortress", desc: "Fortress Profits — Global Tech Moat Analysis" },
+      { id: "greenwald-framework", label: "Greenwald Neglect Framework", url: "./greenwald-neglect-framework.html", icon: "doc", desc: "Screening for structurally under-researched companies" },
     ],
   },
   "stock-analysis": {
@@ -147,6 +148,7 @@ var CATEGORIES = {
           { id: "ck-hutchison-asset", label: "CK Hutchison & Asset", url: "./CK_Hutchison_CK_Asset_Investment_Report.html", icon: "doc" },
           { id: "jd-report", label: "JD.com (9618.HK)", url: "./report_JD_2026-04-19.html", icon: "doc" },
           { id: "tsugami-report", label: "Precision Tsugami (1651.HK)", url: "./report_1651HK_2026-04-21.html", icon: "doc" },
+          { id: "hk-neglect-screen", label: "HK Neglect Screen", url: "./hk-neglect-screen-apr2026.html", icon: "doc" },
         ],
       },
       {
