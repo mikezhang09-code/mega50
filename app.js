@@ -134,7 +134,6 @@ var CATEGORIES = {
           { id: "byd-fy2025", label: "BYD FY2025 Analysis", url: "./BYD_FY2025_Value_Investing_Analysis.html", icon: "doc" },
           { id: "byd-apr2026", label: "BYD Apr 2026 Update", url: "./byd_investment_analysis_updated_apr2026.html", icon: "doc" },
           { id: "fosun-fy2025", label: "Fosun Int'l FY2025", url: "./fosun_fy25_analysis.html", icon: "doc" },
-          { id: "berkshire", label: "Berkshire Hathaway", url: "./berkshire_hathaway_report.html", icon: "doc" },
           { id: "xiaomi", label: "Xiaomi (1810.HK)", url: "./xiaomi_investment_analysis.html", icon: "doc" },
           { id: "xiaomi-intrinsic", label: "Xiaomi Intrinsic Value", url: "./xiaomi-1810hk-intrinsic-value-report.html", icon: "doc" },
           { id: "popmart", label: "Pop Mart (9992.HK)", url: "./popmart-9992hk-report-202604.html", icon: "doc" },
@@ -154,6 +153,7 @@ var CATEGORIES = {
       {
         label: "United States",
         items: [
+          { id: "berkshire", label: "Berkshire Hathaway", url: "./berkshire_hathaway_report.html", icon: "doc" },
           { id: "pfizer", label: "Pfizer (PFE)", url: "./report_PFE_2026-04-17.html", icon: "doc" },
           { id: "cybersec-trio", label: "Cybersecurity Trio", url: "./CYBERSEC_TRIO_Dashboard.html", icon: "doc" },
           { id: "intu", label: "Intuit (INTU)", url: "./INTU_Dashboard.html", icon: "doc" },
