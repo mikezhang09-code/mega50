@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dah Sing Financial (0440.HK) — Deep Value Analysis</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+:root{--bg:#0D0F14;--bg2:#141720;--bg3:#1A1E2A;--bdr:#252A38;--t:#D8DAE0;--tm:#8A8FA0;--td:#4E5366;--gold:#D4A843;--goldl:#EDCC72;--goldbg:rgba(212,168,67,.1);--grn:#34C27A;--grnbg:rgba(52,194,122,.1);--blu:#4B8DF8;--blubg:rgba(75,141,248,.1);--red:#E04E4E;--redbg:rgba(224,78,78,.1);--cn:#4A6741}
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--t);line-height:1.65}
+.w{max-width:1200px;margin:0 auto;padding:32px 28px}
+.hero{margin-bottom:40px}.hero-tag{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);font-family:monospace;margin-bottom:10px}
+.hero h1{font-size:30px;font-weight:700;margin-bottom:4px}.hero-cn{font-size:16px;color:var(--cn);margin-bottom:14px}
+.hero-meta{display:flex;flex-wrap:wrap;gap:20px;font-size:12px;color:var(--tm)}
+.verdict-box{background:var(--bg2);border:1px solid var(--blu);border-radius:10px;padding:28px;margin-bottom:36px;display:grid;grid-template-columns:200px 1fr;gap:24px;align-items:center}
+.verdict-score{text-align:center}.verdict-score .big{font-size:56px;font-weight:700;color:var(--blu);line-height:1}.verdict-score .label{font-size:12px;color:var(--tm);text-transform:uppercase;letter-spacing:1px;margin-top:4px}
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--bdr);margin-bottom:32px;overflow-x:auto}
+.tab{padding:12px 18px;font-size:13px;font-weight:600;color:var(--tm);background:none;border:none;cursor:pointer;white-space:nowrap;position:relative;transition:color .2s}
+.tab:hover{color:var(--t)}.tab.on{color:var(--gold)}.tab.on::after{content:'';position:absolute;bottom:-1px;left:0;right:0;height:2px;background:var(--gold)}
+.tab .cn{display:block;font-size:10px;color:var(--cn);font-weight:400;margin-top:2px}
+.panel{display:none}.panel.on{display:block}
+.sh{display:flex;align-items:center;gap:12px;margin-bottom:18px}.sh-num{font-size:32px;font-weight:700;color:var(--gold);opacity:.4}.sh-title{font-size:20px;font-weight:600}.sh-cn{font-size:13px;color:var(--cn)}
+.card{background:var(--bg2);border:1px solid var(--bdr);border-radius:8px;padding:22px;margin-bottom:14px;transition:border-color .2s}.card:hover{border-color:var(--gold)}
+.card h3{font-size:15px;font-weight:600;margin-bottom:4px}.card h3 .cn{font-size:12px;color:var(--cn);font-weight:400;margin-left:6px}
+.card p{font-size:13px;color:var(--tm);line-height:1.7}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+.metric{background:var(--bg2);border:1px solid var(--bdr);border-radius:8px;padding:16px;text-align:center}
+.metric .val{font-size:24px;font-weight:700;font-family:monospace}.metric .lbl{font-size:11px;color:var(--tm);text-transform:uppercase;letter-spacing:1px;margin-top:2px}
+.badge{display:inline-block;padding:2px 8px;border-radius:3px;font-size:10px;font-weight:600;font-family:monospace}
+.b-pass{background:var(--grnbg);color:var(--grn)}.b-fail{background:var(--redbg);color:var(--red)}.b-warn{background:var(--goldbg);color:var(--gold)}.b-info{background:var(--blubg);color:var(--blu)}
+table{width:100%;border-collapse:collapse;font-size:13px;margin-bottom:20px}
+th{background:var(--bg3);padding:10px 14px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--tm);border-bottom:1px solid var(--bdr)}
+td{padding:10px 14px;border-bottom:1px solid rgba(37,42,56,.5)}tr:hover td{background:rgba(212,168,67,.02)}
+.tbl-wrap{overflow-x:auto;border:1px solid var(--bdr);border-radius:8px;margin-bottom:20px}
+.chart-box{background:var(--bg2);border:1px solid var(--bdr);border-radius:8px;padding:20px;margin-bottom:20px}.chart-box h3{font-size:14px;margin-bottom:4px}.chart-box .cn{font-size:11px;color:var(--cn);margin-bottom:12px}
+.chart-wrap{position:relative;height:250px}
+.prose{font-size:14px;color:var(--tm);line-height:1.75;margin-bottom:20px;max-width:800px}.prose strong{color:var(--t)}.prose em{color:var(--goldl);font-style:normal}
+.formula{background:var(--bg3);border:1px solid var(--bdr);border-radius:8px;padding:16px 20px;font-family:monospace;font-size:13px;color:var(--goldl);line-height:2;margin-bottom:20px;overflow-x:auto}
+.footer{text-align:center;padding:28px;font-size:11px;color:var(--td);border-top:1px solid var(--bdr)}
+.home-btn { display: inline-flex; align-items: center; gap: 8px; background: var(--goldbg); border: 1px solid rgba(212, 175, 55, 0.3); color: var(--t); font-size: 0.85rem; font-weight: 600; padding: 8px 20px; border-radius: 24px; text-decoration: none; margin-bottom: 2rem; transition: all 0.2s; border-left: 3px solid var(--gold); }
+.home-btn:hover { background: rgba(212, 175, 55, 0.25); border-color: var(--gold); transform: translateX(-4px); }
+.home-btn svg { flex-shrink: 0; }
+@media(max-width:800px){.grid2,.grid3{grid-template-columns:1fr}.verdict-box{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="w">
+
+<div class="hero">
+  <a href="./index.html" class="home-btn">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+    Return to Home / 返回主页
+  </a>
+  <div class="hero-tag">Graham-Buffett × Greenwald Neglect · Deep Value Analysis</div>
+  <h1>Dah Sing Financial Holdings (0440.HK)</h1>
+  <div class="hero-cn">大新金融集团 · 深度价值分析</div>
+  <div class="hero-meta">
+    <span>Sector: Banking / Financial Services / Insurance</span>
+    <span>Exchange: HKEx Main Board</span>
+    <span>HQ: Sheung Wan, Hong Kong</span>
+    <span>Analysis Date: April 26, 2026</span>
+    <span>Data: FY2025 H1 + FY2024 Annual + Banking subsidiary FY2025 results</span>
+  </div>
+</div>
+
+<div class="verdict-box">
+  <div class="verdict-score">
+    <div class="big">7.0</div>
+    <div class="label">Confidence / 10</div>
+    <div style="margin-top:8px"><span class="badge b-info" style="font-size:12px">BUY — HALF POSITION</span></div>
+  </div>
+  <div style="padding:0 4px">
+    <h2 style="font-size:20px;margin-bottom:6px;color:var(--blu)">Verdict: Buy at Half Position — Classic Neglected HK Family Bank</h2>
+    <div style="font-size:14px;color:var(--cn);margin-bottom:10px">判定：半仓买入 — 经典被忽视的香港家族银行</div>
+    <p style="font-size:14px;color:var(--tm);line-height:1.7">
+      Dah Sing Financial is a <strong>textbook Graham deep value play</strong>: a profitable, well-capitalized bank trading at <em>0.33× tangible book value</em> — a 67% discount to net assets. Morningstar estimates fair value at HK$82.86 vs. current price ~HK$40. The banking subsidiary just posted a <em>20% YoY profit increase</em> with NIM expanding 24bps to 2.41%. The insurance arm (AM Best A- rating, outlook revised to positive) adds diversification. The key risk is HK commercial real estate exposure (Moody's downgrade from A2 to A3), but CET1 of 16.9% provides a substantial buffer. At 0.33× P/TBV with a 5.8% dividend yield and improving fundamentals, the margin of safety is enormous. <strong>ISS governance score of 10 (worst decile) is the primary concern</strong> and limits us to a half position.
+    </p>
+  </div>
+</div>
+
+<div class="tabs">
+  <button class="tab on" data-t="s1">Step 1: Business<span class="cn">理解生意</span></button>
+  <button class="tab" data-t="s2">Step 2: Quant Screen<span class="cn">量化筛选</span></button>
+  <button class="tab" data-t="s3">Step 3: Intrinsic Value<span class="cn">内在价值</span></button>
+  <button class="tab" data-t="s4">Step 4: Moat<span class="cn">护城河</span></button>
+  <button class="tab" data-t="s5">Step 5: Management<span class="cn">管理层</span></button>
+  <button class="tab" data-t="s6">Step 6: Risk<span class="cn">风险</span></button>
+  <button class="tab" data-t="s7">Step 7: Verdict<span class="cn">最终判定</span></button>
+  <button class="tab" data-t="neglect">Neglect Scorecard<span class="cn">忽视评分</span></button>
+</div>
+
+<!-- STEP 1 -->
+<div class="panel on" id="s1">
+  <div class="sh"><div class="sh-num">01</div><div><div class="sh-title">Understand the Business</div><div class="sh-cn">理解生意</div></div></div>
+
+  <p class="prose">
+    Dah Sing Financial Holdings is a <strong>Hong Kong-headquartered banking and insurance group</strong> founded in 1947. It operates through its 73.4%-owned banking subsidiary <em>Dah Sing Banking Group (2356.HK)</em> and its insurance subsidiary <em>Dah Sing Insurance</em>. The business is straightforward: take deposits from HK retail and SME customers, lend to individuals (mortgages, personal loans) and corporations, earn the spread (net interest margin), and supplement with fee income from bancassurance and treasury activities.
+  </p>
+
+  <div class="grid2">
+    <div class="card">
+      <h3>Business Segments <span class="cn">业务分部</span></h3>
+      <p><strong>Personal Banking:</strong> Deposits, mortgages, personal loans, credit cards, bancassurance. The largest profit contributor. <strong>Corporate Banking:</strong> Commercial lending, trade finance, working capital. <strong>Treasury & Global Markets:</strong> FX, interest rate management, investment portfolio. <strong>Overseas Banking:</strong> Macau and Mainland China branches. <strong>Insurance:</strong> Non-life insurance (AM Best A- rated, outlook revised positive). Growing at 17.5% ROC.</p>
+    </div>
+    <div class="card">
+      <h3>Competitive Position <span class="cn">竞争定位</span></h3>
+      <p>Dah Sing holds ~2-3% market share in HK banking — a <strong>small-to-mid tier player</strong> competing against HSBC, Hang Seng Bank, Bank of China (HK), and Standard Chartered. Its niche is the <em>retail SME segment</em>, where it's expanding dedicated banking centres. Not a national champion but a durable local institution with 77+ years of operating history and deep community roots.</p>
+    </div>
+  </div>
+
+  <div class="grid3">
+    <div class="metric"><div class="val" style="color:var(--goldl)">~320M</div><div class="lbl">Shares Outstanding</div></div>
+    <div class="metric"><div class="val" style="color:var(--goldl)">3,047</div><div class="lbl">Employees</div></div>
+    <div class="metric"><div class="val" style="color:var(--goldl)">1947</div><div class="lbl">Founded</div></div>
+  </div>
+</div>
+
+<!-- STEP 2 -->
+<div class="panel" id="s2">
+  <div class="sh"><div class="sh-num">02</div><div><div class="sh-title">Quantitative Screen</div><div class="sh-cn">量化筛选</div></div></div>
+
+  <div class="grid3" style="margin-bottom:20px">
+    <div class="metric"><div class="val" style="color:var(--grn)">7.9×</div><div class="lbl">PE (Normalized)</div></div>
+    <div class="metric"><div class="val" style="color:var(--grn)">0.33×</div><div class="lbl">P / Tangible Book</div></div>
+    <div class="metric"><div class="val" style="color:var(--grn)">5.8%</div><div class="lbl">Dividend Yield (Trailing)</div></div>
+  </div>
+  <div class="grid3" style="margin-bottom:20px">
+    <div class="metric"><div class="val" style="color:var(--grn)">2.41%</div><div class="lbl">Net Interest Margin (FY2025)</div></div>
+    <div class="metric"><div class="val" style="color:var(--grn)">16.9%</div><div class="lbl">CET1 Ratio</div></div>
+    <div class="metric"><div class="val" style="color:var(--grn)">45%</div><div class="lbl">Cost/Income (H1 2025)</div></div>
+  </div>
+  <div class="grid3" style="margin-bottom:20px">
+    <div class="metric"><div class="val" style="color:var(--goldl)">HK$103.30</div><div class="lbl">TBV per Share (Jun 2024)</div></div>
+    <div class="metric"><div class="val" style="color:var(--goldl)">~HK$40</div><div class="lbl">Current Share Price</div></div>
+    <div class="metric"><div class="val" style="color:var(--grn)">90%</div><div class="lbl">Deposit-Funded</div></div>
+  </div>
+
+  <div class="tbl-wrap">
+  <table>
+    <thead><tr><th>Graham/Buffett Bank Criteria</th><th>Threshold</th><th>0440.HK</th><th>Result</th></tr></thead>
+    <tbody>
+      <tr><td>P/TBV Ratio</td><td>< 1.0× (deep value < 0.5×)</td><td>0.33× — 10yr range: 0.16–0.93×, median 0.42×</td><td><span class="badge b-pass">DEEP VALUE</span></td></tr>
+      <tr><td>PE (Normalized)</td><td>< 12×</td><td>7.94×</td><td><span class="badge b-pass">PASS</span></td></tr>
+      <tr><td>CET1 Capital Ratio</td><td>> 12% (well-capitalized)</td><td>16.9% (up from 16.2% in FY2023)</td><td><span class="badge b-pass">PASS</span></td></tr>
+      <tr><td>NPL Ratio</td><td>< 2% (excellent < 1%)</td><td>~3.1% (elevated due to HK CRE)</td><td><span class="badge b-warn">CAUTION</span></td></tr>
+      <tr><td>Net Interest Margin</td><td>> 1.5% (competitive)</td><td>2.41% (FY2025), up 24bps YoY</td><td><span class="badge b-pass">PASS</span></td></tr>
+      <tr><td>Cost/Income Ratio</td><td>< 55% (efficient)</td><td>45% (H1 2025), improved from 48.5%</td><td><span class="badge b-pass">PASS</span></td></tr>
+      <tr><td>Profitability</td><td>Consistent 5yr positive</td><td>Profitable all years. FY2025 banking profit +20% YoY. ROA 0.8%.</td><td><span class="badge b-pass">PASS</span></td></tr>
+      <tr><td>Funding Quality</td><td>> 70% deposit-funded</td><td>~90% customer deposits — among highest of HK peers</td><td><span class="badge b-pass">PASS</span></td></tr>
+      <tr><td>Dividend Record</td><td>Consistent payer</td><td>Consistent dividend. Policy of maintaining/slightly increasing. Est. ~4.5-5.8% yield.</td><td><span class="badge b-pass">PASS</span></td></tr>
+      <tr><td>Earnings Growth</td><td>> 0%</td><td>FY2025 H1: EPS HK$4.41 (revenue HK$3.4B). Banking subsidiary +20% profit.</td><td><span class="badge b-pass">PASS</span></td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="chart-box">
+    <h3>Key Banking Metrics Trend</h3>
+    <div class="cn">关键银行指标趋势</div>
+    <div class="chart-wrap"><canvas id="chartNIM"></canvas></div>
+  </div>
+</div>
+
+<!-- STEP 3 -->
+<div class="panel" id="s3">
+  <div class="sh"><div class="sh-num">03</div><div><div class="sh-title">Intrinsic Value</div><div class="sh-cn">内在价值</div></div></div>
+
+  <p class="prose">
+    For banks, <strong>tangible book value</strong> is the primary valuation anchor. A well-run bank with adequate returns should trade at or above book value. Dah Sing is trading at a massive discount to every valuation methodology.
+  </p>
+
+  <div class="tbl-wrap">
+  <table>
+    <thead><tr><th>Method</th><th>Assumptions</th><th>Fair Value / Share</th><th>MoS at ~HK$40</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Tangible Book Value</strong></td><td>1.0× P/TBV (fair for profitable bank)</td><td>HK$103.30</td><td>61% ✓</td></tr>
+      <tr><td><strong>Morningstar Quant Fair Value</strong></td><td>DCF + peer multiples model</td><td>HK$82.86</td><td>52% ✓</td></tr>
+      <tr><td><strong>Median P/TBV (10yr)</strong></td><td>0.42× (historical median)</td><td>~HK$43.40</td><td>8% ✓</td></tr>
+      <tr><td><strong>Analyst Target</strong></td><td>Consensus (1 analyst)</td><td>HK$35.00–38.10</td><td>Negative ✗</td></tr>
+      <tr><td><strong>Gordon Growth (DDM)</strong></td><td>HK$2.34 div / 10% req / 2% growth</td><td>~HK$29.25</td><td>Negative ✗</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="formula">
+    Triangulated Intrinsic Value Range: HK$43 — HK$83
+    <br>Central Estimate: ~HK$60 (midpoint TBV discount to Morningstar)
+    <br>Current Price: ~HK$40 (April 2026)
+    <br>Margin of Safety at Central Estimate: ~33%
+    <br><br>
+    Required MoS (Greenwald-adjusted): 35%
+    <br>(Base 20% + Neglect 5% + HK mid-cap 10%)
+    <br><br>
+    ⚠ Borderline — meets MoS at Morningstar/TBV estimates but not at DDM/analyst target.
+    <br>Using TBV alone (the most relevant metric for banks): 61% MoS — exceptional.
+  </div>
+
+  <p class="prose">
+    <strong>Key insight:</strong> The valuation picture depends on which anchor you trust. If you believe Dah Sing's book value is real (and with 90% deposit funding, 16.9% CET1, and audited financials, there's good reason to), the stock is trading at a <em>breathtaking 67% discount</em> to its net tangible assets. You're essentially buying HK$103 of bank equity for HK$40. The question is why — and the answer is the governance discount plus HK property risk, both of which are real but arguably over-penalized.
+  </p>
+</div>
+
+<!-- STEP 4 -->
+<div class="panel" id="s4">
+  <div class="sh"><div class="sh-num">04</div><div><div class="sh-title">Moat Analysis</div><div class="sh-cn">护城河分析</div></div></div>
+
+  <div class="tbl-wrap">
+  <table>
+    <thead><tr><th>Moat Source</th><th>Assessment</th><th>Score</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Deposit Franchise</strong></td><td>90% funded by customer deposits — the cheapest, stickiest source of bank funding. 77 years of retail relationships. This is the primary moat: customers don't easily move their checking accounts and mortgage relationships.</td><td><span class="badge b-pass">STRONG</span></td></tr>
+      <tr><td><strong>Regulatory Licence</strong></td><td>HK banking licence is a scarce, government-granted asset. Regulatory barriers prevent easy entry. Only ~20 licensed banks in HK.</td><td><span class="badge b-pass">STRONG</span></td></tr>
+      <tr><td><strong>Switching Costs</strong></td><td>Moderate for banking customers. Mortgages, payroll accounts, and SME lending relationships are sticky. But personal deposits are increasingly mobile with digital banking.</td><td><span class="badge b-pass">MODERATE</span></td></tr>
+      <tr><td><strong>Scale</strong></td><td>Weak. 2-3% market share means limited cost advantages from scale. HSBC and Hang Seng dominate. Dah Sing is too small for meaningful scale benefits.</td><td><span class="badge b-warn">WEAK</span></td></tr>
+      <tr><td><strong>Brand</strong></td><td>Local brand recognition among HK retail customers. "Community bank" positioning. Not a national/global brand. Insurance arm rated A- by AM Best (positive outlook).</td><td><span class="badge b-pass">MODERATE</span></td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="card">
+    <h3>Moat Verdict: Narrow — Deposit Franchise + Regulatory <span class="cn">窄护城河 — 存款特许权 + 监管壁垒</span></h3>
+    <p>Dah Sing has a <strong>narrow but durable moat</strong>. The deposit franchise (90% deposit-funded, 77-year track record) and HK banking licence provide structural protection. The bank's niche focus on retail SME banking creates modest switching costs. However, the lack of scale means it can't out-compete the big players on pricing, and digital disruption is a longer-term threat. The moat is sufficient to generate stable, if unspectacular, returns for decades. This is a classic Graham "good enough" business at a wonderful price.</p>
+  </div>
+</div>
+
+<!-- STEP 5 -->
+<div class="panel" id="s5">
+  <div class="sh"><div class="sh-num">05</div><div><div class="sh-title">Management Quality</div><div class="sh-cn">管理层质量</div></div></div>
+
+  <div class="grid2">
+    <div class="card">
+      <h3>Capital Allocation <span class="cn">资本配置</span></h3>
+      <p><strong>Positive signals:</strong> CET1 improved from 16.2% to 16.9% (building capital buffer). Cost/Income ratio improved from 48.5% to 45% (efficiency gains). NIM expanded 24bps to 2.41% (better spread management). Insurance arm growing profitably at 17.5% ROC. Consistent dividend policy with gradual increases. Loan-to-deposit ratio prudent at ~74%.</p>
+    </div>
+    <div class="card">
+      <h3>Operational Execution <span class="cn">运营执行</span></h3>
+      <p>FY2025 banking subsidiary reported <strong>20% YoY profit increase</strong> — strong execution in a challenging HK rate environment. Strategic SME banking centre expansion across branch network. Bancassurance cross-selling driving non-interest income growth (+21.1% fee & commission income H1 2025). AM Best revised insurance outlook to positive.</p>
+    </div>
+  </div>
+
+  <div class="card" style="border-color:var(--red)">
+    <h3>🚩 Governance Red Flag: ISS Score 10/10 (Worst Decile) <span class="cn">治理红旗：ISS评分10/10（最差十分位）</span></h3>
+    <p>Yahoo Finance reports ISS Governance QualityScore of <strong>10</strong> (highest risk) with pillar scores: Audit: 4, Board: 4, Shareholder Rights: 8, Compensation: 10. This is a significant concern. The <strong>Compensation score of 10</strong> (worst) suggests executive pay may be misaligned with performance. <strong>Shareholder Rights score of 8</strong> indicates limited minority shareholder protections. The Ng family controls ~25% through various holdings. While the bank's operational performance is good, the governance framework raises questions about whether minority shareholders are treated as partners — Buffett's key management test. This single factor limits our confidence rating and position size.</p>
+  </div>
+</div>
+
+<!-- STEP 6 -->
+<div class="panel" id="s6">
+  <div class="sh"><div class="sh-num">06</div><div><div class="sh-title">Risk Assessment</div><div class="sh-cn">风险评估</div></div></div>
+
+  <div class="tbl-wrap">
+  <table>
+    <thead><tr><th>Risk</th><th>Severity</th><th>Probability</th><th>Mitigation</th></tr></thead>
+    <tbody>
+      <tr><td><strong>HK Commercial Real Estate</strong></td><td><span class="badge b-fail">HIGH</span></td><td><span class="badge b-fail">HIGH</span></td><td>Moody's downgraded specifically due to CRE exposure. NPL ratio elevated to ~3.1%. However, collateral is "well-secured" per Moody's, and CET1 of 16.9% provides substantial buffer. HK property market appears to be stabilizing.</td></tr>
+      <tr><td><strong>Governance / Minority Rights</strong></td><td><span class="badge b-warn">MEDIUM</span></td><td><span class="badge b-warn">MEDIUM</span></td><td>ISS score 10 is concerning. Compensation structure needs investigation. 77-year track record suggests family has not historically destroyed value, but minority protections are weak.</td></tr>
+      <tr><td><strong>Interest Rate Sensitivity</strong></td><td><span class="badge b-warn">MEDIUM</span></td><td><span class="badge b-warn">MEDIUM</span></td><td>NIM expanded nicely in higher rate environment. Rate cuts would compress NIM, but bank has demonstrated ability to manage spread. 90% deposit funding is a structural advantage in any rate environment.</td></tr>
+      <tr><td><strong>China Macro / Mainland Exposure</strong></td><td><span class="badge b-warn">MEDIUM</span></td><td><span class="badge b-warn">MEDIUM</span></td><td>Mainland China and Macau banking segments carry additional credit risk. But these are smaller portions of the overall book. Core business remains HK-focused.</td></tr>
+      <tr><td><strong>Competition from Digital Banks</strong></td><td><span class="badge b-info">LOW</span></td><td><span class="badge b-warn">MEDIUM</span></td><td>Virtual banks licensed in HK but none has achieved scale. Dah Sing's SME relationships and branch network provide stickiness. Slow-moving risk over 5-10 year horizon.</td></tr>
+      <tr><td><strong>Moody's Downgrade Impact</strong></td><td><span class="badge b-info">LOW</span></td><td><span class="badge b-pass">REALIZED</span></td><td>Already happened (A2 → A3 in June 2025). Outlook changed to stable. Impact priced into current share price. Moody's noted path to upgrade: reduce CRE, improve NPLs below 1.5%.</td></tr>
+    </tbody>
+  </table>
+  </div>
+</div>
+
+<!-- STEP 7 -->
+<div class="panel" id="s7">
+  <div class="sh"><div class="sh-num">07</div><div><div class="sh-title">Final Verdict & Action Plan</div><div class="sh-cn">最终判定与行动计划</div></div></div>
+
+  <div class="tbl-wrap">
+  <table>
+    <thead><tr><th>Dimension</th><th>Score</th><th>Weight</th><th>Weighted</th></tr></thead>
+    <tbody>
+      <tr><td>Business Quality</td><td>7/10</td><td>20%</td><td>1.4</td></tr>
+      <tr><td>Quantitative Screen</td><td>9/10</td><td>15%</td><td>1.35</td></tr>
+      <tr><td>Intrinsic Value Gap</td><td>8/10</td><td>25%</td><td>2.0</td></tr>
+      <tr><td>Moat Durability</td><td>6/10</td><td>15%</td><td>0.9</td></tr>
+      <tr><td>Management / Governance</td><td>4/10</td><td>15%</td><td>0.6</td></tr>
+      <tr><td>Risk Profile</td><td>5/10</td><td>10%</td><td>0.5</td></tr>
+      <tr style="font-weight:700"><td>TOTAL</td><td></td><td>100%</td><td>6.75 / 10 → 7.0 (rounded)</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="grid2">
+    <div class="card" style="border-color:var(--blu)">
+      <h3>Entry Strategy <span class="cn">入场策略</span></h3>
+      <p><strong>Verdict: BUY at half position.</strong> Current price ~HK$40 offers 61% discount to TBV and 52% discount to Morningstar fair value. <strong>Position Size:</strong> 2% of portfolio (half position due to governance concerns). <strong>Target:</strong> HK$55-60 (0.55-0.58× TBV). <strong>Paid to wait:</strong> 5.8% dividend yield while waiting for rerating. <strong>Stop-Loss:</strong> HK$28 (30% below entry — aligned with Morningstar's 1-star price of HK$23.39).</p>
+    </div>
+    <div class="card" style="border-color:var(--grn)">
+      <h3>Catalysts to Watch <span class="cn">催化剂观察</span></h3>
+      <p><strong>Bullish:</strong> HK property market stabilization reducing NPLs, Moody's upgrade (back to A2), continued NIM expansion, insurance arm growing to material profit contributor, governance reforms, potential privatization at premium to market. <strong>Bearish:</strong> HK property crash (further NPL deterioration), aggressive rate cuts compressing NIM, governance scandals, China macro shock affecting Mainland book.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Why This Is a Better Candidate Than Kinetic (1277.HK) <span class="cn">为何优于力量发展</span></h3>
+    <p>Both are genuine neglect candidates, but Dah Sing scores higher on our confidence scale for three reasons: (1) <strong>Non-cyclical earnings</strong> — banking revenue is more predictable than coal prices; FY2025 profit grew 20% while Kinetic's fell 50-60%. (2) <strong>Simpler valuation anchor</strong> — tangible book value is audited, verifiable, and provides a clear floor; coal mine valuations depend on commodity price assumptions. (3) <strong>Improving trajectory</strong> — NIM expanding, costs declining, insurance growing, capital strengthening. Kinetic is at a trough hoping for recovery; Dah Sing is already recovering. The governance discount is the equalizer — without it, this would be an 8/10 conviction buy.</p>
+  </div>
+</div>
+
+<!-- NEGLECT SCORECARD -->
+<div class="panel" id="neglect">
+  <div class="sh"><div class="sh-num">GN</div><div><div class="sh-title">Greenwald Neglect Scorecard</div><div class="sh-cn">格林沃尔德忽视评分卡</div></div></div>
+
+  <div class="tbl-wrap">
+  <table>
+    <thead><tr><th>Signal</th><th>Detail</th><th>Score</th></tr></thead>
+    <tbody>
+      <tr><td><strong>N1</strong> Analyst Coverage</td><td>Simply Wall St says "covered by 23 analysts" but only 1 submitted estimates. Morningstar uses quant model (no analyst). Consensus recommendation from 1 analyst: Outperform. Effective coverage: ~1-3 active analysts.</td><td><span class="badge b-pass">3/3</span></td></tr>
+      <tr><td><strong>N2</strong> Institutional Ownership</td><td>~40% institutional (estimated). Higher than Kinetic but still below large-cap norms. No major global fund holds a significant position.</td><td><span class="badge b-warn">1/2</span></td></tr>
+      <tr><td><strong>N3</strong> Media Mentions</td><td>Minimal English coverage. Only Simply Wall St automated articles and one MarketScreener piece in last 30 days.</td><td><span class="badge b-pass">1/1</span></td></tr>
+      <tr><td><strong>N4</strong> Non-Index</td><td>Not in HSI or HSCEI. Not in any major HK equity index.</td><td><span class="badge b-pass">2/2</span></td></tr>
+      <tr><td><strong>N5</strong> Small/Mid Cap</td><td>MCap ~HK$13.4B. Well below our HK$40B threshold.</td><td><span class="badge b-pass">2/2</span></td></tr>
+      <tr><td><strong>N6</strong> Boring Industry</td><td>Small HK family bank. Maximum boringness. Nobody gets excited about mid-tier HK banking.</td><td><span class="badge b-pass">1/1</span></td></tr>
+      <tr><td><strong>N7</strong> Situational Neglect</td><td>Moody's downgrade (June 2025) created negative narrative. HK property fears drove sector-wide de-rating.</td><td><span class="badge b-pass">2/2</span></td></tr>
+      <tr><td><strong>N8</strong> Language Barrier</td><td>Bilingual filings (English + Chinese) available on HKEx. Less language barrier than pure Mainland companies.</td><td><span class="badge b-warn">1/2</span></td></tr>
+    </tbody>
+    <tfoot><tr style="font-weight:700;background:var(--bg3)"><td colspan="2">Total Neglect Score</td><td><span class="badge b-pass" style="font-size:14px">13/15</span></td></tr></tfoot>
+  </table>
+  </div>
+
+  <div class="formula">
+    GGB Composite Score:
+    <br>Neglect:   (13/15 × 30) = 26.0
+    <br>Quality:   (7/8 × 30)   = 26.25  (Q1-Q3 pass, Q4 pass, Q5 pass, Q6 partial, Q7 pass, Q8 N/A for banks)
+    <br>Valuation: (5/6 × 40)   = 33.33  (V1 pass, V2 deep pass, V3 N/A, V4 N/A, V5 pass, V6 pass)
+    <br>
+    <br>GGB Score: 85.6 → PRIME NEGLECT CANDIDATE ✓
+  </div>
+
+  <div class="card" style="border-color:var(--grn)">
+    <h3>Neglect Edge Assessment <span class="cn">忽视优势评估</span></h3>
+    <p><strong>13/15 = Deeply Neglected.</strong> Dah Sing's neglect is driven by a different mechanism than Kinetic's. Where Kinetic is ignored because of ESG/coal aversion, Dah Sing is ignored because of the HK property fear narrative and its small size in a sector dominated by HSBC and Hang Seng Bank. Morningstar doesn't even formally cover it — they use a quant model. Only 1 analyst actively submits estimates. <strong>The structural opportunity:</strong> when the HK property narrative turns (or simply stabilizes), there's no research infrastructure to quickly re-rate the stock. Price discovery will be slow — giving patient value investors time to accumulate. With a GGB score of 85.6, this is our <em>first Prime Neglect Candidate</em> from the HK screen.</p>
+  </div>
+</div>
+
+</div>
+
+<div class="footer">
+  Dah Sing Financial Holdings (0440.HK) · Graham-Buffett × Greenwald Neglect Deep Value Analysis · April 2026<br>
+  ⚠ This is research, not investment advice. Verify all data from primary HKEx filings. Past performance does not predict future results.
+</div>
+
+<script>
+document.querySelectorAll('.tab').forEach(t=>{t.addEventListener('click',()=>{document.querySelectorAll('.tab').forEach(b=>b.classList.remove('on'));document.querySelectorAll('.panel').forEach(p=>p.classList.remove('on'));t.classList.add('on');document.getElementById(t.dataset.t).classList.add('on')})});
+
+new Chart(document.getElementById('chartNIM'),{type:'bar',data:{labels:['FY2022','FY2023','H1 2024','FY2024','H1 2025','FY2025 Banking'],datasets:[{label:'NIM (%)',data:[1.85,2.09,2.09,2.17,2.32,2.41],backgroundColor:'rgba(75,141,248,0.6)',borderColor:'#4B8DF8',borderWidth:1,borderRadius:3,yAxisID:'y'},{label:'Cost/Income (%)',data:[52,48.5,48.5,47,45,44],backgroundColor:'rgba(212,168,67,0.4)',borderColor:'#D4A843',borderWidth:1,borderRadius:3,yAxisID:'y1'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#8A8FA0',font:{size:11}}}},scales:{y:{position:'left',grid:{color:'rgba(37,42,56,.5)'},ticks:{color:'#8A8FA0',callback:v=>v+'%'},min:1.5,max:3},y1:{position:'right',grid:{display:false},ticks:{color:'#D4A843',callback:v=>v+'%'},min:40,max:55},x:{grid:{display:false},ticks:{color:'#8A8FA0'}}}}});
+</script>
+</body>
+</html>

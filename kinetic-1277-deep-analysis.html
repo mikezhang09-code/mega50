@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kinetic Development Group (1277.HK) — Deep Value Analysis</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+:root{--bg:#0D0F14;--bg2:#141720;--bg3:#1A1E2A;--bdr:#252A38;--t:#D8DAE0;--tm:#8A8FA0;--td:#4E5366;--gold:#D4A843;--goldl:#EDCC72;--goldbg:rgba(212,168,67,.1);--grn:#34C27A;--grnbg:rgba(52,194,122,.1);--blu:#4B8DF8;--blubg:rgba(75,141,248,.1);--red:#E04E4E;--redbg:rgba(224,78,78,.1);--pur:#9B71DB;--cn:#4A6741}
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--t);line-height:1.65}
+.w{max-width:1200px;margin:0 auto;padding:32px 28px}
+.hero{margin-bottom:40px}.hero-tag{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);font-family:monospace;margin-bottom:10px}
+.hero h1{font-size:30px;font-weight:700;margin-bottom:4px}.hero-cn{font-size:16px;color:var(--cn);margin-bottom:14px}
+.hero-meta{display:flex;flex-wrap:wrap;gap:20px;font-size:12px;color:var(--tm)}
+.verdict-box{background:var(--bg2);border:1px solid var(--gold);border-radius:10px;padding:28px;margin-bottom:36px;display:grid;grid-template-columns:200px 1fr;gap:24px;align-items:center}
+.verdict-score{text-align:center}.verdict-score .big{font-size:56px;font-weight:700;color:var(--goldl);line-height:1}.verdict-score .label{font-size:12px;color:var(--tm);text-transform:uppercase;letter-spacing:1px;margin-top:4px}
+.verdict-text h2{font-size:20px;margin-bottom:6px;color:var(--goldl)}.verdict-text .cn{font-size:14px;color:var(--cn);margin-bottom:10px}.verdict-text p{font-size:14px;color:var(--tm);line-height:1.7}
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--bdr);margin-bottom:32px;overflow-x:auto}
+.tab{padding:12px 18px;font-size:13px;font-weight:600;color:var(--tm);background:none;border:none;cursor:pointer;white-space:nowrap;position:relative;transition:color .2s}
+.tab:hover{color:var(--t)}.tab.on{color:var(--gold)}.tab.on::after{content:'';position:absolute;bottom:-1px;left:0;right:0;height:2px;background:var(--gold)}
+.tab .cn{display:block;font-size:10px;color:var(--cn);font-weight:400;margin-top:2px}
+.panel{display:none}.panel.on{display:block}
+.section{margin-bottom:36px}
+.sh{display:flex;align-items:center;gap:12px;margin-bottom:18px}.sh-num{font-size:32px;font-weight:700;color:var(--gold);opacity:.4}.sh-title{font-size:20px;font-weight:600}.sh-cn{font-size:13px;color:var(--cn)}
+.card{background:var(--bg2);border:1px solid var(--bdr);border-radius:8px;padding:22px;margin-bottom:14px;transition:border-color .2s}.card:hover{border-color:var(--gold)}
+.card h3{font-size:15px;font-weight:600;margin-bottom:4px}.card h3 .cn{font-size:12px;color:var(--cn);font-weight:400;margin-left:6px}
+.card p{font-size:13px;color:var(--tm);line-height:1.7}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+.metric{background:var(--bg2);border:1px solid var(--bdr);border-radius:8px;padding:16px;text-align:center}
+.metric .val{font-size:24px;font-weight:700;font-family:monospace}.metric .lbl{font-size:11px;color:var(--tm);text-transform:uppercase;letter-spacing:1px;margin-top:2px}
+.badge{display:inline-block;padding:2px 8px;border-radius:3px;font-size:10px;font-weight:600;font-family:monospace}
+.b-pass{background:var(--grnbg);color:var(--grn)}.b-fail{background:var(--redbg);color:var(--red)}.b-warn{background:var(--goldbg);color:var(--gold)}.b-info{background:var(--blubg);color:var(--blu)}
+table{width:100%;border-collapse:collapse;font-size:13px;margin-bottom:20px}
+th{background:var(--bg3);padding:10px 14px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--tm);border-bottom:1px solid var(--bdr)}
+td{padding:10px 14px;border-bottom:1px solid rgba(37,42,56,.5)}tr:hover td{background:rgba(212,168,67,.02)}
+.tbl-wrap{overflow-x:auto;border:1px solid var(--bdr);border-radius:8px;margin-bottom:20px}
+.chart-box{background:var(--bg2);border:1px solid var(--bdr);border-radius:8px;padding:20px;margin-bottom:20px}.chart-box h3{font-size:14px;margin-bottom:4px}.chart-box .cn{font-size:11px;color:var(--cn);margin-bottom:12px}
+.chart-wrap{position:relative;height:250px}
+.quote{background:var(--goldbg);border-left:3px solid var(--gold);padding:18px 22px;border-radius:0 8px 8px 0;margin-bottom:24px}
+.quote p{font-size:16px;color:var(--goldl);line-height:1.6;font-style:italic}.quote .attr{font-size:12px;color:var(--tm);margin-top:6px;font-style:normal}
+.prose{font-size:14px;color:var(--tm);line-height:1.75;margin-bottom:20px;max-width:800px}.prose strong{color:var(--t)}.prose em{color:var(--goldl);font-style:normal}
+.formula{background:var(--bg3);border:1px solid var(--bdr);border-radius:8px;padding:16px 20px;font-family:monospace;font-size:13px;color:var(--goldl);line-height:2;margin-bottom:20px;overflow-x:auto}
+.footer{text-align:center;padding:28px;font-size:11px;color:var(--td);border-top:1px solid var(--bdr)}
+.home-btn { display: inline-flex; align-items: center; gap: 8px; background: var(--goldbg); border: 1px solid rgba(212, 175, 55, 0.3); color: var(--t); font-size: 0.85rem; font-weight: 600; padding: 8px 20px; border-radius: 24px; text-decoration: none; margin-bottom: 2rem; transition: all 0.2s; border-left: 3px solid var(--gold); }
+.home-btn:hover { background: rgba(212, 175, 55, 0.25); border-color: var(--gold); transform: translateX(-4px); }
+.home-btn svg { flex-shrink: 0; }
+@media(max-width:800px){.grid2,.grid3{grid-template-columns:1fr}.verdict-box{grid-template-columns:1fr}.tabs{flex-wrap:nowrap}}
+</style>
+</head>
+<body>
+<div class="w">
+
+<div class="hero">
+  <a href="./index.html" class="home-btn">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+    Return to Home / 返回主页
+  </a>
+  <div class="hero-tag">Graham-Buffett × Greenwald Neglect · Deep Value Analysis</div>
+  <h1>Kinetic Development Group (1277.HK)</h1>
+  <div class="hero-cn">力量发展集团 · 深度价值分析</div>
+  <div class="hero-meta">
+    <span>Sector: Energy / Coal Mining</span>
+    <span>Exchange: HKEx Main Board</span>
+    <span>HQ: Ordos City, Inner Mongolia, China</span>
+    <span>Analysis Date: April 26, 2026</span>
+    <span>Data: FY2025 results (March 24, 2026)</span>
+  </div>
+</div>
+
+<div class="verdict-box">
+  <div class="verdict-score">
+    <div class="big">6.5</div>
+    <div class="label">Confidence / 10</div>
+    <div style="margin-top:8px"><span class="badge b-warn" style="font-size:12px">CONDITIONAL WATCHLIST</span></div>
+  </div>
+  <div class="verdict-text">
+    <h2>Verdict: Conditional Watchlist — Wait for Trough Confirmation</h2>
+    <div class="cn">判定：有条件观察 — 等待周期底部确认</div>
+    <p>
+      Kinetic Development is a <strong>genuine Greenwald neglect candidate</strong> — deeply under-covered (2 analysts), 74% insider-owned, trading at a 69% discount to Simply Wall St's DCF fair value. The business is fundamentally sound with high ROE (25%), strong margins, and a conservative balance sheet. However, the <em>cyclical trough is not yet confirmed</em>: FY2025 net profit fell 50-60%, coal prices remain weak, and non-cash impairments of RMB250-290M cloud the picture. Management's decision to <em>raise ordinary dividends despite the profit drop</em> signals confidence in the trough thesis. <strong>Entry zone: HK$1.00–1.20</strong> on further weakness or confirmation of coal price stabilization. Do not chase at current levels (HK$2.18–2.46) without cyclical clarity.
+    </p>
+  </div>
+</div>
+
+<div class="tabs">
+  <button class="tab on" data-t="s1">Step 1: Business<span class="cn">理解生意</span></button>
+  <button class="tab" data-t="s2">Step 2: Quant Screen<span class="cn">量化筛选</span></button>
+  <button class="tab" data-t="s3">Step 3: Intrinsic Value<span class="cn">内在价值</span></button>
+  <button class="tab" data-t="s4">Step 4: Moat<span class="cn">护城河</span></button>
+  <button class="tab" data-t="s5">Step 5: Management<span class="cn">管理层</span></button>
+  <button class="tab" data-t="s6">Step 6: Risk<span class="cn">风险</span></button>
+  <button class="tab" data-t="s7">Step 7: Verdict<span class="cn">最终判定</span></button>
+  <button class="tab" data-t="neglect">Neglect Scorecard<span class="cn">忽视评分</span></button>
+</div>
+
+<!-- STEP 1 -->
+<div class="panel on" id="s1">
+  <div class="sh"><div class="sh-num">01</div><div><div class="sh-title">Understand the Business</div><div class="sh-cn">理解生意</div></div></div>
+  
+  <p class="prose">
+    Kinetic Development Group is an <strong>Inner Mongolia coal miner</strong> operating the Dafanpu Coal Mine — a single large concession area of ~9.6 sq km in Zhunge'er Banner, Ordos City. The core business is simple: <em>extract coal, wash it, transport it, sell it</em>. Revenue comes overwhelmingly from thermal coal sales to domestic Chinese power plants and industrial users.
+  </p>
+  <p class="prose">
+    The company has been diversifying into non-core businesses: <strong>agriculture and animal husbandry</strong> (planting, feed processing, livestock breeding, food processing), <strong>real estate</strong> (office buildings, residential, parking), and <strong>tobacco/cigars</strong> (production, wholesale, e-vapor). These non-core businesses are early-stage and currently loss-making (RMB80-90M losses in FY2025), but management views them as long-term diversification away from coal dependency.
+  </p>
+
+  <div class="grid2">
+    <div class="card">
+      <h3>How It Makes Money <span class="cn">盈利模式</span></h3>
+      <p>Coal mining and sales generate ~95% of revenue. The Dafanpu mine produces thermal coal used primarily for power generation. Revenue is directly tied to coal prices × volume. Low-cost producer due to open-pit/shallow mine structure in Inner Mongolia. Transportation via local rail to Shuozhou-Huanghua rail line.</p>
+    </div>
+    <div class="card">
+      <h3>Competitive Test <span class="cn">竞争力测试</span></h3>
+      <p><strong>What if a well-funded competitor entered?</strong> Coal mining is a resource-based business — you need the concession. Kinetic's Dafanpu mine is a fixed, depletable asset with government-granted mining rights. New competitors can't replicate the specific mine, but coal is a fungible commodity — price competition comes from other mines and imports. Kinetic's edge is cost structure, not differentiation.</p>
+    </div>
+  </div>
+
+  <div class="grid3">
+    <div class="metric"><div class="val" style="color:var(--goldl)">~8,430</div><div class="lbl">Shares Outstanding (M)</div></div>
+    <div class="metric"><div class="val" style="color:var(--goldl)">2,730</div><div class="lbl">Employees</div></div>
+    <div class="metric"><div class="val" style="color:var(--goldl)">2010</div><div class="lbl">Founded</div></div>
+  </div>
+</div>
+
+<!-- STEP 2 -->
+<div class="panel" id="s2">
+  <div class="sh"><div class="sh-num">02</div><div><div class="sh-title">Quantitative Screen</div><div class="sh-cn">量化筛选</div></div></div>
+
+  <div class="grid3" style="margin-bottom:20px">
+    <div class="metric"><div class="val" style="color:var(--grn)">10.8×</div><div class="lbl">Trailing PE</div></div>
+    <div class="metric"><div class="val" style="color:var(--gold)">~20×</div><div class="lbl">FY2025 Adj. PE (Est.)</div></div>
+    <div class="metric"><div class="val" style="color:var(--grn)">25.1%</div><div class="lbl">ROE (LTM)</div></div>
+  </div>
+  <div class="grid3" style="margin-bottom:20px">
+    <div class="metric"><div class="val" style="color:var(--grn)">37.3%</div><div class="lbl">Net Margin (LTM)</div></div>
+    <div class="metric"><div class="val" style="color:var(--grn)">48.7%</div><div class="lbl">Gross Margin</div></div>
+    <div class="metric"><div class="val" style="color:var(--grn)">4.7%</div><div class="lbl">Net Debt/Equity</div></div>
+  </div>
+  <div class="grid3" style="margin-bottom:20px">
+    <div class="metric"><div class="val" style="color:var(--grn)">17.6%</div><div class="lbl">D/E Ratio</div></div>
+    <div class="metric"><div class="val" style="color:var(--grn)">55.7×</div><div class="lbl">Interest Coverage</div></div>
+    <div class="metric"><div class="val" style="color:var(--grn)">4-8%</div><div class="lbl">Dividend Yield</div></div>
+  </div>
+
+  <div class="tbl-wrap">
+  <table>
+    <thead><tr><th>Graham/Buffett Criteria</th><th>Threshold</th><th>1277.HK</th><th>Result</th></tr></thead>
+    <tbody>
+      <tr><td>PE Ratio</td><td>< 15× (Graham)</td><td>10.8× trailing; ~20× trough-adj.</td><td><span class="badge b-pass">PASS</span> (trailing) <span class="badge b-warn">CAUTION</span> (trough)</td></tr>
+      <tr><td>Debt/Equity</td><td>< 1.0× (HK-adjusted)</td><td>0.176× (improved from 0.266× 5yr ago)</td><td><span class="badge b-pass">PASS</span></td></tr>
+      <tr><td>Current Ratio</td><td>> 2.0× (HK-adjusted)</td><td>⚠ VERIFY from FY2025 report</td><td><span class="badge b-warn">VERIFY</span></td></tr>
+      <tr><td>Net Profit Margin</td><td>> 10%</td><td>37.3% (LTM) / ~28% (FY2025 H1)</td><td><span class="badge b-pass">PASS</span></td></tr>
+      <tr><td>ROE</td><td>> 15% (Buffett)</td><td>25.1%</td><td><span class="badge b-pass">PASS</span></td></tr>
+      <tr><td>Interest Coverage</td><td>> 5×</td><td>55.7×</td><td><span class="badge b-pass">PASS</span></td></tr>
+      <tr><td>Earnings Stability</td><td>Positive 5/5 yrs</td><td>Profitable all years; volatile but always positive</td><td><span class="badge b-pass">PASS</span></td></tr>
+      <tr><td>5yr Earnings Growth</td><td>> 0%</td><td>18.5% CAGR (5yr avg)</td><td><span class="badge b-pass">PASS</span></td></tr>
+      <tr><td>Dividend Record</td><td>Consistent payer</td><td>8 years of dividends; payout 31-47%; RAISED in FY2025 despite profit decline</td><td><span class="badge b-pass">PASS</span></td></tr>
+      <tr><td>P/B Ratio</td><td>< 1.5×</td><td>⚠ VERIFY — estimated ~1.0-1.5× range</td><td><span class="badge b-warn">VERIFY</span></td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="chart-box">
+    <h3>Revenue & Profit Trajectory (HK$ Billions)</h3>
+    <div class="cn">营收和利润趋势（十亿港元）</div>
+    <div class="chart-wrap"><canvas id="chartRev"></canvas></div>
+  </div>
+
+  <p class="prose">
+    <strong>Quant screen summary:</strong> Kinetic passes 8 of 10 Graham/Buffett criteria with 2 requiring verification from the FY2025 annual report (current ratio, P/B). The balance sheet is notably strong — D/E of 0.176× with 55.7× interest coverage is <em>fortress-level</em> for a coal miner. The key caution is the FY2025 earnings collapse (50-60% decline) which inflates the trough-adjusted PE to ~20×. However, using normalized 5-year average earnings, the PE drops back to ~8-10×.
+  </p>
+</div>
+
+<!-- STEP 3 -->
+<div class="panel" id="s3">
+  <div class="sh"><div class="sh-num">03</div><div><div class="sh-title">Intrinsic Value</div><div class="sh-cn">内在价值</div></div></div>
+
+  <p class="prose">
+    Multiple valuation approaches are used to triangulate intrinsic value. For a cyclical commodity producer like Kinetic, <em>normalized earnings</em> (mid-cycle average) are more meaningful than trailing or trough earnings.
+  </p>
+
+  <div class="tbl-wrap">
+  <table>
+    <thead><tr><th>Method</th><th>Assumptions</th><th>Intrinsic Value / Share</th><th>MoS at HK$2.18</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Simply Wall St DCF</strong></td><td>Cash flow projection model</td><td>HK$6.42</td><td>66% ✓</td></tr>
+      <tr><td><strong>Alpha Spread DCF (Base)</strong></td><td>Discounted cash flow model</td><td>HK$3.23</td><td>33% ✓</td></tr>
+      <tr><td><strong>EPV (Normalized)</strong></td><td>5yr avg earnings / 10% discount</td><td>~HK$2.80–3.50 (est.)</td><td>22-38% ✓</td></tr>
+      <tr><td><strong>Trough Earnings (FY2025)</strong></td><td>Using FY2025 depressed EPS ~HK$0.10-0.14</td><td>~HK$1.50–2.10</td><td>Negative to -3% ✗</td></tr>
+      <tr><td><strong>Dividend Discount (Gordon)</strong></td><td>HK$0.13 div / 10% req return / 3% growth</td><td>~HK$1.86</td><td>Negative ✗</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="formula">
+    Triangulated Intrinsic Value Range: HK$2.80 — HK$4.80
+    <br>Central Estimate: ~HK$3.50 (normalized EPV midpoint)
+    <br>Current Price: HK$2.18 (March 27, 2026)
+    <br>Margin of Safety: ~38% at central estimate
+    <br><br>
+    Required MoS (Greenwald-adjusted): 35%
+    <br>(Base 20% + Neglect 5% + HK mid-cap 10%)
+    <br><br>
+    ✓ Current price meets the Greenwald-adjusted MoS threshold at central estimate
+    <br>✗ Does NOT meet MoS threshold using trough earnings — confirming "wait for trough confirmation"
+  </div>
+
+  <p class="prose">
+    <strong>Key insight:</strong> The valuation is <em>bifurcated</em>. Using normalized mid-cycle earnings, Kinetic is clearly undervalued with 30-65% MoS depending on the model. Using trough FY2025 earnings, it's fairly valued or slightly overvalued. This is the classic cyclical value investor's dilemma — the stock looks "expensive" at the trough because earnings are temporarily depressed, which is exactly when it's cheapest on a normalized basis. The question is whether this is a <em>cyclical trough</em> (coal prices recover, earnings rebound) or a <em>structural decline</em> (coal demand permanently impaired).
+  </p>
+</div>
+
+<!-- STEP 4 -->
+<div class="panel" id="s4">
+  <div class="sh"><div class="sh-num">04</div><div><div class="sh-title">Moat Analysis</div><div class="sh-cn">护城河分析</div></div></div>
+
+  <div class="tbl-wrap">
+  <table>
+    <thead><tr><th>Moat Source</th><th>Assessment</th><th>Score</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Cost Advantage</strong></td><td>Inner Mongolia open-pit/shallow mining = low extraction cost. Well-positioned on Shuozhou-Huanghua rail corridor. This is the primary moat — Kinetic can stay profitable at coal prices that force higher-cost competitors to shut down.</td><td><span class="badge b-pass">STRONG</span></td></tr>
+      <tr><td><strong>Resource Scarcity</strong></td><td>Government-granted mining concession for Dafanpu. 9.6 sq km exclusive area. However, coal is a depleting asset — reserve life is finite. New concessions are increasingly hard to obtain in China (environmental policy).</td><td><span class="badge b-pass">MODERATE</span></td></tr>
+      <tr><td><strong>Switching Costs</strong></td><td>Zero. Coal is a commodity. Buyers switch on price. No customer lock-in.</td><td><span class="badge b-fail">NONE</span></td></tr>
+      <tr><td><strong>Network Effects</strong></td><td>None. Not a platform business.</td><td><span class="badge b-fail">NONE</span></td></tr>
+      <tr><td><strong>Brand/Intangible</strong></td><td>Minimal. Coal is sold on spec, not brand. No pricing power beyond cost advantage.</td><td><span class="badge b-fail">NONE</span></td></tr>
+      <tr><td><strong>Regulatory Moat</strong></td><td>Government mining licenses create barriers to entry. China's consolidation of coal industry reduces competition. But regulatory risk cuts both ways — policy can also force closures.</td><td><span class="badge b-warn">MIXED</span></td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="card">
+    <h3>Moat Verdict: Narrow — Cost-Based <span class="cn">窄护城河 — 成本优势型</span></h3>
+    <p>Kinetic has a <strong>narrow moat</strong> based on cost advantage and resource access. This is typical of well-run commodity producers — the moat protects profitability at low points in the cycle but doesn't provide pricing power. The 48.7% gross margin and 37.3% net margin are unusually high for coal, confirming the low-cost position. However, the moat is <em>depleting</em> — as the mine's reserves are exhausted, the moat narrows unless new concessions are acquired. The non-core diversification (agriculture, real estate, tobacco) does not currently contribute to moat strength.</p>
+  </div>
+</div>
+
+<!-- STEP 5 -->
+<div class="panel" id="s5">
+  <div class="sh"><div class="sh-num">05</div><div><div class="sh-title">Management Quality</div><div class="sh-cn">管理层质量</div></div></div>
+
+  <div class="grid2">
+    <div class="card">
+      <h3>Alignment: 74% Insider Ownership <span class="cn">利益一致性</span></h3>
+      <p>Founder <strong>Liang Zhang</strong> holds 63% of shares outstanding. Total insider ownership is 74%. This is <em>exceptionally high alignment</em> — management's net worth is deeply tied to the stock price. Buffett's "owner-operator" ideal. They eat their own cooking. The downside: concentrated control means minority shareholders have limited influence on governance decisions.</p>
+    </div>
+    <div class="card">
+      <h3>Capital Allocation <span class="cn">资本配置</span></h3>
+      <p><strong>Positive signals:</strong> Ordinary dividends were <em>raised</em> in FY2025 despite 50-60% profit decline — signals management confidence in the business's resilience and commitment to shareholder returns. Payout ratio 31-47%. D/E improved from 26.6% to 17.6% over 5 years (paying down debt). <strong>Concerns:</strong> Non-core diversification (agriculture, tobacco, real estate) is consuming capital with RMB80-90M losses in FY2025. Related-party loans to Guizhou Liliang and property acquisitions tied to major shareholder flagged by Simply Wall St.</p>
+    </div>
+  </div>
+
+  <div class="card" style="border-color:var(--red)">
+    <h3>🚩 Governance Red Flag: Related-Party Transactions <span class="cn">关联交易红旗</span></h3>
+    <p>Simply Wall St flagged "governance heavy moves" including <strong>extending loans to Guizhou Liliang</strong> and <strong>aggregating property acquisitions tied to the major shareholder</strong>. This is a classic RF-2 (unverified cross-holdings/related-party risk) from our data discipline framework. For a company where one person controls 63%, related-party transactions are the #1 governance risk. These need detailed investigation from the annual report notes before committing capital. The question is whether these transactions are at arm's length and in minority shareholders' interest.</p>
+  </div>
+</div>
+
+<!-- STEP 6 -->
+<div class="panel" id="s6">
+  <div class="sh"><div class="sh-num">06</div><div><div class="sh-title">Risk Assessment</div><div class="sh-cn">风险评估</div></div></div>
+
+  <div class="tbl-wrap">
+  <table>
+    <thead><tr><th>Risk</th><th>Severity</th><th>Probability</th><th>Mitigation</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Coal Price Cyclicality</strong></td><td><span class="badge b-fail">HIGH</span></td><td><span class="badge b-fail">HIGH</span></td><td>Low-cost structure means profitable even at depressed prices. Currently in trough — upside skewed if prices recover.</td></tr>
+      <tr><td><strong>China Energy Transition</strong></td><td><span class="badge b-fail">HIGH</span></td><td><span class="badge b-warn">MEDIUM</span></td><td>Long-term secular headwind. But China still 60%+ coal-dependent for electricity. Transition will take decades. Short/medium-term demand stable.</td></tr>
+      <tr><td><strong>Single-Asset Concentration</strong></td><td><span class="badge b-warn">MEDIUM</span></td><td><span class="badge b-fail">HIGH</span></td><td>Dafanpu is the only significant mine. Any operational disruption (safety incident, regulatory, geological) would be material. No diversification benefit.</td></tr>
+      <tr><td><strong>Related-Party Transactions</strong></td><td><span class="badge b-warn">MEDIUM</span></td><td><span class="badge b-warn">MEDIUM</span></td><td>63% controlling shareholder could extract value from minorities. Need to verify arm's-length pricing and board independence.</td></tr>
+      <tr><td><strong>Reserve Depletion</strong></td><td><span class="badge b-warn">MEDIUM</span></td><td><span class="badge b-info">LOW</span></td><td>Coal mines have finite lives. Need to verify remaining reserve years from annual report. Non-core diversification is management's (expensive) hedge.</td></tr>
+      <tr><td><strong>Regulatory / Environmental</strong></td><td><span class="badge b-warn">MEDIUM</span></td><td><span class="badge b-warn">MEDIUM</span></td><td>China's environmental policies could force production cuts or mine closures. Zhunge'er Banner is a designated coal region, reducing this risk somewhat.</td></tr>
+      <tr><td><strong>Non-Core Losses</strong></td><td><span class="badge b-info">LOW</span></td><td><span class="badge b-fail">HIGH</span></td><td>RMB80-90M losses from agriculture/real estate/tobacco. Small relative to total earnings but signals potential capital misallocation.</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="card">
+    <h3>Risk-Adjusted Position Sizing <span class="cn">风险调整后的仓位</span></h3>
+    <p>Given the concentration risk (single asset), cyclical exposure, and related-party governance concerns, this is a <strong>half-position candidate at most</strong> — per our portfolio-management skill's guidance for high-uncertainty names. Maximum portfolio weight: 3-4%. Entry should be staged: 50% initial at target entry zone, 50% on confirmation of earnings trough or coal price recovery.</p>
+  </div>
+</div>
+
+<!-- STEP 7 -->
+<div class="panel" id="s7">
+  <div class="sh"><div class="sh-num">07</div><div><div class="sh-title">Final Verdict & Action Plan</div><div class="sh-cn">最终判定与行动计划</div></div></div>
+
+  <div class="tbl-wrap">
+  <table>
+    <thead><tr><th>Dimension</th><th>Score</th><th>Weight</th><th>Weighted</th></tr></thead>
+    <tbody>
+      <tr><td>Business Quality</td><td>6/10</td><td>20%</td><td>1.2</td></tr>
+      <tr><td>Quantitative Screen</td><td>8/10</td><td>15%</td><td>1.2</td></tr>
+      <tr><td>Intrinsic Value Gap</td><td>7/10</td><td>25%</td><td>1.75</td></tr>
+      <tr><td>Moat Durability</td><td>4/10</td><td>15%</td><td>0.6</td></tr>
+      <tr><td>Management / Governance</td><td>5/10</td><td>15%</td><td>0.75</td></tr>
+      <tr><td>Risk Profile</td><td>5/10</td><td>10%</td><td>0.5</td></tr>
+      <tr style="font-weight:700"><td>TOTAL</td><td></td><td>100%</td><td>6.0 / 10</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="grid2">
+    <div class="card" style="border-color:var(--gold)">
+      <h3>Entry Strategy <span class="cn">入场策略</span></h3>
+      <p><strong>Target Entry Zone:</strong> HK$1.00–1.20 on further coal price weakness, OR at current levels IF coal price stabilization confirmed for 2+ months. <strong>Position Size:</strong> Half position (1.5-2% of portfolio). <strong>Staging:</strong> 50% initial, 50% on earnings recovery confirmation. <strong>Stop-Loss:</strong> HK$0.80 (36% below entry midpoint — wide to accommodate coal volatility).</p>
+    </div>
+    <div class="card" style="border-color:var(--grn)">
+      <h3>Catalysts to Watch <span class="cn">催化剂观察</span></h3>
+      <p><strong>Bullish:</strong> China coal price rebound (Daqin Railway supply tightening), winter heating demand spike, new mine concession acquisition, non-core businesses reaching breakeven. <strong>Bearish:</strong> Coal price continued decline, new environmental regulations, major safety incident at Dafanpu, acceleration of non-core losses.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Before Committing Capital — Must Verify <span class="cn">投入资金前必须验证</span></h3>
+    <p>1. <strong>FY2025 annual report (released March 24)</strong> — confirm exact net profit, current ratio, book value per share, FCF, and auditor identity. 2. <strong>Related-party transaction details</strong> — read the notes; verify arm's-length terms for Guizhou Liliang loans and shareholder property deals. 3. <strong>Reserve life</strong> — how many years of coal remain at Dafanpu at current extraction rates? 4. <strong>Coal price outlook</strong> — monitor CCTD thermal coal price index for stabilization signal.</p>
+  </div>
+</div>
+
+<!-- NEGLECT SCORECARD -->
+<div class="panel" id="neglect">
+  <div class="sh"><div class="sh-num">GN</div><div><div class="sh-title">Greenwald Neglect Scorecard</div><div class="sh-cn">格林沃尔德忽视评分卡</div></div></div>
+
+  <div class="tbl-wrap">
+  <table>
+    <thead><tr><th>Signal</th><th>Detail</th><th>Score</th></tr></thead>
+    <tbody>
+      <tr><td><strong>N1</strong> Analyst Coverage</td><td>~2 analysts (Hold at HK$1.50 target). No widely available sell-side research.</td><td><span class="badge b-pass">3/3</span></td></tr>
+      <tr><td><strong>N2</strong> Institutional Ownership</td><td>74% insider; minimal institutional. No hedge fund presence. No institutions on register.</td><td><span class="badge b-pass">2/2</span></td></tr>
+      <tr><td><strong>N3</strong> Media Mentions</td><td>Minimal English-language coverage. Only 2 TipRanks articles in last 30 days (profit warning + results).</td><td><span class="badge b-pass">1/1</span></td></tr>
+      <tr><td><strong>N4</strong> Non-Index</td><td>Not in HSI, HSCEI, or any major HK index.</td><td><span class="badge b-pass">2/2</span></td></tr>
+      <tr><td><strong>N5</strong> Small/Mid Cap</td><td>MCap HK$18-21B. Just above our HK threshold of HK$40B but well below large-cap territory.</td><td><span class="badge b-warn">0/2</span></td></tr>
+      <tr><td><strong>N6</strong> Boring Industry</td><td>Coal mining. Maximum boringness score. Nobody pitches coal stocks at conferences.</td><td><span class="badge b-pass">1/1</span></td></tr>
+      <tr><td><strong>N7</strong> Situational Neglect</td><td>Cyclical trough + sector-wide abandonment. ESG mandates force institutional exit from coal.</td><td><span class="badge b-pass">2/2</span></td></tr>
+      <tr><td><strong>N8</strong> Language Barrier</td><td>Filings in Chinese. Company HQ in Ordos, Inner Mongolia. Minimal English IR.</td><td><span class="badge b-pass">2/2</span></td></tr>
+    </tbody>
+    <tfoot><tr style="font-weight:700;background:var(--bg3)"><td colspan="2">Total Neglect Score</td><td><span class="badge b-pass" style="font-size:14px">13/15</span></td></tr></tfoot>
+  </table>
+  </div>
+
+  <div class="card" style="border-color:var(--gold)">
+    <h3>Neglect Edge Assessment <span class="cn">忽视优势评估</span></h3>
+    <p><strong>13/15 = Deeply Neglected.</strong> This is one of the highest neglect scores possible. The combination of near-zero analyst coverage, no institutional ownership, ESG-driven sector abandonment, Chinese-language filings, and cyclical trough creates a <em>massive informational asymmetry</em>. Most global investors literally cannot or will not look at this stock. Your bilingual capability and willingness to analyze "boring" commodity businesses gives you a structural edge that very few market participants share. <strong>This is exactly the kind of company Greenwald's thesis was designed to find.</strong></p>
+  </div>
+
+  <div class="formula">
+    GGB Composite Score:
+    <br>Neglect:   (13/15 × 30) = 26.0
+    <br>Quality:   (7/8 × 30)   = 26.25  (assuming Q1-Q8 verified except Q7 audit)
+    <br>Valuation: (4/6 × 40)   = 26.67  (V1 trailing pass, V3, V5, V6 pass; V2 verify, V4 verify)
+    <br>
+    <br>GGB Score: 78.9 → STRONG CANDIDATE (borderline Prime)
+  </div>
+</div>
+
+</div>
+
+<div class="footer">
+  Kinetic Development Group (1277.HK) · Graham-Buffett × Greenwald Neglect Deep Value Analysis · April 2026<br>
+  ⚠ This is research, not investment advice. All data requires verification from primary filings. Past performance does not predict future results.
+</div>
+
+<script>
+document.querySelectorAll('.tab').forEach(t=>{t.addEventListener('click',()=>{document.querySelectorAll('.tab').forEach(b=>b.classList.remove('on'));document.querySelectorAll('.panel').forEach(p=>p.classList.remove('on'));t.classList.add('on');document.getElementById(t.dataset.t).classList.add('on')})});
+
+new Chart(document.getElementById('chartRev'),{type:'bar',data:{labels:['FY2020','FY2021','FY2022','FY2023 H1','FY2023 H2','FY2024 H1','FY2024 H2','FY2025 (Est.)'],datasets:[{label:'Revenue (HK$B)',data:[3.2,5.6,6.16,1.68,3.51,2.72,2.72,4.5],backgroundColor:'rgba(212,168,67,0.5)',borderColor:'#D4A843',borderWidth:1,borderRadius:3},{label:'Net Income (HK$B)',data:[1.1,2.47,2.66,1.19,1.63,1.19,1.10,1.1],backgroundColor:'rgba(52,194,122,0.5)',borderColor:'#34C27A',borderWidth:1,borderRadius:3}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#8A8FA0',font:{size:11}}}},scales:{y:{grid:{color:'rgba(37,42,56,.5)'},ticks:{color:'#8A8FA0',callback:v=>v+'B'}},x:{grid:{display:false},ticks:{color:'#8A8FA0',maxRotation:45}}}}});
+</script>
+</body>
+</html>
