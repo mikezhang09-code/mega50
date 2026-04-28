@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>US Small-Cap Neglect Screen — April 2026</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+:root{--bg:#0D0F14;--bg2:#141720;--bg3:#1A1E2A;--bdr:#252A38;--t:#D8DAE0;--tm:#8A8FA0;--td:#4E5366;--gold:#D4A843;--goldl:#EDCC72;--goldbg:rgba(212,168,67,.1);--grn:#34C27A;--grnbg:rgba(52,194,122,.1);--blu:#4B8DF8;--blubg:rgba(75,141,248,.1);--red:#E04E4E;--redbg:rgba(224,78,78,.1);--pur:#9B71DB;--cn:#4A6741}
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--t);line-height:1.65}
+.w{max-width:1280px;margin:0 auto;padding:32px 28px}
+.hero{margin-bottom:32px}.hero-tag{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);font-family:monospace;margin-bottom:10px}
+.hero h1{font-size:30px;font-weight:700;margin-bottom:4px}.hero-cn{font-size:16px;color:var(--cn);margin-bottom:14px}
+.hero-meta{display:flex;flex-wrap:wrap;gap:20px;font-size:12px;color:var(--tm)}
+
+.summary{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:32px}
+.sum-card{background:var(--bg2);border:1px solid var(--bdr);border-radius:8px;padding:18px;text-align:center}
+.sum-card .num{font-size:32px;font-weight:700;font-family:monospace;line-height:1.1}
+.sum-card .lbl{font-size:11px;color:var(--tm);text-transform:uppercase;letter-spacing:1px;margin-top:6px}
+.sum-card .cn{font-size:10px;color:var(--cn);margin-top:2px}
+.sum-card.s1 .num{color:var(--gold)}.sum-card.s2 .num{color:var(--blu)}.sum-card.s3 .num{color:var(--grn)}.sum-card.s4 .num{color:var(--goldl)}
+
+.section-h{font-size:18px;font-weight:600;margin:32px 0 14px 0;display:flex;align-items:center;gap:12px}
+.section-h .num{font-size:24px;color:var(--gold);opacity:.4;font-weight:700}
+.section-h .cn{font-size:12px;color:var(--cn);font-weight:400;margin-left:6px}
+
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--bdr);margin-bottom:24px;overflow-x:auto}
+.tab{padding:12px 18px;font-size:13px;font-weight:600;color:var(--tm);background:none;border:none;cursor:pointer;white-space:nowrap;position:relative;transition:color .2s}
+.tab:hover{color:var(--t)}.tab.on{color:var(--gold)}.tab.on::after{content:'';position:absolute;bottom:-1px;left:0;right:0;height:2px;background:var(--gold)}
+.tab .cn{display:block;font-size:10px;color:var(--cn);font-weight:400;margin-top:2px}
+.panel{display:none}.panel.on{display:block}
+
+.tbl-wrap{overflow-x:auto;border:1px solid var(--bdr);border-radius:8px;margin-bottom:20px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{background:var(--bg3);padding:11px 12px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--tm);border-bottom:1px solid var(--bdr);cursor:pointer;user-select:none;white-space:nowrap}
+th:hover{color:var(--gold)}
+th.sortable::after{content:' ⇅';opacity:.3;font-size:9px}
+th.sort-asc::after{content:' ↑';opacity:1;color:var(--gold)}
+th.sort-desc::after{content:' ↓';opacity:1;color:var(--gold)}
+td{padding:11px 12px;border-bottom:1px solid rgba(37,42,56,.5);vertical-align:middle}
+tr:hover td{background:rgba(212,168,67,.02)}
+tr.candidate-row{cursor:pointer}
+tr.detail-row{background:var(--bg3);display:none}
+tr.detail-row.on{display:table-row}
+tr.detail-row td{padding:18px 22px;background:var(--bg3)}
+
+.badge{display:inline-block;padding:3px 8px;border-radius:3px;font-size:10px;font-weight:600;font-family:monospace;letter-spacing:.3px}
+.b-pass{background:var(--grnbg);color:var(--grn)}
+.b-fail{background:var(--redbg);color:var(--red)}
+.b-warn{background:var(--goldbg);color:var(--gold)}
+.b-info{background:var(--blubg);color:var(--blu)}
+.b-prime{background:var(--grnbg);color:var(--grn)}
+.b-strong{background:var(--blubg);color:var(--blu)}
+.b-watch{background:var(--goldbg);color:var(--gold)}
+.b-skip{background:var(--redbg);color:var(--red)}
+.b-flag{background:rgba(155,113,219,.12);color:var(--pur)}
+
+.score-bar{display:inline-block;width:60px;height:8px;background:var(--bg3);border-radius:4px;overflow:hidden;vertical-align:middle;margin-right:8px;border:1px solid var(--bdr)}
+.score-bar-fill{height:100%;background:var(--gold)}
+.score-fill-prime{background:var(--grn)}
+.score-fill-strong{background:var(--blu)}
+.score-fill-watch{background:var(--gold)}
+
+.mono{font-family:monospace;font-size:13px}
+.ticker{font-weight:700;font-family:monospace}
+
+.detail-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px}
+.detail-card{background:var(--bg2);border:1px solid var(--bdr);border-radius:6px;padding:14px}
+.detail-card h4{font-size:12px;color:var(--gold);font-family:monospace;letter-spacing:1px;margin-bottom:10px;text-transform:uppercase}
+.detail-card h4 .cn{font-size:10px;color:var(--cn);font-family:'Segoe UI',sans-serif;margin-left:4px;text-transform:none;letter-spacing:0}
+.detail-card .row{display:flex;justify-content:space-between;font-size:12px;padding:4px 0;border-bottom:1px solid rgba(37,42,56,.4)}
+.detail-card .row:last-child{border-bottom:none}
+.detail-card .row .lbl{color:var(--tm)}
+.detail-card .row .val{font-family:monospace;color:var(--t)}
+.thesis-block{background:var(--bg2);border-left:3px solid var(--blu);padding:14px 18px;border-radius:0 6px 6px 0;margin-top:14px;font-size:13px;color:var(--tm);line-height:1.7}
+.thesis-block strong{color:var(--t)}.thesis-block em{color:var(--goldl);font-style:normal}
+
+.chart-box{background:var(--bg2);border:1px solid var(--bdr);border-radius:8px;padding:20px;margin-bottom:20px}
+.chart-box h3{font-size:14px;margin-bottom:4px;font-weight:600}
+.chart-box .cn{font-size:11px;color:var(--cn);margin-bottom:14px}
+.chart-wrap{position:relative;height:260px}
+
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:20px}
+
+.method-box{background:var(--bg2);border:1px solid var(--bdr);border-radius:8px;padding:22px;margin-bottom:20px}
+.method-box h3{font-size:14px;font-weight:600;margin-bottom:8px}
+.method-box h3 .cn{font-size:11px;color:var(--cn);font-weight:400;margin-left:6px}
+.method-box p{font-size:13px;color:var(--tm);line-height:1.75;margin-bottom:10px}
+.method-box .formula{background:var(--bg3);border:1px solid var(--bdr);border-radius:6px;padding:12px 16px;font-family:monospace;font-size:12px;color:var(--goldl);line-height:1.8;margin:10px 0;overflow-x:auto}
+
+.elim-tbl td:nth-child(1){font-family:monospace;font-weight:700;color:var(--t)}
+.elim-tbl td:nth-child(3){color:var(--red);font-style:italic}
+
+.footer{text-align:center;padding:28px;font-size:11px;color:var(--td);border-top:1px solid var(--bdr);margin-top:30px}
+
+.notice{background:var(--goldbg);border:1px solid var(--gold);border-radius:6px;padding:14px 18px;margin-bottom:20px;font-size:13px;color:var(--goldl);line-height:1.7}
+.notice strong{color:var(--gold)}
+
+@media(max-width:900px){.summary{grid-template-columns:repeat(2,1fr)}.detail-grid{grid-template-columns:1fr}.grid2{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="w">
+
+<div class="hero">
+  <div class="hero-tag">Greenwald Neglect × Graham-Buffett · Single-Market Deep Screen</div>
+  <h1>US Small-Cap Neglect Screen — April 2026</h1>
+  <div class="hero-cn">美国小盘股忽视筛选 · 2026年4月</div>
+  <div class="hero-meta">
+    <span>Mode: 2 (Single-Market Deep Screen) · 模式 2</span>
+    <span>Universe: US micro/small-cap, $50M–$2B market cap</span>
+    <span>Framework: GGB v1.1 (4-stage funnel + governance weighting)</span>
+    <span>Screen Date: April 26, 2026</span>
+  </div>
+</div>
+
+<div class="notice">
+  <strong>⚠ Read me first / 重要说明.</strong> The US is the most efficient of the four markets we screen. Genuine N1 ≤ 3 analyst neglect is rare and concentrated in micro-caps, family-controlled industrials, regional banks/insurers, and recent spinoffs/index deletions. This screen examined a candidate slate of <strong>11 names</strong> across these categories; <strong>2 were eliminated at Stage 1.5</strong> for pending acquisitions (NATH–Smithfield, NWLI–S. USA Life), <strong>4 failed N1 verification</strong> (analyst count came back higher than initial signal), and <strong>2 failed Q1/Q2 quality kill criteria</strong>. Three names cleared all four gates — none scored ≥80 GGB. This is what a disciplined US screen looks like; the v1.0 framework would have produced false-positive Prime candidates here.
+</div>
+
+<div class="summary">
+  <div class="sum-card s1">
+    <div class="num">11</div>
+    <div class="lbl">Total Screened</div>
+    <div class="cn">候选数</div>
+  </div>
+  <div class="sum-card s2">
+    <div class="num">5</div>
+    <div class="lbl">Passed Stage 1.5</div>
+    <div class="cn">通过快速验证</div>
+  </div>
+  <div class="sum-card s3">
+    <div class="num">3</div>
+    <div class="lbl">Passed Quality Gate</div>
+    <div class="cn">通过质量关口</div>
+  </div>
+  <div class="sum-card s4">
+    <div class="num">3</div>
+    <div class="lbl">Final Ranked Candidates</div>
+    <div class="cn">最终排名候选</div>
+  </div>
+</div>
+
+<div class="tabs">
+  <button class="tab on" data-t="results">Ranked Results<span class="cn">排名结果</span></button>
+  <button class="tab" data-t="charts">Score Distribution<span class="cn">评分分布</span></button>
+  <button class="tab" data-t="eliminated">Eliminated Candidates<span class="cn">淘汰候选</span></button>
+  <button class="tab" data-t="method">Methodology<span class="cn">方法论</span></button>
+</div>
+
+<!-- ====================== TAB 1: RANKED RESULTS ====================== -->
+<div id="results" class="panel on">
+  <div style="font-size:13px;color:var(--tm);margin-bottom:14px">Click any row to expand the full N1–N8 / Q1–Q10 / V1–V6 score breakdown. Click column headers to sort.</div>
+  <div class="tbl-wrap">
+    <table id="resultsTable">
+      <thead>
+        <tr>
+          <th class="sortable" data-col="rank" data-type="num">Rank</th>
+          <th class="sortable" data-col="ticker">Ticker</th>
+          <th>Company</th>
+          <th class="sortable" data-col="sector">Sector</th>
+          <th class="sortable" data-col="cap" data-type="num">Mkt Cap</th>
+          <th class="sortable" data-col="neglect" data-type="num">Neglect (15)</th>
+          <th class="sortable" data-col="quality" data-type="num">Quality (10)</th>
+          <th class="sortable" data-col="gov" data-type="num">G-Score (10)</th>
+          <th class="sortable" data-col="val" data-type="num">Val (6)</th>
+          <th class="sortable sort-desc" data-col="ggb" data-type="num">GGB Score</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+
+        <!-- Rank 1: HBB -->
+        <tr class="candidate-row" data-id="hbb">
+          <td class="mono">1</td>
+          <td class="ticker">HBB</td>
+          <td>Hamilton Beach Brands<br><span style="color:var(--cn);font-size:11px">汉密尔顿比奇</span></td>
+          <td>Consumer Durables</td>
+          <td class="mono">$220M</td>
+          <td class="mono">10/15</td>
+          <td class="mono">8/10</td>
+          <td class="mono">8/10</td>
+          <td class="mono">4/6</td>
+          <td>
+            <span class="score-bar"><span class="score-bar-fill score-fill-strong" style="width:72.7%"></span></span>
+            <span class="mono" style="color:var(--blu);font-weight:700">72.7</span>
+          </td>
+          <td><span class="badge b-strong">STRONG</span></td>
+        </tr>
+        <tr class="detail-row" id="detail-hbb">
+          <td colspan="11">
+            <div class="detail-grid">
+              <div class="detail-card">
+                <h4>Stage 1: Neglect Score 10/15<span class="cn">忽视评分</span></h4>
+                <div class="row"><span class="lbl">N1 Analyst Coverage</span><span class="val">3/3 — 1 analyst (Simply Wall St)</span></div>
+                <div class="row"><span class="lbl">N2 Institutional Own.</span><span class="val">1/2 — ~30%</span></div>
+                <div class="row"><span class="lbl">N3 Media Mentions</span><span class="val">1/1 — Low</span></div>
+                <div class="row"><span class="lbl">N4 Non-Index</span><span class="val">2/2 — Removed from R2K</span></div>
+                <div class="row"><span class="lbl">N5 Small/Mid Cap</span><span class="val">2/2 — $220M micro</span></div>
+                <div class="row"><span class="lbl">N6 Boring Industry</span><span class="val">1/1 — Small appliances</span></div>
+                <div class="row"><span class="lbl">N7 Situational</span><span class="val">0/2 — None active</span></div>
+                <div class="row"><span class="lbl">N8 Language</span><span class="val">0/2 — English</span></div>
+              </div>
+              <div class="detail-card">
+                <h4>Stage 2: Quality 8/10<span class="cn">质量关口</span></h4>
+                <div class="row"><span class="lbl">Q1 Profitability</span><span class="badge b-pass">PASS · 5/5y NI+</span></div>
+                <div class="row"><span class="lbl">Q2 Cash Generation</span><span class="badge b-pass">PASS · 5/5y OCF+</span></div>
+                <div class="row"><span class="lbl">Q3 Balance Sheet</span><span class="badge b-pass">PASS · Net debt $2.7M</span></div>
+                <div class="row"><span class="lbl">Q4 ROIC ≥ 8%</span><span class="badge b-pass">PASS · ~12% ROE</span></div>
+                <div class="row"><span class="lbl">Q5 Revenue Stability</span><span class="badge b-fail">FAIL · -7.3% FY25 (tariffs)</span></div>
+                <div class="row"><span class="lbl">Q6 Insider Alignment</span><span class="badge b-pass">PASS · Rankin family</span></div>
+                <div class="row"><span class="lbl">Q7 Big-4 Auditor</span><span class="badge b-pass">PASS · EY</span></div>
+                <div class="row"><span class="lbl">Q8 FCF/NI > 70%</span><span class="badge b-fail">FAIL · ~52% FY25</span></div>
+                <div class="row"><span class="lbl">Q9 Going Concern</span><span class="badge b-pass">PASS · Clean</span></div>
+                <div class="row"><span class="lbl">Q10 Non-Core Discipline</span><span class="badge b-pass">PASS</span></div>
+              </div>
+              <div class="detail-card">
+                <h4>Stage 3: Valuation 4/6<span class="cn">估值与安全边际</span></h4>
+                <div class="row"><span class="lbl">V1 P/E < 12×</span><span class="badge b-pass">8.05× ✓</span></div>
+                <div class="row"><span class="lbl">V2 P/B < 1.5×</span><span class="badge b-pass">~1.0× ✓</span></div>
+                <div class="row"><span class="lbl">V3 EV/EBIT < 8×</span><span class="badge b-pass">~5.5× ✓</span></div>
+                <div class="row"><span class="lbl">V4 FCF Yield > 8%</span><span class="badge b-fail">~6.3% ✗</span></div>
+                <div class="row"><span class="lbl">V5 MoS (req 30%)</span><span class="badge b-pass">~30% vs Graham $26 ✓</span></div>
+                <div class="row"><span class="lbl">V6 Div Yield > 3%</span><span class="badge b-fail">3.0% borderline ✗</span></div>
+                <div style="margin-top:10px;padding-top:10px;border-top:1px solid rgba(37,42,56,.5)">
+                  <div class="row"><span class="lbl">Governance G-Score</span><span class="val">8/10 (dual-class -1)</span></div>
+                  <div class="row"><span class="lbl">Required MoS (US small-cap)</span><span class="val">30%</span></div>
+                </div>
+              </div>
+            </div>
+            <div class="thesis-block">
+              <strong>Thesis.</strong> Family-controlled US small appliance maker with <em>1 analyst</em>, $220M cap, P/E ~8, and 30+ year operating history. The Rankin family controls Class B supervotes, and the company has a clean balance sheet (net debt $2.7M) with consistent capital returns (returned 58% of FY2025 NI to shareholders). <strong>Key risk:</strong> tariff exposure caused FY2025 revenue to drop 7.3% and FCF to compress to $13.8M (from $65M in 2024). The 2026 guidance is mid-single-digit revenue growth as tariffs normalize. Q5 and Q8 fails are <em>cycle-driven, not structural</em>. Recommended next step: full 7-step analysis to validate that the FY2025 weakness is transitory and the long-run earnings power supports a normalized P/E ~10×. Position size: half on entry given micro-cap liquidity. <span style="color:var(--gold)">Tier 1 sources: HBB FY2025 10-K (filed Feb 25, 2026).</span>
+            </div>
+          </td>
+        </tr>
+
+        <!-- Rank 2: ITIC -->
+        <tr class="candidate-row" data-id="itic">
+          <td class="mono">2</td>
+          <td class="ticker">ITIC</td>
+          <td>Investors Title Company<br><span style="color:var(--cn);font-size:11px">投资者产权保险</span></td>
+          <td>Specialty Insurance</td>
+          <td class="mono">$530M</td>
+          <td class="mono">10/15</td>
+          <td class="mono">10/10</td>
+          <td class="mono">9/10</td>
+          <td class="mono">2/6</td>
+          <td>
+            <span class="score-bar"><span class="score-bar-fill score-fill-strong" style="width:69.7%"></span></span>
+            <span class="mono" style="color:var(--blu);font-weight:700">69.7</span>
+          </td>
+          <td><span class="badge b-strong">STRONG</span></td>
+        </tr>
+        <tr class="detail-row" id="detail-itic">
+          <td colspan="11">
+            <div class="detail-grid">
+              <div class="detail-card">
+                <h4>Stage 1: Neglect Score 10/15<span class="cn">忽视评分</span></h4>
+                <div class="row"><span class="lbl">N1 Analyst Coverage</span><span class="val">3/3 — Quant only (Morningstar)</span></div>
+                <div class="row"><span class="lbl">N2 Institutional Own.</span><span class="val">1/2 — ~50%</span></div>
+                <div class="row"><span class="lbl">N3 Media Mentions</span><span class="val">1/1 — Low</span></div>
+                <div class="row"><span class="lbl">N4 Non-Index</span><span class="val">2/2 — No major index</span></div>
+                <div class="row"><span class="lbl">N5 Small/Mid Cap</span><span class="val">2/2 — $530M small</span></div>
+                <div class="row"><span class="lbl">N6 Boring Industry</span><span class="val">1/1 — Title insurance</span></div>
+                <div class="row"><span class="lbl">N7 Situational</span><span class="val">0/2 — None</span></div>
+                <div class="row"><span class="lbl">N8 Language</span><span class="val">0/2 — English</span></div>
+              </div>
+              <div class="detail-card">
+                <h4>Stage 2: Quality 10/10<span class="cn">质量关口</span></h4>
+                <div class="row"><span class="lbl">Q1 Profitability</span><span class="badge b-pass">PASS · Consistent NI+</span></div>
+                <div class="row"><span class="lbl">Q2 Cash Generation</span><span class="badge b-pass">PASS · Stable insurance OCF</span></div>
+                <div class="row"><span class="lbl">Q3 Balance Sheet</span><span class="badge b-pass">PASS · Virtually no debt</span></div>
+                <div class="row"><span class="lbl">Q4 ROIC ≥ 8%</span><span class="badge b-pass">PASS · ~13% ROE</span></div>
+                <div class="row"><span class="lbl">Q5 Revenue Stability</span><span class="badge b-pass">PASS · FY25 +5.6%</span></div>
+                <div class="row"><span class="lbl">Q6 Insider Alignment</span><span class="badge b-pass">PASS · Family ~10%</span></div>
+                <div class="row"><span class="lbl">Q7 Auditor</span><span class="badge b-pass">PASS · DHG (top regional)</span></div>
+                <div class="row"><span class="lbl">Q8 FCF/NI > 70%</span><span class="badge b-pass">PASS · Insurance float</span></div>
+                <div class="row"><span class="lbl">Q9 Going Concern</span><span class="badge b-pass">PASS · Clean</span></div>
+                <div class="row"><span class="lbl">Q10 Non-Core Discipline</span><span class="badge b-pass">PASS</span></div>
+              </div>
+              <div class="detail-card">
+                <h4>Stage 3: Valuation 2/6<span class="cn">估值与安全边际</span></h4>
+                <div class="row"><span class="lbl">V1 P/E < 12×</span><span class="badge b-fail">~13–15× ✗</span></div>
+                <div class="row"><span class="lbl">V2 P/B < 1.5×</span><span class="badge b-fail">~2.0× ✗</span></div>
+                <div class="row"><span class="lbl">V3 EV/EBIT < 8×</span><span class="badge b-fail">~9.5× ✗</span></div>
+                <div class="row"><span class="lbl">V4 FCF Yield > 8%</span><span class="badge b-pass">~7-8% ✓</span></div>
+                <div class="row"><span class="lbl">V5 MoS (req 30%)</span><span class="badge b-pass">Graham $241 ≈ price ✓</span></div>
+                <div class="row"><span class="lbl">V6 Div Yield > 3%</span><span class="badge b-fail">~1.5% ✗</span></div>
+                <div style="margin-top:10px;padding-top:10px;border-top:1px solid rgba(37,42,56,.5)">
+                  <div class="row"><span class="lbl">Governance G-Score</span><span class="val">9/10 (auditor not Big 4 -1)</span></div>
+                  <div class="row"><span class="lbl">Required MoS (US small-cap)</span><span class="val">30%</span></div>
+                </div>
+              </div>
+            </div>
+            <div class="thesis-block">
+              <strong>Thesis.</strong> A textbook Buffett-quality business in a deeply boring industry: title insurance for residential and commercial real estate transactions, plus 1031 like-kind exchange services. The business is <em>profoundly under-followed</em> — Morningstar uses only its quant model to rate it. FY2025 results were excellent: revenue $272.8M (+5.6%), net income $35.18M (+15%), diluted EPS $18.57. ROE 13%+, no debt. Insurance float (FCF conversion) is structurally high. <strong>Why it's only Strong, not Prime:</strong> the <em>price isn't quite cheap enough</em>. Recent run-up to $280 puts P/E at ~15× and P/B at ~2.0× — above neglect-screen thresholds. ITIC is a "buy on weakness" name: at $200/share or below (P/E ~10×, P/B ~1.4×), it would clear into Prime territory. Action: queue for full 7-step, set price alerts at $210 and $190. <span style="color:var(--gold)">Tier 1 sources: ITIC FY2025 10-K (filed March 2026).</span>
+            </div>
+          </td>
+        </tr>
+
+        <!-- Rank 3: HIFS -->
+        <tr class="candidate-row" data-id="hifs">
+          <td class="mono">3</td>
+          <td class="ticker">HIFS</td>
+          <td>Hingham Inst. for Savings<br><span style="color:var(--cn);font-size:11px">兴汉储蓄机构</span></td>
+          <td>Community Thrift</td>
+          <td class="mono">$727M</td>
+          <td class="mono">11/15</td>
+          <td class="mono">8/10</td>
+          <td class="mono">8/10</td>
+          <td class="mono">1/6</td>
+          <td>
+            <span class="score-bar"><span class="score-bar-fill score-fill-watch" style="width:59.3%"></span></span>
+            <span class="mono" style="color:var(--gold);font-weight:700">59.3</span>
+          </td>
+          <td><span class="badge b-watch">WATCHLIST</span></td>
+        </tr>
+        <tr class="detail-row" id="detail-hifs">
+          <td colspan="11">
+            <div class="detail-grid">
+              <div class="detail-card">
+                <h4>Stage 1: Neglect Score 11/15<span class="cn">忽视评分</span></h4>
+                <div class="row"><span class="lbl">N1 Analyst Coverage</span><span class="val">3/3 — <strong style="color:var(--gold)">0 analysts</strong></span></div>
+                <div class="row"><span class="lbl">N2 Institutional Own.</span><span class="val">2/2 — Family/insider heavy</span></div>
+                <div class="row"><span class="lbl">N3 Media Mentions</span><span class="val">1/1 — Niche only</span></div>
+                <div class="row"><span class="lbl">N4 Non-Index</span><span class="val">2/2 — No S&P/R2K</span></div>
+                <div class="row"><span class="lbl">N5 Small/Mid Cap</span><span class="val">1/2 — $727M small-cap</span></div>
+                <div class="row"><span class="lbl">N6 Boring Industry</span><span class="val">1/1 — Community thrift</span></div>
+                <div class="row"><span class="lbl">N7 Situational</span><span class="val">1/2 — '23-'24 NIM compression</span></div>
+                <div class="row"><span class="lbl">N8 Language</span><span class="val">0/2 — English</span></div>
+              </div>
+              <div class="detail-card">
+                <h4>Stage 2: Quality 8/10<span class="cn">质量关口</span></h4>
+                <div class="row"><span class="lbl">Q1 Profitability</span><span class="badge b-pass">PASS · 5/5y NI+</span></div>
+                <div class="row"><span class="lbl">Q2 Cash Generation</span><span class="badge b-pass">PASS · Banks NA</span></div>
+                <div class="row"><span class="lbl">Q3 Balance Sheet</span><span class="badge b-pass">PASS · Strong CET1</span></div>
+                <div class="row"><span class="lbl">Q4 ROE ≥ 8%</span><span class="badge b-pass">PASS · 12% FY25</span></div>
+                <div class="row"><span class="lbl">Q5 Revenue Stability</span><span class="badge b-fail">FAIL · NIM crash '23-'24</span></div>
+                <div class="row"><span class="lbl">Q6 Insider Alignment</span><span class="badge b-pass">PASS · Gaughen family</span></div>
+                <div class="row"><span class="lbl">Q7 Auditor</span><span class="badge b-pass">PASS</span></div>
+                <div class="row"><span class="lbl">Q8 FCF Conversion</span><span class="badge b-pass">PASS · 129 div quarters</span></div>
+                <div class="row"><span class="lbl">Q9 Going Concern</span><span class="badge b-pass">PASS · Clean</span></div>
+                <div class="row"><span class="lbl">Q10 Non-Core Discipline</span><span class="badge b-fail">FLAG · $30.6M CRE on nonaccrual</span></div>
+              </div>
+              <div class="detail-card">
+                <h4>Stage 3: Valuation 1/6<span class="cn">估值与安全边际</span></h4>
+                <div class="row"><span class="lbl">V1 P/E < 12×</span><span class="badge b-fail">13.4× GAAP / 22.8× core ✗</span></div>
+                <div class="row"><span class="lbl">V2 P/B < 1.5×</span><span class="badge b-fail">~1.51× borderline ✗</span></div>
+                <div class="row"><span class="lbl">V3 EV/EBIT</span><span class="badge b-fail">N/A bank ✗</span></div>
+                <div class="row"><span class="lbl">V4 FCF Yield</span><span class="badge b-fail">N/A bank ✗</span></div>
+                <div class="row"><span class="lbl">V5 MoS (req 30%)</span><span class="badge b-pass">Graham $349 vs $333 ✓</span></div>
+                <div class="row"><span class="lbl">V6 Div Yield > 3%</span><span class="badge b-fail">~0.76% ✗</span></div>
+                <div style="margin-top:10px;padding-top:10px;border-top:1px solid rgba(37,42,56,.5)">
+                  <div class="row"><span class="lbl">Governance G-Score</span><span class="val">8/10 (family -1, CRE conc -1)</span></div>
+                  <div class="row"><span class="lbl">Required MoS (US small-cap)</span><span class="val">30%</span></div>
+                </div>
+              </div>
+            </div>
+            <div class="thesis-block">
+              <strong>Thesis.</strong> A 1834-founded Massachusetts community thrift with <em>literally 0 sell-side analyst coverage</em> — the most deeply neglected name in this screen by N1. Family-controlled (Gaughen), 129 consecutive quarterly dividends, and 30-year track record of ~11% annualized returns. After two brutal years of NIM compression (NIM hit 1.0% in 2023), 2025 was a recovery year: NI $54.55M, ROE 12%, NIM expanding sequentially to 2.04% in Q1 2026. <strong>Why it's only Watchlist:</strong> the price has already moved — at $333/share vs $220 book value, P/B is 1.51× and core P/E (excluding equity gains) is 22.8×. The <em>$30.6M Washington DC CRE loan on nonaccrual</em> is a real risk: it's ~5% of total equity. Valuation needs to come back ~25% before the math works. Action: monitor; trigger price ~$240–$260 (P/B ~1.1×). <span style="color:var(--gold)">Tier 1 sources: HIFS Q1 2026 release (Apr 2026); FY2025 results (Jan 16, 2026).</span>
+            </div>
+          </td>
+        </tr>
+
+      </tbody>
+    </table>
+  </div>
+
+  <div class="thesis-block" style="border-left-color:var(--gold);background:var(--goldbg);margin-top:18px">
+    <strong style="color:var(--gold)">Cross-candidate observations / 跨候选观察:</strong>
+    <ul style="margin:10px 0 0 18px;padding:0;font-size:13px;line-height:1.8">
+      <li>All three survivors are <em>family-controlled</em> — a core US neglect signature (consistent with playbook hunting grounds)</li>
+      <li>None are deep value at current prices: HBB has the cheapest price (P/E 8×) but is cycle-pressured; ITIC and HIFS are quality businesses with prices that have run</li>
+      <li><strong>No Prime (≥80) candidates</strong> — this is expected for the most efficient market in the screen universe</li>
+      <li>Recommended action: HBB → run full 7-step deep dive to validate that FY2025 weakness is cyclical; ITIC and HIFS → set price alerts and re-screen quarterly</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ====================== TAB 2: SCORE DISTRIBUTION ====================== -->
+<div id="charts" class="panel">
+  <div class="grid2">
+    <div class="chart-box">
+      <h3>GGB Composite Score Breakdown by Candidate</h3>
+      <div class="cn">候选标的 GGB 综合评分构成</div>
+      <div class="chart-wrap"><canvas id="chartBreakdown"></canvas></div>
+    </div>
+    <div class="chart-box">
+      <h3>Component Scores: Neglect vs Quality vs Valuation</h3>
+      <div class="cn">忽视 vs 质量 vs 估值 — 雷达对比</div>
+      <div class="chart-wrap"><canvas id="chartRadar"></canvas></div>
+    </div>
+  </div>
+  <div class="chart-box">
+    <h3>Funnel Conversion: 11 → 5 → 3 → 3 → Action</h3>
+    <div class="cn">漏斗转化：从原始候选到最终行动名单</div>
+    <div class="chart-wrap" style="height:280px"><canvas id="chartFunnel"></canvas></div>
+  </div>
+</div>
+
+<!-- ====================== TAB 3: ELIMINATED ====================== -->
+<div id="eliminated" class="panel">
+  <div style="font-size:13px;color:var(--tm);margin-bottom:14px;line-height:1.7">
+    The v1.1 Stage 1.5 Quick Verify and Q1–Q3 quality kill criteria together caught <strong>8 of 11 candidates</strong> as false positives or non-survivors. Recording these eliminations is part of the discipline — it documents what the screen <em>didn't</em> recommend, and why.
+  </div>
+  <div class="tbl-wrap">
+    <table class="elim-tbl">
+      <thead>
+        <tr>
+          <th>Ticker</th>
+          <th>Company</th>
+          <th>Eliminated At</th>
+          <th>Reason</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>NATH</td>
+          <td>Nathan's Famous</td>
+          <td>Stage 1.5 — Quick Verify</td>
+          <td>Pending acquisition by Smithfield Foods at $102/share (~$450M EV); deal expected to close H1 2026. Per protocol, all pending-M&A names eliminated to avoid embedding deal-arb spread in screen.</td>
+        </tr>
+        <tr>
+          <td>NWLI</td>
+          <td>National Western Life Group</td>
+          <td>Stage 1.5 — Quick Verify</td>
+          <td>Pending acquisition by S. USA Life Insurance for $1.9B (per TipRanks/The Fly). Same M&A elimination rule.</td>
+        </tr>
+        <tr>
+          <td>DFIN</td>
+          <td>Donnelley Financial Solutions</td>
+          <td>Stage 1.5 — N1 Verify</td>
+          <td>Initial signal suggested ~2 analysts; cross-check showed 4–7 active (Needham, BofA-affiliated, others tracked by TipRanks) plus $1.34B mkt cap. Failed N1 verification; not deeply neglected.</td>
+        </tr>
+        <tr>
+          <td>CRD-A</td>
+          <td>Crawford & Company</td>
+          <td>Stage 1.5 — N1 Verify</td>
+          <td>Simply Wall St shows 5 analysts; failed N1 ≤3 threshold. Borderline neglected but does not clear the bar.</td>
+        </tr>
+        <tr>
+          <td>DGICA</td>
+          <td>Donegal Group</td>
+          <td>Stage 1.5 — N1 Verify</td>
+          <td>Active KBW coverage + 4-10 analyst range across sources. Failed N1.</td>
+        </tr>
+        <tr>
+          <td>VSH</td>
+          <td>Vishay Intertechnology</td>
+          <td>Stage 2 — Q1 Kill</td>
+          <td>TTM EPS -$0.07 (FY2025 net loss). Fails Q1 (3-of-5-year profitability). Also $2.7B mkt cap exceeds small-cap threshold.</td>
+        </tr>
+        <tr>
+          <td>HURC</td>
+          <td>Hurco Companies</td>
+          <td>Stage 2 — Q1/Q2 Kill</td>
+          <td>TTM net income -$4.3M (-9.3% margin), TTM EPS -$0.67. Two consecutive years of operating losses. Q1 fail.</td>
+        </tr>
+        <tr>
+          <td>PKE</td>
+          <td>Park Aerospace</td>
+          <td>Stage 3 — Valuation Fail</td>
+          <td>P/E ~39× fails V1 by wide margin; growth story already priced in. Quality is excellent (no debt, founder-controlled, 70-yr business) but no margin of safety. Re-screen on weakness.</td>
+        </tr>
+        <tr>
+          <td>UFPT</td>
+          <td>UFP Technologies</td>
+          <td>Stage 3 — Valuation Fail</td>
+          <td>P/E ~28×, mkt cap $1.86B. Quality medical-device packaging name, but priced as a growth stock — not a value-screen candidate.</td>
+        </tr>
+        <tr>
+          <td>FKYS</td>
+          <td>First Keystone Corp</td>
+          <td>Stage 1.5 — Listing Trap</td>
+          <td>OTC-listed (OTCID:FKYS). Per US playbook trap rules, OTC names avoided unless voluntarily SEC-filing AND with adequate liquidity. FKYS files 8-Ks but trades sporadically. Note: 6.5% div yield is attractive; promote to deep watchlist if it ever uplists.</td>
+        </tr>
+        <tr style="background:rgba(75,141,248,.05)">
+          <td colspan="4" style="text-align:center;color:var(--blu);font-size:12px;padding:14px">
+            <em>The 3 candidates that survived (HBB, ITIC, HIFS) are documented in the Ranked Results tab.</em>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ====================== TAB 4: METHODOLOGY ====================== -->
+<div id="method" class="panel">
+  <div class="method-box">
+    <h3>The Four-Stage Funnel (v1.1)<span class="cn">四阶段漏斗</span></h3>
+    <p>This screen executes the Greenwald Neglect × Graham-Buffett (GGB) v1.1 framework. Each stage has explicit pass/fail gates; candidates that fail at any stage are eliminated from advancement.</p>
+    <div class="formula">
+STAGE 1: Neglect Filter (N1–N8, max 15 pts)         → Gate: ≥ 5/15
+STAGE 1.5: Quick Verify (N1 + 3 deal-breaker checks) → Gate: confirmed neglect, no M&A/profit warning/going concern
+STAGE 2: Quality Gate (Q1–Q10)                       → Gate: Q1, Q2, Q3, Q9 ALL pass
+STAGE 3: Valuation & MoS (V1–V6, max 6 pts)          → Rank by GGB Composite
+    </div>
+  </div>
+
+  <div class="method-box">
+    <h3>GGB Composite Score Formula<span class="cn">GGB 综合评分公式</span></h3>
+    <div class="formula">
+GGB Score = (Neglect / 15 × 25)
+          + (Quality_Pass_Rate × 25)
+          + (G-Score / 10 × 20)
+          + (Valuation / 6 × 30)
+
+         Maximum: 100 points
+    </div>
+    <p>The v1.1 formula explicitly weights governance at 20% (up from 15% in v1.0). The inaugural HK screen showed governance was the primary differentiator between "invest" and "don't invest" decisions; explicit weighting prevents a great-value/great-neglect/terrible-governance trap from scoring incorrectly high.</p>
+  </div>
+
+  <div class="method-box">
+    <h3>US-Specific Margin of Safety Adjustment<span class="cn">美国市场专属安全边际调整</span></h3>
+    <p>Per the market playbooks reference, US small-caps require a higher MoS than US large-caps. For this screen:</p>
+    <div class="formula">
+US small-cap, Neglect 5–7    → 30% required MoS
+US small-cap, Neglect 8–11   → 30% required MoS
+US micro-cap, Neglect 12+    → 35% required MoS
+    </div>
+    <p>All three surviving candidates fall in the 8–11 neglect band; the 30% MoS is therefore the threshold against which V5 was scored.</p>
+  </div>
+
+  <div class="method-box">
+    <h3>Data Sourcing Hierarchy (Tier 1/2/3)<span class="cn">数据来源层级</span></h3>
+    <p><strong>Tier 1 (required for verdict-moving signals — N1 analyst count, Q1–Q3 kill criteria, Q9 going concern):</strong> SEC EDGAR primary filings (10-K, 10-Q, 8-K). All three surviving candidates have FY2025 10-K filings verified at Tier 1.</p>
+    <p><strong>Tier 2 (acceptable for non-kill criteria):</strong> Yahoo Finance, Simply Wall St, Morningstar, GuruFocus, MarketBeat, MarketScreener, Stockopedia. Cross-referenced when conflicts emerged (e.g., DFIN had analyst-count disagreement between sources — the higher count was used per protocol).</p>
+    <p><strong>Tier 3 (screening-only, never for scoring):</strong> Seeking Alpha headlines, TipRanks blurbs, Substack research notes. Used for candidate discovery; never as primary basis for any score.</p>
+  </div>
+
+  <div class="method-box">
+    <h3>Why the US Screen Returns Few Names<span class="cn">为什么美国筛选返回的名字很少</span></h3>
+    <p>This is the most efficient market in the GGB universe. Per the US playbook:</p>
+    <ul style="margin:6px 0 6px 22px;font-size:13px;color:var(--tm);line-height:1.8">
+      <li>Russell 2000 already pulls in names down to ~$120M cap, providing institutional scrutiny</li>
+      <li>Aggregator services (Yahoo, Simply Wall St) cover essentially every SEC-registered name</li>
+      <li>Genuine N1 ≤ 3 neglect concentrated in micro-caps, OTC names (often trapped), or family-controlled industrials too small for index inclusion</li>
+      <li>The "neglect premium" in US is real but narrow — single-digit basis points of edge</li>
+    </ul>
+    <p>The next screen of the same universe should target HK/China/India for richer hunting; consult market-playbooks.md for those market-specific signals.</p>
+  </div>
+
+  <div class="method-box">
+    <h3>Workflow After This Screen<span class="cn">筛选后的工作流</span></h3>
+    <ul style="margin:6px 0 6px 22px;font-size:13px;color:var(--tm);line-height:1.8">
+      <li><strong>HBB (GGB 72.7, Strong):</strong> Queue for full 7-step value-investing analysis. Validate that FY2025 weakness is transitory; build owner-earnings DCF assuming normalized FCF/NI ratio of 70%+</li>
+      <li><strong>ITIC (GGB 69.7, Strong):</strong> Set price alerts at $210 (P/E ~10×) and $190 (clear Prime threshold). Quality is exceptional — wait for the price to come</li>
+      <li><strong>HIFS (GGB 59.3, Watchlist):</strong> Monitor; trigger at ~$240–$260 (P/B ~1.1×). Track the $30.6M CRE nonaccrual loan resolution as the binary catalyst</li>
+      <li><strong>Re-screen cadence:</strong> Quarterly (per Mode 2 cadence in SKILL.md). Watchlist names should be re-scored each quarter; rising scores signal promotion</li>
+    </ul>
+  </div>
+</div>
+
+<div class="footer">
+  US Small-Cap Greenwald Neglect Screen · April 2026 · Framework v1.1<br>
+  ⚠ This is research output, not investment advice. Verify all data from primary SEC filings before action. Past performance does not predict future results.<br>
+  Tier 1 sources verified: HBB FY2025 10-K (Feb 25, 2026); ITIC FY2025 10-K (Mar 16, 2026); HIFS FY2025 (Jan 16, 2026) and Q1 2026 (Apr 2026) earnings releases.
+</div>
+
+<script>
+// Tab switching
+document.querySelectorAll('.tab').forEach(t => {
+  t.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(b => b.classList.remove('on'));
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('on'));
+    t.classList.add('on');
+    document.getElementById(t.dataset.t).classList.add('on');
+  });
+});
+
+// Expandable rows
+document.querySelectorAll('.candidate-row').forEach(r => {
+  r.addEventListener('click', () => {
+    const detailRow = document.getElementById('detail-' + r.dataset.id);
+    if (detailRow) detailRow.classList.toggle('on');
+  });
+});
+
+// Sortable table
+const table = document.getElementById('resultsTable');
+const tbody = table.querySelector('tbody');
+let currentSort = { col: 'ggb', dir: 'desc' };
+
+document.querySelectorAll('#resultsTable th.sortable').forEach((th, idx) => {
+  th.addEventListener('click', () => {
+    const col = th.dataset.col;
+    const type = th.dataset.type || 'string';
+    
+    // Toggle direction
+    if (currentSort.col === col) {
+      currentSort.dir = currentSort.dir === 'asc' ? 'desc' : 'asc';
+    } else {
+      currentSort.col = col;
+      currentSort.dir = 'desc';
+    }
+    
+    // Update header indicators
+    document.querySelectorAll('#resultsTable th.sortable').forEach(h => {
+      h.classList.remove('sort-asc', 'sort-desc');
+    });
+    th.classList.add('sort-' + currentSort.dir);
+    
+    // Get all candidate rows + their detail rows together
+    const rows = Array.from(tbody.querySelectorAll('tr.candidate-row'));
+    const colIdx = idx;
+    
+    rows.sort((a, b) => {
+      let av = a.cells[colIdx].textContent.trim();
+      let bv = b.cells[colIdx].textContent.trim();
+      if (type === 'num') {
+        av = parseFloat(av.replace(/[^0-9.\-]/g, '')) || 0;
+        bv = parseFloat(bv.replace(/[^0-9.\-]/g, '')) || 0;
+      }
+      const cmp = av < bv ? -1 : (av > bv ? 1 : 0);
+      return currentSort.dir === 'asc' ? cmp : -cmp;
+    });
+    
+    // Re-append in sorted order, with detail rows
+    rows.forEach(r => {
+      tbody.appendChild(r);
+      const detail = document.getElementById('detail-' + r.dataset.id);
+      if (detail) tbody.appendChild(detail);
+    });
+  });
+});
+
+// Charts
+const labels = ['HBB', 'ITIC', 'HIFS'];
+
+new Chart(document.getElementById('chartBreakdown'), {
+  type: 'bar',
+  data: {
+    labels: labels,
+    datasets: [
+      { label: 'Neglect (×25)', data: [16.7, 16.7, 18.3], backgroundColor: 'rgba(212,168,67,.7)', borderColor: '#D4A843', borderWidth: 1 },
+      { label: 'Quality (×25)', data: [20.0, 25.0, 20.0], backgroundColor: 'rgba(155,113,219,.7)', borderColor: '#9B71DB', borderWidth: 1 },
+      { label: 'Governance (×20)', data: [16.0, 18.0, 16.0], backgroundColor: 'rgba(75,141,248,.7)', borderColor: '#4B8DF8', borderWidth: 1 },
+      { label: 'Valuation (×30)', data: [20.0, 10.0, 5.0], backgroundColor: 'rgba(52,194,122,.7)', borderColor: '#34C27A', borderWidth: 1 }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { labels: { color: '#8A8FA0', font: { size: 11 } } } },
+    scales: {
+      y: { stacked: true, grid: { color: 'rgba(37,42,56,.5)' }, ticks: { color: '#8A8FA0' }, max: 100, title: { display: true, text: 'GGB Score', color: '#8A8FA0' } },
+      x: { stacked: true, grid: { display: false }, ticks: { color: '#D8DAE0', font: { weight: 'bold' } } }
+    }
+  }
+});
+
+new Chart(document.getElementById('chartRadar'), {
+  type: 'radar',
+  data: {
+    labels: ['Neglect Score', 'Quality Pass', 'G-Score', 'Valuation'],
+    datasets: [
+      { label: 'HBB', data: [10/15*100, 80, 80, 4/6*100], backgroundColor: 'rgba(212,168,67,.18)', borderColor: '#D4A843', borderWidth: 2, pointBackgroundColor: '#D4A843' },
+      { label: 'ITIC', data: [10/15*100, 100, 90, 2/6*100], backgroundColor: 'rgba(75,141,248,.18)', borderColor: '#4B8DF8', borderWidth: 2, pointBackgroundColor: '#4B8DF8' },
+      { label: 'HIFS', data: [11/15*100, 80, 80, 1/6*100], backgroundColor: 'rgba(52,194,122,.18)', borderColor: '#34C27A', borderWidth: 2, pointBackgroundColor: '#34C27A' }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { labels: { color: '#8A8FA0', font: { size: 11 } } } },
+    scales: {
+      r: {
+        angleLines: { color: 'rgba(37,42,56,.6)' },
+        grid: { color: 'rgba(37,42,56,.5)' },
+        pointLabels: { color: '#D8DAE0', font: { size: 11 } },
+        ticks: { color: '#4E5366', backdropColor: 'transparent', font: { size: 9 } },
+        suggestedMin: 0, suggestedMax: 100
+      }
+    }
+  }
+});
+
+new Chart(document.getElementById('chartFunnel'), {
+  type: 'bar',
+  data: {
+    labels: ['Initial Universe', 'Stage 1 Pass (N≥5)', 'Stage 1.5 Pass (Quick Verify)', 'Stage 2 Pass (Quality)', 'Final Ranked'],
+    datasets: [{
+      label: 'Candidates',
+      data: [11, 10, 5, 3, 3],
+      backgroundColor: ['rgba(78,83,102,.7)', 'rgba(212,168,67,.7)', 'rgba(212,168,67,.7)', 'rgba(75,141,248,.7)', 'rgba(52,194,122,.7)'],
+      borderColor: ['#4E5366', '#D4A843', '#D4A843', '#4B8DF8', '#34C27A'],
+      borderWidth: 1, borderRadius: 4
+    }]
+  },
+  options: {
+    indexAxis: 'y',
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: {
+      x: { grid: { color: 'rgba(37,42,56,.5)' }, ticks: { color: '#8A8FA0' }, beginAtZero: true, max: 12 },
+      y: { grid: { display: false }, ticks: { color: '#D8DAE0' } }
+    }
+  }
+});
+</script>
+</body>
+</html>

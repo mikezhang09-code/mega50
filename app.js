@@ -120,6 +120,35 @@ var CATEGORIES = {
       { id: "greenwald-framework", label: "Greenwald Neglect Framework", url: "./greenwald-neglect-framework.html", icon: "doc", desc: "Screening for structurally under-researched companies" },
     ],
   },
+  neglect: {
+    title: "Neglect Screening",
+    type: "grouped-pages",
+    groups: [
+      {
+        label: "Hong Kong Screens",
+        items: [
+          { id: "hk-midcap-neglect", label: "HK Mid-Cap Neglect Screen", url: "./hk-midcap-neglect-screen.html", icon: "chart" },
+          { id: "hk-smallcap-screen", label: "HK Small-Cap Screen (Apr 2026)", url: "./hk-smallcap-screen-2026-04.html", icon: "chart" },
+        ],
+      },
+      {
+        label: "United States Screens",
+        items: [
+          { id: "us-midcap-neglect", label: "US Mid-Cap Neglect (Q2 2026)", url: "./us-midcap-neglect-screen-2026Q2.html", icon: "chart" },
+          { id: "us-smallcap-neglect", label: "US Small-Cap Neglect (Apr 2026)", url: "./us-smallcap-neglect-screen-2026-04.html", icon: "chart" },
+        ],
+      },
+      {
+        label: "Deep Analysis",
+        items: [
+          { id: "asiacement-0743", label: "Asia Cement (0743.HK)", url: "./asiacement-0743-deep-analysis.html", icon: "doc" },
+          { id: "dahsing-2356", label: "Dah Sing Banking (2356.HK)", url: "./dahsing-2356-deep-analysis.html", icon: "doc" },
+          { id: "leeman-2314", label: "Lee & Man Paper (2314.HK)", url: "./leeman-2314-deep-analysis-v2.html", icon: "doc" },
+          { id: "hbb-deep", label: "Hamilton Beach (HBB)", url: "./hbb-deep-analysis.html", icon: "doc" },
+        ],
+      },
+    ],
+  },
   "stock-analysis": {
     title: "Stock Analysis",
     type: "grouped-pages",

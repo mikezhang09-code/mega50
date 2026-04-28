@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hamilton Beach Brands (HBB) — Deep Value Analysis</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+:root{--bg:#0D0F14;--bg2:#141720;--bg3:#1A1E2A;--bdr:#252A38;--t:#D8DAE0;--tm:#8A8FA0;--td:#4E5366;--gold:#D4A843;--goldl:#EDCC72;--goldbg:rgba(212,168,67,.1);--grn:#34C27A;--grnbg:rgba(52,194,122,.1);--blu:#4B8DF8;--blubg:rgba(75,141,248,.1);--red:#E04E4E;--redbg:rgba(224,78,78,.1);--pur:#9B71DB;--cn:#4A6741}
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--t);line-height:1.65}
+.w{max-width:1200px;margin:0 auto;padding:32px 28px}
+.hero{margin-bottom:40px}.hero-tag{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);font-family:monospace;margin-bottom:10px}
+.hero h1{font-size:30px;font-weight:700;margin-bottom:4px}.hero-cn{font-size:16px;color:var(--cn);margin-bottom:14px}
+.hero-meta{display:flex;flex-wrap:wrap;gap:20px;font-size:12px;color:var(--tm)}
+.verdict-box{background:var(--bg2);border:1px solid var(--gold);border-radius:10px;padding:28px;margin-bottom:36px;display:grid;grid-template-columns:200px 1fr;gap:24px;align-items:center}
+.verdict-score{text-align:center}.verdict-score .big{font-size:56px;font-weight:700;color:var(--goldl);line-height:1}.verdict-score .label{font-size:12px;color:var(--tm);text-transform:uppercase;letter-spacing:1px;margin-top:4px}
+.verdict-text h2{font-size:20px;margin-bottom:6px;color:var(--gold)}
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--bdr);margin-bottom:32px;overflow-x:auto}
+.tab{padding:12px 18px;font-size:13px;font-weight:600;color:var(--tm);background:none;border:none;cursor:pointer;white-space:nowrap;position:relative;transition:color .2s}
+.tab:hover{color:var(--t)}.tab.on{color:var(--gold)}.tab.on::after{content:'';position:absolute;bottom:-1px;left:0;right:0;height:2px;background:var(--gold)}
+.tab .cn{display:block;font-size:10px;color:var(--cn);font-weight:400;margin-top:2px}
+.panel{display:none}.panel.on{display:block}
+.sh{display:flex;align-items:center;gap:12px;margin-bottom:18px}.sh-num{font-size:32px;font-weight:700;color:var(--gold);opacity:.4;font-family:monospace}.sh-title{font-size:20px;font-weight:600}.sh-cn{font-size:13px;color:var(--cn)}
+.card{background:var(--bg2);border:1px solid var(--bdr);border-radius:8px;padding:22px;margin-bottom:14px;transition:border-color .2s}.card:hover{border-color:var(--gold)}
+.card h3{font-size:15px;font-weight:600;margin-bottom:4px}.card h3 .cn{font-size:12px;color:var(--cn);font-weight:400;margin-left:6px}
+.card p{font-size:13px;color:var(--tm);line-height:1.7}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.metric{background:var(--bg2);border:1px solid var(--bdr);border-radius:8px;padding:16px;text-align:center}
+.metric .val{font-size:24px;font-weight:700;font-family:monospace}.metric .lbl{font-size:11px;color:var(--tm);text-transform:uppercase;letter-spacing:1px;margin-top:2px}
+.badge{display:inline-block;padding:2px 8px;border-radius:3px;font-size:10px;font-weight:600;font-family:monospace}
+.b-pass{background:var(--grnbg);color:var(--grn)}.b-fail{background:var(--redbg);color:var(--red)}.b-warn{background:var(--goldbg);color:var(--gold)}.b-info{background:var(--blubg);color:var(--blu)}
+table{width:100%;border-collapse:collapse;font-size:13px;margin-bottom:20px}
+th{background:var(--bg3);padding:10px 14px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--tm);border-bottom:1px solid var(--bdr)}
+td{padding:10px 14px;border-bottom:1px solid rgba(37,42,56,.5)}tr:hover td{background:rgba(212,168,67,.02)}
+.tbl-wrap{overflow-x:auto;border:1px solid var(--bdr);border-radius:8px;margin-bottom:20px}
+.chart-box{background:var(--bg2);border:1px solid var(--bdr);border-radius:8px;padding:20px;margin-bottom:20px}.chart-box h3{font-size:14px;margin-bottom:4px}.chart-box .cn{font-size:11px;color:var(--cn);margin-bottom:12px}
+.chart-wrap{position:relative;height:280px}
+.quote{background:var(--goldbg);border-left:3px solid var(--gold);padding:18px 22px;border-radius:0 8px 8px 0;margin-bottom:24px}
+.quote p{font-size:16px;color:var(--goldl);line-height:1.6;font-style:italic}.quote .attr{font-size:12px;color:var(--tm);margin-top:6px;font-style:normal}
+.prose{font-size:14px;color:var(--tm);line-height:1.75;margin-bottom:20px;max-width:850px}.prose strong{color:var(--t)}.prose em{color:var(--goldl);font-style:normal}
+.formula{background:var(--bg3);border:1px solid var(--bdr);border-radius:8px;padding:16px 20px;font-family:monospace;font-size:13px;color:var(--goldl);line-height:2;margin-bottom:20px;overflow-x:auto}
+.footer{text-align:center;padding:28px;font-size:11px;color:var(--td);border-top:1px solid var(--bdr);margin-top:30px}
+.alert{background:rgba(224,78,78,.06);border:1px solid var(--red);border-radius:6px;padding:14px 18px;margin-bottom:20px;font-size:13px;color:var(--t);line-height:1.7}
+.alert strong{color:var(--red)}
+.update-note{background:var(--blubg);border:1px solid var(--blu);border-radius:6px;padding:14px 18px;margin-bottom:24px;font-size:13px;color:var(--t);line-height:1.7}
+.update-note strong{color:var(--blu)}
+@media(max-width:800px){.grid2,.grid3,.grid4{grid-template-columns:1fr}.verdict-box{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="w">
+
+<div class="hero">
+  <div class="hero-tag">Graham-Buffett × Greenwald Neglect · Deep Value Analysis</div>
+  <h1>Hamilton Beach Brands Holding (HBB)</h1>
+  <div class="hero-cn">汉密尔顿比奇品牌控股 · 深度价值分析</div>
+  <div class="hero-meta">
+    <span>Sector: Consumer Durables / Small Appliances</span>
+    <span>Exchange: NYSE</span>
+    <span>HQ: Glen Allen, Virginia</span>
+    <span>Analysis Date: April 26, 2026</span>
+    <span>Data: FY2025 10-K (filed Feb 25, 2026)</span>
+  </div>
+</div>
+
+<div class="verdict-box">
+  <div class="verdict-score">
+    <div class="big">5.5</div>
+    <div class="label">Confidence / 10</div>
+    <div style="margin-top:8px"><span class="badge b-warn" style="font-size:12px">MONITOR — WAIT FOR PULLBACK</span></div>
+  </div>
+  <div style="padding:0 4px">
+    <h2>Verdict: Quality Business, But the Price Got Away</h2>
+    <div style="font-size:14px;color:var(--cn);margin-bottom:10px">判定：质量不错，但价格已失</div>
+    <p style="font-size:14px;color:var(--tm);line-height:1.7">
+      HBB is a <strong>fundamentally sound family-controlled small appliance business</strong> trading at the intersection of three real edges: 1 sell-side analyst (deep neglect), Rankin family alignment with 84% of voting power, and an asset-light model with 25%+ gross margins. The screen captured this at $15.70 with a GGB of 72.7. <em>However, the stock has rallied 33% to $20.87 in just weeks</em> — the screen's window has largely closed. Triangulated intrinsic value is $20–$29 (base case ~$24); current price implies only ~12-15% margin of safety, well below the 30% required for a US small-cap with Neglect score of 10/15. Quality remains intact (FY2025 weakness was tariff-cycle, not structural), but <strong>the disciplined value answer is: wait</strong>. Trigger price for re-entry: $15.50–$17.00 (P/E ~8×, P/B ~1.2×, ~30% MoS to base IV).
+    </p>
+  </div>
+</div>
+
+<div class="update-note">
+  <strong>⚠ Price-driven verdict change.</strong> When this screen was built (around April 2026), HBB closed at ~$15.70 and the GGB composite was 72.7 (Strong). At today's $20.87, the GGB drops to <strong>57.7 (Watchlist)</strong> — the rally consumed three of four valuation criteria. The business is unchanged; the price moved. This deep dive documents the original thesis and the recalibrated entry plan. The framework's Stage 3 valuation gate is doing exactly what it should: prevent buying a quality business at a price that no longer compensates for the small-cap and neglect risk.
+</div>
+
+<div class="tabs">
+  <button class="tab on" data-t="s1">Step 1: Business<span class="cn">理解生意</span></button>
+  <button class="tab" data-t="s2">Step 2: Quant Screen<span class="cn">量化筛选</span></button>
+  <button class="tab" data-t="s3">Step 3: Intrinsic Value<span class="cn">内在价值</span></button>
+  <button class="tab" data-t="s4">Step 4: Moat<span class="cn">护城河</span></button>
+  <button class="tab" data-t="s5">Step 5: Management<span class="cn">管理层</span></button>
+  <button class="tab" data-t="s6">Step 6: Risk<span class="cn">风险</span></button>
+  <button class="tab" data-t="s7">Step 7: Verdict<span class="cn">最终判定</span></button>
+  <button class="tab" data-t="neglect">Neglect Scorecard<span class="cn">忽视评分</span></button>
+</div>
+
+<!-- ====================== STEP 1: BUSINESS ====================== -->
+<div class="panel on" id="s1">
+  <div class="sh"><div class="sh-num">01</div><div><div class="sh-title">Understand the Business</div><div class="sh-cn">理解生意</div></div></div>
+
+  <p class="prose">
+    Hamilton Beach Brands is a <strong>115-year-old American small appliance designer and distributor</strong>, founded 1910 in Racine, Wisconsin. The company does not manufacture anything — it operates an <em>asset-light "design-and-distribute" model</em> where products are made by ~70 third-party suppliers, predominantly in China and increasingly across the Asia-Pacific region. Revenue comes from selling Hamilton Beach®, Proctor Silex®, Weston®, and licensed-brand kitchen appliances to retailers (Walmart 29%, Amazon 19%, top 5 customers 62% of revenue).
+  </p>
+  <p class="prose">
+    The company was <em>spun off from NACCO Industries in September 2017</em> to separate its consumer business from NACCO's North American coal mining operations. Two material events have reshaped the company since: (1) the <strong>February 2024 acquisition of HealthBeacon</strong> for $7.4M, creating a new Health segment focused on connected medical devices for chronic-condition management; and (2) the <strong>September 2025 launch of the Lotus® premium brand</strong>, marking HBB's first move upmarket beyond "good/better" pricing tiers.
+  </p>
+
+  <div class="grid2">
+    <div class="card">
+      <h3>How It Makes Money <span class="cn">盈利模式</span></h3>
+      <p>HBB designs products in Glen Allen, VA, contracts manufacturing to Asia-Pacific suppliers, and ships through distribution centers in Mississippi, North Carolina, Belgium, Canada, and Mexico. <strong>~93% of revenue</strong> is the Home and Commercial Products segment (consumer kitchen appliances + restaurant/hotel commercial products); ~7% is the Health segment (HealthBeacon connected device leasing + healthcare software). The model is structurally low-capital: FY2025 capex was just <em>$2.8M against $607M revenue</em>.</p>
+    </div>
+    <div class="card">
+      <h3>Brand Portfolio <span class="cn">品牌组合</span></h3>
+      <p><strong>Owned brands:</strong> Hamilton Beach®, Hamilton Beach Professional®, Proctor Silex®, Weston®, Lotus® (premium, launched Sept 2025), TrueAir®, Brightline®. <strong>Licensed brands (in/out):</strong> CHI® garment care, Clorox™ home appliances, Sunkist® commercial juicers, Numilk® plant-milk makers. <em>Notable: Bartesian licensing expired end-2025</em> creating a $22M revenue headwind in 2026 management is offsetting with mid-single-digit core growth.</p>
+    </div>
+  </div>
+
+  <div class="grid2">
+    <div class="card">
+      <h3>Market Position <span class="cn">市场地位</span></h3>
+      <p>Hamilton Beach® is the <strong>#2 small kitchen appliance brand in the U.S. by units sold</strong> and <strong>#4 by dollar share</strong>. The company is "one of the largest full-line distributors and marketers" in North America by key product categories (per 10-K). 84% of revenue is U.S./Canada/Mexico/Latin America, with limited but profitable global commercial sales.</p>
+    </div>
+    <div class="card">
+      <h3>Two Critical Concentrations <span class="cn">两大集中风险</span></h3>
+      <p><strong>Customer concentration:</strong> Walmart 29% + Amazon 19% = 48% of revenue from two customers. Top 5 = 62%. No long-term supply contracts. <strong>Supplier concentration:</strong> One supplier accounted for >10% of FY2025 purchases. Two-thirds of suppliers in China — though management has been actively diversifying across APAC since the 2018 China tariff cycle.</p>
+    </div>
+  </div>
+
+  <div class="quote">
+    <p>"Our performance showed significant sequential improvement from the double-digit sales declines we experienced in the second and third quarters and demonstrates both the resilience of our business and the effectiveness of the strategic actions we implemented throughout the year."</p>
+    <div class="attr">— R. Scott Tidey, CEO, Q4 2025 Earnings Call (Feb 25, 2026)</div>
+  </div>
+
+  <div class="card">
+    <h3>FY2026 Operating Outlook <span class="cn">2026年经营展望</span></h3>
+    <p style="margin-bottom:8px">Management's Feb 25, 2026 guidance is the most recent signal of the recovery thesis:</p>
+    <ul style="margin:6px 0 6px 22px;font-size:13px;color:var(--tm);line-height:1.85">
+      <li><strong>Revenue:</strong> Mid-single-digit growth (~5%) <em>despite a $22M Bartesian licensing expiration headwind</em> — implying core ~9% organic growth</li>
+      <li><strong>Gross margin:</strong> Similar to slightly better than 25.7% in 2025</li>
+      <li><strong>Operating profit:</strong> Reported decline low-teens % due to ~$6M ERP accelerated depreciation + $6M incremental advertising for Lotus and digital initiatives</li>
+      <li><strong>Cash flow (operating - investing):</strong> $35M to $45M (vs. $11M FCF in 2025) — reflecting tariff working-capital normalization</li>
+      <li><strong>Tariff posture:</strong> "Currently at parity across APAC countries"; management calls multi-country sourcing flexibility a "core competency"</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ====================== STEP 2: QUANT SCREEN ====================== -->
+<div class="panel" id="s2">
+  <div class="sh"><div class="sh-num">02</div><div><div class="sh-title">5-Year Financial Analysis</div><div class="sh-cn">五年财务分析</div></div></div>
+
+  <p class="prose">
+    The 5-year track record reveals <strong>an asset-light business with low but stable profitability, periodic working capital volatility, and a meaningful 2025 tariff dislocation</strong>. ROE has averaged ~16%, gross margins expanded structurally from 20% to 26% over the period, and the company has paid increasing dividends every year. The 2022 inventory crisis (revenue fell, OCF turned -$3.4M as channel inventory was bloated) is the cycle's nadir; 2023-2024 was the recovery; 2025 was the tariff disruption.
+  </p>
+
+  <div class="chart-box">
+    <h3>Revenue & Net Income Trend (FY2021–FY2025)</h3>
+    <div class="cn">营收与净利润趋势</div>
+    <div class="chart-wrap"><canvas id="chartFin"></canvas></div>
+  </div>
+
+  <div class="tbl-wrap">
+    <table>
+      <thead>
+        <tr><th>Metric</th><th style="text-align:right">FY2021</th><th style="text-align:right">FY2022</th><th style="text-align:right">FY2023</th><th style="text-align:right">FY2024</th><th style="text-align:right">FY2025</th><th style="text-align:right">5Y Avg</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Revenue ($M)</td><td style="text-align:right" class="mono">658.4</td><td style="text-align:right" class="mono">641.0</td><td style="text-align:right" class="mono">625.6</td><td style="text-align:right" class="mono">654.7</td><td style="text-align:right" class="mono">606.9</td><td style="text-align:right;font-family:monospace;color:var(--goldl)">637.3</td></tr>
+        <tr><td>Gross Margin</td><td style="text-align:right" class="mono">20.7%</td><td style="text-align:right" class="mono">20.1%</td><td style="text-align:right" class="mono">23.0%</td><td style="text-align:right" class="mono">26.0%</td><td style="text-align:right" class="mono">25.7%</td><td style="text-align:right;font-family:monospace;color:var(--goldl)">23.1%</td></tr>
+        <tr><td>Operating Margin</td><td style="text-align:right" class="mono">4.79%</td><td style="text-align:right" class="mono">6.05%</td><td style="text-align:right" class="mono">5.61%</td><td style="text-align:right" class="mono">6.60%</td><td style="text-align:right" class="mono">6.03%</td><td style="text-align:right;font-family:monospace;color:var(--goldl)">5.82%</td></tr>
+        <tr><td>Net Income ($M)</td><td style="text-align:right" class="mono">21.3</td><td style="text-align:right" class="mono">25.3</td><td style="text-align:right" class="mono">25.2</td><td style="text-align:right" class="mono">30.8</td><td style="text-align:right" class="mono">26.5</td><td style="text-align:right;font-family:monospace;color:var(--goldl)">25.8</td></tr>
+        <tr><td>Diluted EPS ($)</td><td style="text-align:right" class="mono">1.53</td><td style="text-align:right" class="mono">1.81</td><td style="text-align:right" class="mono">1.80</td><td style="text-align:right" class="mono">2.20</td><td style="text-align:right" class="mono">1.95</td><td style="text-align:right;font-family:monospace;color:var(--goldl)">1.86</td></tr>
+        <tr><td>FCF ($M)</td><td style="text-align:right" class="mono">6.0</td><td style="text-align:right" class="mono" style="color:var(--red)">-5.7</td><td style="text-align:right" class="mono">85.2</td><td style="text-align:right" class="mono">62.2</td><td style="text-align:right" class="mono">11.0</td><td style="text-align:right;font-family:monospace;color:var(--goldl)">31.7</td></tr>
+        <tr><td>Book Value/Share</td><td style="text-align:right" class="mono">$7.34</td><td style="text-align:right" class="mono">$8.90</td><td style="text-align:right" class="mono">$10.47</td><td style="text-align:right" class="mono">$11.88</td><td style="text-align:right" class="mono">$13.47</td><td style="text-align:right;font-family:monospace;color:var(--grn)">+16.4% CAGR</td></tr>
+        <tr><td>Net Debt ($M)</td><td style="text-align:right" class="mono">95.7</td><td style="text-align:right" class="mono">162.6</td><td style="text-align:right" class="mono">82.7</td><td style="text-align:right" class="mono">48.6</td><td style="text-align:right" class="mono">44.6</td><td style="text-align:right;font-family:monospace;color:var(--grn)">Deleveraging</td></tr>
+        <tr><td>Dividend/Share</td><td style="text-align:right" class="mono">$0.395</td><td style="text-align:right" class="mono">$0.415</td><td style="text-align:right" class="mono">$0.435</td><td style="text-align:right" class="mono">$0.455</td><td style="text-align:right" class="mono">$0.475</td><td style="text-align:right;font-family:monospace;color:var(--grn)">8 yrs of growth</td></tr>
+        <tr><td>Shares Out (M)</td><td style="text-align:right" class="mono">13.90</td><td style="text-align:right" class="mono">13.88</td><td style="text-align:right" class="mono">13.90</td><td style="text-align:right" class="mono">13.53</td><td style="text-align:right" class="mono">13.41</td><td style="text-align:right;font-family:monospace;color:var(--grn)">Buybacks</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="grid2">
+    <div class="card">
+      <h3>Green Flags <span class="cn">绿灯信号</span></h3>
+      <ul style="margin-left:18px;font-size:13px;color:var(--tm);line-height:1.85">
+        <li><strong>Gross margin expansion:</strong> 20.7% → 25.7% over 5 years — pricing discipline and mix shift to commercial/health</li>
+        <li><strong>BVPS compounding 16.4% CAGR</strong> — retained earnings net of dividends and buybacks</li>
+        <li><strong>Net debt reduced 53%</strong> from 2022 peak ($163M) to $45M end-2025</li>
+        <li><strong>Share count down 3.5%</strong> in 5 years via consistent buybacks</li>
+        <li><strong>8 consecutive years of dividend increases</strong> since 2017 spinoff</li>
+        <li><strong>2025 capex/sales ratio: 0.46%</strong> — extremely asset-light</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Red Flags <span class="cn">红灯信号</span></h3>
+      <ul style="margin-left:18px;font-size:13px;color:var(--tm);line-height:1.85">
+        <li><strong>Revenue CAGR -2.0%</strong> over 5 years — top-line is not growing</li>
+        <li><strong>FCF volatility:</strong> swung from -$5.7M (2022) to +$85M (2023) — working capital is the dominant variable</li>
+        <li><strong>FY2025 FCF/NI = 42%</strong>, well below Q8's 70% threshold (cycle-driven, but a screen miss)</li>
+        <li><strong>Customer concentration extreme:</strong> Walmart + Amazon = 48% of sales</li>
+        <li><strong>2-customer + China-supplier setup</strong> = bilateral concentration risk</li>
+        <li><strong>FY2025 op margin 6.0%</strong> — thin; little buffer for further input cost shocks</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>The 2025 "Adjusted" Earnings Picture <span class="cn">2025年调整后盈利图景</span></h3>
+    <p style="margin-bottom:8px">Management disclosed the cycle's normalized earnings power in Q4 2025 commentary. Stripping out the <em>$5.3M one-time tariff cost</em> and <em>$1.6M ERP write-off</em>:</p>
+    <div class="formula">
+Reported FY2025 Operating Profit:    $36.6M (6.0% of sales)
+   + One-time tariff cost:            $5.3M
+   + ERP accelerated D&A/write-off:   $1.6M
+   ─────────────────────────────────────────
+Adjusted FY2025 Operating Profit:    $43.5M (7.2% of sales)
+Adjusted Net Income (@21% tax):      ~$34.4M
+Adjusted EPS:                        ~$2.56
+    </div>
+    <p style="font-size:13px;color:var(--tm);margin-top:6px">This $2.56 normalized EPS, not the reported $1.95, is the proper anchor for the intrinsic value calculation in Step 3. <em>The neglected analyst snippet on Tier 2 platforms quotes the GAAP $1.95</em> — exactly the kind of mispricing the neglect framework is designed to find.</p>
+  </div>
+
+  <div class="chart-box">
+    <h3>Capital Allocation: Where the Cash Has Gone (FY2021–FY2025)</h3>
+    <div class="cn">资本配置去向</div>
+    <div class="chart-wrap"><canvas id="chartCapAlloc"></canvas></div>
+  </div>
+</div>
+
+<!-- ====================== STEP 3: INTRINSIC VALUE ====================== -->
+<div class="panel" id="s3">
+  <div class="sh"><div class="sh-num">03</div><div><div class="sh-title">Intrinsic Value Triangulation</div><div class="sh-cn">内在价值三角测量</div></div></div>
+
+  <p class="prose">
+    Per the value-investing framework, intrinsic value is triangulated across <strong>at least two methods</strong>. We use five — Graham Number, Graham Formula, Owner Earnings DCF, Earnings Power Value (EPV), and Peer Multiples — and present the range. Two key normalizing assumptions: (1) sustainable EPS is <em>$1.86–$2.56</em> (the band between 5-year average and 2025 management-adjusted), and (2) sustainable owner earnings is approximately <em>$38M</em> on the basis of $30M normalized NI + $6M D&A + $5M SBC − $3M maintenance capex.
+  </p>
+
+  <div class="grid4" style="margin-bottom:20px">
+    <div class="metric"><div class="val" style="color:var(--goldl)">$20.87</div><div class="lbl">Current Price (Apr 24)</div></div>
+    <div class="metric"><div class="val" style="color:var(--blu)">$23.50</div><div class="lbl">Base Case IV</div></div>
+    <div class="metric"><div class="val" style="color:var(--grn)">$29.00</div><div class="lbl">Optimistic IV</div></div>
+    <div class="metric"><div class="val" style="color:var(--red)">$18.50</div><div class="lbl">Conservative IV</div></div>
+  </div>
+
+  <div class="card">
+    <h3>Method 1: Graham Number <span class="cn">格雷厄姆数</span></h3>
+    <div class="formula">V = √(22.5 × EPS × BVPS)</div>
+    <table style="margin-bottom:0">
+      <tr><th>Scenario</th><th>EPS</th><th>BVPS</th><th>Graham Number</th></tr>
+      <tr><td>Conservative (5-yr avg EPS)</td><td>$1.86</td><td>$13.47</td><td class="mono" style="color:var(--goldl)">$23.74</td></tr>
+      <tr><td>Base (FY24 EPS)</td><td>$2.20</td><td>$13.47</td><td class="mono" style="color:var(--goldl)">$25.82</td></tr>
+      <tr><td>Optimistic (adj. FY25 EPS)</td><td>$2.56</td><td>$13.47</td><td class="mono" style="color:var(--goldl)">$27.85</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <h3>Method 2: Graham Formula <span class="cn">格雷厄姆公式</span></h3>
+    <div class="formula">V = EPS × (8.5 + 2g) × (4.4 / Y)
+where Y = AAA bond yield (~5.0% in early 2026)</div>
+    <table style="margin-bottom:0">
+      <tr><th>Scenario</th><th>EPS</th><th>g (growth)</th><th>Graham Formula</th></tr>
+      <tr><td>Conservative</td><td>$1.86</td><td>0%</td><td class="mono" style="color:var(--goldl)">$13.91</td></tr>
+      <tr><td>Base</td><td>$2.20</td><td>3%</td><td class="mono" style="color:var(--goldl)">$28.07</td></tr>
+      <tr><td>Optimistic</td><td>$2.56</td><td>5%</td><td class="mono" style="color:var(--goldl)">$41.68</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <h3>Method 3: Owner Earnings DCF (Buffett's preferred) <span class="cn">所有者盈利现金流折现</span></h3>
+    <div class="formula">Owner Earnings = NI + D&A + SBC − Maintenance CapEx ± WC change
+                = $30M + $6M + $5M − $3M = $38M
+
+10-year explicit growth → terminal at perpetual growth, 10% discount rate</div>
+    <table style="margin-bottom:0">
+      <tr><th>Scenario</th><th>Explicit g</th><th>Terminal g</th><th>Per-Share IV</th></tr>
+      <tr><td>Conservative</td><td>0%</td><td>1%</td><td class="mono" style="color:var(--goldl)">$27.09</td></tr>
+      <tr><td>Base</td><td>3%</td><td>2%</td><td class="mono" style="color:var(--goldl)">$34.28</td></tr>
+      <tr><td>Optimistic</td><td>5%</td><td>3%</td><td class="mono" style="color:var(--goldl)">$41.97</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <h3>Method 4: Earnings Power Value (no-growth baseline) <span class="cn">盈利能力价值</span></h3>
+    <div class="formula">EPV = Sustainable Net Income / Cost of Capital
+Sustainable NI = (5-yr avg OP $37M + adj FY25 OP $43.5M) / 2 × (1 − tax)
+              = $31.8M</div>
+    <table style="margin-bottom:0">
+      <tr><th>Cost of Capital</th><th>EPV Total</th><th>Per-Share Equity Value</th></tr>
+      <tr><td>8% (low risk)</td><td>$398M</td><td class="mono" style="color:var(--goldl)">$26.26</td></tr>
+      <tr><td>10% (standard)</td><td>$318M</td><td class="mono" style="color:var(--goldl)">$20.34</td></tr>
+      <tr><td>12% (small-cap risk)</td><td>$265M</td><td class="mono" style="color:var(--goldl)">$16.39</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <h3>Method 5: Peer Multiples <span class="cn">同业倍数</span></h3>
+    <p style="font-size:13px;color:var(--tm);margin-bottom:10px">Comparable consumer durables companies (Newell Brands, Lifetime Brands, National Presto, Spectrum Brands) trade at 8-12× P/E and 6-8× EV/EBITDA. HBB's 3-year average EBITDA is $43.3M.</p>
+    <table style="margin-bottom:0">
+      <tr><th>Multiple</th><th>Application</th><th>Per-Share IV</th></tr>
+      <tr><td>EV/EBITDA 6×</td><td>3-yr avg EBITDA $43.3M</td><td class="mono" style="color:var(--goldl)">$15.99</td></tr>
+      <tr><td>EV/EBITDA 8×</td><td>3-yr avg EBITDA $43.3M</td><td class="mono" style="color:var(--goldl)">$22.44</td></tr>
+      <tr><td>P/E 9×</td><td>Normalized EPS $2.00</td><td class="mono" style="color:var(--goldl)">$18.00</td></tr>
+      <tr><td>P/E 12×</td><td>Normalized EPS $2.00</td><td class="mono" style="color:var(--goldl)">$24.00</td></tr>
+    </table>
+  </div>
+
+  <div class="chart-box">
+    <h3>IV Range Across Methods (vs. Current Price $20.87)</h3>
+    <div class="cn">五种方法的内在价值区间</div>
+    <div class="chart-wrap"><canvas id="chartIV"></canvas></div>
+  </div>
+
+  <div class="card" style="border-color:var(--gold)">
+    <h3>Triangulated Verdict <span class="cn">综合判定</span></h3>
+    <p style="margin-bottom:10px"><strong>Conservative IV: $18.50</strong> (anchored on EPV @ 12% CoC, peer EV/EBITDA 6×, low-end Graham Formula). The current price <em>exceeds</em> this — meaning the most cautious investor would not buy here.</p>
+    <p style="margin-bottom:10px"><strong>Base IV: $23.50</strong> (median of Graham Number Base, EPV @ 10% CoC, peer P/E 12×, peer EV/EBITDA 8×). Current price implies ~13% upside to base IV — <em>insufficient margin of safety for a US small-cap with 10/15 neglect score (30% required)</em>.</p>
+    <p><strong>Optimistic IV: $29.00</strong> (anchored on Owner Earnings DCF with 3-5% growth, Graham Formula at 3-5% growth). Achievable only if mid-single-digit growth resumes <em>and</em> Lotus + Health segments meaningfully scale. Current price implies ~39% upside — but only if all the growth assumptions materialize.</p>
+  </div>
+
+  <div class="card">
+    <h3>The 30% MoS Trigger Price <span class="cn">30%安全边际触发价</span></h3>
+    <div class="formula">Required Entry Price = Base IV × (1 − Required MoS)
+                     = $23.50 × 0.70 = <span style="color:var(--gold)">$16.45</span>
+
+(For US small-cap, Neglect 8-11 band, per market-playbooks.md)</div>
+    <p style="font-size:13px;color:var(--tm)">At $16.45 or below, the GGB valuation score recovers to 4-5/6, the composite returns to ~70+ (Strong territory), and the trade becomes actionable. <em>This is roughly 21% below the current $20.87 — i.e., we're patient buyers, not chasers.</em></p>
+  </div>
+</div>
+
+<!-- ====================== STEP 4: MOAT ====================== -->
+<div class="panel" id="s4">
+  <div class="sh"><div class="sh-num">04</div><div><div class="sh-title">Moat Assessment</div><div class="sh-cn">护城河分析</div></div></div>
+
+  <p class="prose">
+    Small kitchen appliances are <strong>not a wide-moat industry.</strong> Customers shop on price, brand recognition matters less than shelf placement, and barriers to entry are low. However, HBB has built a <em>narrow moat</em> through three reinforcing advantages — none individually dominant, but collectively durable enough to support 15-20% ROIC over 5 years.
+  </p>
+
+  <div class="tbl-wrap">
+    <table>
+      <thead>
+        <tr><th>Moat Source</th><th>Assessment</th><th>Verdict</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Brand / Intangible Assets</strong></td><td>Hamilton Beach® is a 115-year-old American brand with strong shelf presence (#2 unit share / #4 dollar share in U.S. small kitchen). Brand alone doesn't command pricing power vs. private label, but it does buy retail shelf space and shopper recognition.</td><td><span class="badge b-warn">MODERATE</span></td></tr>
+        <tr><td><strong>Cost Advantage / Scale</strong></td><td>Asset-light design-and-distribute model with leverageable SG&A (~20% of revenue). Scale benefits show up in supplier negotiation and distribution fixed-cost absorption. Capex is just 0.5% of revenue. Operating margin held at 5-7% while smaller competitors run lower.</td><td><span class="badge b-pass">NARROW</span></td></tr>
+        <tr><td><strong>Distribution Lock-in</strong></td><td>Long-standing relationships with Walmart (29% of revenue, decades-long) and Amazon (19%). Retailers prefer multi-category suppliers over single-product specialists. New entrants face <em>shelf-space competition, not product competition</em>.</td><td><span class="badge b-pass">NARROW</span></td></tr>
+        <tr><td><strong>Switching Costs</strong></td><td>Zero — consumers buy a $40 blender and may never repurchase the same brand.</td><td><span class="badge b-fail">NONE</span></td></tr>
+        <tr><td><strong>Network Effects</strong></td><td>None. Not a platform business.</td><td><span class="badge b-fail">NONE</span></td></tr>
+        <tr><td><strong>Regulatory Moat</strong></td><td>UL certifications, CPSC compliance, FDA Class I/II for Health segment devices. Modest barriers; not a durable moat.</td><td><span class="badge b-fail">MINIMAL</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <h3>The Moat Trend: Widening or Narrowing? <span class="cn">护城河趋势</span></h3>
+    <p style="margin-bottom:8px"><strong>Widening signals (5-year track record):</strong></p>
+    <ul style="margin:6px 0 14px 22px;font-size:13px;color:var(--tm);line-height:1.8">
+      <li>Gross margin expansion 20.7% → 25.7% — pricing discipline and mix shift demonstrate <em>some</em> pricing power</li>
+      <li>Premium brand launches (Hamilton Beach Professional, Lotus®) — moving up the price/margin ladder</li>
+      <li>Strategic move into Health segment (HealthBeacon) — diversifying away from pure consumer cyclicality, with switching costs in B2B medical device leasing</li>
+    </ul>
+    <p style="margin-bottom:8px"><strong>Narrowing risks:</strong></p>
+    <ul style="margin:6px 0 0 22px;font-size:13px;color:var(--tm);line-height:1.8">
+      <li>Walmart and Amazon are increasingly building their own private-label small appliances (the 10-K explicitly cites this)</li>
+      <li>"Some of our customers have expressed interest in sourcing... directly from manufacturers in Asia" (10-K) — disintermediation risk</li>
+      <li>Generative AI / agentic shopping could erode the brand-recognition layer of consumer choice</li>
+      <li>HealthBeacon is an early-stage bet — not yet proven at scale</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3>Munger Inversion: How Does HBB Fail in 10 Years? <span class="cn">芒格逆向思考</span></h3>
+    <p>Three plausible failure modes:</p>
+    <ol style="margin:6px 0 0 22px;font-size:13px;color:var(--tm);line-height:1.85">
+      <li><strong>Walmart private-label takeover.</strong> Walmart's "Mainstays" or "Better Homes & Gardens" appliance lines accelerate. HBB loses 10 percentage points of Walmart shelf, taking 10% off total revenue. Plausible — but Walmart values having a brand portfolio, not just private label.</li>
+      <li><strong>Permanent China sourcing dislocation.</strong> US-China relations deteriorate beyond reasonable tariff levels, forcing 50%+ supply chain relocation at material cost. Margin compression from 25% to 20%. Plausible but slow-moving — and management has already begun diversification.</li>
+      <li><strong>HealthBeacon impairment + brand commoditization.</strong> The 2024 acquisition fails to scale, taking a goodwill writedown ($7M is the entire goodwill base — manageable). Combined with continued top-line stagnation, the multiple compresses to 5-6× EPS permanently.</li>
+    </ol>
+  </div>
+
+  <div class="card">
+    <h3>Moat Verdict: Narrow — Brand × Distribution × Asset-Light Model <span class="cn">护城河判定：窄 — 品牌×渠道×轻资产</span></h3>
+    <p>HBB has a <strong>narrow moat</strong> built on three legs: a 115-year brand with #2 unit share, deep distribution lock-in with the dominant US retailers, and an asset-light cost structure that lets it earn 15%+ ROIC at 6% operating margins. <em>This is not a Coca-Cola.</em> It's a "fair business at a fair price" candidate — Graham, not Buffett. The moat is wide enough to defend against disruption, but not wide enough to drive sustained price increases or a re-rating to 20× P/E. Fair value is tied tightly to normalized earnings × ~10-12× multiple — exactly where the IV triangulation lands.</p>
+  </div>
+</div>
+
+<!-- ====================== STEP 5: MANAGEMENT ====================== -->
+<div class="panel" id="s5">
+  <div class="sh"><div class="sh-num">05</div><div><div class="sh-title">Management & Governance</div><div class="sh-cn">管理层与治理</div></div></div>
+
+  <div class="grid2">
+    <div class="card">
+      <h3>Family Control: Rankin & Taplin <span class="cn">家族控制</span></h3>
+      <p>Per the FY2025 10-K, <strong>"certain members of the Company's extended founding family"</strong> hold approximately <em>34.4% of Class A Common</em> and <em>93.7% of Class B Common</em> — translating to <strong>81.0% of total voting power</strong>. The controlling families are the Rankin and Taplin families, descendants of NACCO's controlling shareholders. <strong>Alfred M. Rankin Jr.</strong> serves as Non-Executive Chairman of the Board (he was Executive Chairman post-spinoff, stepped back as company stabilized).</p>
+    </div>
+    <div class="card">
+      <h3>Dual-Class Structure <span class="cn">双重股权结构</span></h3>
+      <p>Class A: 9.84M shares, 1 vote each (publicly traded under HBB).<br>Class B: 3.59M shares, 10 votes each (untraded; converts to Class A 1-for-1 on sale, destroying 9 votes per conversion).<br><br>This is a <em>self-reinforcing structure</em>: every Class B sale concentrates control further with the remaining family holders. The original 2017 spinoff design appears to have been deliberately built to preserve family control even if some heirs want liquidity.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Current Management Team <span class="cn">现任管理层</span></h3>
+    <table style="margin-bottom:0">
+      <tr><th>Role</th><th>Name</th><th>Background</th><th>Tenure</th></tr>
+      <tr><td>President & CEO</td><td>R. Scott Tidey</td><td>Career HBB executive — SVP Global Sales 2023, SVP Consumer Sales & Mkt 2021. Promoted to President Feb 2024, CEO Oct 2024.</td><td>CEO ~18 months</td></tr>
+      <tr><td>SVP, CFO & Treasurer</td><td>Sally M. Cunningham</td><td>Former Operating Partner at One Rock Capital (PE), former CFO of Ascent Industries (steel). Joined HBB March 2023.</td><td>~3 years</td></tr>
+      <tr><td>SVP, General Counsel</td><td>Andrew C. Carington</td><td>Joined March 2025 from MediaCo Holding, prior at Standard Media Group. Newer hire.</td><td>~1 year</td></tr>
+      <tr><td>Non-Executive Chairman</td><td>Alfred M. Rankin Jr.</td><td>Former CEO of NACCO (parent), continues as long-tenured director and family representative.</td><td>9+ years (post-spin)</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <h3>Capital Allocation Track Record (5 years) <span class="cn">五年资本配置记录</span></h3>
+    <p style="margin-bottom:10px">A capable management team converts owner earnings into shareholder value. HBB's record:</p>
+    <ul style="margin:6px 0 0 22px;font-size:13px;color:var(--tm);line-height:1.85">
+      <li><strong>Dividend growth:</strong> 8 consecutive years of increases (raised ~$0.395 → $0.475 in 5 years; ~5% CAGR)</li>
+      <li><strong>Share buybacks:</strong> $40.6M cumulative in 5 years (1.9M shares) at avg ~$21/share. <em>The $14.85 average price in Q4 2025 was opportunistic</em></li>
+      <li><strong>M&A:</strong> One small acquisition — HealthBeacon for $7.4M (Feb 2024). Conservative pricing; cash-funded, no dilution. Currently a small loss but strategic optionality</li>
+      <li><strong>Debt management:</strong> Reduced net debt from $163M (2022 peak) to $45M (end 2025) — disciplined deleveraging during the inventory crisis cycle</li>
+      <li><strong>2025 capital return:</strong> 58% of net income returned to shareholders ($9M buybacks + $6.4M dividends). New $25M repurchase authorization for 2026-2027</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3>Governance G-Score: 8/10 <span class="cn">治理评分</span></h3>
+    <div class="formula">G2 — Controlling shareholder (>50% voting): -1
+G7 — Some equity-based compensation dilution (annual $1M): -1
+G1, G3, G4, G5, G6, G8 — All clean
+─────────────────────────────────────
+G-Score: 10 - 2 = <span style="color:var(--gold)">8/10</span></div>
+    <p style="font-size:13px;color:var(--tm)">The dual-class structure is the only material governance flag. Mitigants: family ownership has been long-tenured (since NACCO acquired HBB in 1990 — 36 years), no material related-party transactions, EY (Big 4) auditor with clean opinion, no related-party RPT issues, no SEC investigations. Family interests appear aligned with minority shareholders given they retain economic exposure through the Class B holdings.</p>
+  </div>
+
+  <div class="card">
+    <h3>Insider Activity Watch <span class="cn">内部人交易观察</span></h3>
+    <p>Per the FY2025 10-K, the Company withheld 39,121 shares for tax payments due upon RSU issuance — these are <em>not active sales</em>, just tax withholding. There are no signs of significant insider open-market selling beyond this. The Worldly Invest analyst note (July 2025) highlighted that "most recent share acquisitions have come via RSUs, not open-market purchases — limiting the signaling power of insider buying" — a fair caveat.</p>
+  </div>
+
+  <div class="card" style="border-color:var(--blu)">
+    <h3>Management Verdict: Capable Steward <span class="cn">管理层判定：尽职管家</span></h3>
+    <p>Owner-operator structure with 81% voting control — exactly what Buffett looks for in family businesses. No obvious capital allocation mistakes, conservative balance sheet, consistent dividend track record, opportunistic buybacks, modest M&A. The CEO transition from Greg Trepp to Scott Tidey (Oct 2024) was orderly; both internal promotions. <em>This is not visionary leadership; it's competent stewardship of a mature business.</em> For a small appliance company, that's the right profile.</p>
+  </div>
+</div>
+
+<!-- ====================== STEP 6: RISK ====================== -->
+<div class="panel" id="s6">
+  <div class="sh"><div class="sh-num">06</div><div><div class="sh-title">Risk Assessment & Sell Discipline</div><div class="sh-cn">风险评估与卖出纪律</div></div></div>
+
+  <div class="card">
+    <h3>Five-Type Value Trap Diagnostic <span class="cn">五类价值陷阱诊断</span></h3>
+    <table style="margin-bottom:0">
+      <tr><th>Trap Type</th><th>Diagnostic</th><th>Status</th></tr>
+      <tr><td>Structural industry decline</td><td>Small appliance industry is mature, not declining. People still buy blenders, coffee makers, air fryers. Total US TAM is steady-to-growing in dollar terms.</td><td><span class="badge b-pass">CLEAR</span></td></tr>
+      <tr><td>Commodity business</td><td>Partially yes — a $40 blender is largely a commodity. <em>But</em> brand + shelf placement + breadth of SKU portfolio create modest switching friction. Mid-tier of a moat-spectrum.</td><td><span class="badge b-warn">PARTIAL</span></td></tr>
+      <tr><td>Poor capital allocation</td><td>10-year M&A track record is conservative (one small acquisition: HealthBeacon $7.4M cash). Buybacks done at reasonable prices. Dividends sustainable.</td><td><span class="badge b-pass">CLEAR</span></td></tr>
+      <tr><td>Heavy assets, low returns</td><td>Asset-light by design. ROIC ~12-16%, comfortably above estimated WACC of ~8-9%. Capex 0.5% of revenue.</td><td><span class="badge b-pass">CLEAR</span></td></tr>
+      <tr><td>Accounting quality</td><td>FY2023 OCF $89M vs NI $25M (3.5×); FY2025 OCF $14M vs NI $26.5M (0.5×). <em>Wide swings driven by working capital, not earnings quality.</em> 5-year OCF/NI avg = ~125%.</td><td><span class="badge b-pass">CLEAR</span></td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <h3>Concrete Risk Catalysts (next 12-24 months) <span class="cn">具体风险催化剂</span></h3>
+    <ol style="margin:6px 0 0 22px;font-size:13px;color:var(--tm);line-height:1.85">
+      <li><strong>Tariff re-escalation.</strong> US-China tariff posture has cooled but is fragile. A re-escalation would directly hit gross margin (FY2025 saw $5.3M one-time tariff cost reduce margin by ~90bps). Each 10pp tariff hike on Chinese imports could shave 100-150bps of GM.</li>
+      <li><strong>Walmart or Amazon pulls back.</strong> If either reduces HBB shelf/listings by even 2-3 percentage points, that's $12-18M of revenue at risk — single-digit % EPS hit. Walmart's private-label aggression is a watchpoint.</li>
+      <li><strong>Q1 2026 results (May 6, 2026 release).</strong> First post-tariff-shock quarter to validate the recovery. Negative print would re-rate the multiple lower.</li>
+      <li><strong>Bartesian licensing expiration.</strong> The $22M revenue headwind hits 2026 — already disclosed but could prompt sentiment dip.</li>
+      <li><strong>HealthBeacon impairment.</strong> $7.4M acquisition. If FDA approvals or commercial scale stall, a goodwill write-down would hit GAAP earnings (small in dollars, but headline-material).</li>
+      <li><strong>Consumer recession.</strong> US small appliance demand is consumer-discretionary. A recession would cut volume 5-10%.</li>
+    </ol>
+  </div>
+
+  <div class="card">
+    <h3>What Would Make Us SELL? <span class="cn">触发卖出条件</span></h3>
+    <table style="margin-bottom:0">
+      <tr><th>Sell Criterion</th><th>HBB-Specific Trigger</th></tr>
+      <tr><td>1. Price severely overvalued</td><td>Stock above $32 (~35% above base IV $23.50) without earnings improvement</td></tr>
+      <tr><td>2. Moat fundamentally destroyed</td><td>Walmart shelf share drops below 20% of HBB revenue (currently 29%); OR Amazon discontinues HBB SKUs at scale; OR private-label takes 5+ pp of HBB unit share</td></tr>
+      <tr><td>3. Management integrity issue</td><td>Any related-party transaction lacking arm's-length terms; CFO/CEO sudden departure with restatement; SEC investigation</td></tr>
+      <tr><td>4. Better opportunity</td><td>Another ranked-screen Prime candidate (GGB ≥ 80) emerges with similar quality but better valuation. ITIC at $200 would be such a switch trigger.</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <h3>Behavioral Bias Check <span class="cn">行为偏差自检</span></h3>
+    <ul style="margin:6px 0 0 22px;font-size:13px;color:var(--tm);line-height:1.85">
+      <li><strong>Confirmation bias:</strong> The 1-analyst neglect signal is genuinely there, but the price has moved. We should not search only for confirming bullish points to justify the original Strong rating</li>
+      <li><strong>Anchoring:</strong> The screen called this at $15.70 with GGB 72.7. The current price of $20.87 changes the math materially. <em>Don't anchor on the prior verdict — re-evaluate at the current price</em></li>
+      <li><strong>Recency bias:</strong> Q4 2025 was strong (28.3% GM). Don't extrapolate one quarter into the entire 2026 thesis</li>
+      <li><strong>Action bias:</strong> "Do nothing" (continue monitoring) is the correct action here, not "buy now because the analysis is done"</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ====================== STEP 7: VERDICT ====================== -->
+<div class="panel" id="s7">
+  <div class="sh"><div class="sh-num">07</div><div><div class="sh-title">Final Verdict & Action Plan</div><div class="sh-cn">最终判定与行动计划</div></div></div>
+
+  <div class="card" style="border-color:var(--gold)">
+    <h3>Recommendation: MONITOR (Wait for Pullback) <span class="cn">建议：监控（等待回调）</span></h3>
+    <p style="margin-bottom:10px"><strong>Confidence: 5.5/10</strong> — split between high conviction in the business quality and low conviction in the price entry.</p>
+    <p style="margin-bottom:10px"><strong>The single most important reason to own HBB:</strong> A 115-year-old family-controlled small appliance brand with #2 US unit share, asset-light economics, 16-25% ROE depending on cycle position, conservative balance sheet, and 1 sell-side analyst — exactly the structural neglect profile that creates persistent mispricings in micro-caps. The Rankin family's 81% voting control with long-tenured ownership is the best possible alignment.</p>
+    <p><strong>The single biggest risk that could invalidate the thesis:</strong> Walmart aggressively expanding private-label small appliances and pulling Hamilton Beach® shelf placement. 29% of revenue dependence on Walmart is the structural Achilles heel. A 5pp shelf-share loss = 1.5% revenue hit; 10pp = 3% revenue and likely 50bps margin compression.</p>
+  </div>
+
+  <div class="grid3">
+    <div class="metric"><div class="val" style="color:var(--gold)">$20.87</div><div class="lbl">Current Price</div></div>
+    <div class="metric"><div class="val" style="color:var(--blu)">$23.50</div><div class="lbl">12-mo Target (Base IV)</div></div>
+    <div class="metric"><div class="val" style="color:var(--grn)">$16.45</div><div class="lbl">Buy Trigger (30% MoS)</div></div>
+  </div>
+
+  <div class="card">
+    <h3>Action Plan <span class="cn">行动计划</span></h3>
+    <ol style="margin:6px 0 0 22px;font-size:13px;color:var(--tm);line-height:1.85">
+      <li><strong>Set a price alert at $17.00.</strong> This is the level where GGB recovers to ~70 (Strong) and MoS to base IV reaches 28%. Below this, the trade becomes actionable.</li>
+      <li><strong>Set a deeper alert at $15.50.</strong> Where MoS crosses 35% — half-position entry zone with full-position option on further weakness.</li>
+      <li><strong>Watch Q1 2026 earnings (May 6, 2026).</strong> First post-recovery quarter. A miss could create the pullback we're waiting for.</li>
+      <li><strong>Watch Bartesian transition impact.</strong> The $22M revenue headwind hits H1 2026 — sentiment-driven price weakness possible even if core business is fine.</li>
+      <li><strong>Watch Walmart and Amazon shelf disclosures.</strong> If we see HBB SKU count drop on either platform, downgrade to "PASS" without waiting for price weakness.</li>
+      <li><strong>Re-screen quarterly.</strong> If neglect signal degrades (analyst count rises to 4+) or quality degrades (Q5/Q8 fail in 2026), reclassify accordingly.</li>
+    </ol>
+  </div>
+
+  <div class="card">
+    <h3>Key Metrics to Monitor Quarterly <span class="cn">季度监控关键指标</span></h3>
+    <table style="margin-bottom:0">
+      <tr><th>Metric</th><th>Current</th><th>Watch For</th></tr>
+      <tr><td>Gross Margin</td><td>25.7%</td><td>Sequential expansion to 26-27% confirms tariff normalization</td></tr>
+      <tr><td>Q1 Revenue YoY</td><td>TBD May 6</td><td>+3-5% (mid-single digit guidance) is required for thesis</td></tr>
+      <tr><td>OCF (cumulative TTM)</td><td>$13.8M</td><td>Recovery to $30M+ confirms working-capital normalization</td></tr>
+      <tr><td>Walmart concentration</td><td>29%</td><td>Stable or trending lower (diversification good); rising = concentration risk increasing</td></tr>
+      <tr><td>Sell-side analyst count</td><td>1</td><td>Rising count means the neglect edge is closing — paradoxically a buy signal short-term, sell signal long-term</td></tr>
+      <tr><td>Net debt</td><td>$45M</td><td>Should continue declining toward ~$20-30M as 2026 FCF normalizes to $35-45M</td></tr>
+    </table>
+  </div>
+
+  <div class="card" style="border-color:var(--blu)">
+    <h3>Position Sizing (when triggered) <span class="cn">仓位规模</span></h3>
+    <p style="margin-bottom:8px">Per the portfolio-management framework for neglect-screen candidates with micro-cap liquidity and family control:</p>
+    <ul style="margin:6px 0 0 22px;font-size:13px;color:var(--tm);line-height:1.8">
+      <li><strong>Initial position: 1.5-2.0% of portfolio</strong> (half of full position)</li>
+      <li>Add to 3-4% only if: (a) price drops a further 15% below entry without business deterioration, OR (b) Q1/Q2 2026 results confirm the recovery thesis</li>
+      <li>Maximum position: 4-5% — the customer concentration risk caps the conviction</li>
+      <li>Liquidity caveat: average daily volume ~25,000 shares (~$520K). Position should not exceed 5 days of volume. For a $1M portfolio, that's ~$50K = ~3,000 shares — easy. For a $10M portfolio, $200K position would take 4 days to exit — manageable.</li>
+    </ul>
+  </div>
+
+  <div class="quote">
+    <p>"This is research, not investment advice. The pivot from 'Strong (buy)' at $15.70 to 'Watchlist (monitor)' at $20.87 is what disciplined value investing actually looks like — when the price moves to fair, you stop. Patience is the edge."</p>
+    <div class="attr">— Greenwald Neglect × Graham-Buffett Framework v1.1, April 2026</div>
+  </div>
+</div>
+
+<!-- ====================== NEGLECT SCORECARD ====================== -->
+<div class="panel" id="neglect">
+  <div class="sh"><div class="sh-num">N</div><div><div class="sh-title">Neglect Scorecard</div><div class="sh-cn">忽视评分卡</div></div></div>
+
+  <div class="grid4" style="margin-bottom:20px">
+    <div class="metric"><div class="val" style="color:var(--gold)">10/15</div><div class="lbl">Neglect Score</div></div>
+    <div class="metric"><div class="val" style="color:var(--blu)">8/10</div><div class="lbl">Quality Pass</div></div>
+    <div class="metric"><div class="val" style="color:var(--grn)">8/10</div><div class="lbl">G-Score</div></div>
+    <div class="metric"><div class="val" style="color:var(--red)">1/6</div><div class="lbl">Valuation (at $20.87)</div></div>
+  </div>
+
+  <div class="card">
+    <h3>GGB Composite Score Comparison <span class="cn">GGB综合评分对比</span></h3>
+    <div class="formula">At screen entry $15.70:    GGB = 72.7  (Strong)
+At current $20.87:         GGB = <span style="color:var(--gold)">57.7</span>  (Watchlist)
+At trigger price $16.45:   GGB ≈ 70.0  (Strong restored)</div>
+    <p style="font-size:13px;color:var(--tm);margin-top:6px">The composite is dominated by the valuation component (30% weight). The price rally consumed 3 of 4 valuation criteria (V2 P/B, V3 EV/EBIT, V5 MoS), leaving only V1 P/E intact. This is the framework operating exactly as designed: the same business at a different price has a different verdict.</p>
+  </div>
+
+  <div class="tbl-wrap">
+    <table>
+      <thead>
+        <tr><th>Signal</th><th>Threshold</th><th>HBB</th><th>Score</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>N1 Analyst Coverage</td><td>≤ 3 sell-side analysts</td><td>1 analyst (Simply Wall St); Morningstar quant only; no formal coverage</td><td><span class="badge b-pass">3/3</span></td></tr>
+        <tr><td>N2 Institutional Ownership</td><td>< 30%</td><td>~51% institutional Class A; but heavy family Class B = 36% insider</td><td><span class="badge b-warn">1/2</span></td></tr>
+        <tr><td>N3 Media Mentions</td><td>< 5/month</td><td>Low coverage; appears occasionally on micro-cap value blogs</td><td><span class="badge b-pass">1/1</span></td></tr>
+        <tr><td>N4 Non-Index Member</td><td>Not in S&P 500 / R2K</td><td>Below R2K market cap threshold (R2K floor ~$120M; HBB hovers near it but float-adjusted excluded)</td><td><span class="badge b-pass">2/2</span></td></tr>
+        <tr><td>N5 Small/Mid Cap</td><td>< $5B (US small)</td><td>$280M market cap — clear micro-cap territory</td><td><span class="badge b-pass">2/2</span></td></tr>
+        <tr><td>N6 Boring Industry</td><td>Non-glamour sector</td><td>Small kitchen appliances. Maximum boring.</td><td><span class="badge b-pass">1/1</span></td></tr>
+        <tr><td>N7 Situational Neglect</td><td>Spinoff/post-crisis</td><td>2017 NACCO spinoff is too old to count (>5 years). 2025 tariff disruption is not a neglect-creating event.</td><td><span class="badge b-fail">0/2</span></td></tr>
+        <tr><td>N8 Language Barrier</td><td>Non-English filings</td><td>English filings.</td><td><span class="badge b-fail">0/2</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <h3>Required MoS Calculation <span class="cn">所需安全边际计算</span></h3>
+    <div class="formula">Required MoS = Base MoS + Neglect Premium + Market Premium
+
+Base MoS:        20%  (Graham minimum)
+Neglect Premium: +5%  (Neglect score 8-11 band)
+Market Premium:  +5%  (US small-cap)
+─────────────────────────────────────
+Required MoS:    <span style="color:var(--gold)">30%</span></div>
+    <p style="font-size:13px;color:var(--tm)">At the current $20.87 vs. base IV $23.50, MoS is only 11.2% — significantly below the 30% threshold required for a US small-cap with moderate neglect score.</p>
+  </div>
+
+  <div class="card">
+    <h3>Edge Assessment <span class="cn">优势评估</span></h3>
+    <p>HBB has <strong>moderate informational edge</strong> over the market. With 1 analyst formally covering and Morningstar relying on a quant model, fundamentals are not being deeply scrutinized by the sell-side. Family control + 36% insider holdings + low float (5.24M Class A float) further reinforce structural neglect. <em>The edge is real — but it has been partially priced in by the recent rally</em>. The remaining edge is in the cyclical recovery thesis (2025 was tariff-distorted; normalized earnings are higher), but this requires patience to harvest.</p>
+  </div>
+</div>
+
+<div class="footer">
+  Hamilton Beach Brands Holding Company (HBB) · Graham-Buffett × Greenwald Neglect Deep Value Analysis · April 26, 2026<br>
+  ⚠ This is research, not investment advice. Verify all data from primary SEC filings. Past performance does not predict future results.<br>
+  Tier 1 sources: HBB FY2025 10-K (SEC EDGAR, filed Feb 25, 2026); HBB FY2025 earnings release (Form 8-K); HBB Q4 2025 Earnings Call transcript.<br>
+  Tier 2 cross-references: StockAnalysis.com (financials), Simply Wall St (analyst count), Morningstar (quant fair value), Yahoo Finance (price/dividend).
+</div>
+
+<script>
+document.querySelectorAll('.tab').forEach(t => {
+  t.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(b => b.classList.remove('on'));
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('on'));
+    t.classList.add('on');
+    document.getElementById(t.dataset.t).classList.add('on');
+  });
+});
+
+// Chart 1: Revenue + Net Income Trend
+new Chart(document.getElementById('chartFin'), {
+  type: 'bar',
+  data: {
+    labels: ['FY2021', 'FY2022', 'FY2023', 'FY2024', 'FY2025'],
+    datasets: [
+      {label: 'Revenue ($M)', data: [658.4, 641.0, 625.6, 654.7, 606.9], backgroundColor: 'rgba(212,168,67,0.5)', borderColor: '#D4A843', borderWidth: 1, borderRadius: 3, yAxisID: 'y'},
+      {label: 'Net Income ($M)', data: [21.3, 25.3, 25.2, 30.8, 26.5], backgroundColor: 'rgba(52,194,122,0.6)', borderColor: '#34C27A', borderWidth: 1, borderRadius: 3, yAxisID: 'y1'},
+      {label: 'Gross Margin (%)', data: [20.7, 20.1, 23.0, 26.0, 25.7], type: 'line', borderColor: '#4B8DF8', backgroundColor: 'rgba(75,141,248,0.1)', borderWidth: 2, pointBackgroundColor: '#4B8DF8', pointRadius: 4, yAxisID: 'y2', tension: 0.3}
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {legend: {labels: {color: '#8A8FA0', font: {size: 11}}}},
+    scales: {
+      y: {position: 'left', grid: {color: 'rgba(37,42,56,.5)'}, ticks: {color: '#8A8FA0', callback: v => '$' + v + 'M'}, title: {display: true, text: 'Revenue', color: '#D4A843', font: {size: 10}}},
+      y1: {position: 'right', grid: {display: false}, ticks: {color: '#34C27A', callback: v => '$' + v + 'M'}, title: {display: true, text: 'Net Income', color: '#34C27A', font: {size: 10}}, max: 50},
+      y2: {display: false, max: 30, min: 18},
+      x: {grid: {display: false}, ticks: {color: '#8A8FA0'}}
+    }
+  }
+});
+
+// Chart 2: Capital Allocation
+new Chart(document.getElementById('chartCapAlloc'), {
+  type: 'bar',
+  data: {
+    labels: ['FY2021', 'FY2022', 'FY2023', 'FY2024', 'FY2025'],
+    datasets: [
+      {label: 'Buybacks ($M)', data: [0, 3.0, 3.1, 14.1, 9.0], backgroundColor: 'rgba(75,141,248,0.7)', borderColor: '#4B8DF8', borderWidth: 1, borderRadius: 3},
+      {label: 'Dividends ($M)', data: [5.5, 5.8, 6.1, 6.3, 6.4], backgroundColor: 'rgba(52,194,122,0.7)', borderColor: '#34C27A', borderWidth: 1, borderRadius: 3},
+      {label: 'Net Debt Paydown ($M)', data: [1.6, -14.4, 60.9, 0, 0], backgroundColor: 'rgba(212,168,67,0.7)', borderColor: '#D4A843', borderWidth: 1, borderRadius: 3},
+      {label: 'M&A ($M)', data: [0, 0, 0, 7.4, 0], backgroundColor: 'rgba(155,113,219,0.7)', borderColor: '#9B71DB', borderWidth: 1, borderRadius: 3}
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {legend: {labels: {color: '#8A8FA0', font: {size: 11}}}},
+    scales: {
+      y: {stacked: true, grid: {color: 'rgba(37,42,56,.5)'}, ticks: {color: '#8A8FA0', callback: v => '$' + v + 'M'}},
+      x: {stacked: true, grid: {display: false}, ticks: {color: '#8A8FA0'}}
+    }
+  }
+});
+
+// Chart 3: IV Range
+new Chart(document.getElementById('chartIV'), {
+  type: 'bar',
+  data: {
+    labels: ['Graham Number', 'Graham Formula', 'Owner Earn. DCF', 'EPV (10% CoC)', 'Peer EV/EBITDA', 'Peer P/E'],
+    datasets: [
+      {label: 'Conservative', data: [23.74, 13.91, 27.09, 16.39, 15.99, 18.00], backgroundColor: 'rgba(224,78,78,0.55)', borderColor: '#E04E4E', borderWidth: 1, borderRadius: 3},
+      {label: 'Base', data: [25.82, 28.07, 34.28, 20.34, 19.22, 20.00], backgroundColor: 'rgba(75,141,248,0.55)', borderColor: '#4B8DF8', borderWidth: 1, borderRadius: 3},
+      {label: 'Optimistic', data: [27.85, 41.68, 41.97, 26.26, 22.44, 24.00], backgroundColor: 'rgba(52,194,122,0.55)', borderColor: '#34C27A', borderWidth: 1, borderRadius: 3},
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: {labels: {color: '#8A8FA0', font: {size: 11}}},
+      annotation: {}
+    },
+    scales: {
+      y: {grid: {color: 'rgba(37,42,56,.5)'}, ticks: {color: '#8A8FA0', callback: v => '$' + v}, title: {display: true, text: 'Per-Share IV ($)', color: '#8A8FA0', font: {size: 10}}},
+      x: {grid: {display: false}, ticks: {color: '#8A8FA0', font: {size: 10}, maxRotation: 30}}
+    }
+  }
+});
+
+// Add reference line for current price on IV chart (drawn as a separate dataset)
+const iv_chart = Chart.getChart('chartIV');
+iv_chart.data.datasets.push({
+  label: 'Current Price $20.87',
+  data: [20.87, 20.87, 20.87, 20.87, 20.87, 20.87],
+  type: 'line',
+  borderColor: '#D4A843',
+  borderWidth: 2,
+  borderDash: [5, 5],
+  pointRadius: 0,
+  fill: false
+});
+iv_chart.update();
+</script>
+</body>
+</html>

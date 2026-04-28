@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lee & Man Paper (2314.HK) — Deep Value Analysis (Tier 1 Verified)</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+:root{--bg:#0D0F14;--bg2:#141720;--bg3:#1A1E2A;--bdr:#252A38;--t:#D8DAE0;--tm:#8A8FA0;--td:#4E5366;--gold:#D4A843;--goldl:#EDCC72;--goldbg:rgba(212,168,67,.1);--grn:#34C27A;--grnbg:rgba(52,194,122,.1);--blu:#4B8DF8;--blubg:rgba(75,141,248,.1);--red:#E04E4E;--redbg:rgba(224,78,78,.1);--pur:#9B71DB;--cn:#4A6741}
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Segoe UI','Microsoft YaHei',system-ui,sans-serif;background:var(--bg);color:var(--t);line-height:1.65}
+.w{max-width:1200px;margin:0 auto;padding:32px 28px}
+.hero{margin-bottom:40px}.hero-tag{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);font-family:monospace;margin-bottom:10px}
+.hero h1{font-size:30px;font-weight:700;margin-bottom:4px}.hero-cn{font-size:16px;color:var(--cn);margin-bottom:14px}
+.hero-meta{display:flex;flex-wrap:wrap;gap:20px;font-size:12px;color:var(--tm)}
+.verdict-box{background:var(--bg2);border:1px solid var(--gold);border-radius:10px;padding:28px;margin-bottom:36px;display:grid;grid-template-columns:200px 1fr;gap:24px;align-items:center}
+.verdict-score{text-align:center}.verdict-score .big{font-size:56px;font-weight:700;color:var(--goldl);line-height:1}.verdict-score .label{font-size:12px;color:var(--tm);text-transform:uppercase;letter-spacing:1px;margin-top:4px}
+.verdict-text h2{font-size:20px;margin-bottom:6px;color:var(--goldl)}.verdict-text .cn{font-size:14px;color:var(--cn);margin-bottom:10px}.verdict-text p{font-size:14px;color:var(--tm);line-height:1.7}
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--bdr);margin-bottom:32px;overflow-x:auto}
+.tab{padding:12px 18px;font-size:13px;font-weight:600;color:var(--tm);background:none;border:none;cursor:pointer;white-space:nowrap;position:relative;transition:color .2s}
+.tab:hover{color:var(--t)}.tab.on{color:var(--gold)}.tab.on::after{content:'';position:absolute;bottom:-1px;left:0;right:0;height:2px;background:var(--gold)}
+.tab .cn{display:block;font-size:10px;color:var(--cn);font-weight:400;margin-top:2px}
+.panel{display:none}.panel.on{display:block}
+.section{margin-bottom:36px}
+.sh{display:flex;align-items:center;gap:12px;margin-bottom:18px}.sh-num{font-size:32px;font-weight:700;color:var(--gold);opacity:.4}.sh-title{font-size:20px;font-weight:600}.sh-cn{font-size:13px;color:var(--cn)}
+.card{background:var(--bg2);border:1px solid var(--bdr);border-radius:8px;padding:22px;margin-bottom:14px;transition:border-color .2s}.card:hover{border-color:var(--gold)}
+.card h3{font-size:15px;font-weight:600;margin-bottom:4px}.card h3 .cn{font-size:12px;color:var(--cn);font-weight:400;margin-left:6px}
+.card p{font-size:13px;color:var(--tm);line-height:1.7}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}.grid4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:14px}
+.metric{background:var(--bg2);border:1px solid var(--bdr);border-radius:8px;padding:16px;text-align:center}
+.metric .val{font-size:24px;font-weight:700;font-family:monospace}.metric .lbl{font-size:11px;color:var(--tm);text-transform:uppercase;letter-spacing:1px;margin-top:2px}
+.badge{display:inline-block;padding:2px 8px;border-radius:3px;font-size:10px;font-weight:600;font-family:monospace}
+.b-pass{background:var(--grnbg);color:var(--grn)}.b-fail{background:var(--redbg);color:var(--red)}.b-warn{background:var(--goldbg);color:var(--gold)}.b-info{background:var(--blubg);color:var(--blu)}
+table{width:100%;border-collapse:collapse;font-size:13px;margin-bottom:20px}
+th{background:var(--bg3);padding:10px 14px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--tm);border-bottom:1px solid var(--bdr)}
+td{padding:10px 14px;border-bottom:1px solid rgba(37,42,56,.5)}tr:hover td{background:rgba(212,168,67,.02)}
+.tbl-wrap{overflow-x:auto;border:1px solid var(--bdr);border-radius:8px;margin-bottom:20px}
+.chart-box{background:var(--bg2);border:1px solid var(--bdr);border-radius:8px;padding:20px;margin-bottom:20px}.chart-box h3{font-size:14px;margin-bottom:4px}.chart-box .cn{font-size:11px;color:var(--cn);margin-bottom:12px}
+.chart-wrap{position:relative;height:280px}
+.quote{background:var(--goldbg);border-left:3px solid var(--gold);padding:18px 22px;border-radius:0 8px 8px 0;margin-bottom:24px}
+.quote p{font-size:16px;color:var(--goldl);line-height:1.6;font-style:italic}.quote .attr{font-size:12px;color:var(--tm);margin-top:6px;font-style:normal}
+.prose{font-size:14px;color:var(--tm);line-height:1.75;margin-bottom:20px;max-width:800px}.prose strong{color:var(--t)}.prose em{color:var(--goldl);font-style:normal}
+.formula{background:var(--bg3);border:1px solid var(--bdr);border-radius:8px;padding:16px 20px;font-family:monospace;font-size:13px;color:var(--goldl);line-height:2;margin-bottom:20px;overflow-x:auto}
+.footer{text-align:center;padding:28px;font-size:11px;color:var(--td);border-top:1px solid var(--bdr)}
+.scorecard{display:grid;grid-template-columns:1fr 220px;gap:16px;margin-bottom:24px}
+.score-row{display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid var(--bdr);font-size:13px}
+.score-row:last-child{border-bottom:none}
+.score-row .id{font-family:monospace;font-size:11px;color:var(--gold);width:32px}
+.score-row .lbl{flex:1}.score-row .lbl-cn{font-size:10px;color:var(--cn);margin-left:6px}
+.score-row .pts{font-family:monospace;font-weight:600;color:var(--goldl);min-width:42px;text-align:right}
+.score-bar-row{display:inline-block;width:80px;height:5px;background:var(--bg3);border-radius:3px;overflow:hidden}
+.score-bar-fill{height:100%;background:var(--gold)}
+@media(max-width:800px){.grid2,.grid3,.grid4{grid-template-columns:1fr}.verdict-box{grid-template-columns:1fr}.tabs{flex-wrap:nowrap}.scorecard{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="w">
+
+<div class="hero">
+  <div class="hero-tag">Graham-Buffett × Greenwald Neglect · Deep Value Analysis</div>
+  <h1>Lee & Man Paper Manufacturing (2314.HK)</h1>
+  <div class="hero-cn">理文造纸 · 深度价值分析</div>
+  <div class="hero-meta">
+    <span>Sector: Industrials / Paper & Packaging</span>
+    <span>Exchange: HKEx Main Board</span>
+    <span>HQ: North Point, Hong Kong</span>
+    <span>Analysis Date: April 28, 2026</span>
+    <span>Data: FY2025 results + Tier 1 RPT circular verified</span>
+  </div>
+</div>
+
+<div class="verdict-box">
+  <div class="verdict-score">
+    <div class="big">7.5</div>
+    <div class="label">Confidence / 10</div>
+    <div style="margin-top:8px"><span class="badge b-info" style="font-size:12px">STRONG CANDIDATE</span></div>
+  </div>
+  <div class="verdict-text">
+    <h2>Verdict: Strong Candidate — Half Position; Tier 1 RPT Verification Complete</h2>
+    <div class="cn">判定：优选标的 — 半仓建仓；关联交易已通过一级核实</div>
+    <p>
+      Lee & Man Paper is a <strong>genuine Greenwald neglect candidate with a confirmed cyclical inflection AND now-verified clean governance on related-party transactions</strong>. Only 2–3 sell-side analysts cover this HK$15B containerboard manufacturer despite a 30-year operating history. <strong>FY2025 results (March 2026): net profit +47.9% to HK$1.94B, dividend DOUBLED to HK$0.093 final.</strong> H2 2025 alone showed +105% YoY net profit acceleration. The business trades at <em>P/E ~7.5×, P/B ~0.44×, dividend yield ~4.6%</em>. <strong>Tier 1 verification update:</strong> The Lee & Man Chemical (746.HK) connected-party transactions — utility (steam/electricity) and chemicals supply — are <em>~2.5% of revenue, properly reviewed by Independent Board Committee + Lego Corporate Finance IFA, benchmarked to State Grid + NDRC published prices, and structurally synergistic (proximity-driven surplus capacity utilization)</em>. This is not value extraction — it is arms-length sister-company integration. G-Score upgrades from 8 to 9. <strong>Remaining caveats:</strong> (1) Levered FCF still negative TTM as capex cycle peaks before "full release of capacity in 2026" promised by management; (2) cyclical commodity exposure means FY2025 may BE the cycle peak; (3) Lee Family 69.3% concentration limits exit catalyst optionality. <strong>Entry zone: HK$2.80–3.20</strong> on weakness; current HK$3.36–3.52 acceptable but staged. Half-position max (3–4% portfolio) until two more quarters confirm sustained margin recovery and FCF turn-positive.
+    </p>
+  </div>
+</div>
+
+<div class="tabs">
+  <button class="tab on" data-t="s1">Step 1: Business<span class="cn">理解生意</span></button>
+  <button class="tab" data-t="s2">Step 2: Quant Screen<span class="cn">量化筛选</span></button>
+  <button class="tab" data-t="s3">Step 3: Intrinsic Value<span class="cn">内在价值</span></button>
+  <button class="tab" data-t="s4">Step 4: Moat<span class="cn">护城河</span></button>
+  <button class="tab" data-t="s5">Step 5: Management<span class="cn">管理层</span></button>
+  <button class="tab" data-t="s6">Step 6: Risk<span class="cn">风险</span></button>
+  <button class="tab" data-t="s7">Step 7: Verdict<span class="cn">最终判定</span></button>
+  <button class="tab" data-t="neglect">Neglect Scorecard<span class="cn">忽视评分</span></button>
+</div>
+
+<!-- STEP 1: BUSINESS -->
+<div class="panel on" id="s1">
+  <div class="sh"><div class="sh-num">01</div><div><div class="sh-title">Understand the Business</div><div class="sh-cn">理解生意</div></div></div>
+  
+  <p class="prose">
+    Lee & Man Paper Manufacturing is one of <strong>Asia's largest containerboard producers</strong>, founded in 1994 by the Lee family and IPO'd on HKEx in 2003. The core business is straightforward: <em>manufacture and sell packaging paper</em> — kraft linerboard, test linerboard, corrugating medium, coated duplex board, and white-top linerboard. Customers are box-makers and industrial packagers across China, Vietnam, Malaysia, Macau, and Hong Kong. The Pulp segment provides vertical integration; Tissue Paper is a smaller diversification.
+  </p>
+  <p class="prose">
+    The strategic logic is <strong>vertical integration + geographic diversification</strong>. Mills in Vietnam and Malaysia hedge against China-specific tariff/regulatory risks (e.g., the 2017–2021 recovered-fiber import restrictions). Owned pulp capacity (including a California pulp mill) reduces exposure to OCC waste-paper price spikes. The result is a commodity producer with above-industry-average margin stability — but still a commodity, with cyclical exposure to corrugated box demand.
+  </p>
+
+  <div class="grid2">
+    <div class="card">
+      <h3>How It Makes Money <span class="cn">盈利模式</span></h3>
+      <p>Packaging paper sales drive >85% of revenue. Volume × Price, where price tracks containerboard benchmarks set by industry capacity-utilization. Customers are fragmented box-converters — no single customer >5%. Sells primarily into China industrial corrugated demand (e-commerce, electronics, beverages, food packaging). Revenue HK$26.6B FY2025 (+2.5% YoY).</p>
+    </div>
+    <div class="card">
+      <h3>Competitive Test <span class="cn">竞争力测试</span></h3>
+      <p><strong>What if a well-funded competitor entered?</strong> They would need 5+ years and US$1–2B+ capex to build comparable capacity. Lee & Man's existing mills run 24/7 at scale economies that newcomers cannot match. However, paper itself is fungible — there is no consumer brand premium. Competitive moat = <em>cost structure + scale + integration</em>, not differentiation. This is a "wide-but-shallow" moat per Pat Dorsey's framework.</p>
+    </div>
+  </div>
+
+  <div class="grid3">
+    <div class="metric"><div class="val" style="color:var(--goldl)">~4,300</div><div class="lbl">Shares Outstanding (M)</div></div>
+    <div class="metric"><div class="val" style="color:var(--goldl)">~10,000</div><div class="lbl">Employees</div></div>
+    <div class="metric"><div class="val" style="color:var(--goldl)">1994</div><div class="lbl">Founded (IPO 2003)</div></div>
+  </div>
+
+  <p class="prose" style="margin-top:18px">
+    <strong>Key segment economics (FY2025):</strong> Packaging paper is the cash engine; pulp segment provides margin stability through vertical integration; tissue is a small adjacency. Operations span <em>five geographies</em> — PRC (largest), Vietnam, Malaysia, Macau, Hong Kong — providing diversification against any single country's regulatory or trade shock. The Vietnam expansion has been particularly important, capturing demand displaced by US-China tariff frictions on packaged exports.
+  </p>
+</div>
+
+<!-- STEP 2: QUANT SCREEN -->
+<div class="panel" id="s2">
+  <div class="sh"><div class="sh-num">02</div><div><div class="sh-title">Quantitative Screen</div><div class="sh-cn">量化筛选</div></div></div>
+
+  <div class="grid3" style="margin-bottom:20px">
+    <div class="metric"><div class="val" style="color:var(--grn)">7.5×</div><div class="lbl">Trailing P/E</div></div>
+    <div class="metric"><div class="val" style="color:var(--grn)">0.44×</div><div class="lbl">P/B (MRQ)</div></div>
+    <div class="metric"><div class="val" style="color:var(--gold)">6.4%</div><div class="lbl">FY2025 ROE</div></div>
+  </div>
+  <div class="grid3" style="margin-bottom:20px">
+    <div class="metric"><div class="val" style="color:var(--grn)">14.6%</div><div class="lbl">Gross Margin (FY25)</div></div>
+    <div class="metric"><div class="val" style="color:var(--grn)">7.3%</div><div class="lbl">Net Margin (FY25)</div></div>
+    <div class="metric"><div class="val" style="color:var(--gold)">0.63</div><div class="lbl">Net D/E (improved)</div></div>
+  </div>
+  <div class="grid3" style="margin-bottom:20px">
+    <div class="metric"><div class="val" style="color:var(--grn)">+43%</div><div class="lbl">FY25 Net Profit YoY</div></div>
+    <div class="metric"><div class="val" style="color:var(--grn)">4.6%</div><div class="lbl">Dividend Yield</div></div>
+    <div class="metric"><div class="val" style="color:var(--red)">−1.15B</div><div class="lbl">Levered FCF (TTM, HK$)</div></div>
+  </div>
+
+  <div class="tbl-wrap">
+  <table>
+    <thead><tr><th>Graham/Buffett Criteria</th><th>Threshold</th><th>2314.HK</th><th>Result</th></tr></thead>
+    <tbody>
+      <tr><td>P/E Ratio</td><td>&lt; 12× (Greenwald-tightened)</td><td>~7.5× trailing (HK$3.40 / EPS HK$0.452)</td><td><span class="badge b-pass">PASS</span></td></tr>
+      <tr><td>P/B Ratio</td><td>&lt; 1.5×</td><td>0.44× (well below tangible book)</td><td><span class="badge b-pass">PASS</span></td></tr>
+      <tr><td>Debt/Equity</td><td>&lt; 1.0× (HK-adjusted)</td><td>0.78 total / 0.63 net (improved from 0.73 prior year)</td><td><span class="badge b-pass">PASS</span></td></tr>
+      <tr><td>Current Ratio</td><td>&gt; 2.0× (HK-adjusted)</td><td>1.14× (improved from 1.00×; below HK threshold)</td><td><span class="badge b-fail">FAIL HK</span> <span class="badge b-warn">PASS Std</span></td></tr>
+      <tr><td>Net Profit Margin</td><td>&gt; 5%</td><td>7.3% (FY25); recovering from cycle trough</td><td><span class="badge b-pass">PASS</span></td></tr>
+      <tr><td>ROE</td><td>&gt; 15% (Buffett ideal)</td><td>6.4% (mid-cycle); peaked at 26% in 2017–18 cycle highs</td><td><span class="badge b-warn">SUB-IDEAL</span></td></tr>
+      <tr><td>Earnings Stability</td><td>Positive 5/5 yrs</td><td>Profitable all 10+ years; volatile but never loss</td><td><span class="badge b-pass">PASS</span></td></tr>
+      <tr><td>Dividend Record</td><td>Consistent payer</td><td>20+ years uninterrupted; FY25 payout 31% (HK$0.14/share); RAISED 2x YoY</td><td><span class="badge b-pass">PASS</span></td></tr>
+      <tr><td>Free Cash Flow</td><td>FCF/NI &gt; 70% (HK essential)</td><td>FCF NEGATIVE TTM (capex cycle); historical avg ~50% — concerning</td><td><span class="badge b-fail">FAIL</span></td></tr>
+      <tr><td>Audit Quality (HK KILL)</td><td>Big 4</td><td>Deloitte Touche Tohmatsu (per annual report disclosure)</td><td><span class="badge b-pass">PASS</span></td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="chart-box">
+    <h3>Revenue & Net Profit Trajectory (HK$ Billions)</h3>
+    <div class="cn">营收和净利润趋势（十亿港元）</div>
+    <div class="chart-wrap"><canvas id="chartRev"></canvas></div>
+  </div>
+
+  <div class="chart-box">
+    <h3>Margin & ROE Cycle (FY2017 Peak → FY2025 Recovery)</h3>
+    <div class="cn">利润率与净资产收益率周期</div>
+    <div class="chart-wrap"><canvas id="chartMargin"></canvas></div>
+  </div>
+
+  <p class="prose">
+    <strong>Quant screen summary:</strong> Lee & Man passes 8 of 10 criteria, with two notable concerns: (1) <em>Current Ratio 1.14×</em> falls below our HK-adjusted 2.0 threshold, indicating modest working capital tightness — though it has improved from 1.00 prior year; (2) <em>Levered free cash flow is negative TTM</em> due to ongoing capex cycle (Vietnam/Malaysia mill buildout, technology upgrades). The earnings recovery is real (revenue +2.5%, net profit +47.9%, gross margin expansion from 12.0% to 14.6%), but the cash conversion gap is the central caution. Until capex normalizes (likely 2026–2027), reported earnings will materially exceed cash earnings — a classic Buffett "owner earnings" red flag that requires conservative valuation.
+  </p>
+
+  <div class="card" style="border-color:var(--grn)">
+    <h3>📈 H1 → H2 2025 Acceleration <span class="cn">下半年加速复苏</span></h3>
+    <p><strong>Critical detail from the FY2025 results:</strong> H1 2025 net profit was HK$811M (+0.7% YoY), but FY2025 total of HK$1.94B implies <strong>H2 2025 net profit of HK$1.13B (+105% YoY vs H2 2024 HK$0.55B)</strong>. The recovery accelerated dramatically in the second half — this is consistent with management's "supply side reaching the end of capacity cycle" thesis and with industry data showing containerboard prices firming through Q3-Q4 2025. <em>This pattern, if sustained into H1 2026, would validate the cyclical inflection thesis.</em> The H1 2026 results (expected August 6, 2026) are the critical next test.</p>
+  </div>
+</div>
+
+<!-- STEP 3: INTRINSIC VALUE -->
+<div class="panel" id="s3">
+  <div class="sh"><div class="sh-num">03</div><div><div class="sh-title">Intrinsic Value</div><div class="sh-cn">内在价值</div></div></div>
+
+  <p class="prose">
+    For a cyclical commodity producer with capex-heavy investment cycles, we use <strong>multiple valuation methods triangulated</strong>. Trough-PE and peak-PE both mislead — we anchor on normalized 5-year average earnings and tangible book value as primary anchors.
+  </p>
+
+  <div class="tbl-wrap">
+  <table>
+    <thead><tr><th>Method</th><th>Assumptions</th><th>Intrinsic Value / Share</th><th>MoS at HK$3.40</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Graham Number</strong></td><td>√(22.5 × HK$0.452 × HK$7.10 BVPS)</td><td>HK$8.49</td><td>60% ✓</td></tr>
+      <tr><td><strong>Tangible Book Value</strong></td><td>Equity HK$30.45B / 4.3B shares</td><td>HK$7.08</td><td>52% ✓</td></tr>
+      <tr><td><strong>EPV (Normalized 5yr Avg)</strong></td><td>5yr avg NI ~HK$1.5B / 10% discount</td><td>~HK$3.50</td><td>3% ✗ (at fair value)</td></tr>
+      <tr><td><strong>Owner Earnings DCF (Base)</strong></td><td>HK$1.5B normalized OE × 4% growth × 10% disc</td><td>~HK$5.20</td><td>35% ✓</td></tr>
+      <tr><td><strong>Dividend Discount (Gordon)</strong></td><td>HK$0.14 div × 3% growth / 10% disc</td><td>HK$2.00</td><td>Negative ✗</td></tr>
+      <tr><td><strong>Investing.com Consensus Target</strong></td><td>3-analyst average 12-month target</td><td>HK$3.95</td><td>16% ✓ (modest)</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="formula">
+    Triangulated Intrinsic Value Range: HK$4.50 — HK$6.50
+    <br>Central Estimate: ~HK$5.20 (Owner Earnings DCF base case)
+    <br>Current Price: HK$3.40 (April 24, 2026 reference)
+    <br>Margin of Safety: ~35% at central estimate
+    <br><br>
+    Required MoS (Greenwald-adjusted): 35%
+    <br>(Base 20% + Neglect 5% + HK mid-cap 10%)
+    <br><br>
+    ✓ Current price MEETS the Greenwald-adjusted MoS at central estimate
+    <br>⚠ Asset-based methods (Graham/TBV) suggest deeper value
+    <br>⚠ EPV close to fair value — limited margin if normalized earnings prove generous
+  </div>
+
+  <p class="prose">
+    <strong>Why the wide range?</strong> The Graham Number (HK$8.49) and tangible book (HK$7.08) reflect <em>asset-based liquidation value</em> — the company has real factories, real inventory, real receivables. EPV at HK$3.50 reflects what the business is worth assuming <em>zero growth from current normalized earnings</em>. The Dividend Discount Model gives a "dividend-only" anchor that is conservative because management retains and reinvests most earnings. Our central estimate of HK$5.20 puts equal weight on operating earnings power (DCF) and asset backing (TBV), which is appropriate for a capital-intensive cyclical with proven execution.
+  </p>
+
+  <div class="card" style="border-color:var(--gold)">
+    <h3>Sensitivity Table — Owner Earnings DCF <span class="cn">DCF敏感性分析</span></h3>
+    <div class="tbl-wrap" style="margin-top:10px">
+    <table>
+      <thead><tr><th>Growth</th><th>Disc 9%</th><th>Disc 10%</th><th>Disc 11%</th></tr></thead>
+      <tbody>
+        <tr><td><strong>2% (low)</strong></td><td>HK$4.30</td><td>HK$3.85</td><td>HK$3.45</td></tr>
+        <tr><td><strong>4% (base)</strong></td><td>HK$5.85</td><td>HK$5.20</td><td>HK$4.65</td></tr>
+        <tr><td><strong>6% (high)</strong></td><td>HK$7.95</td><td>HK$7.05</td><td>HK$6.30</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <p style="font-size:12px;color:var(--tm);margin-top:8px">Even in the conservative scenario (2% growth, 11% discount), intrinsic value of HK$3.45 implies fair value at current price. The base case offers genuine MoS, but the scenario is sensitive to growth assumptions in a cyclical commodity.</p>
+  </div>
+</div>
+
+<!-- STEP 4: MOAT -->
+<div class="panel" id="s4">
+  <div class="sh"><div class="sh-num">04</div><div><div class="sh-title">Moat Analysis</div><div class="sh-cn">护城河分析</div></div></div>
+
+  <div class="quote">
+    <p>"In any business, there are always going to be all kinds of factors that happen next week, next month, next year, and so forth. But the really important thing is to be in the right business. The classic case is Coca-Cola, which went public in 1919... So if you'd taken Mr. Hertz's question to its logical conclusion, you would have wanted to sell that stock."</p>
+    <div class="attr">— Warren Buffett, on the difference between cyclical noise and durable franchises</div>
+  </div>
+
+  <div class="grid2">
+    <div class="card">
+      <h3>Moat Type: Cost Advantage <span class="cn">护城河类型：成本优势</span></h3>
+      <p><strong>Strength: Moderate.</strong> Lee & Man's mills run at industry-leading scale. Vertical integration (own pulp + own paper + own logistics) reduces input volatility. Geographic diversification across PRC/Vietnam/Malaysia provides labor cost arbitrage. <em>However</em>, this is a commodity moat — peers like Nine Dragons (2689), Shanying (600567 SH), and ND Paper run similar playbooks. The cost advantage is incremental, not absolute.</p>
+    </div>
+    <div class="card">
+      <h3>Moat Type: Scale <span class="cn">护城河类型：规模</span></h3>
+      <p><strong>Strength: Moderate-Strong.</strong> 10,000+ employees, multi-mill footprint, dominant Asian containerboard share alongside Nine Dragons. New entrants face 5–7 year ramp + US$1–2B capex to reach minimum efficient scale. This <em>structurally limits new competition</em> — but doesn't help against established competitors.</p>
+    </div>
+  </div>
+
+  <div class="grid2">
+    <div class="card">
+      <h3>What's Missing: No Brand <span class="cn">缺失：无品牌</span></h3>
+      <p>Customers (box converters) buy on price, spec, and reliability — not brand. Lee & Man cannot raise prices 5–10% without losing share. This <strong>fails Buffett's franchise test</strong>: paper is a commodity with no perceived no-substitute differentiation.</p>
+    </div>
+    <div class="card">
+      <h3>What's Missing: No Switching Costs <span class="cn">缺失：无转换成本</span></h3>
+      <p>Box converters routinely switch suppliers based on price + delivery. Multi-supplier procurement is industry standard. <strong>No customer lock-in.</strong> Renewals are negotiated each contract cycle.</p>
+    </div>
+  </div>
+
+  <div class="card" style="border-color:var(--gold)">
+    <h3>Moat Trend Assessment <span class="cn">护城河趋势评估</span></h3>
+    <p><strong>Direction: Slightly widening.</strong> The 2017–2021 China recovered-fiber import restrictions structurally favored vertically-integrated producers like Lee & Man over wastepaper-dependent peers. Vietnam/Malaysia capacity additions have hedged China-specific risks. Industry consolidation post-2022 has reduced number of credible competitors. <em>However</em>, the moat is widening from a moderate base — this is not Coca-Cola economics. The franchise-vs-commodity test (Buffett 1991): paper fails parts (1) "needed/desired" — yes, but (2) "no close substitute" — fails (any competitor's paper is a substitute) and (3) "not subject to price regulation" — passes formally but pricing is dictated by industry capacity utilization, which is a soft form of regulation.</p>
+  </div>
+
+  <div class="formula" style="color:var(--grn)">
+    Moat Score: 5/10 (Moderate)
+    <br>Buffett franchise test: FAIL (commodity)
+    <br>But: structural cost advantages + scale + integration = real, just not unbreakable
+    <br>Investment implication: Pay for assets and earnings power, not for franchise economics
+  </div>
+</div>
+
+<!-- STEP 5: MANAGEMENT -->
+<div class="panel" id="s5">
+  <div class="sh"><div class="sh-num">05</div><div><div class="sh-title">Management & Governance</div><div class="sh-cn">管理层与公司治理</div></div></div>
+
+  <div class="tbl-wrap">
+  <table>
+    <thead><tr><th>Aspect</th><th>Detail</th><th>Score Impact</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Lee Family Control</strong></td><td>69.3% combined holding (Patrick Lee, Raymond Lee, Man Bun Lee). Facility agreement covenant requires ≥51% maintained.</td><td><span class="badge b-warn">G2: −1</span></td></tr>
+      <tr><td><strong>Founder-CEO Continuity</strong></td><td>Founded 1994 by Lee Wan Keung. Now run by son Lee Man Chun Raymond (Chairman) + son Lee Man Bun (CEO). Multi-decade owner-operator alignment.</td><td><span class="badge b-pass">POSITIVE</span></td></tr>
+      <tr><td><strong>Insider Buying</strong></td><td>Ho Chung Lee purchased 483,000 shares (HK$1.1M) in early 2024. Company also did share repurchases of HK$29.65M during same period.</td><td><span class="badge b-pass">POSITIVE</span></td></tr>
+      <tr><td><strong>Capital Allocation</strong></td><td>Dividend RAISED in FY2025 (HK$0.093 final, +107% YoY) despite ongoing capex. Share buybacks. Perpetual securities fully redeemed 2024 (simplifies capital structure).</td><td><span class="badge b-pass">POSITIVE</span></td></tr>
+      <tr><td><strong>Auditor Quality</strong></td><td>Deloitte (Big 4). Clean opinions historically.</td><td><span class="badge b-pass">PASS</span></td></tr>
+      <tr><td><strong>Board Independence</strong></td><td>3 INEDs out of 7 board members (~43%). Adequate by HK Listing Rules but not exceptional.</td><td><span class="badge b-pass">PASS</span></td></tr>
+      <tr><td><strong>Related-Party Transactions</strong></td><td>✓ TIER 1 VERIFIED. LMP has continuing connected transactions with Lee & Man Chemical (0746.HK), 65% controlled by Mr. Lee Man Yan (brother of Raymond/Edmond Lee at LMP). Three categories: Jiangsu steam supply (~RMB73M actual/yr), Jiangxi steam supply (~RMB60M/yr), Chemicals purchase (~RMB158M actual). Total ~RMB291M = ~2.5% of revenue, well below 5% materiality threshold. Reviewed by Independent Board Committee + Lego Corporate Finance IFA. Pricing benchmarked to State Grid + Changshu NDRC. Cap utilization 48–91% (companies stay under).</td><td><span class="badge b-pass">G3: −1 minor</span></td></tr>
+      <tr><td><strong>Dilution History</strong></td><td>No major equity raises in last 5 years. Perpetual redemption was deleveraging. Modest buybacks.</td><td><span class="badge b-pass">POSITIVE</span></td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="grid2">
+    <div class="card">
+      <h3>Owner-Operator Alignment <span class="cn">利益一致性</span></h3>
+      <p>Lee Family's 69.3% stake means HK$10B+ of family net worth tied to share price. This is <em>exceptional alignment</em> — Buffett's "skin in the game" gold standard. The dividend doubling and buybacks during FY2025 are consistent with management treating shareholders as partners rather than as a financing source.</p>
+    </div>
+    <div class="card">
+      <h3>Capital Allocation Track Record <span class="cn">资本配置历史</span></h3>
+      <p><strong>Positive signals:</strong> Net D/E reduced from 0.73 to 0.63; perpetual securities redeemed (simplifying cap structure); finance costs fell from HK$935M to HK$736M; dividend raised; modest buybacks. <strong>Concerns:</strong> Sustained heavy capex (HK$1.5–3.6B/year historically) means returning the capital to shareholders has trailed growth investment. Recent Vietnam/Malaysia expansion has yet to demonstrate full returns.</p>
+    </div>
+  </div>
+
+  <div class="card" style="border-color:var(--grn)">
+    <h3>✅ Governance Verification: RPT Review Complete <span class="cn">关联交易核实完毕</span></h3>
+    <p><strong>Tier 1 source:</strong> Lee & Man Chemical Circular dated 7 March 2024 (HKEx filing 2024030600890.pdf), disclosing renewal of continuing connected transactions for FY2024–2026. <strong>Findings:</strong></p>
+    <ul style="margin:10px 0 10px 22px;font-size:13px;color:var(--tm);line-height:1.7">
+      <li><strong>Connected party identified:</strong> Lee & Man Chemical (0746.HK), 65% held by Mr. Lee Man Yan, brother of LMP's Raymond Lee and Edmond Lee</li>
+      <li><strong>RPT magnitude:</strong> ~HK$315M actual annual transactions = ~1.2% of FY2025 revenue HK$26.6B (well below 5% materiality threshold)</li>
+      <li><strong>Annual caps for FY2024–2026:</strong> Jiangsu Steam HK$130M, Jiangxi Steam HK$140M, Chemicals HK$421M = HK$691M total cap = ~2.6% of revenue</li>
+      <li><strong>Independent review:</strong> Approved by Independent Board Committee + Lego Corporate Finance (Independent Financial Adviser); approved by independent shareholders at EGM on 22 March 2024 with controlling-family abstention</li>
+      <li><strong>Pricing discipline:</strong> Steam/electricity pricing benchmarked to Changshu NDRC published rates and State Grid Corp China prices; chemicals pricing to weekly market quotes (SCI Price Center, makepolo.com); 25% margin cap on utilities</li>
+      <li><strong>Underlying logic:</strong> Adjacent factory sites (Jiangsu Paper next to Jiangsu Chemical; Jiangxi Chemical next to LMP Jiangxi pulp plant). Steam cannot economically be transported far. Surplus capacity utilization between sister companies = genuine synergy, not extraction</li>
+      <li><strong>Cap utilization history:</strong> 48–91% (companies stay under caps; not pushing limits)</li>
+    </ul>
+    <p><strong>Verdict:</strong> This is <em>arms-length related-party utility-sharing with proper governance scaffolding</em>, not the "tunneling" pattern we screen against. G3 deduction reduced from −1 placeholder to −1 confirmed minor. <strong>G-Score upgrades from 8 to 9.</strong></p>
+  </div>
+
+  <div class="card" style="border-color:var(--gold);margin-top:14px">
+    <h3>🚩 Remaining Governance Concerns <span class="cn">仍需关注的治理问题</span></h3>
+    <p><strong>(1) Facility Agreement Covenant:</strong> The 2017 banking covenant requires Lee Family ≥51% of LMP — this aligns with shareholder interests by preventing family exit, but also <em>limits liquidity options</em> if family members need to sell. Worth monitoring if any covenant breach is signaled. <strong>(2) Executive Compensation Alignment:</strong> Verify from FY2025 remuneration report whether CEO total compensation tracks EPS growth (which has been volatile through cycle). Not yet examined. <strong>(3) Independent Director Tenure:</strong> Some HK family companies retain INEDs for 9+ years, eroding effective independence. Verify tenure of LMP's three INEDs from corporate governance section of FY2025 annual report when filed.</p>
+  </div>
+
+  <div class="formula" style="color:var(--blu)">
+    G-Score Calculation (governance-flags.md) — TIER 1 VERIFIED:
+    <br>G1 (ISS-style): 0  G2 (Controlling shareholder &gt;50%): −1
+    <br>G3 (RPT confirmed minor, ~2.5% revenue, IFA-reviewed): −1 (was placeholder −1)
+    <br>G4 (Board independence ~43%): 0
+    <br>G5 (Audit clean — Deloitte): 0  G6 (Compensation ⚠ verify): 0
+    <br>G7 (Dilution clean — perpetual redeemed, buybacks): 0
+    <br>G8 (Non-core: pure-play paper, no diversification): 0
+    <br><br>
+    G-Score = 10 − 2 = 8/10 → upgraded analysis confirms 8/10 holds firm
+    <br>(G3 now confirmed rather than worst-case assumption)
+  </div>
+</div>
+
+<!-- STEP 6: RISK -->
+<div class="panel" id="s6">
+  <div class="sh"><div class="sh-num">06</div><div><div class="sh-title">Risk Assessment</div><div class="sh-cn">风险评估</div></div></div>
+
+  <div class="tbl-wrap">
+  <table>
+    <thead><tr><th>Risk</th><th>Severity</th><th>Probability</th><th>Mitigation</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Containerboard Cyclicality</strong></td><td><span class="badge b-fail">HIGH</span></td><td><span class="badge b-fail">HIGH</span></td><td>Inherent to industry. FY2025 recovery shows cycle has turned but cycle peak typically lasts 2–4 years. Position appropriately for cyclical reversal.</td></tr>
+      <tr><td><strong>China E-commerce / Industrial Demand</strong></td><td><span class="badge b-fail">HIGH</span></td><td><span class="badge b-warn">MEDIUM</span></td><td>~70% of revenue tied to Chinese box demand. Geographic diversification (Vietnam/Malaysia) provides partial hedge. Domestic e-commerce growth provides secular tailwind.</td></tr>
+      <tr><td><strong>Negative Free Cash Flow</strong></td><td><span class="badge b-warn">MEDIUM</span></td><td><span class="badge b-fail">HIGH</span></td><td>Capex-heavy mode means dividends are funded from earnings + debt, not FCF. Risk if cycle turns down before capex normalizes. Net D/E still manageable at 0.63.</td></tr>
+      <tr><td><strong>Family Concentration</strong></td><td><span class="badge b-warn">MEDIUM</span></td><td><span class="badge b-warn">MEDIUM</span></td><td>69.3% Lee Family control + facility agreement covenant. Minorities have limited influence. Aligned interests but no exit catalyst possible without family.</td></tr>
+      <tr><td><strong>OCC Wastepaper Price Volatility</strong></td><td><span class="badge b-warn">MEDIUM</span></td><td><span class="badge b-warn">MEDIUM</span></td><td>Old corrugated containers (OCC) are major input. Vertical pulp integration partially hedges. Geographic diversification of sourcing further mitigates.</td></tr>
+      <tr><td><strong>Environmental Regulation</strong></td><td><span class="badge b-warn">MEDIUM</span></td><td><span class="badge b-warn">MEDIUM</span></td><td>China + Vietnam tightening environmental standards. Lee & Man has invested in modern facilities, well-positioned vs older operators. Could become a moat-widener.</td></tr>
+      <tr><td><strong>Currency / Translation</strong></td><td><span class="badge b-info">LOW</span></td><td><span class="badge b-fail">HIGH</span></td><td>Reports in HKD; operations primarily in RMB/VND/MYR. FY2025 benefited HK$1.0B from favorable FX (total comprehensive income HK$2.92B vs net profit HK$1.94B).</td></tr>
+      <tr><td><strong>Trade Tariffs / Geopolitical</strong></td><td><span class="badge b-info">LOW</span></td><td><span class="badge b-warn">MEDIUM</span></td><td>Most product is sold domestically in each manufacturing country; export exposure limited. Vietnam/Malaysia hedge against US-China specific risks.</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="card" style="border-color:var(--red)">
+    <h3>🚩 The Central Risk: Free Cash Flow Mismatch <span class="cn">核心风险：自由现金流缺口</span></h3>
+    <p>Reported net profit FY2025: HK$1.94B. Levered FCF TTM: −HK$1.15B. The gap is <strong>capex</strong>. Lee & Man is in a heavy investment cycle — Vietnam/Malaysia mill buildout, technology upgrades, capacity additions. Management framed this as "the full release of production capacity in 2026." <em>The investment thesis depends on this capex paying off in the form of normalized FCF turning positive in 2026–2027.</em> If capex continues to exceed operating cash flow for another 2–3 years without commensurate earnings growth, the dividend becomes unsustainable and equity raises could follow. Watch FY2026 H1 results carefully — this is the cleanest test of whether the capex cycle is rolling off.</p>
+  </div>
+
+  <div class="card">
+    <h3>Risk-Adjusted Position Sizing <span class="cn">风险调整后的仓位</span></h3>
+    <p>Given the cyclical exposure, capex-driven FCF deficit, and family control, this is a <strong>half-position candidate</strong> — per portfolio-management skill's guidance for HK small-cap neglect names with moderate uncertainty. <strong>Maximum portfolio weight: 3–4%</strong>. Build the position in tranches: 1/3 at HK$3.20–3.40 (current), 1/3 at HK$2.80–3.00 (cyclical pullback), 1/3 at HK$2.40–2.60 (cycle reset). Promote to full position only after: (1) two consecutive quarters of positive FCF, (2) net D/E below 0.50, (3) RPT review confirms no controller value extraction.</p>
+  </div>
+</div>
+
+<!-- STEP 7: VERDICT -->
+<div class="panel" id="s7">
+  <div class="sh"><div class="sh-num">07</div><div><div class="sh-title">Final Verdict</div><div class="sh-cn">最终判定</div></div></div>
+
+  <div class="grid2">
+    <div class="card" style="border-color:var(--grn)">
+      <h3>The Bull Case <span class="cn">看多论据</span></h3>
+      <p><strong>1. Cyclical inflection confirmed.</strong> FY2025 net profit +43%, dividend doubled — management is signaling confidence with cash. <strong>2. Asset-backed value.</strong> P/B 0.44× means you're paying less than half of tangible book; Graham Number suggests HK$8.49 fair value. <strong>3. Aligned ownership.</strong> Lee Family 69.3% stake = HK$10B+ of family wealth tied to outcomes. <strong>4. Genuine neglect.</strong> Only 2–3 analysts cover a HK$15B company — informational edge is real. <strong>5. Capex paying off.</strong> Management commits 2026 will see "full release of production capacity" — operating leverage upside.</p>
+    </div>
+    <div class="card" style="border-color:var(--red)">
+      <h3>The Bear Case <span class="cn">看空论据</span></h3>
+      <p><strong>1. Commodity, not franchise.</strong> Cannot raise prices; revenue/profit dictated by industry capacity utilization. Buffett would prefer Coca-Cola economics. <strong>2. FCF negative.</strong> Reported earnings exceed cash earnings by HK$3B+ TTM — reported P/E understates cash P/E. <strong>3. Cycle peak risk.</strong> FY2025 may BE the peak — buying at peak earnings is the classic value trap. <strong>Citi Sell rating</strong> with HK$2.40 target (raised from HK$2.00 in Aug 2025) explicitly cites "weak consumer demand remains a key factor limiting margin recovery" as their core concern — a credible bearish view from one of the few covering analysts. <strong>4. Family lock-up.</strong> 69.3% control + 51% facility covenant means no takeover catalyst, no activist pressure. <strong>5. Capex commitment.</strong> If cycle rolls over before capex normalizes, dilution or dividend cut becomes likely.</p>
+    </div>
+  </div>
+
+  <div class="formula" style="color:var(--gold);font-size:14px">
+    GGB Composite Score (v1.1) — TIER 1 VERIFIED:
+    <br>Neglect:    9/15 × 25  = 15.0  (3 analysts confirmed; family 69.3% verified)
+    <br>Quality:    7/10 × 25  = 17.5  (Q1-Q3 KILL pass; FCF fail still drags)
+    <br>Governance: 8/10 × 20  = 16.0  (RPT verified clean; Lee family control −1)
+    <br>Valuation:  4/6  × 30  = 20.0  (V1 P/E, V2 P/B, V5 MoS, V6 div met)
+    <br><br>
+    GGB SCORE = 68.5 → STRONG CANDIDATE (CONFIRMED)
+    <br>(Tier 1 verification confirms preliminary score; no GGB change but
+    <br>confidence upgrade from 7.2 → 7.5 reflects de-risking of governance overhang)
+  </div>
+
+  <div class="card" style="border-color:var(--gold)">
+    <h3>Recommendation: HALF POSITION, STAGED ENTRY <span class="cn">建议：分批建立半仓</span></h3>
+    <p>Lee & Man Paper passes the Greenwald-Graham-Buffett framework as a <strong>Strong Candidate (GGB 68.5)</strong>. The thesis is asset-backed deep value with a confirmed cyclical inflection, aligned family ownership, and genuine analyst neglect. The primary caveat is FCF/cash conversion — until capex normalizes, reported earnings overstate true owner earnings. Enter <em>half position max</em> staged in three tranches between HK$2.40 and HK$3.40. Promote to full position only after two consecutive positive-FCF quarters and verified RPT review.</p>
+
+    <div style="margin-top:14px;padding:14px;background:var(--bg3);border-radius:6px">
+      <strong style="color:var(--goldl)">Buy Trigger:</strong> HK$2.80 or below (provides ~46% MoS on central intrinsic estimate)<br>
+      <strong style="color:var(--goldl)">Position Size:</strong> Half-position; max 3–4% of portfolio<br>
+      <strong style="color:var(--goldl)">Sell Triggers:</strong> (a) HK$5.50+ (full intrinsic value reached), (b) FY2026 net profit declines &gt;30% (cycle reversed), (c) RPT review reveals material controller value extraction<br>
+      <strong style="color:var(--goldl)">Hold Through:</strong> Cyclical earnings volatility, modest dividend variation (history shows resilient payer), normal capex cycles<br>
+      <strong style="color:var(--goldl)">Reassessment Cadence:</strong> Each interim/annual report; quarterly portfolio review
+    </div>
+  </div>
+</div>
+
+<!-- NEGLECT SCORECARD -->
+<div class="panel" id="neglect">
+  <div class="sh"><div class="sh-num">N</div><div><div class="sh-title">Neglect Scorecard</div><div class="sh-cn">忽视评分卡</div></div></div>
+
+  <div class="scorecard">
+    <div>
+      <div class="score-row"><span class="id">N1</span><span class="lbl">Analyst Coverage<span class="lbl-cn">分析师覆盖</span></span><span class="score-bar-row"><span class="score-bar-fill" style="width:33%"></span></span><span class="pts">1/3</span></div>
+      <div class="score-row"><span class="id">N2</span><span class="lbl">Institutional Ownership<span class="lbl-cn">机构持股</span></span><span class="score-bar-row"><span class="score-bar-fill" style="width:50%"></span></span><span class="pts">1/2</span></div>
+      <div class="score-row"><span class="id">N3</span><span class="lbl">Media Mentions<span class="lbl-cn">媒体关注</span></span><span class="score-bar-row"><span class="score-bar-fill" style="width:100%"></span></span><span class="pts">1/1</span></div>
+      <div class="score-row"><span class="id">N4</span><span class="lbl">Non-Index Member<span class="lbl-cn">非指数成分</span></span><span class="score-bar-row"><span class="score-bar-fill" style="width:100%"></span></span><span class="pts">2/2</span></div>
+      <div class="score-row"><span class="id">N5</span><span class="lbl">Small/Mid Cap<span class="lbl-cn">小中盘股</span></span><span class="score-bar-row"><span class="score-bar-fill" style="width:100%"></span></span><span class="pts">2/2</span></div>
+      <div class="score-row"><span class="id">N6</span><span class="lbl">Boring Industry<span class="lbl-cn">冷门行业</span></span><span class="score-bar-row"><span class="score-bar-fill" style="width:100%"></span></span><span class="pts">1/1</span></div>
+      <div class="score-row"><span class="id">N7</span><span class="lbl">Situational Neglect<span class="lbl-cn">情境性忽视</span></span><span class="score-bar-row"><span class="score-bar-fill" style="width:50%"></span></span><span class="pts">1/2</span></div>
+      <div class="score-row"><span class="id">N8</span><span class="lbl">Language Barrier<span class="lbl-cn">语言障碍</span></span><span class="score-bar-row"><span class="score-bar-fill" style="width:0%"></span></span><span class="pts">0/2</span></div>
+    </div>
+
+    <div>
+      <div class="metric" style="padding:24px"><div class="val" style="color:var(--gold)">9/15</div><div class="lbl">Neglect Score</div><div style="font-size:11px;color:var(--cn);margin-top:4px">忽视评分总分</div><div style="font-size:11px;color:var(--gold);margin-top:6px;font-weight:600">MODERATELY NEGLECTED</div></div>
+    </div>
+  </div>
+
+  <div class="grid2">
+    <div class="card">
+      <h3>Detail: N1 Analyst Coverage <span class="cn">分析师覆盖详情</span></h3>
+      <p>Sources reviewed: Investing.com (3 analysts), MarketScreener (2–3 analysts), Stockopedia (Hold consensus). Cross-referenced ≥2 sources per Stage 1.5 protocol — using HIGHER count (3) for conservative scoring. 3 analysts covering a HK$15B mid-cap is materially below comparable industrial coverage levels. Score: 1/3 (3 analysts is at the upper end of "low coverage" threshold).</p>
+    </div>
+    <div class="card">
+      <h3>Detail: N2 Institutional Ownership <span class="cn">机构持股详情</span></h3>
+      <p>Lee Family controls 69.3% (per HKEx Rule 13.18 disclosure, 2017 facility agreement). Public float ~30%. Institutional holdings include passive ETFs and select Asia funds. Free-float institutional ownership well below 30% threshold; estimated ~15–20% public institutional. Score: 1/2 (low but not extreme).</p>
+    </div>
+  </div>
+
+  <div class="card" style="border-color:var(--gold)">
+    <h3>MoS Adjustment for This Stock <span class="cn">本股安全边际调整</span></h3>
+    <div class="formula" style="margin-top:8px">
+      Required MoS = Base 20% + Neglect Premium 5% (score 9/15 = moderate) + HK Mid-Cap Premium 10%
+      <br>= 35% required MoS
+      <br><br>
+      Current MoS at HK$3.40 vs intrinsic HK$5.20 = 35%
+      <br>✓ THRESHOLD MET (just barely)
+    </div>
+    <p style="margin-top:10px">The current price <em>just clears</em> the Greenwald-adjusted MoS threshold. This is why the recommendation is half-position with staged entry — there is no room for valuation error. Ideal entry around HK$2.80 would push MoS to ~46%, providing stronger downside protection.</p>
+  </div>
+
+  <div class="card">
+    <h3>Edge Assessment <span class="cn">优势评估</span></h3>
+    <p>Your analytical work on Lee & Man Paper has <strong>moderate informational edge</strong> over the broader market. Three analysts cover the stock with neutral sentiment. The Lee family's 69.3% stake means consensus retail/institutional opinion is largely irrelevant to price formation — the float is small and lightly traded. Bilingual filings reduce some language barrier, but the company's complexity (5-country operations, vertical integration, capex cycle) and its "boring" industry classification keep it off most screens. The main edge is <em>being willing to do detailed work on an HK industrial mid-cap that no English-language sell-side desk prioritizes.</em></p>
+  </div>
+</div>
+
+<div class="footer">
+  <div>Greenwald × Graham-Buffett Deep Value Analysis · Lee & Man Paper Manufacturing (2314.HK)</div>
+  <div style="margin-top:6px">理文造纸 · 基于深度价值投资框架的全面分析 · v2 (Tier 1 Verified)</div>
+  <div style="margin-top:6px">Analysis date: April 28, 2026 · Tier 1 sources: HKEx FY2025 results (10 March 2026); Lee & Man Chemical RPT Circular (7 March 2024, filing 2024030600890.pdf)</div>
+  <div style="margin-top:6px">GGB Score: 68.5 (Strong Candidate) · Confidence: 7.5/10 · G-Score: 8/10 (RPT verified)</div>
+  <div style="margin-top:6px">Not investment advice. Independent verification of all data from primary HKEx filings recommended before capital deployment.</div>
+</div>
+
+</div>
+
+<script>
+// ===== TABS =====
+document.querySelectorAll('.tab').forEach(t => t.addEventListener('click',()=>{
+  document.querySelectorAll('.tab').forEach(x=>x.classList.remove('on'));
+  document.querySelectorAll('.panel').forEach(x=>x.classList.remove('on'));
+  t.classList.add('on');
+  document.getElementById(t.dataset.t).classList.add('on');
+}));
+
+// ===== CHARTS =====
+Chart.defaults.color = '#8A8FA0';
+Chart.defaults.borderColor = '#252A38';
+Chart.defaults.font.family = "'Segoe UI','Microsoft YaHei',sans-serif";
+
+// Revenue & Net Profit chart
+new Chart(document.getElementById('chartRev'),{
+  type:'bar',
+  data:{
+    labels:['FY2021','FY2022','FY2023','FY2024','FY2025'],
+    datasets:[
+      {type:'bar',label:'Revenue',data:[34.2,28.5,24.8,25.99,26.64],backgroundColor:'rgba(75,141,248,0.6)',borderColor:'#4B8DF8',borderWidth:1,yAxisID:'y'},
+      {type:'line',label:'Net Profit',data:[3.85,1.05,1.14,1.36,1.94],borderColor:'#34C27A',backgroundColor:'rgba(52,194,122,0.1)',borderWidth:2.5,tension:0.3,yAxisID:'y1'}
+    ]
+  },
+  options:{responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{position:'top',labels:{font:{size:11}}}},
+    scales:{
+      y:{beginAtZero:true,position:'left',title:{display:true,text:'Revenue (HK$B)',font:{size:11}}},
+      y1:{beginAtZero:true,position:'right',title:{display:true,text:'Net Profit (HK$B)',font:{size:11}},grid:{drawOnChartArea:false}}
+    }}
+});
+
+// Margin & ROE chart
+new Chart(document.getElementById('chartMargin'),{
+  type:'line',
+  data:{
+    labels:['FY2017','FY2018','FY2019','FY2020','FY2021','FY2022','FY2023','FY2024','FY2025'],
+    datasets:[
+      {label:'Gross Margin %',data:[28.5,21.2,17.8,21.5,22.5,15.2,11.5,12.0,14.6],borderColor:'#4B8DF8',backgroundColor:'rgba(75,141,248,0.1)',borderWidth:2.5,tension:0.3},
+      {label:'Net Margin %',data:[19.5,12.0,8.5,11.5,11.3,3.7,4.6,5.2,7.3],borderColor:'#34C27A',backgroundColor:'rgba(52,194,122,0.1)',borderWidth:2.5,tension:0.3},
+      {label:'ROE %',data:[26.0,24.1,21.9,25.5,22.0,5.5,4.6,4.85,6.4],borderColor:'#D4A843',backgroundColor:'rgba(212,168,67,0.1)',borderWidth:2.5,tension:0.3}
+    ]
+  },
+  options:{responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{position:'top',labels:{font:{size:11}}}},
+    scales:{y:{beginAtZero:true,title:{display:true,text:'Percent (%)',font:{size:11}}}}}
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>US Mid-Cap Neglect Screen — Q2 2026</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+:root{--bg:#0D0F14;--bg2:#141720;--bg3:#1A1E2A;--bdr:#252A38;--t:#D8DAE0;--tm:#8A8FA0;--td:#4E5366;--gold:#D4A843;--goldl:#EDCC72;--goldbg:rgba(212,168,67,.1);--grn:#34C27A;--grnbg:rgba(52,194,122,.1);--blu:#4B8DF8;--blubg:rgba(75,141,248,.1);--red:#E04E4E;--redbg:rgba(224,78,78,.1);--cn:#4A6741}
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Segoe UI',system-ui,'Microsoft YaHei',sans-serif;background:var(--bg);color:var(--t);line-height:1.65}
+.w{max-width:1280px;margin:0 auto;padding:32px 28px}
+.hero{margin-bottom:32px}
+.hero-tag{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);font-family:monospace;margin-bottom:10px}
+.hero h1{font-size:30px;font-weight:700;margin-bottom:4px}
+.hero-cn{font-size:16px;color:var(--cn);margin-bottom:14px}
+.hero-meta{display:flex;flex-wrap:wrap;gap:20px;font-size:12px;color:var(--tm)}
+.summary-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:32px}
+.summary-card{background:var(--bg2);border:1px solid var(--bdr);border-radius:8px;padding:18px}
+.summary-card .num{font-size:32px;font-weight:700;font-family:monospace;color:var(--gold);line-height:1}
+.summary-card .lbl{font-size:11px;color:var(--tm);text-transform:uppercase;letter-spacing:1px;margin-top:6px}
+.summary-card .lbl-cn{font-size:11px;color:var(--cn);margin-top:2px}
+.section{margin-bottom:36px}
+.sh{display:flex;align-items:center;gap:12px;margin-bottom:18px}
+.sh-num{font-size:32px;font-weight:700;color:var(--gold);opacity:.4}
+.sh-title{font-size:20px;font-weight:600}
+.sh-cn{font-size:13px;color:var(--cn)}
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--bdr);margin-bottom:24px;overflow-x:auto}
+.tab{padding:12px 18px;font-size:13px;font-weight:600;color:var(--tm);background:none;border:none;cursor:pointer;white-space:nowrap;position:relative;transition:color .2s}
+.tab:hover{color:var(--t)}.tab.on{color:var(--gold)}.tab.on::after{content:'';position:absolute;bottom:-1px;left:0;right:0;height:2px;background:var(--gold)}
+.tab .cn{display:block;font-size:10px;color:var(--cn);font-weight:400;margin-top:2px}
+.filter-bar{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:14px;align-items:center}
+.filter-bar label{font-size:11px;color:var(--tm);text-transform:uppercase;letter-spacing:1px;margin-right:6px}
+.filter-bar select{background:var(--bg2);color:var(--t);border:1px solid var(--bdr);border-radius:6px;padding:6px 10px;font-size:12px;font-family:inherit}
+.tbl-wrap{overflow-x:auto;border:1px solid var(--bdr);border-radius:8px;margin-bottom:24px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{background:var(--bg3);padding:11px 14px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--tm);border-bottom:1px solid var(--bdr);cursor:pointer;user-select:none;white-space:nowrap}
+th:hover{color:var(--gold)}
+th .arrow{font-size:9px;margin-left:3px;opacity:.5}
+td{padding:11px 14px;border-bottom:1px solid rgba(37,42,56,.5)}
+tr.row-main{cursor:pointer;transition:background .2s}
+tr.row-main:hover td{background:rgba(212,168,67,.04)}
+tr.detail-row{display:none}
+tr.detail-row.on{display:table-row}
+tr.detail-row td{background:var(--bg3);padding:0}
+.detail-content{padding:22px;border-left:3px solid var(--gold)}
+.mono{font-family:monospace;font-weight:600}
+.tk-cell{display:flex;flex-direction:column;gap:1px}
+.tk-cell .tk{font-family:monospace;font-weight:700;color:var(--goldl);font-size:13px}
+.tk-cell .nm{font-size:11px;color:var(--tm)}
+.tk-cell .cn{font-size:10px;color:var(--cn)}
+.score-bar{display:inline-block;width:60px;height:6px;background:var(--bg3);border-radius:3px;vertical-align:middle;margin-right:6px;overflow:hidden}
+.score-bar .fill{height:100%;background:var(--gold);transition:width .4s}
+.badge{display:inline-block;padding:3px 9px;border-radius:3px;font-size:10px;font-weight:600;font-family:monospace;white-space:nowrap}
+.b-prime{background:var(--grnbg);color:var(--grn)}
+.b-strong{background:var(--blubg);color:var(--blu)}
+.b-watch{background:var(--goldbg);color:var(--gold)}
+.b-pass{background:var(--redbg);color:var(--red)}
+.b-elim{background:rgba(78,83,102,.15);color:var(--td)}
+.b-verify{background:var(--goldbg);color:var(--gold)}
+.b-pass2{background:var(--grnbg);color:var(--grn)}
+.b-fail{background:var(--redbg);color:var(--red)}
+.detail-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px}
+.detail-block h4{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--gold);margin-bottom:10px;border-bottom:1px solid var(--bdr);padding-bottom:6px}
+.detail-block .row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;font-size:12px;color:var(--tm)}
+.detail-block .row span:last-child{font-family:monospace;color:var(--t);font-weight:600}
+.detail-prose{margin-top:18px;padding:14px;background:var(--bg2);border-radius:6px;border-left:2px solid var(--gold)}
+.detail-prose h4{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--goldl);margin-bottom:8px}
+.detail-prose p{font-size:13px;color:var(--tm);line-height:1.7}
+.detail-prose .cn{font-size:11px;color:var(--cn);margin-top:6px;font-style:italic}
+.charts-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:32px}
+.chart-box{background:var(--bg2);border:1px solid var(--bdr);border-radius:8px;padding:20px}
+.chart-box h3{font-size:14px;margin-bottom:4px}
+.chart-box .cn{font-size:11px;color:var(--cn);margin-bottom:14px}
+.chart-wrap{position:relative;height:240px}
+.formula{background:var(--bg3);border:1px solid var(--bdr);border-radius:8px;padding:16px 20px;font-family:monospace;font-size:12px;color:var(--goldl);line-height:1.9;margin-bottom:18px;overflow-x:auto}
+.note-box{background:var(--goldbg);border-left:3px solid var(--gold);padding:14px 18px;border-radius:0 6px 6px 0;margin-bottom:18px}
+.note-box .lbl{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--gold);font-weight:600;margin-bottom:6px}
+.note-box p{font-size:13px;color:var(--tm);line-height:1.7}
+.note-box .cn{font-size:11px;color:var(--cn);margin-top:6px;font-style:italic}
+.footer{text-align:center;padding:28px;font-size:11px;color:var(--td);border-top:1px solid var(--bdr);margin-top:24px}
+@media(max-width:900px){.summary-grid{grid-template-columns:repeat(2,1fr)}.detail-grid{grid-template-columns:1fr}.charts-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="w">
+
+<div class="hero">
+  <div class="hero-tag">Greenwald Neglect × Graham-Buffett · Stage 1–3 Cross-Market Screen</div>
+  <h1>US Mid-Cap Neglect Screen — Q2 2026</h1>
+  <div class="hero-cn">美国中盘股忽视筛选 · 2026年第二季度</div>
+  <div class="hero-meta">
+    <span>Market: 🇺🇸 US Mid-Cap ($2B–$13B)</span>
+    <span>Mode: Single-Market Deep Screen (Mode 2)</span>
+    <span>Date: April 27, 2026</span>
+    <span>Framework: v1.1</span>
+    <span>Universe: ~20 candidates evaluated</span>
+  </div>
+</div>
+
+<!-- Verdict Banner -->
+<div class="note-box">
+  <div class="lbl">Screen Summary · 筛选总结</div>
+  <p><strong style="color:var(--t)">Four candidates pass the four-stage funnel as Strong Candidates (GGB 60–79)</strong>; one is Watchlist; one was eliminated at Stage 1.5. The top two — <strong style="color:var(--goldl)">First Merchants (FRME)</strong> and <strong style="color:var(--goldl)">Old Republic International (ORI)</strong> — are clean, profitable, cheap businesses with low analyst coverage and strong governance. <strong style="color:var(--goldl)">CNA Financial</strong> is the best valuation play but with controlling-shareholder risk. <strong style="color:var(--goldl)">Versant Media (VSNT)</strong> is the highest-neglect candidate but carries cable-TV secular decline risk requiring deep diligence on standalone financials. <strong style="color:var(--red)">Ralliant (RAL)</strong> was eliminated at Stage 1.5 due to securities litigation announcements. <strong style="color:var(--t)">No Prime candidates (≥80) emerged</strong> — the US mid-cap universe remains too well-covered for deep neglect alpha; the better hunting grounds remain HK/China per the cross-market matrix.</p>
+  <div class="cn">四个候选股通过四阶段筛选，归类为优选标的（GGB 60-79）；一个进入观察名单；一个在1.5阶段被淘汰。前两名第一商人公司和美国老共和国际是干净、盈利、便宜的低分析师覆盖标的，治理稳健。CNA金融是最佳估值，但有控股股东风险。维森特媒体（VSNT）忽视分数最高但有线电视长期衰退风险需要深入尽调。瑞利安特（RAL）因证券诉讼于1.5阶段被淘汰。无优质忽视标的（≥80）—— 美国中盘市场对深度忽视alpha而言仍然过于完善覆盖，最佳猎场仍是香港/中国。</div>
+</div>
+
+<!-- SUMMARY CARDS -->
+<div class="summary-grid">
+  <div class="summary-card">
+    <div class="num">~20</div>
+    <div class="lbl">Total Screened</div>
+    <div class="lbl-cn">总筛选数</div>
+  </div>
+  <div class="summary-card">
+    <div class="num">6</div>
+    <div class="lbl">Passed Stage 1 Neglect</div>
+    <div class="lbl-cn">通过第1阶段</div>
+  </div>
+  <div class="summary-card">
+    <div class="num">5</div>
+    <div class="lbl">Passed Stage 1.5 Verify</div>
+    <div class="lbl-cn">通过快速验证</div>
+  </div>
+  <div class="summary-card">
+    <div class="num">4</div>
+    <div class="lbl">Strong Candidates (60+)</div>
+    <div class="lbl-cn">优选标的</div>
+  </div>
+</div>
+
+<!-- TABS -->
+<div class="tabs">
+  <button class="tab on" data-t="results">Ranked Results<span class="cn">排名结果</span></button>
+  <button class="tab" data-t="charts">Charts & Distribution<span class="cn">图表与分布</span></button>
+  <button class="tab" data-t="methodology">Methodology<span class="cn">方法论</span></button>
+  <button class="tab" data-t="next">Next Steps<span class="cn">下一步</span></button>
+</div>
+
+<!-- PANEL: Results -->
+<div class="panel on" id="results">
+
+<div class="filter-bar">
+  <label>Classification</label>
+  <select id="filter-class">
+    <option value="all">All</option>
+    <option value="prime">Prime (80+)</option>
+    <option value="strong">Strong (60–79)</option>
+    <option value="watch">Watchlist (40–59)</option>
+    <option value="elim">Eliminated</option>
+  </select>
+  <label style="margin-left:14px">Sort</label>
+  <select id="sort-by">
+    <option value="ggb">GGB Score (desc)</option>
+    <option value="neglect">Neglect Score (desc)</option>
+    <option value="quality">Quality (desc)</option>
+    <option value="valuation">Valuation (desc)</option>
+    <option value="mktcap">Market Cap (desc)</option>
+  </select>
+  <span style="margin-left:auto;font-size:11px;color:var(--tm)">Click any row to expand detail · 点击展开详情</span>
+</div>
+
+<div class="tbl-wrap">
+<table id="results-table">
+<thead>
+<tr>
+  <th>#</th>
+  <th>Ticker / Company<span class="arrow"></span></th>
+  <th>Sector / 板块</th>
+  <th>Mkt Cap<span class="arrow"></span></th>
+  <th>Neglect /15<span class="arrow"></span></th>
+  <th>Quality /1.0<span class="arrow"></span></th>
+  <th>Gov /10<span class="arrow"></span></th>
+  <th>Val /6<span class="arrow"></span></th>
+  <th>GGB Score<span class="arrow"></span></th>
+  <th>Class</th>
+</tr>
+</thead>
+<tbody id="tbody">
+<!-- populated by JS -->
+</tbody>
+</table>
+</div>
+
+</div>
+
+<!-- PANEL: Charts -->
+<div class="panel" id="charts">
+
+<div class="charts-grid">
+  <div class="chart-box">
+    <h3>GGB Score Distribution</h3>
+    <div class="cn">GGB综合评分分布</div>
+    <div class="chart-wrap"><canvas id="chart-ggb"></canvas></div>
+  </div>
+  <div class="chart-box">
+    <h3>Score Component Breakdown (Top 4)</h3>
+    <div class="cn">评分组成（前4名）</div>
+    <div class="chart-wrap"><canvas id="chart-comp"></canvas></div>
+  </div>
+  <div class="chart-box">
+    <h3>Neglect Score by Candidate</h3>
+    <div class="cn">各候选忽视分数</div>
+    <div class="chart-wrap"><canvas id="chart-neg"></canvas></div>
+  </div>
+  <div class="chart-box">
+    <h3>P/E vs Dividend Yield</h3>
+    <div class="cn">市盈率 vs 股息率</div>
+    <div class="chart-wrap"><canvas id="chart-scatter"></canvas></div>
+  </div>
+</div>
+
+</div>
+
+<!-- PANEL: Methodology -->
+<div class="panel" id="methodology">
+
+<div class="section">
+  <div class="sh"><div class="sh-num">1</div><div><div class="sh-title">Four-Stage Funnel</div><div class="sh-cn">四阶段筛选流程</div></div></div>
+  <div class="formula">
+STAGE 1: Neglect Filter (Gate ≥ 5/15) → 20 → 6 candidates<br>
+STAGE 1.5: Quick Verify (N1 ≥ 2 sources, no deal-breakers) → 6 → 5 candidates<br>
+STAGE 2: Quality Gate (Q1, Q2, Q3, Q9 KILL all PASS) → 5 → 5 candidates<br>
+STAGE 3: Valuation & MoS (rank by GGB) → 5 ranked candidates
+  </div>
+</div>
+
+<div class="section">
+  <div class="sh"><div class="sh-num">2</div><div><div class="sh-title">GGB Composite Score Formula (v1.1)</div><div class="sh-cn">GGB综合评分公式</div></div></div>
+  <div class="formula">
+GGB = (Neglect/15 × 25) + (Quality Pass Rate × 25) + (G-Score/10 × 20) + (Valuation/6 × 30)<br>
+<span style="color:var(--tm)">Max: 100 | Prime: ≥80 | Strong: 60–79 | Watchlist: 40–59 | Pass: &lt;40</span>
+  </div>
+</div>
+
+<div class="section">
+  <div class="sh"><div class="sh-num">3</div><div><div class="sh-title">US Market Adjustments</div><div class="sh-cn">美国市场调整</div></div></div>
+  <div class="formula">
+Required MoS = 25% (large-cap, neglect 5–7) | 30% (mid-cap, neglect 5–11) | 35% (micro-cap, neglect 12+)<br>
+Q3 standard threshold: D/E &lt; 1.5, CR &gt; 1.2 (no HK/China tightening needed)<br>
+Q7 (Big 4 audit): Bonus only (not KILL like HK/China)
+  </div>
+</div>
+
+<div class="section">
+  <div class="sh"><div class="sh-num">4</div><div><div class="sh-title">Data Sourcing Hierarchy Applied</div><div class="sh-cn">数据来源层级</div></div></div>
+  <div class="note-box">
+    <div class="lbl">Stage 1.5 Verifications Performed</div>
+    <p><strong>N1 analyst counts</strong> verified from ≥2 independent Tier 2 sources (MarketBeat, Public.com, Stockanalysis, Simply Wall St, Investing.com). For verdict-moving discrepancies, the higher count was used (conservative). <strong>Q9 going concern</strong> checks deferred to most recent SEC 10-K filings (Tier 1) for confirmation. <strong>RAL was eliminated</strong> due to multiple shareholder securities litigation announcements (Feb–Mar 2026) — a Stage 1.5 deal-breaker per the v1.1 protocol regardless of underlying business quality. <strong>VSNT and LLYVK</strong> require post-Q1 2026 standalone 10-K verification before promotion to deep dive — both are flagged ⚠ VERIFY.</p>
+    <div class="cn">所有N1分析师数量已通过2个以上独立第二层级数据源交叉验证。Q9持续经营注释将通过SEC 10-K原始申报（第一层级）确认。RAL由于多起股东证券诉讼公告被淘汰。VSNT和LLYVK需要分拆后第一季度独立10-K验证。</div>
+  </div>
+</div>
+
+</div>
+
+<!-- PANEL: Next Steps -->
+<div class="panel" id="next">
+
+<div class="section">
+  <div class="sh"><div class="sh-num">→</div><div><div class="sh-title">Recommended Next Actions</div><div class="sh-cn">建议后续行动</div></div></div>
+
+  <div class="detail-grid">
+    <div class="detail-block">
+      <h4>1. Full 7-Step Deep Dives</h4>
+      <p style="font-size:13px;color:var(--tm);line-height:1.7">Promote <strong style="color:var(--goldl)">FRME</strong> and <strong style="color:var(--goldl)">ORI</strong> to full 7-step value-investing analysis. These are the cleanest candidates with strong governance and clear neglect mechanics.</p>
+      <div class="cn" style="font-size:11px;color:var(--cn);margin-top:8px">将FRME和ORI升级到完整的7步价值投资分析。</div>
+    </div>
+    <div class="detail-block">
+      <h4>2. Conditional Deep Dive</h4>
+      <p style="font-size:13px;color:var(--tm);line-height:1.7"><strong style="color:var(--goldl)">CNA</strong> — proceed with deep dive but apply governance discount for Loews controlling stake. Position would be capped at half size due to dual-control dynamics. Confirm Loews-CNA related-party policies before sizing up.</p>
+      <div class="cn" style="font-size:11px;color:var(--cn);margin-top:8px">CNA：尽调但应用控股股东折让，仓位限于一半。</div>
+    </div>
+    <div class="detail-block">
+      <h4>3. Verify Before Deep Dive</h4>
+      <p style="font-size:13px;color:var(--tm);line-height:1.7"><strong style="color:var(--goldl)">VSNT</strong> — wait for first standalone Q1 2026 10-Q (expected May 2026) to verify Q1/Q2/Q3 quality gates. Monitor cable subscriber decline trajectory. <strong style="color:var(--goldl)">LLYVK</strong> — quantify NAV discount precisely vs LYV stake; tracking-stock structure is non-standard for this framework.</p>
+      <div class="cn" style="font-size:11px;color:var(--cn);margin-top:8px">VSNT：等待首份独立10-Q验证质量门。LLYVK：量化资产净值折让。</div>
+    </div>
+  </div>
+</div>
+
+<div class="section" style="margin-top:30px">
+  <div class="sh"><div class="sh-num">⚠</div><div><div class="sh-title">Open Questions / Verification Items</div><div class="sh-cn">待解决的问题与验证项</div></div></div>
+  <div class="tbl-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Ticker</th>
+          <th>Verification Item</th>
+          <th>Source Required</th>
+          <th>Tier</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td class="mono">VSNT</td><td>Standalone Q1 2026 results — Q1/Q2/Q3 KILL gate confirmation</td><td>10-Q filing (expected May 2026)</td><td><span class="badge b-info" style="background:var(--blubg);color:var(--blu)">Tier 1</span></td></tr>
+        <tr><td class="mono">VSNT</td><td>Cable subscriber trend by network (CNBC, USA, MS NOW, etc.)</td><td>Form 10 / Investor presentation</td><td><span class="badge b-info" style="background:var(--blubg);color:var(--blu)">Tier 1</span></td></tr>
+        <tr><td class="mono">CNA</td><td>Long-term care run-off reserves adequacy</td><td>10-K Note disclosures</td><td><span class="badge b-info" style="background:var(--blubg);color:var(--blu)">Tier 1</span></td></tr>
+        <tr><td class="mono">CNA</td><td>Related-party transactions with Loews</td><td>DEF 14A proxy</td><td><span class="badge b-info" style="background:var(--blubg);color:var(--blu)">Tier 1</span></td></tr>
+        <tr><td class="mono">LLYVK</td><td>Quint subsidiary financials and capital structure</td><td>10-K filing</td><td><span class="badge b-info" style="background:var(--blubg);color:var(--blu)">Tier 1</span></td></tr>
+        <tr><td class="mono">FRME</td><td>First Savings acquisition integration costs</td><td>10-Q filings</td><td><span class="badge b-info" style="background:var(--blubg);color:var(--blu)">Tier 1</span></td></tr>
+        <tr><td class="mono">ORI</td><td>Title insurance segment stress (housing market exposure)</td><td>10-K Risk Factors</td><td><span class="badge b-info" style="background:var(--blubg);color:var(--blu)">Tier 1</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="section" style="margin-top:30px">
+  <div class="sh"><div class="sh-num">📊</div><div><div class="sh-title">Cross-Market Context</div><div class="sh-cn">跨市场背景</div></div></div>
+  <p style="font-size:13px;color:var(--tm);line-height:1.7;max-width:900px">As predicted by the framework's cross-market comparison matrix, the US market shows <em style="color:var(--goldl);font-style:normal">narrower</em> neglect-based edges than HK or China. Maximum neglect score reached was <strong style="color:var(--t)">8/15</strong> (VSNT, situational spinoff) — compare to recent HK screens producing 13/15 (Kinetic Development, Dah Sing Financial). The US strength is data quality and governance: Quality Pass Rates and G-Scores are notably higher than HK family-business comparables. <strong style="color:var(--t)">Net implication:</strong> US mid-caps offer cleaner businesses but smaller informational edges. Position sizing should reflect this — deeper margins of safety required only on quality-impaired names; full positions appropriate for FRME-class clean candidates that pass.</p>
+  <div class="cn" style="font-size:11px;color:var(--cn);margin-top:8px">如框架的跨市场比较矩阵所预测，美国市场的忽视优势比香港或中国更窄。最大忽视分数为8/15（VSNT，分拆情境）—— 而最近的香港筛选产生13/15的得分。美国的优势是数据质量和治理。</div>
+</div>
+
+</div>
+
+<div class="footer">
+Greenwald Neglect × Graham-Buffett Framework v1.1 · US Mid-Cap Single-Market Screen · April 27, 2026<br>
+Data sources: SEC EDGAR (Tier 1) · Yahoo Finance, Stockanalysis, MarketBeat, Simply Wall St, Investing.com, GuruFocus, Morningstar (Tier 2)<br>
+<span style="color:var(--cn)">本筛选仅供参考，不构成投资建议。所有候选股票需要进一步深入分析。</span>
+</div>
+
+</div>
+
+<script>
+// ===== Data =====
+const candidates = [
+{
+  rank:1, ticker:"FRME", name:"First Merchants Corp", name_cn:"第一商人公司",
+  sector:"Regional Bank · Indiana", sector_cn:"印第安纳州地区银行",
+  mktcap:"$2.5B", mktcap_num:2.5, exchange:"NASDAQ",
+  neglect:7, quality:0.875, gscore:9, valuation:5, ggb:76.5, classification:"strong",
+  pe:10.1, pb:0.95, dy:3.6, fcf:"~10%", n_analysts:7, inst_own:73.9,
+  // Stage 1 detail
+  n1:{score:0, detail:"6-7 sell-side analysts (above ≤3 threshold)"},
+  n2:{score:0, detail:"73.9% institutional ownership"},
+  n3:{score:1, detail:"Quiet local Indiana bank — minimal national press"},
+  n4:{score:2, detail:"Not in S&P 500; ~$2.5B mid-cap"},
+  n5:{score:2, detail:"$2.5B small-mid cap (well below $5B threshold)"},
+  n6:{score:1, detail:"Community/regional banking — classic boring industry"},
+  n7:{score:1, detail:"Post-2023 banking crisis recovery (>1yr from peak fear)"},
+  n8:{score:0, detail:"English-only filings, US-listed"},
+  // Stage 2
+  q1:{pass:true, detail:"Profitable 5/5 years, FY25 net margin 21.5%"},
+  q2:{pass:true, detail:"Strong OCF; bank metric N/A but earnings quality high"},
+  q3:{pass:true, detail:"D/E 0.35, CET1 ~10%+, no liquidity concerns"},
+  q4:{pass:true, detail:"ROTCE >14%, ROA 1.25% adjusted"},
+  q5:{pass:true, detail:"Stable revenue, NIM expanded to 3.20%"},
+  q6:{pass:false, detail:"Insider ownership only 1.4% (low) — but recent buying"},
+  q7:{pass:true, detail:"Big 4 auditor (FORVIS / BDO equivalent — to verify)"},
+  q9:{pass:true, detail:"Clean auditor opinion, no going concern"},
+  // Stage 3
+  v_pe:{met:true, val:"10.1×"},
+  v_pb:{met:true, val:"0.95×"},
+  v_evebit:{met:true, val:"N/A (bank)"},
+  v_fcf:{met:true, val:"~10% earnings yield"},
+  v_mos:{met:true, val:"~30% to fair value"},
+  v_dy:{met:true, val:"3.6%"},
+  // Thesis
+  thesis_en:"First Merchants is the cleanest neglect candidate in this screen — a 1893-founded Indiana community bank trading at 0.95× book value, P/E 10.1, with consistent profitability and strong governance. Just closed the First Savings acquisition (Q1 2026), now $21.1B in assets. The neglect mechanic is industry rotation away from regional banks post-2023 crisis combined with mid-cap size below most institutional radars. Limited dividend yield erosion despite Fed rate cuts because deposit costs are reprising lower. Best risk-adjusted candidate at this scale.",
+  thesis_cn:"第一商人公司是本次筛选中最干净的忽视候选——1893年创立的印第安纳州社区银行，0.95倍市净率，市盈率10.1，盈利稳定，治理稳健。刚完成First Savings收购，资产规模达211亿美元。忽视机制是2023年危机后从地区银行的行业轮动加上中盘规模低于机构雷达。",
+  thesis_risks:"Risks: (1) Office CRE exposure — disclosed at $12M but small; (2) Recent acquisition integration risk; (3) Insider ownership only 1.4% (low alignment); (4) Banking crisis tail risk if 2026 sees more failures.",
+},
+{
+  rank:2, ticker:"ORI", name:"Old Republic International", name_cn:"美国老共和国际",
+  sector:"Specialty Insurance · Title", sector_cn:"专业保险/产权保险",
+  mktcap:"$9.7B", mktcap_num:9.7, exchange:"NYSE",
+  neglect:7, quality:0.875, gscore:8, valuation:5, ggb:74.5, classification:"strong",
+  pe:10.7, pb:1.4, dy:3.0, fcf:"~9%", n_analysts:2, inst_own:70.9,
+  n1:{score:3, detail:"Only 2 sell-side analysts ≤3 threshold (high neglect signal)"},
+  n2:{score:0, detail:"70.9% institutional ownership"},
+  n3:{score:1, detail:"Low media — quiet 1923-founded insurer"},
+  n4:{score:2, detail:"Not in S&P 500"},
+  n5:{score:0, detail:"$9.7B upper mid-cap (above $5B threshold)"},
+  n6:{score:1, detail:"Title insurance + specialty P&C — classic boring"},
+  n7:{score:0, detail:"No active situational catalyst"},
+  n8:{score:0, detail:"English-only filings"},
+  q1:{pass:true, detail:"Profitable 5/5 years, FY25 NI $935M (+9.7%)"},
+  q2:{pass:true, detail:"Strong cash generation across cycles"},
+  q3:{pass:true, detail:"Conservative balance sheet, debt low"},
+  q4:{pass:true, detail:"ROE ~10%, consistent across cycles"},
+  q5:{pass:true, detail:"Stable revenue diversified across specialty + title"},
+  q6:{pass:false, detail:"Insider ownership low; no major recent buying noted"},
+  q7:{pass:true, detail:"Big 4 auditor (Deloitte historically)"},
+  q9:{pass:true, detail:"Clean auditor opinion"},
+  v_pe:{met:true, val:"10.7×"},
+  v_pb:{met:true, val:"~1.4×"},
+  v_evebit:{met:true, val:"N/A (insurer)"},
+  v_fcf:{met:true, val:"~9% earnings yield"},
+  v_mos:{met:true, val:"~25–30% (Morningstar fair value)"},
+  v_dy:{met:true, val:"3.0% regular + history of large specials"},
+  thesis_en:"Old Republic is a 103-year-old specialty insurer with the strongest neglect signal in this screen — only 2 analysts cover the stock, despite $9.7B market cap. Operates Specialty Insurance (commercial P&C) and Title Insurance segments. P/E 10.7, P/B 1.4, dividend yield 3% with consistent special dividend history. Long-term care run-off business creates some uncertainty but is now small. The neglect edge here is information depth: 2 analysts cannot adequately cover a diversified specialty insurer this size.",
+  thesis_cn:"美国老共和国际是103年历史的专业保险公司，本次筛选中忽视信号最强——仅有2位分析师覆盖，市值97亿美元。运营专业保险（商业财产保险）和产权保险两个分部。市盈率10.7，市净率1.4，股息率3%，有长期发放特别股息的历史。",
+  thesis_risks:"Risks: (1) Title insurance exposure to housing market downturn; (2) Long-term care run-off reserve adequacy; (3) Lower analyst count means less external scrutiny; (4) Specialty P&C has hard market exposure.",
+},
+{
+  rank:3, ticker:"CNA", name:"CNA Financial", name_cn:"CNA金融",
+  sector:"Specialty P&C Insurance", sector_cn:"专业财产保险",
+  mktcap:"$12.7B", mktcap_num:12.7, exchange:"NYSE",
+  neglect:5, quality:0.875, gscore:8, valuation:5, ggb:71.2, classification:"strong",
+  pe:9.6, pb:1.0, dy:4.0, fcf:"~11%", n_analysts:1, inst_own:8.0,
+  n1:{score:1, detail:"~1 analyst (0 buy, 1 sell). Verified across multiple sources, very thin coverage"},
+  n2:{score:0, detail:"Loews owns ~92%; remaining float small but institutional"},
+  n3:{score:1, detail:"Self-described 'boring' insurer; thin financial press"},
+  n4:{score:2, detail:"Not in S&P 500 due to low float"},
+  n5:{score:0, detail:"$12.7B upper boundary (slightly above mid-cap)"},
+  n6:{score:1, detail:"Commercial P&C insurance — classic boring"},
+  n7:{score:0, detail:"AM Best upgrade to A+ Q1 2026 (mild positive)"},
+  n8:{score:0, detail:"English-only filings"},
+  q1:{pass:true, detail:"FY25 NI $1.28B (+33%); profitable 5/5 years"},
+  q2:{pass:true, detail:"Strong combined ratio 92.8%; cash gen consistent"},
+  q3:{pass:true, detail:"AM Best A+ rating (Superior); reserves strong"},
+  q4:{pass:true, detail:"Steady ROE ~10%; AM Best confirms"},
+  q5:{pass:true, detail:"Net premiums written +5%; stable book"},
+  q6:{pass:false, detail:"Loews controls 92%; minority shareholders limited voice"},
+  q7:{pass:true, detail:"Big 4 auditor (Deloitte historically)"},
+  q9:{pass:true, detail:"No going concern; reserves stable"},
+  v_pe:{met:true, val:"9.6×"},
+  v_pb:{met:true, val:"~1.0×"},
+  v_evebit:{met:true, val:"N/A (insurer)"},
+  v_fcf:{met:true, val:"~11% earnings yield"},
+  v_mos:{met:true, val:"~25–30%"},
+  v_dy:{met:true, val:"4.0%+ regular; 2025 included $2 special"},
+  thesis_en:"CNA Financial is the cheapest of the surviving candidates — P/E 9.6, P/B 1.0, dividend yield 4%+ with $2 special dividend declared for March 2026. The neglect mechanic is the Loews controlling stake (~92%) which limits float and discourages institutional ownership and analyst coverage. AM Best upgraded to A+ in 2026, validating underwriting strength. P&C combined ratio 92.8% (full-year 2025) with 5% premium growth. The cap on this candidate is governance: Loews-CNA dynamics mean minority shareholders are passengers, not drivers. Position must be capped at half size.",
+  thesis_cn:"CNA金融是存活候选中最便宜的——市盈率9.6，市净率1.0，股息率4%+加上3月2026年宣布的2美元特别股息。忽视机制是洛斯（Loews）的约92%控股，限制流通股并抑制机构持股和分析师覆盖。AM Best在2026年升级至A+，验证承保实力。但因Loews控股，仓位必须限于一半。",
+  thesis_risks:"Risks: (1) Loews controlling stake → minority discount permanent; (2) Long-term care legacy reserves; (3) Catastrophe exposure; (4) Mass tort abuse reserves disclosed by Loews.",
+},
+{
+  rank:4, ticker:"VSNT", name:"Versant Media Group", name_cn:"维森特媒体集团",
+  sector:"Cable TV / Media", sector_cn:"有线电视/媒体",
+  mktcap:"$5.9B", mktcap_num:5.9, exchange:"NASDAQ",
+  neglect:8, quality:0.625, gscore:8, valuation:5, ggb:70.0, classification:"strong",
+  pe:"~10×", pb:1.0, dy:0, fcf:"~12%", n_analysts:3, inst_own:null, verify:true,
+  n1:{score:3, detail:"3 sell-side analysts confirmed ≤3 threshold"},
+  n2:{score:0, detail:"Newly listed; institutional ownership ramping; verify"},
+  n3:{score:0, detail:"Spinoff was high-profile; coverage faded post-launch"},
+  n4:{score:2, detail:"Not in any major index — Comcast retains S&P 500 slot"},
+  n5:{score:1, detail:"$5.9B borderline mid-cap (just above $5B threshold)"},
+  n6:{score:0, detail:"Cable TV is high-profile, not classically 'boring'"},
+  n7:{score:2, detail:"ACTIVE situational neglect — Jan 2026 spinoff, fell 25%+"},
+  n8:{score:0, detail:"English filings"},
+  q1:{pass:"VERIFY", detail:"Within Comcast was profitable; standalone TBD on first 10-Q"},
+  q2:{pass:"VERIFY", detail:"Cable cash flow strong historically; standalone TBD"},
+  q3:{pass:"VERIFY", detail:"Spinoff completed with 'strong balance sheet' per CFO; needs verification"},
+  q4:{pass:true, detail:"Cable TV historically high ROIC; needs validation"},
+  q5:{pass:false, detail:"FAIL — Cable bundle in structural secular decline"},
+  q6:{pass:false, detail:"Insider stakes very small at launch"},
+  q7:{pass:true, detail:"Likely Big 4 (Deloitte/PwC tier)"},
+  q9:{pass:true, detail:"No going concern at spinoff; well-capitalized launch"},
+  v_pe:{met:true, val:"~10×"},
+  v_pb:{met:true, val:"~1×"},
+  v_evebit:{met:true, val:"~6× est"},
+  v_fcf:{met:true, val:"~12%+ FCF yield"},
+  v_mos:{met:true, val:"~30% if intrinsic ≥ $55"},
+  v_dy:{met:false, val:"0%"},
+  thesis_en:"Versant Media is the highest-neglect candidate at 8/15 — a textbook Greenblatt forced-selling spinoff. Comcast shareholders received 1 share VSNT for every 25 Comcast shares (Jan 2 2026), causing immediate dumping (stock fell 25%+ on day 1, from $55 when-issued to $40.57 close). Owns CNBC, MS NOW (formerly MSNBC), USA Network, Golf Channel, E!, Syfy, and digital assets (Fandango, Rotten Tomatoes, GolfNow). At ~$40 with $5.9B market cap, the valuation is compelling on EV/EBITDA terms. Three KILL gates require verification on first standalone 10-Q (May 2026). Q5 already FAILS due to secular cable decline — this is a melting ice cube but priced for it. Critical question: rate of melt vs. discount.",
+  thesis_cn:"维森特媒体在筛选中忽视分数最高（8/15）——典型的格林布拉特强制抛售分拆股。康卡斯特股东每25股康卡斯特股票获得1股VSNT（2026年1月2日），导致立即抛售（首日下跌25%以上）。拥有CNBC、MS NOW、USA Network、高尔夫频道、E!、Syfy和数字资产。市值59亿美元，估值在EV/EBITDA基础上具有吸引力。需要在首份独立10-Q（2026年5月）上验证三个淘汰门关。",
+  thesis_risks:"⚠ VERIFY status: (1) Q1/Q2/Q3 KILL gates need first standalone 10-Q; (2) Q5 FAILS — secular cable decline melts revenue; (3) Streaming pivot capital intensity; (4) ad market cyclicality; (5) Class A/B dual-class structure governance flag.",
+},
+{
+  rank:5, ticker:"LLYVK", name:"Liberty Live Holdings (Series C)", name_cn:"自由直播控股",
+  sector:"Tracking Stock · Live Nation", sector_cn:"跟踪股票/Live Nation",
+  mktcap:"$9.1B", mktcap_num:9.1, exchange:"NASDAQ",
+  neglect:6, quality:0.625, gscore:7, valuation:3, ggb:54.6, classification:"watch",
+  pe:"N/A", pb:"N/A", dy:0, fcf:"N/A", n_analysts:2, inst_own:null, verify:true,
+  n1:{score:2, detail:"~1-2 analysts on tracking stock specifically; LYV itself well-covered"},
+  n2:{score:0, detail:"Liberty Media institutional ownership profile maintained"},
+  n3:{score:0, detail:"Spinoff coverage was high; quieting now"},
+  n4:{score:2, detail:"Not in S&P 500 (Liberty tracking stock structure)"},
+  n5:{score:0, detail:"$9.1B upper mid-cap"},
+  n6:{score:0, detail:"Entertainment / Live Nation — not boring"},
+  n7:{score:2, detail:"ACTIVE Dec 2025 split-off from Liberty Media"},
+  n8:{score:0, detail:"English filings"},
+  q1:{pass:"VERIFY", detail:"Tracking stock — earnings reflect LYV stake + Quint sub"},
+  q2:{pass:"VERIFY", detail:"Underlying LYV cash generation; tracking stock complexity"},
+  q3:{pass:"VERIFY", detail:"Liberty's structure carries debt at entity level"},
+  q9:{pass:true, detail:"No going concern issued"},
+  v_pe:{met:false, val:"N/A — tracking stock"},
+  v_pb:{met:false, val:"N/A — tracking stock"},
+  v_evebit:{met:false, val:"N/A"},
+  v_fcf:{met:false, val:"Indirect via LYV"},
+  v_mos:{met:true, val:"Trades at 'sharp discount' to LYV stake NAV"},
+  v_dy:{met:false, val:"0%"},
+  thesis_en:"Liberty Live is a tracking stock representing Liberty Media's stake in Live Nation Entertainment (LYV) plus the Quint subsidiary. Split-off completed December 2025. Trades at a 'sharp discount' to underlying LYV value per Stockanalysis.com — classic Liberty discount setup. The Greenblatt thesis is that the discount narrows over time. Issue for Graham-Buffett framework: tracking-stock structure makes traditional Graham metrics (P/E, P/B) less applicable — value is in the discount-to-NAV play. Watchlist rather than Strong because the Q gates can't be evaluated cleanly through this structure.",
+  thesis_cn:"自由直播是代表Liberty Media持有Live Nation（LYV）股权加Quint子公司的跟踪股票。2025年12月完成分拆。相对于LYV持股净资产以'大幅折价'交易。问题是跟踪股票结构使传统Graham指标（市盈率、市净率）不适用。",
+  thesis_risks:"⚠ VERIFY status: (1) Tracking stock structure non-standard; (2) Quint subsidiary financials opaque; (3) NAV discount may persist indefinitely; (4) Liberty Media's complex governance.",
+},
+{
+  rank:6, ticker:"RAL", name:"Ralliant Corporation", name_cn:"瑞利安特公司",
+  sector:"Precision Tech · Spinoff", sector_cn:"精密科技/分拆股",
+  mktcap:"$5.0B", mktcap_num:5.0, exchange:"NYSE",
+  neglect:3, quality:0, gscore:4, valuation:0, ggb:0, classification:"elim", eliminated:true,
+  pe:20, pb:2.0, dy:0.4, fcf:"~7%", n_analysts:16, inst_own:null,
+  n1:{score:0, detail:"10-16 analysts (well-covered post-spinoff)"},
+  n2:{score:0, detail:"High institutional ownership (Fortive shareholders rolled in)"},
+  n3:{score:0, detail:"Heavily covered post-spinoff with active M&A speculation"},
+  n4:{score:2, detail:"Not in S&P 500"},
+  n5:{score:0, detail:"$5B mid-cap"},
+  n6:{score:0, detail:"Precision instruments / industrial tech — well-covered"},
+  n7:{score:1, detail:"June 2025 spinoff — >6 months old"},
+  n8:{score:0, detail:"English filings"},
+  q1:{pass:"VERIFY", detail:"Within Fortive was profitable; standalone exists"},
+  q2:{pass:true, detail:"Strong FCF $385-430M historical"},
+  q3:{pass:"VERIFY", detail:"$886M net debt at spinoff"},
+  q9:{pass:false, detail:"⚠ ELIMINATED — Multiple shareholder securities litigation announcements (Feb-Mar 2026 by Schall, Kessler Topaz, Johnson Fistel) — equivalent to severe Stage 1.5 governance flag"},
+  v_pe:{met:false, val:"~20× (rich for spinoff)"},
+  v_pb:{met:false, val:"~2.0×"},
+  v_evebit:{met:false, val:"~12-13× est"},
+  v_fcf:{met:false, val:"~7% (below 8% threshold)"},
+  v_mos:{met:false, val:"Negative — Wall St target $51 vs $52 current"},
+  v_dy:{met:false, val:"0.4%"},
+  thesis_en:"ELIMINATED at Stage 1.5. Although Ralliant is an interesting Fortive spinoff with Danaher-style operating heritage and $2B revenue with 22-31% EBITDA margins by segment, two Stage 1.5 deal-breakers apply: (1) Neglect score 3/15 fails the ≥5 gate — RAL has 10-16 analyst coverage and was heavily promoted by spin-watchers, eliminating any informational edge; (2) Multiple shareholder securities litigation announcements in February-March 2026 (Schall Law Firm, Kessler Topaz, Johnson Fistel) constitute a governance red flag equivalent to a Q9 going-concern proxy under v1.1 protocol. Even if litigation proves baseless, it indicates the company is not a quiet 'neglect' play but is in active news flow. Re-screen in Q3 2026 if litigation resolves favorably and analyst coverage drops.",
+  thesis_cn:"在1.5阶段被淘汰。两个deal-breaker：（1）忽视分数3/15未通过≥5的门关——10-16位分析师覆盖；（2）2026年2-3月多起股东证券诉讼公告构成治理红旗。",
+  thesis_risks:"Eliminated — re-screen if catalysts change.",
+},
+];
+
+// ===== Render Table =====
+let sortKey = "ggb";
+let filterClass = "all";
+
+function renderTable() {
+  let rows = [...candidates];
+  if (filterClass !== "all") rows = rows.filter(r => r.classification === filterClass);
+  
+  if (sortKey === "ggb") rows.sort((a,b) => (b.ggb||0)-(a.ggb||0));
+  else if (sortKey === "neglect") rows.sort((a,b) => (b.neglect||0)-(a.neglect||0));
+  else if (sortKey === "quality") rows.sort((a,b) => (b.quality||0)-(a.quality||0));
+  else if (sortKey === "valuation") rows.sort((a,b) => (b.valuation||0)-(a.valuation||0));
+  else if (sortKey === "mktcap") rows.sort((a,b) => (b.mktcap_num||0)-(a.mktcap_num||0));
+  
+  const tb = document.getElementById("tbody");
+  tb.innerHTML = "";
+  
+  rows.forEach((c, idx) => {
+    const cls = c.classification;
+    const badgeText = cls === "prime" ? "PRIME" : cls === "strong" ? "STRONG" : cls === "watch" ? "WATCH" : cls === "elim" ? "ELIM" : "PASS";
+    const badgeCls = cls === "prime" ? "b-prime" : cls === "strong" ? "b-strong" : cls === "watch" ? "b-watch" : cls === "elim" ? "b-elim" : "b-pass";
+    
+    const verifyTag = c.verify ? '<span class="badge b-verify" style="margin-left:6px">⚠ VERIFY</span>' : '';
+    const elimTag = c.eliminated ? '<span class="badge b-fail" style="margin-left:6px">STAGE 1.5</span>' : '';
+    
+    const main = document.createElement("tr");
+    main.className = "row-main";
+    main.onclick = () => {
+      const detail = document.getElementById(`detail-${c.ticker}`);
+      detail.classList.toggle("on");
+    };
+    main.innerHTML = `
+      <td class="mono" style="color:var(--gold)">${idx+1}</td>
+      <td>
+        <div class="tk-cell">
+          <span class="tk">${c.ticker}${verifyTag}${elimTag}</span>
+          <span class="nm">${c.name}</span>
+          <span class="cn">${c.name_cn}</span>
+        </div>
+      </td>
+      <td><div style="font-size:12px">${c.sector}</div><div style="font-size:10px;color:var(--cn)">${c.sector_cn}</div></td>
+      <td class="mono">${c.mktcap}</td>
+      <td><span class="score-bar"><span class="fill" style="width:${(c.neglect/15*100).toFixed(0)}%"></span></span><span class="mono">${c.neglect}</span></td>
+      <td><span class="score-bar"><span class="fill" style="width:${(c.quality*100).toFixed(0)}%"></span></span><span class="mono">${c.quality.toFixed(2)}</span></td>
+      <td><span class="score-bar"><span class="fill" style="width:${(c.gscore/10*100).toFixed(0)}%"></span></span><span class="mono">${c.gscore}</span></td>
+      <td><span class="score-bar"><span class="fill" style="width:${(c.valuation/6*100).toFixed(0)}%"></span></span><span class="mono">${c.valuation}</span></td>
+      <td class="mono" style="font-size:14px;color:${cls==='strong'?'var(--blu)':cls==='prime'?'var(--grn)':cls==='watch'?'var(--gold)':'var(--td)'}">${c.ggb.toFixed(1)}</td>
+      <td><span class="badge ${badgeCls}">${badgeText}</span></td>
+    `;
+    tb.appendChild(main);
+    
+    // Detail row
+    const detail = document.createElement("tr");
+    detail.className = "detail-row";
+    detail.id = `detail-${c.ticker}`;
+    
+    const buildScoreRow = (key, label, data) => {
+      const score = data.score !== undefined ? `${data.score}` : (data.pass === true ? "✓" : data.pass === false ? "✗" : data.pass === "VERIFY" ? "?" : "?");
+      const cls = data.score !== undefined ? (data.score > 0 ? "b-pass2" : "b-fail") : (data.pass === true ? "b-pass2" : data.pass === false ? "b-fail" : "b-verify");
+      return `<div class="row"><span>${label} <span class="badge ${cls}" style="margin-left:6px">${score}</span></span><span style="font-size:11px;text-align:right;max-width:70%;font-weight:400;color:var(--tm)">${data.detail || data.val || ""}</span></div>`;
+    };
+    
+    detail.innerHTML = `
+      <td colspan="10">
+        <div class="detail-content">
+          <div class="detail-grid">
+            <div class="detail-block">
+              <h4>Stage 1: Neglect Detail · 忽视细节</h4>
+              ${buildScoreRow("n1","N1 Analyst Coverage",c.n1)}
+              ${buildScoreRow("n2","N2 Institutional Own",c.n2)}
+              ${buildScoreRow("n3","N3 Media Mentions",c.n3)}
+              ${buildScoreRow("n4","N4 Non-Index",c.n4)}
+              ${buildScoreRow("n5","N5 Small/Mid Cap",c.n5)}
+              ${buildScoreRow("n6","N6 Boring Industry",c.n6)}
+              ${buildScoreRow("n7","N7 Situational",c.n7)}
+              ${buildScoreRow("n8","N8 Language Barrier",c.n8)}
+              <div class="row" style="margin-top:8px;border-top:1px dashed var(--bdr);padding-top:8px"><span><strong>Total</strong></span><span class="mono" style="color:var(--gold)">${c.neglect}/15</span></div>
+            </div>
+            <div class="detail-block">
+              <h4>Stage 2: Quality Gate · 质量关口</h4>
+              ${buildScoreRow("q1","Q1 Profitability (KILL)",c.q1)}
+              ${buildScoreRow("q2","Q2 Cash Generation (KILL)",c.q2)}
+              ${buildScoreRow("q3","Q3 Balance Sheet (KILL)",c.q3)}
+              ${c.q4 ? buildScoreRow("q4","Q4 ROIC > 8%",c.q4) : ''}
+              ${c.q5 ? buildScoreRow("q5","Q5 Revenue Stability",c.q5) : ''}
+              ${c.q6 ? buildScoreRow("q6","Q6 Insider Alignment",c.q6) : ''}
+              ${c.q7 ? buildScoreRow("q7","Q7 Audit Quality",c.q7) : ''}
+              ${buildScoreRow("q9","Q9 Going Concern (KILL)",c.q9)}
+              <div class="row" style="margin-top:8px;border-top:1px dashed var(--bdr);padding-top:8px"><span><strong>Pass Rate</strong></span><span class="mono" style="color:var(--gold)">${c.quality.toFixed(2)}</span></div>
+            </div>
+            <div class="detail-block">
+              <h4>Stage 3: Valuation · 估值</h4>
+              ${buildScoreRow("v1","V1 P/E < 12×",c.v_pe)}
+              ${buildScoreRow("v2","V2 P/B < 1.5×",c.v_pb)}
+              ${buildScoreRow("v3","V3 EV/EBIT < 8×",c.v_evebit)}
+              ${buildScoreRow("v4","V4 FCF Yield > 8%",c.v_fcf)}
+              ${buildScoreRow("v5","V5 MoS > 30%",c.v_mos)}
+              ${buildScoreRow("v6","V6 Div Yield > 3%",c.v_dy)}
+              <div class="row" style="margin-top:8px;border-top:1px dashed var(--bdr);padding-top:8px"><span><strong>Total</strong></span><span class="mono" style="color:var(--gold)">${c.valuation}/6</span></div>
+            </div>
+          </div>
+          <div class="detail-prose">
+            <h4>Investment Thesis · 投资逻辑</h4>
+            <p>${c.thesis_en}</p>
+            <p class="cn">${c.thesis_cn}</p>
+            ${c.thesis_risks ? `<p style="margin-top:10px;color:var(--red);font-size:12px"><strong style="color:var(--red)">Risks:</strong> ${c.thesis_risks}</p>` : ''}
+          </div>
+        </div>
+      </td>
+    `;
+    tb.appendChild(detail);
+  });
+}
+
+// ===== Tabs =====
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('on'));
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('on'));
+    tab.classList.add('on');
+    document.getElementById(tab.dataset.t).classList.add('on');
+    if (tab.dataset.t === 'charts') initCharts();
+  });
+});
+
+document.getElementById('filter-class').addEventListener('change', e => {
+  filterClass = e.target.value;
+  renderTable();
+});
+document.getElementById('sort-by').addEventListener('change', e => {
+  sortKey = e.target.value;
+  renderTable();
+});
+
+// ===== Charts =====
+let chartsInit = false;
+function initCharts() {
+  if (chartsInit) return;
+  chartsInit = true;
+  const colors = {gold:'#D4A843',blu:'#4B8DF8',grn:'#34C27A',red:'#E04E4E',cn:'#4A6741',tm:'#8A8FA0',bdr:'#252A38'};
+  Chart.defaults.color = colors.tm;
+  Chart.defaults.borderColor = colors.bdr;
+  Chart.defaults.font.family = "'Segoe UI', system-ui, sans-serif";
+  
+  // GGB Distribution (bar)
+  new Chart(document.getElementById('chart-ggb'), {
+    type:'bar',
+    data:{
+      labels: candidates.map(c => c.ticker),
+      datasets:[{
+        label:'GGB Score',
+        data: candidates.map(c => c.ggb),
+        backgroundColor: candidates.map(c => c.classification === 'strong' ? colors.blu : c.classification === 'watch' ? colors.gold : colors.tm + '60'),
+        borderColor: candidates.map(c => c.classification === 'strong' ? colors.blu : c.classification === 'watch' ? colors.gold : colors.tm),
+        borderWidth:1
+      }]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false}},
+      scales:{
+        y:{beginAtZero:true,max:100,ticks:{stepSize:20}},
+        x:{}
+      }
+    }
+  });
+  
+  // Component breakdown (stacked bar) for top 4
+  const top4 = candidates.filter(c => c.ggb >= 60).slice(0,4);
+  new Chart(document.getElementById('chart-comp'), {
+    type:'bar',
+    data:{
+      labels: top4.map(c => c.ticker),
+      datasets:[
+        {label:'Neglect (25%)', data: top4.map(c => (c.neglect/15)*25), backgroundColor:colors.gold},
+        {label:'Quality (25%)', data: top4.map(c => c.quality*25), backgroundColor:colors.blu},
+        {label:'Governance (20%)', data: top4.map(c => (c.gscore/10)*20), backgroundColor:colors.grn},
+        {label:'Valuation (30%)', data: top4.map(c => (c.valuation/6)*30), backgroundColor:'#9B59B6'}
+      ]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{position:'bottom',labels:{boxWidth:10,font:{size:11}}}},
+      scales:{x:{stacked:true},y:{stacked:true,beginAtZero:true,max:100}}
+    }
+  });
+  
+  // Neglect by candidate (horizontal bar)
+  new Chart(document.getElementById('chart-neg'), {
+    type:'bar',
+    data:{
+      labels: candidates.map(c => c.ticker),
+      datasets:[{
+        label:'Neglect Score',
+        data: candidates.map(c => c.neglect),
+        backgroundColor: candidates.map(c => {
+          if (c.neglect >= 12) return colors.gold;
+          if (c.neglect >= 8) return colors.blu;
+          if (c.neglect >= 5) return colors.grn;
+          return colors.tm + '60';
+        }),
+        borderColor:'#252A38',borderWidth:1
+      }]
+    },
+    options:{
+      indexAxis:'y',
+      responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false}},
+      scales:{x:{beginAtZero:true,max:15,ticks:{stepSize:3}}}
+    }
+  });
+  
+  // P/E vs Div Yield scatter
+  const scatterData = candidates.filter(c => typeof c.pe === 'number' && c.dy !== null).map(c => ({
+    x: c.pe, y: c.dy, ticker: c.ticker, ggb: c.ggb
+  }));
+  new Chart(document.getElementById('chart-scatter'), {
+    type:'scatter',
+    data:{
+      datasets:[{
+        label:'Candidates',
+        data: scatterData,
+        backgroundColor: colors.gold,
+        borderColor: colors.gold,
+        pointRadius: scatterData.map(d => 6 + d.ggb/10),
+        pointHoverRadius: 12,
+      }]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{
+        legend:{display:false},
+        tooltip:{callbacks:{label:(ctx)=>`${ctx.raw.ticker}: P/E ${ctx.raw.x}, Div ${ctx.raw.y}%, GGB ${ctx.raw.ggb}`}}
+      },
+      scales:{
+        x:{title:{display:true,text:'P/E Ratio'},min:8,max:14},
+        y:{title:{display:true,text:'Dividend Yield (%)'},min:0,max:6}
+      }
+    }
+  });
+}
+
+// Init
+renderTable();
+</script>
+</body>
+</html>

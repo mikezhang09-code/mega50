@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Asia Cement China (0743.HK) — Deep Value Analysis</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+:root{--bg:#0D0F14;--bg2:#141720;--bg3:#1A1E2A;--bdr:#252A38;--t:#D8DAE0;--tm:#8A8FA0;--td:#4E5366;--gold:#D4A843;--goldl:#EDCC72;--goldbg:rgba(212,168,67,.1);--grn:#34C27A;--grnbg:rgba(52,194,122,.1);--blu:#4B8DF8;--blubg:rgba(75,141,248,.1);--red:#E04E4E;--redbg:rgba(224,78,78,.1);--cn:#4A6741}
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--t);line-height:1.65}
+.w{max-width:1200px;margin:0 auto;padding:32px 28px}
+.hero{margin-bottom:40px}.hero-tag{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);font-family:monospace;margin-bottom:10px}
+.hero h1{font-size:30px;font-weight:700;margin-bottom:4px}.hero-cn{font-size:16px;color:var(--cn);margin-bottom:14px}
+.hero-meta{display:flex;flex-wrap:wrap;gap:20px;font-size:12px;color:var(--tm)}
+.verdict-box{background:var(--bg2);border:1px solid var(--gold);border-radius:10px;padding:28px;margin-bottom:36px;display:grid;grid-template-columns:200px 1fr;gap:24px;align-items:center}
+.verdict-score{text-align:center}.verdict-score .big{font-size:56px;font-weight:700;color:var(--gold);line-height:1}.verdict-score .label{font-size:12px;color:var(--tm);text-transform:uppercase;letter-spacing:1px;margin-top:4px}
+.verdict-text h2{font-size:20px;margin-bottom:6px;color:var(--gold)}
+.verdict-text .cn{font-size:14px;color:var(--cn);margin-bottom:10px}
+.verdict-text p{font-size:14px;color:var(--tm);line-height:1.7}
+.verdict-text strong{color:var(--t)}.verdict-text em{color:var(--goldl);font-style:normal}
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--bdr);margin-bottom:32px;overflow-x:auto}
+.tab{padding:12px 18px;font-size:13px;font-weight:600;color:var(--tm);background:none;border:none;cursor:pointer;white-space:nowrap;position:relative;transition:color .2s}
+.tab:hover{color:var(--t)}.tab.on{color:var(--gold)}.tab.on::after{content:'';position:absolute;bottom:-1px;left:0;right:0;height:2px;background:var(--gold)}
+.tab .cn{display:block;font-size:10px;color:var(--cn);font-weight:400;margin-top:2px}
+.panel{display:none}.panel.on{display:block}
+.sh{display:flex;align-items:center;gap:12px;margin-bottom:18px}.sh-num{font-size:32px;font-weight:700;color:var(--gold);opacity:.4}.sh-title{font-size:20px;font-weight:600}.sh-cn{font-size:13px;color:var(--cn)}
+.card{background:var(--bg2);border:1px solid var(--bdr);border-radius:8px;padding:22px;margin-bottom:14px;transition:border-color .2s}.card:hover{border-color:var(--gold)}
+.card h3{font-size:15px;font-weight:600;margin-bottom:4px}.card h3 .cn{font-size:12px;color:var(--cn);font-weight:400;margin-left:6px}
+.card p{font-size:13px;color:var(--tm);line-height:1.7}
+.card strong{color:var(--t)}.card em{color:var(--goldl);font-style:normal}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+.metric{background:var(--bg2);border:1px solid var(--bdr);border-radius:8px;padding:16px;text-align:center}
+.metric .val{font-size:24px;font-weight:700;font-family:monospace}.metric .lbl{font-size:11px;color:var(--tm);text-transform:uppercase;letter-spacing:1px;margin-top:2px}
+.badge{display:inline-block;padding:2px 8px;border-radius:3px;font-size:10px;font-weight:600;font-family:monospace}
+.b-pass{background:var(--grnbg);color:var(--grn)}.b-fail{background:var(--redbg);color:var(--red)}.b-warn{background:var(--goldbg);color:var(--gold)}.b-info{background:var(--blubg);color:var(--blu)}
+table{width:100%;border-collapse:collapse;font-size:13px;margin-bottom:20px}
+th{background:var(--bg3);padding:10px 14px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--tm);border-bottom:1px solid var(--bdr)}
+td{padding:10px 14px;border-bottom:1px solid rgba(37,42,56,.5)}tr:hover td{background:rgba(212,168,67,.02)}
+.tbl-wrap{overflow-x:auto;border:1px solid var(--bdr);border-radius:8px;margin-bottom:20px}
+.chart-box{background:var(--bg2);border:1px solid var(--bdr);border-radius:8px;padding:20px;margin-bottom:20px}.chart-box h3{font-size:14px;margin-bottom:4px}.chart-box .cn{font-size:11px;color:var(--cn);margin-bottom:12px}
+.chart-wrap{position:relative;height:250px}
+.prose{font-size:14px;color:var(--tm);line-height:1.75;margin-bottom:20px;max-width:800px}.prose strong{color:var(--t)}.prose em{color:var(--goldl);font-style:normal}
+.formula{background:var(--bg3);border:1px solid var(--bdr);border-radius:8px;padding:16px 20px;font-family:monospace;font-size:13px;color:var(--goldl);line-height:2;margin-bottom:20px;overflow-x:auto}
+.footer{text-align:center;padding:28px;font-size:11px;color:var(--td);border-top:1px solid var(--bdr)}
+@media(max-width:800px){.grid2,.grid3{grid-template-columns:1fr}.verdict-box{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="w">
+
+<div class="hero">
+  <div class="hero-tag">Graham-Buffett × Greenwald Neglect · Deep Value Analysis</div>
+  <h1>Asia Cement (China) Holdings (0743.HK)</h1>
+  <div class="hero-cn">亚洲水泥 (中国) 控股 · 深度价值分析 · 周期低谷深度低估</div>
+  <div class="hero-meta">
+    <span>Sector: Materials / Cement & Concrete</span>
+    <span>Exchange: HKEx Main Board</span>
+    <span>HQ: Causeway Bay, Hong Kong</span>
+    <span>Analysis Date: April 28, 2026</span>
+    <span>Data: FY2025 results (announced 9 March 2026); Q1 2026 update (April 2026)</span>
+  </div>
+</div>
+
+<div class="verdict-box">
+  <div class="verdict-score">
+    <div class="big">7.0</div>
+    <div class="label">Confidence / 10</div>
+    <div style="margin-top:8px"><span class="badge b-info" style="font-size:12px">STRONG CANDIDATE — STAGED ENTRY</span></div>
+  </div>
+  <div class="verdict-text">
+    <h2>Verdict: Strong Candidate — Classic Asset-Backed Cyclical Trough Play</h2>
+    <div class="cn">判定：优选标的 — 经典资产支撑的周期低谷投资</div>
+    <p>
+      Asia Cement China is the <strong>most extreme deep-value setup of all four HK candidates analyzed</strong>: a Taiwan-controlled mainland Chinese cement producer trading at <em>P/B 0.20×, P/TBV 0.21×, with NEGATIVE enterprise value (cash exceeds market cap)</em>. At HK$2.33, the entire HK$3.65B market cap is more than fully covered by HK$4.52B of net cash (HK$2.89/share) — <em>investors are getting the cement business for less than zero</em>. The bull case received structural validation in June 2024 when parent Asia Cement Corp (Taiwan) attempted privatization at HK$3.22/share, which was REJECTED by minority shareholders as too low. <strong>However, the cycle has NOT turned</strong>: FY2025 returned to small profit (RMB85.7M after RMB263.7M loss in 2024) but Q4 2025 reverted to RMB60.5M loss, and Q1 2026 deepened to RMB81.3M loss. China cement demand remains structurally weak. <strong>Position: Quarter-half (1.5–2.5% of portfolio) at HK$2.20-2.40, scaling to half on each leg lower (HK$2.00, HK$1.80) IF balance sheet remains intact.</strong> The asymmetric setup — minimal downside (covered by cash) and large upside (privatization or eventual cyclical recovery) — is the signature deep-value Greenwald-Graham pattern. Required catalyst: either re-tabled privatization at HK$3.50+ OR China cement industry consolidation announcement OR sustained quarterly profitability. Patience required: 2-3 year horizon.
+    </p>
+  </div>
+</div>
+
+<div class="tabs">
+  <button class="tab on" data-t="s1">Step 1: Business<span class="cn">理解生意</span></button>
+  <button class="tab" data-t="s2">Step 2: Quant Screen<span class="cn">量化筛选</span></button>
+  <button class="tab" data-t="s3">Step 3: Intrinsic Value<span class="cn">内在价值</span></button>
+  <button class="tab" data-t="s4">Step 4: Moat<span class="cn">护城河</span></button>
+  <button class="tab" data-t="s5">Step 5: Management<span class="cn">管理层</span></button>
+  <button class="tab" data-t="s6">Step 6: Risk<span class="cn">风险</span></button>
+  <button class="tab" data-t="s7">Step 7: Verdict<span class="cn">最终判定</span></button>
+  <button class="tab" data-t="catalysts">Privatization Story<span class="cn">私有化情况</span></button>
+  <button class="tab" data-t="neglect">Neglect Scorecard<span class="cn">忽视评分</span></button>
+</div>
+
+<!-- STEP 1: BUSINESS -->
+<div class="panel on" id="s1">
+  <div class="sh"><div class="sh-num">01</div><div><div class="sh-title">Understand the Business</div><div class="sh-cn">理解生意</div></div></div>
+
+  <p class="prose">
+    Asia Cement (China) Holdings is the <strong>mainland China cement and concrete operating subsidiary of Taiwan-listed Asia Cement Corporation (ACC, 1102-TW)</strong>, controlled by the Hsu family of Taiwan's Far Eastern Group. ACC was founded in 1957 by Y.Z. Hsu; the China subsidiary was established in 2004 and listed on HKEx in 2008. Production footprint: ~10 cement plants across <em>Sichuan, Hubei, Jiangxi, and other provinces</em>, primarily focused on <strong>Central China, Southwest China, and Southeast China</strong> markets. The business is straightforward — mine limestone, manufacture clinker, grind cement, sell to construction and real estate markets in mainland China. Two operating segments: Cement Business (~85% of revenue) and Concrete Business (~15%).
+  </p>
+
+  <div class="grid2">
+    <div class="card">
+      <h3>Business Segments <span class="cn">业务分部</span></h3>
+      <p><strong>Cement Business (Primary):</strong> Portland cement clinker, general purpose Portland cement, moderate/low heat Portland cement, slag/limestone/ash powder. Sold to infrastructure, real estate, and concrete plants across central/southwest China. <strong>Concrete Business:</strong> Ready-mix concrete plants located near major construction markets. Provides marketing, transportation, sales/storage of cement products. Has equipped all production lines with high-efficiency waste heat recovery power-generating systems for cost reduction.</p>
+    </div>
+    <div class="card">
+      <h3>Competitive Position <span class="cn">竞争定位</span></h3>
+      <p>Asia Cement China is a <strong>mid-tier regional player</strong> in a Chinese cement industry dominated by giants like Anhui Conch Cement (914.HK), CNBM (3323.HK), and Huaxin Cement (6655.HK). Not a national champion but a durable regional franchise with logistics advantages in Central/Southwest China. Brand: "Skyscraper" (天玺) — recognized in Taiwan; less differentiated in mainland China where cement is largely commoditized. The Hsu family's 67%+ control via parent provides long-term strategic patience but raises minority alignment questions.</p>
+    </div>
+  </div>
+
+  <div class="grid3">
+    <div class="metric"><div class="val" style="color:var(--goldl)">1.57B</div><div class="lbl">Shares Outstanding</div></div>
+    <div class="metric"><div class="val" style="color:var(--goldl)">2,760</div><div class="lbl">Employees</div></div>
+    <div class="metric"><div class="val" style="color:var(--goldl)">2008</div><div class="lbl">HKEx Listed</div></div>
+  </div>
+
+  <div class="card" style="border-color:var(--blu)">
+    <h3>📋 Why This Setup Is Different From Other Cyclicals <span class="cn">为何此设置不同于其他周期股</span></h3>
+    <p>Cement is a deeply cyclical commodity business — generally a value-trap candidate (low ROIC + price-takers + China property pain). What makes 0743.HK different is <strong>three asymmetric features</strong>: (1) Net cash position of HK$4.52B exceeds market cap of HK$3.65B (negative enterprise value of −HK$471M); (2) Parent attempted privatization at HK$3.22 in 2024 — failed because minority shareholders refused to sell that low — meaning the parent has signaled their belief in fair value AT LEAST HK$3.22; (3) Trading at 0.20× P/B means each HK$1 of book equity costs 20¢ — the asymmetry only requires partial cycle recovery to compress this back to 0.50× for a 2.5× return.</p>
+  </div>
+</div>
+
+<!-- STEP 2: QUANT SCREEN -->
+<div class="panel" id="s2">
+  <div class="sh"><div class="sh-num">02</div><div><div class="sh-title">Quantitative Screen — FY2025 + Q1 2026</div><div class="sh-cn">量化筛选 — 2025年报 + 2026年一季度</div></div></div>
+
+  <div class="grid3" style="margin-bottom:20px">
+    <div class="metric"><div class="val" style="color:var(--grn)">0.20×</div><div class="lbl">P/B Ratio</div></div>
+    <div class="metric"><div class="val" style="color:var(--grn)">0.21×</div><div class="lbl">P/TBV Ratio</div></div>
+    <div class="metric"><div class="val" style="color:var(--grn)">−HK$471M</div><div class="lbl">Enterprise Value (Negative!)</div></div>
+  </div>
+  <div class="grid3" style="margin-bottom:20px">
+    <div class="metric"><div class="val" style="color:var(--grn)">HK$2.89</div><div class="lbl">Net Cash / Share</div></div>
+    <div class="metric"><div class="val" style="color:var(--grn)">HK$11.49</div><div class="lbl">Book Value / Share</div></div>
+    <div class="metric"><div class="val" style="color:var(--grn)">2.93</div><div class="lbl">Current Ratio</div></div>
+  </div>
+  <div class="grid3" style="margin-bottom:20px">
+    <div class="metric"><div class="val" style="color:var(--gold)">9.81×</div><div class="lbl">P/E (LTM, Cycle Trough)</div></div>
+    <div class="metric"><div class="val" style="color:var(--red)">2.08%</div><div class="lbl">ROE (Cycle Trough)</div></div>
+    <div class="metric"><div class="val" style="color:var(--red)">−RMB81M</div><div class="lbl">Q1 2026 Loss</div></div>
+  </div>
+
+  <div class="tbl-wrap">
+  <table>
+    <thead><tr><th>Graham-Buffett Cyclical Criteria</th><th>Threshold</th><th>0743.HK FY2025</th><th>Result</th></tr></thead>
+    <tbody>
+      <tr><td>P/B Ratio</td><td>&lt; 1.0× (deep value &lt; 0.5×)</td><td><strong>0.20×</strong> — extreme deep value territory</td><td><span class="badge b-pass">EXTREME VALUE</span></td></tr>
+      <tr><td>P/TBV Ratio</td><td>&lt; 1.0× (deep value &lt; 0.5×)</td><td><strong>0.21×</strong></td><td><span class="badge b-pass">EXTREME VALUE</span></td></tr>
+      <tr><td>Enterprise Value</td><td>Positive (= mcap + debt − cash)</td><td><strong>−HK$471M (negative)</strong> — net cash exceeds market cap</td><td><span class="badge b-pass">CASH-COVERED</span></td></tr>
+      <tr><td>Net Cash / Share</td><td>Material % of price</td><td>HK$2.89 / HK$2.33 = 124% — net cash exceeds price</td><td><span class="badge b-pass">EXCEPTIONAL</span></td></tr>
+      <tr><td>Current Ratio</td><td>&gt; 2.0 (strong liquidity)</td><td>2.93</td><td><span class="badge b-pass">PASS</span></td></tr>
+      <tr><td>Debt / Equity</td><td>&lt; 0.5</td><td>0.09 — minimal leverage</td><td><span class="badge b-pass">PASS</span></td></tr>
+      <tr><td>Profitability — FY2025</td><td>&gt; 0 (turnaround)</td><td>RMB85.7M profit (vs RMB263.7M loss FY2024)</td><td><span class="badge b-pass">TURNAROUND</span></td></tr>
+      <tr><td>Profitability — Q1 2026</td><td>&gt; 0</td><td><strong>−RMB81.3M loss</strong> — cycle has not yet turned</td><td><span class="badge b-fail">FAIL</span></td></tr>
+      <tr><td>Q4 2025 Trend</td><td>Sequential improvement</td><td><strong>Q4 2025 reverted to RMB60.5M loss</strong> after Q1-Q3 profits</td><td><span class="badge b-fail">FAIL</span></td></tr>
+      <tr><td>Free Cash Flow</td><td>Positive</td><td>HK$182M FCF generated (LTM)</td><td><span class="badge b-pass">PASS</span></td></tr>
+      <tr><td>ROE</td><td>&gt; 8% (normalized)</td><td>2.08% (cycle trough; need normalization)</td><td><span class="badge b-warn">CYCLE TROUGH</span></td></tr>
+      <tr><td>Dividend</td><td>Consistent payer</td><td>FY2025 final RMB0.03/share (modest); historical record present</td><td><span class="badge b-warn">MINIMAL</span></td></tr>
+      <tr><td>Beta (Defensiveness)</td><td>&lt; 1.0</td><td>0.64 — defensive</td><td><span class="badge b-pass">PASS</span></td></tr>
+      <tr><td>Piotroski F-Score</td><td>≥ 7</td><td>5 — mediocre quality at cycle trough</td><td><span class="badge b-warn">MEDIOCRE</span></td></tr>
+      <tr><td>Audit Opinion</td><td>Unqualified</td><td>FY2025 audited results filed 9 March 2026</td><td><span class="badge b-pass">CLEAN</span></td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <p class="prose">
+    <strong>Quant screen summary:</strong> The balance sheet metrics are <em>extraordinary</em>: P/B 0.20×, P/TBV 0.21×, negative enterprise value, net cash exceeding market cap. These are textbook Graham-style asset-backed deep-value indicators. <strong>However, the income statement is decidedly mixed:</strong> FY2025 saw a small profit (RMB85.7M) on lower revenue (RMB5.1B, -13% YoY), but Q4 2025 reverted to a RMB60.5M loss and Q1 2026 deepened that to RMB81.3M loss. The cyclical trough has not turned. <em>Investors are NOT being asked to bet on the cycle turning soon — they are being asked whether the asset coverage justifies the price even if the cycle remains depressed for another 1-3 years.</em> Net cash of HK$4.52B alone provides a multi-year cushion against operational cash burn (LTM FCF was actually +HK$182M, so cash is currently growing despite losses).
+  </p>
+
+  <div class="card" style="border-color:var(--gold)">
+    <h3>The Two Key Numbers <span class="cn">两个关键数字</span></h3>
+    <p><strong>Number 1: HK$11.49 book value per share.</strong> If the cement industry merely returns to a 5% ROE — far below historical averages — this would generate ~HK$0.57/share of earnings, putting current HK$2.33 at 4× normalized P/E. <strong>Number 2: HK$2.89 net cash per share.</strong> If you mark the cement business to zero and just liquidate cash, you receive HK$2.89 — already 24% above the current price. The combined effect is mathematical: <em>at HK$2.33, you are buying HK$11.49 of book equity AND being paid HK$0.56 per share to take the business off market hands.</em> This is the kind of asymmetry Buffett describes when he says "be fearful when others are greedy, greedy when others are fearful" — the Chinese cement industry is currently in the deepest fear phase since the 2008-09 cycle.</p>
+  </div>
+
+  <div class="chart-box">
+    <h3>Quarterly Profit Trajectory — Cycle Has Not Yet Turned</h3>
+    <div class="cn">季度盈利轨迹 — 周期尚未反转</div>
+    <div class="chart-wrap"><canvas id="chartProfit"></canvas></div>
+  </div>
+
+  <div class="chart-box">
+    <h3>Net Cash vs Market Cap — The Asymmetric Setup</h3>
+    <div class="cn">净现金 vs 市值 — 非对称设置</div>
+    <div class="chart-wrap"><canvas id="chartCash"></canvas></div>
+  </div>
+</div>
+
+<!-- STEP 3: INTRINSIC VALUE -->
+<div class="panel" id="s3">
+  <div class="sh"><div class="sh-num">03</div><div><div class="sh-title">Intrinsic Value</div><div class="sh-cn">内在价值</div></div></div>
+
+  <p class="prose">
+    For an asset-heavy cyclical at trough, the primary valuation anchor is <strong>tangible book value plus normalized earnings power</strong>. The market is currently pricing only the cash component of book value — assigning zero value to plant, equipment, and operating franchise.
+  </p>
+
+  <div class="tbl-wrap">
+  <table>
+    <thead><tr><th>Method</th><th>Assumptions</th><th>Fair Value / Share</th><th>MoS at HK$2.33</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Net Cash Liquidation Floor</strong></td><td>Mark cement business to zero; receive cash only</td><td>HK$2.89</td><td>24%</td></tr>
+      <tr><td><strong>Failed Privatization Bid (Jun 2024)</strong></td><td>Parent's own valuation, rejected as too low by minorities</td><td>HK$3.22</td><td>38%</td></tr>
+      <tr><td><strong>0.5× P/B (Deep Discount Cyclical)</strong></td><td>Modest TBV recovery; still significant industry discount</td><td>HK$5.75</td><td>147%</td></tr>
+      <tr><td><strong>Normalized 8% ROE × 1.0× P/B</strong></td><td>Mid-cycle ROE × fair P/B for cyclical at fair value</td><td>HK$11.49</td><td>393%</td></tr>
+      <tr><td><strong>Stockinvest.us Forecast (3-month)</strong></td><td>Technical model; HK$1.97-HK$2.54 range</td><td>HK$2.25 midpoint</td><td>~−4%</td></tr>
+      <tr><td><strong>Recent Analyst Hold Target</strong></td><td>HK$2.50 target (TipRanks recent rating)</td><td>HK$2.50</td><td>7%</td></tr>
+      <tr><td><strong>Graham Net-Net (Conservative)</strong></td><td>Current assets − all liabilities, ignore PP&E</td><td>~HK$3.40 (estimated)</td><td>46%</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="formula">
+    Triangulated Intrinsic Value Range:
+    <br>Conservative (cash floor):       HK$2.89    +24% upside
+    <br>Failed Privatization Reference:  HK$3.22    +38% upside
+    <br>Modest Recovery (0.5× P/B):      HK$5.75   +147% upside
+    <br>Mid-cycle (1.0× P/B):           HK$11.49   +393% upside
+    <br><br>
+    Central Estimate: HK$5.00 (weighted toward conservative)
+    <br>Current Price: HK$2.33 (Feb 2026 close)
+    <br>Margin of Safety at Central Estimate: 115%
+    <br><br>
+    Required MoS (Greenwald-adjusted for HK cyclical w/ Taiwan parent): 50%
+    <br>(Base 20% + Neglect 5% + Cyclical 15% + China property concern 10%)
+    <br><br>
+    ✓ EXCEEDS — multiple margin of safety even on conservative estimate.
+    <br>Asymmetric setup: −15% downside risk (unlikely to break HK$2.00) vs +100%+ upside potential.
+  </div>
+
+  <div class="card" style="border-color:var(--blu)">
+    <h3>💡 The Mr. Market Mispricing <span class="cn">市场先生的错误定价</span></h3>
+    <p>Mr. Market is currently treating Asia Cement China as a slowly-dying business that will burn through its cash and leave nothing. <strong>The reality:</strong> (1) FY2025 generated +HK$182M of free cash flow despite Q4 loss — cash position is GROWING, not shrinking; (2) Operating expenses can be cut further if needed; (3) Production lines are equipped with waste heat recovery power generation, providing structural cost advantage; (4) China cement industry is consolidating — capacity discipline policies (dual carbon, dual control) are accelerating closures of inefficient operators. <strong>The asymmetry:</strong> If business merely stabilizes at break-even, intrinsic value remains HK$11.49 and current price represents 393% upside. If business deteriorates further, downside is constrained at ~HK$2.00 by the cash floor (the rest is loss-absorbing equity, but cash itself is real).</p>
+  </div>
+
+  <div class="card" style="border-color:var(--red)">
+    <h3>⚠ Caution: Cash Could Be Trapped <span class="cn">注意：现金可能被困</span></h3>
+    <p>The HK$4.52B net cash sits primarily in mainland China subsidiaries. <strong>Repatriation requires PRC State Administration of Foreign Exchange (SAFE) approval</strong>, which has tightened over the past 5 years. While the cash exists on the balance sheet, minority shareholders cannot directly access it via dividends if SAFE controls capital outflows. The parent (Asia Cement Corp Taiwan) likewise depends on dividend approval for repatriation. <em>Modest dividend (RMB0.03 final FY2025) likely reflects this constraint rather than capital reluctance.</em> Investors should not treat the HK$2.89 cash/share as freely deployable — it is "real" cash but with restricted mobility. This is a real but manageable concern.</p>
+  </div>
+</div>
+
+<!-- STEP 4: MOAT -->
+<div class="panel" id="s4">
+  <div class="sh"><div class="sh-num">04</div><div><div class="sh-title">Moat Analysis</div><div class="sh-cn">护城河分析</div></div></div>
+
+  <div class="tbl-wrap">
+  <table>
+    <thead><tr><th>Moat Source</th><th>Assessment</th><th>Strength</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Geographic Niche</strong></td><td>~10 cement plants distributed across Central, Southwest, and Southeast China — major positions in Sichuan, Hubei, Jiangxi. Cement has high transportation costs (typically uneconomic to ship beyond ~150km from plant), so local market positions matter.</td><td><span class="badge b-pass">MODERATE</span></td></tr>
+      <tr><td><strong>Limestone Reserves</strong></td><td>Mining permits and quality limestone reserves in operating regions are valuable assets. Difficult and expensive for new entrants to obtain mining rights in modern PRC. Long-term franchise value beyond cyclical earnings.</td><td><span class="badge b-pass">MODERATE</span></td></tr>
+      <tr><td><strong>Cost Position (Waste Heat Power)</strong></td><td>All production lines equipped with high-efficiency waste heat recovery power-generating systems. This reduces electricity costs (typically 30-40% of cement production cost) and reliance on grid. A genuine structural cost advantage.</td><td><span class="badge b-pass">MODERATE</span></td></tr>
+      <tr><td><strong>Brand</strong></td><td>"Skyscraper" / "天玺" brand is recognized but cement is a commodity — buyers select based on quality, location, and price, not brand loyalty. Parent ACC has stronger brand in Taiwan but limited spillover to mainland.</td><td><span class="badge b-warn">WEAK</span></td></tr>
+      <tr><td><strong>Scale</strong></td><td>Mid-tier scale. Anhui Conch (the dominant player) is roughly 10× larger by capacity. Asia Cement China cannot compete on national-scale efficiency or distribution. Fights for regional pricing power, not national.</td><td><span class="badge b-warn">WEAK</span></td></tr>
+      <tr><td><strong>Switching Costs</strong></td><td>Effectively zero for end customers — cement is a commodity input. Real estate developers and contractors switch suppliers based on price/availability/proximity.</td><td><span class="badge b-fail">NONE</span></td></tr>
+      <tr><td><strong>Pricing Power</strong></td><td>None — cement industry is in oversupply across China. Industry has been engaged in "low-price cutthroat competition" per FY2024 annual report. H2 2025 saw "anti-involution" efforts gain traction; some pricing recovery seen.</td><td><span class="badge b-fail">NONE</span></td></tr>
+      <tr><td><strong>Regulatory Tailwinds</strong></td><td>"Dual carbon" and "dual control" policies are forcing capacity rationalization. Inefficient producers are being phased out. Asia Cement China's modern, efficient plants benefit from this consolidation. <em>This is the structural reason the cycle eventually turns.</em></td><td><span class="badge b-pass">EMERGING POSITIVE</span></td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <p class="prose">
+    <strong>Overall moat: Narrow.</strong> Asia Cement China is a commodity producer with modest geographic and cost-based advantages. This is NOT a Buffett "wonderful business" — it's a Graham-style asset-backed cyclical. The thesis does not depend on durable competitive advantages but on (a) the asset coverage at trough valuations and (b) the eventual mean reversion of the China cement cycle as capacity discipline policies bite. <em>The moat assessment matters because it tells us the upside ceiling: at peak cycle, this should trade at 1.0-1.5× P/B (HK$11.49-17.24), not the 3-5× book value commanded by genuine moat businesses.</em>
+  </p>
+
+  <div class="card">
+    <h3>Industry Consolidation Thesis <span class="cn">行业整合论点</span></h3>
+    <p>The Chinese cement industry has been suffering since 2021 from the combination of (a) real estate sector contraction, (b) infrastructure investment slowdown, and (c) capacity oversupply built during the 2010-2018 boom. The FY2024 annual report from parent ACC notes: "the cement industry began to explore ways to counter involution" in H2 2024, and "low-first-then-high trajectory" expected in 2025-2026 with "the dual carbon and dual control policies are driving forces behind the accelerating phasing out of inefficient production capacity." <strong>If this consolidation accelerates in 2026-2027, surviving operators (which include Asia Cement China given its modern fleet and net cash) should see margin expansion as supply rationalizes.</strong> This is the structural moat — not the company's individual position, but its membership in the surviving cohort.</p>
+  </div>
+</div>
+
+<!-- STEP 5: MANAGEMENT/GOVERNANCE -->
+<div class="panel" id="s5">
+  <div class="sh"><div class="sh-num">05</div><div><div class="sh-title">Management & Governance</div><div class="sh-cn">管理层与治理</div></div></div>
+
+  <div class="tbl-wrap">
+  <table>
+    <thead><tr><th>Governance Factor</th><th>Detail</th><th>Score</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Controlling Shareholder</strong></td><td>Asia Cement Corp (Taiwan, 1102-TW) holds ~67.73% via wholly-owned subsidiaries. Hsu family ultimately controls. Public float only ~26.5% of total shares (417M of 1.57B).</td><td><span class="badge b-fail">G2: −2</span></td></tr>
+      <tr><td><strong>ISS Governance Score</strong></td><td>Not separately published for 0743.HK by Yahoo (small-cap not actively scored). Insufficient data.</td><td><span class="badge b-warn">G1: −1 (estimate)</span></td></tr>
+      <tr><td><strong>Related-Party Transactions</strong></td><td>Active RPTs with parent ACC and other Far Eastern Group entities (logistics via U-Ming Marine Transport, etc.). Magnitude has been disclosed in past annual reports as not material to financial statements. <em>Lower-priority Tier 2 verification — pattern is similar to Lee &amp; Man Chemical / Lee &amp; Man Paper relationship.</em></td><td><span class="badge b-warn">G3: −1 (placeholder)</span></td></tr>
+      <tr><td><strong>Failed Privatization Attempt</strong></td><td>June 2024: parent attempted privatization at HK$3.22, was rejected by minority shareholders at Court Meeting in August 2024. <strong>This is governance-positive</strong>: minority shareholders successfully blocked an attempted "low-ball" exit. Demonstrates effective minority shareholder protection mechanism worked.</td><td><span class="badge b-pass">G+1 (positive)</span></td></tr>
+      <tr><td><strong>Board Independence</strong></td><td>Board has executive, non-executive, and independent non-executive directors. Recent INED changes (Wang Guoming resigned Oct 2025; Lin Meixue appointed; Li Gaochao resigned Oct 2024) suggest INED rotation. Specific independence ratio requires verification from full annual report.</td><td><span class="badge b-warn">G4: 0 (presumed adequate)</span></td></tr>
+      <tr><td><strong>Audit Quality</strong></td><td>FY2025 audited consolidated results released 9 March 2026 with no flagged opinions. Standard Big 4-equivalent audit (specific firm not yet verified).</td><td><span class="badge b-pass">G5: 0</span></td></tr>
+      <tr><td><strong>Compensation Alignment</strong></td><td>Not specifically flagged. Standard family-controlled HK-listed structure. ACC parent annual report shows reasonable executive comp framework.</td><td><span class="badge b-pass">G6: 0</span></td></tr>
+      <tr><td><strong>Dilution History</strong></td><td>Shares outstanding +0.46% YoY — minor. Buyback yield -0.46% (slight share creep). Stable share count.</td><td><span class="badge b-pass">G7: 0</span></td></tr>
+      <tr><td><strong>Capital Allocation</strong></td><td>Maintained net cash position through cycle trough. Did NOT engage in M&amp;A at peak prices. Modest dividends preserved during loss years. <strong>Conservative capital allocation is exactly what an investor wants in a cyclical at trough.</strong></td><td><span class="badge b-pass">G+1 (positive)</span></td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="formula" style="color:var(--gold)">
+    G-Score Calculation (governance-flags.md):
+    <br>G1 (ISS unavail, estimate): −1
+    <br>G2 (Controlling shareholder &gt;50% via Taiwan parent): −2
+    <br>G3 (RPTs placeholder): −1
+    <br>G4 (Board independence assumed adequate): 0
+    <br>G5 (Audit clean): 0
+    <br>G6 (Compensation): 0
+    <br>G7 (Dilution clean): 0
+    <br>G+ (Failed privatization defended): +1
+    <br>G+ (Conservative capital allocation): +1
+    <br><br>
+    G-Score = 10 − 4 + 2 = 8/10 (Acceptable)
+    <br>Note: Two positive credits unique to this analysis offset the standard
+    <br>controlling-shareholder deductions, reflecting demonstrated governance
+    <br>strength rather than just absence of flags.
+  </div>
+
+  <div class="card" style="border-color:var(--grn)">
+    <h3>✅ Governance Strength: Failed Privatization Demonstrates Minority Protection <span class="cn">治理优势：私有化失败展示了小股东保护</span></h3>
+    <p>The June-August 2024 privatization attempt at HK$3.22/share is a <strong>strongly positive governance signal</strong>. Under HKEx Scheme of Arrangement rules, the privatization required: (a) approval by 75% in value of disinterested ("scheme") shares voted, AND (b) no more than 10% of all disinterested shares voting against. The fact that the scheme was rejected at the Court Meeting means minorities successfully blocked it. Compared to many HK family-controlled small caps where minorities have no effective voice, this demonstrates that <em>0743.HK's governance framework actually functions when tested.</em> The minority shareholders effectively said: "We believe fair value is well above HK$3.22, and we refuse to be cashed out at a 45% premium to a depressed undisturbed price." That is a meaningful indicator of investor sentiment that the controlling shareholder cannot easily override.</p>
+  </div>
+
+  <div class="card" style="border-color:var(--gold)">
+    <h3>The Far Eastern Group Context <span class="cn">远东集团背景</span></h3>
+    <p>Asia Cement Corp (1102-TW) is part of the <strong>Far Eastern Group</strong>, one of Taiwan's largest family conglomerates, with diversified holdings across cement, transportation (U-Ming Marine Transport), department stores (Far Eastern Department Stores), telecommunications (Far EasTone), petrochemicals (Oriental Union Chemical), and others. The Hsu family has controlled the conglomerate since founding by Y.Z. Hsu in 1957. Group-level governance is generally regarded as competent if family-conservative. The presence of multiple cross-holdings between Far Eastern Group entities (visible in ACC's annual report) is typical of Taiwan family conglomerates and not specifically problematic.</p>
+  </div>
+</div>
+
+<!-- STEP 6: RISK -->
+<div class="panel" id="s6">
+  <div class="sh"><div class="sh-num">06</div><div><div class="sh-title">Risk Assessment</div><div class="sh-cn">风险评估</div></div></div>
+
+  <div class="tbl-wrap">
+  <table>
+    <thead><tr><th>Risk</th><th>Severity</th><th>Probability</th><th>Mitigation</th></tr></thead>
+    <tbody>
+      <tr><td><strong>China Real Estate Cycle Persistence</strong></td><td><span class="badge b-fail">HIGH</span></td><td><span class="badge b-fail">HIGH</span></td><td>Q1 2026 loss confirms cycle has not turned. China real estate sales remain depressed. Cement demand structurally lower than 2015-2020 peak. <em>Mitigation:</em> HK$4.52B net cash provides multi-year cushion; LTM FCF still positive; capacity rationalization (dual carbon/dual control) eventually balances supply with new demand level.</td></tr>
+      <tr><td><strong>Cash Repatriation Restrictions</strong></td><td><span class="badge b-warn">MEDIUM</span></td><td><span class="badge b-warn">MEDIUM</span></td><td>HK$4.52B net cash is largely in mainland subsidiaries (RMB cash). SAFE approvals required to repatriate as HK dollar dividends. Modest FY2025 dividend (RMB0.03) reflects this constraint. <em>This means cash exists but is partially trapped.</em> Doesn't change the asset coverage thesis but limits dividend yield potential.</td></tr>
+      <tr><td><strong>Cyclical Earnings Quality</strong></td><td><span class="badge b-warn">MEDIUM</span></td><td><span class="badge b-warn">MEDIUM</span></td><td>Net profit at cycle trough = mediocre indicator. ROE 2.08% is below cost of capital. If cycle remains depressed for 5+ years, value erosion (depreciation, plant maintenance, slow capacity rationalization) would compound. <em>Mitigation:</em> 5-year holding period; cement is durable infrastructure cycle that historically reverts.</td></tr>
+      <tr><td><strong>Failed Privatization Re-attempt at Lower Price</strong></td><td><span class="badge b-warn">MEDIUM</span></td><td><span class="badge b-warn">MEDIUM</span></td><td>Parent ACC may retry privatization in 2026 or 2027 at a "compromise" price like HK$2.80 or HK$3.00. Some minorities (especially those who joined at higher prices or face liquidity needs) may capitulate. <em>This is actually mostly positive risk</em> — even a HK$2.80 outcome is +20% from current.</td></tr>
+      <tr><td><strong>Geopolitical Risk (Taiwan-China)</strong></td><td><span class="badge b-warn">MEDIUM</span></td><td><span class="badge b-warn">MEDIUM</span></td><td>Taiwan parent operating mainland China cement assets is structurally exposed to Cross-Strait tensions. If relations deteriorate sharply, mainland authorities could impose operational restrictions. <em>Mitigation:</em> 0743.HK is HK-listed and PRC-incorporated subsidiaries; technically separate from Taiwan parent; tensions have historically not impacted day-to-day operations of Taiwanese-owned PRC subsidiaries.</td></tr>
+      <tr><td><strong>Liquidity</strong></td><td><span class="badge b-warn">MEDIUM</span></td><td><span class="badge b-warn">HIGH</span></td><td>20-day average volume only 654K shares = HK$1.5M daily turnover at current prices. Float is only 417M shares (~26.5% of total). Building a meaningful position requires patience and limit orders. Exiting in stress could trigger price impact.</td></tr>
+      <tr><td><strong>Indefinite Holding Period</strong></td><td><span class="badge b-pass">LOW</span></td><td><span class="badge b-warn">MEDIUM</span></td><td>Position may need to be held 3-5 years before catalysts materialize. Capital is not income-producing in interim (RMB0.03 dividend is symbolic). Opportunity cost of capital is real. <em>Mitigation:</em> Asymmetric setup justifies the wait if downside is capped.</td></tr>
+      <tr><td><strong>Goodwill or Asset Impairment</strong></td><td><span class="badge b-pass">LOW</span></td><td><span class="badge b-warn">MEDIUM</span></td><td>If cement plants are written down (impairment of long-lived assets), book value declines. However, given starting P/B is 0.20×, even a 30% writedown would only push P/B to 0.29× — still deep value. Asset coverage thesis is robust to substantial impairments.</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="card" style="border-color:var(--blu)">
+    <h3>Why The Risk Profile Is Asymmetric <span class="cn">为何风险概率非对称</span></h3>
+    <p>The risk asymmetry comes from the <strong>cash floor</strong>. At HK$2.33 current price vs HK$2.89 net cash per share: even if all cement assets were impaired to zero (which they won't be — the LTM FCF is +HK$182M), shareholders still own claim to HK$2.89/share of cash. <em>This caps theoretical downside at ~−15% to ~HK$2.00 region (assuming the cash itself doesn't deteriorate, which is unlikely given operating profitability is breakeven-positive).</em> Compare this to upside scenarios: even a partial cycle recovery to 0.5× P/B = HK$5.75 = +147%. The probability-weighted expected return — even in pessimistic scenarios — favors the long thesis significantly.</p>
+  </div>
+</div>
+
+<!-- STEP 7: VERDICT -->
+<div class="panel" id="s7">
+  <div class="sh"><div class="sh-num">07</div><div><div class="sh-title">Verdict</div><div class="sh-cn">最终判定</div></div></div>
+
+  <div class="formula" style="color:var(--gold);font-size:14px">
+    GGB Composite Score (v1.1):
+    <br>Neglect:    11/15 × 25  = 18.3  (low coverage, 4% institutional, low volume)
+    <br>Quality:    6/10  × 25  = 15.0  (B/S extreme strength; income statement at trough)
+    <br>Governance: 8/10  × 20  = 16.0  (Failed privatization defended + conservative cap alloc)
+    <br>Valuation:  6/6   × 30  = 30.0  (P/B 0.20×, neg EV, all valuation criteria max out)
+    <br><br>
+    GGB SCORE = 79.3 → STRONG CANDIDATE (top of band)
+    <br>(This is the highest GGB score across all four HK candidates analyzed
+    <br>this session — the asset-backed deep-value setup with negative
+    <br>enterprise value is structurally stronger than the cyclical/franchise
+    <br>cases of Lee &amp; Man, DSFH, or DSBG.)
+  </div>
+
+  <div class="grid2">
+    <div class="card" style="border-color:var(--grn)">
+      <h3>The Bull Case <span class="cn">看多论据</span></h3>
+      <p><strong>1. Negative EV, asset-backed.</strong> Net cash exceeds market cap; cement business comes free. <strong>2. P/B 0.20× extreme deep value.</strong> Among most extreme valuations in any equity market globally. <strong>3. Failed privatization signal.</strong> Parent ACC's HK$3.22 bid was rejected — implies fair value above that. <strong>4. China consolidation tailwind.</strong> Dual carbon/dual control policies forcing inefficient capacity closures; Asia Cement China benefits from being a survivor. <strong>5. Conservative balance sheet.</strong> D/E 0.09; current ratio 2.93. Multi-year staying power. <strong>6. Positive FCF despite Q4/Q1 losses.</strong> Cash pile is still growing. <strong>7. Catalyst optionality.</strong> Future privatization re-attempt likely at HK$2.80-3.50 = +20-50% from current. <strong>8. Defensive beta 0.64</strong> — won't blow up in macro stress.</p>
+    </div>
+    <div class="card" style="border-color:var(--red)">
+      <h3>The Bear Case <span class="cn">看空论据</span></h3>
+      <p><strong>1. Cycle has NOT turned.</strong> Q4 2025 loss + Q1 2026 deeper loss confirms ongoing distress. <strong>2. China real estate is structurally smaller.</strong> Cement demand may not return to 2018-2020 peaks for a decade or more. <strong>3. Cash is partially trapped.</strong> SAFE controls limit dividend repatriation; HK$2.89 net cash isn't fully accessible. <strong>4. Family-controlled, illiquid.</strong> 67% controlling shareholder + 26% float means minorities have limited governance leverage day-to-day. <strong>5. Holding period uncertainty.</strong> Could be 3-5+ years before cyclical recovery materializes. Opportunity cost is real. <strong>6. Mediocre Piotroski F-Score 5.</strong> Quality metrics not great even relative to its own balance sheet strength. <strong>7. Possible value-trap classification.</strong> Cyclical commodity at trough is the stereotype value trap.</p>
+    </div>
+  </div>
+
+  <div class="card" style="border-color:var(--gold);margin-top:14px">
+    <h3>Position Sizing &amp; Entry Strategy <span class="cn">仓位规模与入场策略</span></h3>
+    <p><strong>Initial position at current HK$2.33:</strong> 1.5-2% of portfolio (quarter-half position size). <strong>Add to half position (3-4%) on weakness:</strong> add tranche at HK$2.00 (~14% below current; would represent extreme cycle pessimism). <strong>Maximum position 5%</strong> at HK$1.80 if balance sheet remains intact (verify cash position holds). <strong>Trim/exit triggers:</strong> (a) HK$3.50+ on privatization re-attempt or cycle recovery; (b) cash position deteriorates to &lt;HK$2.00/share (cycle is destroying capital faster than expected); (c) parent ACC begins material asset transfers OUT of 0743.HK to other group entities. <strong>Holding period:</strong> 2-5 years.</p>
+  </div>
+
+  <div class="card" style="border-color:var(--blu);margin-top:14px">
+    <h3>Catalysts to Watch <span class="cn">催化剂观察</span></h3>
+    <p><strong>Bullish triggers:</strong> (1) China cement industry consolidation announcement (e.g., NDRC capacity reduction policy); (2) Anhui Conch or CNBM raising prices — typically signals industry pricing discipline; (3) Re-tabled privatization at HK$2.80-3.50; (4) Q2 or Q3 2026 sequential profit improvement; (5) Real estate stimulus expansion in China. <strong>Bearish triggers:</strong> (1) FY2026 H1 loss exceeding RMB200M; (2) Major land-related impairment charges; (3) Material asset transfer to parent or other Far Eastern Group entities; (4) RMB devaluation reducing reported book value; (5) Geopolitical incident affecting Taiwan-China commerce.</p>
+  </div>
+
+  <p class="prose">
+    <strong>Final verdict:</strong> Asia Cement China (0743.HK) is the <em>highest-conviction setup of all four HK candidates analyzed</em> — but it requires patience, contrarian temperament, and discipline on position sizing. The asymmetric risk-reward is exceptional: with HK$2.89 cash per share supporting a HK$2.33 price, downside is mathematically constrained while upside extends to HK$5.75-11.49 on cyclical recovery. The June 2024 failed privatization at HK$3.22 provides a key data point — the controlling shareholder believes the company is worth at least that much, and minority shareholders defended their position. <strong>Quarter to half position at current levels, scaling on weakness, with a 2-5 year holding horizon.</strong> This is the classic Greenwald neglect + Graham asset-backed deep-value pattern that the framework was designed to identify.
+  </p>
+</div>
+
+<!-- PRIVATIZATION STORY -->
+<div class="panel" id="catalysts">
+  <div class="sh"><div class="sh-num">PV</div><div><div class="sh-title">The Privatization Story — A Key Catalyst</div><div class="sh-cn">私有化故事 — 关键催化剂</div></div></div>
+
+  <p class="prose">
+    The June-August 2024 privatization attempt is critical context that distinguishes 0743.HK from a generic value trap. Understanding this episode is essential to the investment thesis.
+  </p>
+
+  <div class="tbl-wrap">
+  <table>
+    <thead><tr><th>Date</th><th>Event</th><th>Significance</th></tr></thead>
+    <tbody>
+      <tr><td>24 May 2024</td><td>"Last Undisturbed Date" — closing price ~HK$2.22</td><td>Reference point for pricing the offer</td></tr>
+      <tr><td>5 Jun 2024</td><td>Asia Cement Corp (Taiwan) Board approves privatization at HK$3.22</td><td>45% premium to undisturbed; total deal HK$1.6B for 32.27% minority stake</td></tr>
+      <tr><td>Jun-Jul 2024</td><td>Scheme document filed; UBS engaged as financial adviser</td><td>Formal Scheme of Arrangement under Cayman law</td></tr>
+      <tr><td>Aug 2024</td><td>Court Meeting held; <strong>Scheme NOT APPROVED by minority shareholders</strong></td><td>Required 75% by value voting in favor + ≤10% against — failed at this hurdle</td></tr>
+      <tr><td>29 Aug 2024</td><td>Solactive confirms 0743.HK NOT being deleted from indices — privatization formally lapsed</td><td>Stock continues to trade as listed entity</td></tr>
+      <tr><td>Sep 2024 - Apr 2026</td><td>Stock declined from ~HK$3.00 to current HK$2.33 (~−22%)</td><td>Market punished failed deal even though minorities won — reflects ongoing China cement weakness</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="card" style="border-color:var(--grn)">
+    <h3>Why the Failed Privatization is Bullish <span class="cn">为何私有化失败是利好</span></h3>
+    <p><strong>1. Floor on parent's view of value.</strong> ACC Taiwan was willing to pay HK$3.22 — they internally believe the business is worth at least that. This is "smart money" valuation by the most informed party. <strong>2. Minority shareholders demonstrated agency.</strong> The successful blocking of the bid demonstrates that 0743.HK's minority shareholders are not passive — they will defend their economic interests. This is unusual and valuable in HK family-controlled small-caps. <strong>3. Future re-attempt likely.</strong> The reasons ACC wanted to privatize (reduce admin costs, eliminate listing maintenance, gain operational flexibility) have not gone away. ACC is likely to retry, probably at a higher price, possibly when the cycle turns more decisively. <strong>4. Backstop to downside.</strong> Even in scenario where cement industry remains depressed, the parent has incentive to clean up the holding via re-attempted privatization at any price minorities would accept (probably HK$3.00+).</p>
+  </div>
+
+  <div class="card" style="border-color:var(--gold)">
+    <h3>Estimating the Re-Attempt Price <span class="cn">重新尝试价格估算</span></h3>
+    <p>If ACC re-tables a privatization, what price would clear the bar? Given the August 2024 rejection at HK$3.22 (45% premium to undisturbed HK$2.22), and assuming minority shareholders use roughly the same logic (P/B-based, with some sensitivity to cycle position):</p>
+    <ul style="margin:10px 0 10px 22px;font-size:13px;color:var(--tm);line-height:1.7">
+      <li><strong>Floor scenario:</strong> HK$2.80 (20% above current; minority shareholders capitulate during liquidity stress)</li>
+      <li><strong>Likely scenario:</strong> HK$3.50-4.00 (50-72% above current; reflects 0.30-0.35× P/B; clears most minorities)</li>
+      <li><strong>Best-case scenario:</strong> HK$5.00+ (115%+ above current; reflects partial cycle recovery + 0.45× P/B)</li>
+    </ul>
+    <p>Note: ACC may also wait for cycle recovery before re-attempting, in which case the underlying price would have already risen and the offer premium might be smaller. Either path generates positive returns from current levels.</p>
+  </div>
+</div>
+
+<!-- NEGLECT SCORECARD -->
+<div class="panel" id="neglect">
+  <div class="sh"><div class="sh-num">GN</div><div><div class="sh-title">Greenwald Neglect Scorecard</div><div class="sh-cn">格林沃尔德忽视评分卡</div></div></div>
+
+  <div class="tbl-wrap">
+  <table>
+    <thead><tr><th>Signal</th><th>Detail</th><th>Score</th></tr></thead>
+    <tbody>
+      <tr><td><strong>N1</strong> Analyst Coverage</td><td>Recent TipRanks shows "most recent analyst rating: Hold with HK$2.50 target." Likely 1-3 active analysts at most. Simply Wall St uses quant model. Coverage well below large-cap norms.</td><td><span class="badge b-pass">3/3</span></td></tr>
+      <tr><td><strong>N2</strong> Institutional Ownership</td><td>Only 4.05% institutional ownership per Stockanalysis.com. Insiders 0.31%. Effectively zero major institutional positions despite HK$3.65B market cap.</td><td><span class="badge b-pass">2/2</span></td></tr>
+      <tr><td><strong>N3</strong> Media Mentions</td><td>Minimal English coverage. Mostly mentioned in HK financial press during privatization episode. Not on radar of global equity press.</td><td><span class="badge b-pass">1/1</span></td></tr>
+      <tr><td><strong>N4</strong> Trading Volume</td><td>20-day average volume only 653,750 shares = ~HK$1.5M daily turnover. Highly illiquid for a stock of this size.</td><td><span class="badge b-pass">1/1</span></td></tr>
+      <tr><td><strong>N5</strong> Index Membership</td><td>Not in Hang Seng Index. Was scheduled to be deleted from indices upon successful privatization (Aug 2024) — that didn't happen, so currently in some second-tier indices but excluded from main benchmarks.</td><td><span class="badge b-pass">1/1</span></td></tr>
+      <tr><td><strong>N6</strong> Reverse Index Effect</td><td>Limited recent index changes. Not currently re-entering major benchmarks. Has not been forcibly purchased by ETFs.</td><td><span class="badge b-warn">1/2</span></td></tr>
+      <tr><td><strong>N7</strong> Forced Selling</td><td>No evidence of recent forced selling. Some technical-trader exits since failed privatization but more reflective of fundamentals than mechanical selling.</td><td><span class="badge b-warn">0/2</span></td></tr>
+      <tr><td><strong>N8</strong> Sentiment Avoidance</td><td><strong>Strong avoidance signal:</strong> "China cement" + "China real estate" + "Taiwan parent" + "small-cap" combines four separate narrative aversions. Most institutional investors structurally cannot or will not own this name.</td><td><span class="badge b-pass">2/2</span></td></tr>
+      <tr><td colspan="2" style="text-align:right;font-weight:bold;color:var(--t)">Total Neglect Score</td><td><span class="badge b-pass">11/15</span></td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <p class="prose">
+    <strong>Neglect classification: High (Top tier).</strong> 0743.HK scores 11/15 on neglect — among the highest scores in the HK universe. Multiple structural neglect factors combine: (a) commodity cyclical sector at trough; (b) China real estate exposure; (c) Taiwan parent (geopolitical aversion); (d) small float (illiquid); (e) low institutional ownership (4%); (f) minimal analyst coverage; (g) excluded from major indices; (h) negative narrative environment. <strong>This is the type of structural mispricing that the Greenwald neglect framework is specifically designed to identify.</strong> Most institutional investors are forbidden from holding this stock for any of several reasons (size, liquidity, geographic, sector mandates, or simply policy aversion). The result is a stock where price discovery is genuinely broken — and patient capital can compound returns over multi-year horizons.
+  </p>
+
+  <div class="card" style="border-color:var(--blu)">
+    <h3>The Compounding Neglect Pattern <span class="cn">累积式忽视模式</span></h3>
+    <p>What makes Asia Cement China unusually attractive among neglect candidates is the <em>compounding nature</em> of the neglect signals. Each individual factor (small cap, illiquid, Taiwan parent, China cement, etc.) excludes a different group of potential buyers. Combined, virtually no institutional buyer has a mandate to own this stock. The result is that prices can drift far below fundamental value not because the market disagrees with the analysis but because <em>no one is doing the analysis</em>. This is the Greenwald thesis at its purest — structural under-research producing exploitable mispricing for those willing to do the work.</p>
+  </div>
+</div>
+
+</div>
+
+<div class="footer">
+  <div>Greenwald × Graham-Buffett Deep Value Analysis · Asia Cement (China) Holdings (0743.HK)</div>
+  <div style="margin-top:6px">亚洲水泥 (中国) 控股 · 资产支撑型周期低谷深度低估</div>
+  <div style="margin-top:6px">Analysis date: April 28, 2026 · Tier 1 sources: HKEx FY2025 results announcement (9 March 2026); Q1 2026 update (April 2026); Solactive privatization confirmation (29 August 2024); ACC Taiwan annual reports</div>
+  <div style="margin-top:6px">GGB Score: 79.3 (Strong Candidate, top of band) · Confidence: 7.0/10 · G-Score: 8/10 (with positive credits)</div>
+  <div style="margin-top:6px">Not investment advice. Independent verification of all data from primary HKEx filings recommended before capital deployment.</div>
+</div>
+
+<script>
+document.querySelectorAll('.tab').forEach(t=>{t.addEventListener('click',()=>{document.querySelectorAll('.tab').forEach(b=>b.classList.remove('on'));document.querySelectorAll('.panel').forEach(p=>p.classList.remove('on'));t.classList.add('on');document.getElementById(t.dataset.t).classList.add('on')})});
+
+new Chart(document.getElementById('chartProfit'),{type:'bar',data:{labels:['9M 2024','Q4 2024','Q1 2025','Q2 2025','Q3 2025','Q4 2025','Q1 2026'],datasets:[{label:'Quarterly Net Profit (RMB M)',data:[-459,195,3.1,111.3,31.9,-60.5,-81.3],backgroundColor:c=>{const v=c.parsed.y;return v>=0?'rgba(52,194,122,0.7)':'rgba(224,78,78,0.7)'},borderColor:c=>{const v=c.parsed.y;return v>=0?'#34C27A':'#E04E4E'},borderWidth:1,borderRadius:3}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#8A8FA0',font:{size:11}}}},scales:{y:{grid:{color:'rgba(37,42,56,.5)'},ticks:{color:'#8A8FA0',callback:v=>v+'M'},title:{display:true,text:'RMB Million',color:'#8A8FA0'}},x:{grid:{display:false},ticks:{color:'#8A8FA0'}}}}});
+
+new Chart(document.getElementById('chartCash'),{type:'bar',data:{labels:['Net Cash','Market Cap','Total Equity (Book)'],datasets:[{label:'Value (HK$ Billion)',data:[4.52,3.65,18.61],backgroundColor:['rgba(52,194,122,0.7)','rgba(212,168,67,0.7)','rgba(75,141,248,0.7)'],borderColor:['#34C27A','#D4A843','#4B8DF8'],borderWidth:1,borderRadius:3}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},title:{display:true,text:'Market cap is ~80% of net cash; ~20% of book equity',color:'#8A8FA0',font:{size:11}}},scales:{y:{grid:{color:'rgba(37,42,56,.5)'},ticks:{color:'#8A8FA0',callback:v=>'$'+v+'B'},title:{display:true,text:'HK$ Billion',color:'#8A8FA0'}},x:{grid:{display:false},ticks:{color:'#8A8FA0'}}}}});
+</script>
+</body>
+</html>

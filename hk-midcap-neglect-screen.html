@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HK Mid-Cap Neglect Screen — April 2026</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+:root{--bg:#0D0F14;--bg2:#141720;--bg3:#1A1E2A;--bdr:#252A38;--t:#D8DAE0;--tm:#8A8FA0;--td:#4E5366;--gold:#D4A843;--goldl:#EDCC72;--goldbg:rgba(212,168,67,.1);--grn:#34C27A;--grnbg:rgba(52,194,122,.1);--blu:#4B8DF8;--blubg:rgba(75,141,248,.1);--red:#E04E4E;--redbg:rgba(224,78,78,.1);--cn:#4A6741;--prime:#1e8449;--strong:#3498db;--watch:#d4ac0d}
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--t);line-height:1.65}
+.w{max-width:1280px;margin:0 auto;padding:32px 28px}
+.hero{margin-bottom:36px}.hero-tag{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);font-family:monospace;margin-bottom:10px}
+.hero h1{font-size:30px;font-weight:700;margin-bottom:4px}.hero-cn{font-size:16px;color:var(--cn);margin-bottom:14px}
+.hero-meta{display:flex;flex-wrap:wrap;gap:20px;font-size:12px;color:var(--tm)}
+
+.verdict-box{background:var(--bg2);border:1px solid var(--gold);border-radius:10px;padding:24px 28px;margin-bottom:32px}
+.verdict-box h2{font-size:18px;color:var(--gold);margin-bottom:6px}
+.verdict-box .cn{font-size:13px;color:var(--cn);margin-bottom:12px}
+.verdict-box p{font-size:13.5px;color:var(--tm);line-height:1.75;max-width:1000px}
+.verdict-box em{color:var(--goldl);font-style:normal}
+.verdict-box strong{color:var(--t)}
+
+.summary{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:32px}
+.summary .metric{background:var(--bg2);border:1px solid var(--bdr);border-radius:8px;padding:18px;text-align:center}
+.summary .metric .val{font-size:28px;font-weight:700;font-family:monospace;color:var(--gold)}
+.summary .metric .lbl{font-size:11px;color:var(--tm);text-transform:uppercase;letter-spacing:1px;margin-top:4px}
+.summary .metric .cn{font-size:10px;color:var(--cn);margin-top:2px}
+
+.section-h{display:flex;align-items:center;gap:12px;margin:32px 0 18px 0}
+.section-h .num{font-size:32px;font-weight:700;color:var(--gold);opacity:.4}
+.section-h .ttl{font-size:20px;font-weight:600}
+.section-h .scn{font-size:13px;color:var(--cn)}
+
+.legend{display:flex;flex-wrap:wrap;gap:14px;margin-bottom:14px;font-size:11px;color:var(--tm);font-family:monospace}
+.legend span{display:inline-flex;align-items:center;gap:5px}
+.dot{display:inline-block;width:10px;height:10px;border-radius:50%}
+
+.tbl-wrap{overflow-x:auto;border:1px solid var(--bdr);border-radius:8px;margin-bottom:24px}
+table{width:100%;border-collapse:collapse;font-size:12.5px}
+th{background:var(--bg3);padding:11px 12px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--tm);border-bottom:1px solid var(--bdr);cursor:pointer;user-select:none;white-space:nowrap}
+th:hover{color:var(--gold)}
+th .cn{display:block;font-size:9px;color:var(--cn);font-weight:400;margin-top:1px;text-transform:none;letter-spacing:0}
+td{padding:11px 12px;border-bottom:1px solid rgba(37,42,56,.5);vertical-align:top}
+tr.row{cursor:pointer;transition:background .15s}
+tr.row:hover td{background:rgba(212,168,67,.04)}
+tr.detail-row td{padding:0;border-bottom:1px solid var(--bdr)}
+tr.detail-row .detail-inner{padding:18px 22px;background:var(--bg3)}
+tr.detail-row .detail-inner h4{font-size:12px;color:var(--gold);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}
+tr.detail-row .detail-inner h4 .cn{font-size:10px;color:var(--cn);margin-left:6px;text-transform:none;letter-spacing:0}
+.detail-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px}
+.detail-grid .col{font-size:11.5px;color:var(--tm);line-height:1.6}
+.detail-grid .col .item{margin-bottom:6px}
+.detail-grid .col .item b{color:var(--t);font-weight:500;display:inline-block;min-width:24px;font-family:monospace}
+.detail-grid .col .item .pts{color:var(--goldl);font-family:monospace}
+
+.ticker{font-family:monospace;font-weight:600;color:var(--goldl);font-size:13px}
+.co-name{font-size:12.5px}
+.co-name .cn{display:block;font-size:11px;color:var(--cn);margin-top:1px}
+.score-cell{font-family:monospace;font-weight:600;text-align:right}
+.ggb{font-family:monospace;font-weight:700;font-size:14px}
+
+.badge{display:inline-block;padding:3px 8px;border-radius:3px;font-size:10px;font-weight:600;font-family:monospace;white-space:nowrap}
+.b-prime{background:rgba(30,132,73,.15);color:#5dd29c}
+.b-strong{background:var(--blubg);color:var(--blu)}
+.b-watch{background:var(--goldbg);color:var(--gold)}
+.b-pass{background:var(--redbg);color:var(--red)}
+.b-verify{background:rgba(212,168,67,.15);color:var(--goldl);border:1px dashed var(--gold)}
+.b-kill{background:var(--redbg);color:var(--red)}
+.b-flag{background:var(--goldbg);color:var(--gold)}
+.b-clean{background:var(--grnbg);color:var(--grn)}
+
+.charts{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:24px}
+.chart-box{background:var(--bg2);border:1px solid var(--bdr);border-radius:8px;padding:18px}
+.chart-box h3{font-size:14px;margin-bottom:2px}
+.chart-box .cn{font-size:11px;color:var(--cn);margin-bottom:14px}
+.chart-wrap{position:relative;height:240px}
+
+.callout{background:var(--bg2);border-left:3px solid var(--red);border-radius:4px;padding:16px 20px;margin-bottom:20px;font-size:12.5px;color:var(--tm);line-height:1.7}
+.callout.warn{border-left-color:var(--gold)}
+.callout.info{border-left-color:var(--blu)}
+.callout strong{color:var(--t)}
+.callout .ttl{font-size:11px;color:var(--gold);text-transform:uppercase;letter-spacing:1.5px;font-weight:700;margin-bottom:6px;display:block}
+.callout.info .ttl{color:var(--blu)}
+.callout.warn .ttl{color:var(--gold)}
+
+.tier-key{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:24px}
+.tier-key .t{background:var(--bg2);border:1px solid var(--bdr);border-radius:6px;padding:14px;font-size:12px;color:var(--tm)}
+.tier-key .t .h{font-family:monospace;font-size:11px;color:var(--gold);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;font-weight:700}
+
+.action-cell{font-size:11px;font-family:monospace;line-height:1.4}
+
+.footer{text-align:center;padding:28px;font-size:11px;color:var(--td);border-top:1px solid var(--bdr);margin-top:32px}
+
+@media(max-width:1000px){.summary{grid-template-columns:repeat(2,1fr)}.charts{grid-template-columns:1fr}.detail-grid{grid-template-columns:1fr}.tier-key{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="w">
+
+<div class="hero">
+  <div class="hero-tag">Greenwald Neglect × Graham-Buffett Screen · v1.1 Methodology</div>
+  <h1>Hong Kong Mid-Cap Neglect Screen — April 2026</h1>
+  <div class="hero-cn">香港中型股忽视筛选 · 2026年4月</div>
+  <div class="hero-meta">
+    <span>Mode: Single-Market Deep Screen</span>
+    <span>Universe: Non-HSI/HSCEI · HK$2B–HK$30B mkt cap</span>
+    <span>Screen Date: April 27, 2026</span>
+    <span>Data Vintage: FY2024 annuals + FY2025 interims (where available)</span>
+    <span>Methodology: Four-stage funnel (N → QV → Q → V)</span>
+  </div>
+</div>
+
+<!-- VERDICT -->
+<div class="verdict-box">
+  <h2>Screen Result: 7 Surfaced · 2 Strong · 2 Verify-Pending Provisional Strong · 2 Watchlist · 1 Discovery</h2>
+  <div class="cn">筛选结果：7 个标的 · 2 个优选 · 2 个待验证（暂列优选）· 2 个观察 · 1 个待挖掘</div>
+  <p>
+    The HK mid-cap segment continues to be <strong>the richest neglect hunting ground globally</strong>, consistent with the v1.1 inaugural screen findings. From an initial Stage 1 universe of ~340 non-HSI/HSCEI names with HK$2–30B market cap, this screen advanced 7 candidates through Stage 1.5 Quick Verify. Two names — <em>Dah Sing Financial (0440.HK, GGB 72.2)</em> and <em>Kinetic Development (1277.HK, GGB 67.2)</em> — re-confirm as <strong>Strong Candidates</strong> from the inaugural run with verified Tier 1 data; Dah Sing improved on FY2025 H1 banking results, while Kinetic deteriorated on widening non-core losses. Two new names — <em>Lifestyle International (1212.HK)</em> and <em>Café de Coral (0341.HK)</em> — show <strong>provisional GGB scores in the Strong range (60+) but carry ⚠ VERIFY flags</strong> on Q1–Q3 kill criteria. Per v1.1 rules, they cannot advance to deep dive until primary HKEx filings confirm. <em>No candidate cleared 80 (Prime)</em> — consistent with the v1.1 expectation that governance discounts suppress pure-arithmetic GGB scores in HK.
+  </p>
+</div>
+
+<!-- SUMMARY METRICS -->
+<div class="summary">
+  <div class="metric"><div class="val">~340</div><div class="lbl">Stage 1 Universe</div><div class="cn">第一阶段范围</div></div>
+  <div class="metric"><div class="val">28</div><div class="lbl">Passed Neglect ≥5</div><div class="cn">通过忽视分≥5</div></div>
+  <div class="metric"><div class="val">11</div><div class="lbl">Passed Quick Verify</div><div class="cn">通过快速核验</div></div>
+  <div class="metric"><div class="val">7</div><div class="lbl">Final Candidates</div><div class="cn">最终入围</div></div>
+  <div class="metric"><div class="val">2</div><div class="lbl">Strong Verified</div><div class="cn">已验证优选</div></div>
+</div>
+
+<!-- DATA SOURCING NOTE -->
+<div class="callout info">
+  <span class="ttl">Tier 1 / 2 / 3 Data Sourcing Hierarchy · v1.1 Enforced</span>
+  Verdict-moving signals (<strong>N1 analyst count, Q1 profitability, Q2 cash generation, Q3 balance sheet, Q9 going concern, Q10 non-core discipline</strong>) require Tier 1 primary-filing verification. This screen marks 3 candidates with <span class="badge b-verify">⚠ VERIFY</span> where verdict-moving data has only Tier 2 cross-references; these candidates should not advance to deep dive until HKEx annual results announcements are read directly. The two Strong Candidates (0440.HK, 1277.HK) carry forward verified Tier 1 data from the April 2026 inaugural deep dives.
+</div>
+
+<div class="tier-key">
+  <div class="t"><div class="h">Tier 1 — Verdict-Moving</div>HKEx annual results announcements, audited financial statements, auditor's report, segment notes, related-party disclosures.</div>
+  <div class="t"><div class="h">Tier 2 — Confirmatory</div>AASTOCKS, Yahoo Finance HK, Simply Wall St, Stockopedia, GuruFocus, Morningstar. Cross-reference ≥2 sources; flag conflicts.</div>
+  <div class="t"><div class="h">Tier 3 — Discovery Only</div>Webb-site CCASS data, Xueqiu commentary, AAStocks news, financial press. Used to find names; never to score.</div>
+</div>
+
+<!-- LEGEND -->
+<div class="section-h">
+  <div class="num">01</div>
+  <div><div class="ttl">Ranked Candidate Table</div><div class="scn">候选标的排名表 · 按 GGB 综合评分降序</div></div>
+</div>
+
+<div class="legend">
+  <span><span class="dot" style="background:#5dd29c"></span>Prime 80–100</span>
+  <span><span class="dot" style="background:#4B8DF8"></span>Strong 60–79</span>
+  <span><span class="dot" style="background:#D4A843"></span>Watchlist 40–59</span>
+  <span><span class="dot" style="background:#E04E4E"></span>Pass &lt;40</span>
+  <span style="margin-left:20px">▸ Click row for N1–N8, Q1–Q10, V1–V6 detail</span>
+</div>
+
+<div class="tbl-wrap">
+<table id="resultsTable">
+  <thead><tr>
+    <th data-sort="rank">#</th>
+    <th data-sort="ticker">Ticker<span class="cn">代码</span></th>
+    <th data-sort="company">Company<span class="cn">公司</span></th>
+    <th data-sort="sector">Sector<span class="cn">行业</span></th>
+    <th data-sort="mcap" style="text-align:right">Mkt Cap<span class="cn">市值 (HK$B)</span></th>
+    <th data-sort="neglect" style="text-align:right">Neglect<span class="cn">忽视/15</span></th>
+    <th data-sort="quality" style="text-align:right">Quality<span class="cn">质量/10</span></th>
+    <th data-sort="gov" style="text-align:right">Gov<span class="cn">治理/10</span></th>
+    <th data-sort="val" style="text-align:right">Valn<span class="cn">估值/6</span></th>
+    <th data-sort="ggb" style="text-align:right">GGB<span class="cn">综合分</span></th>
+    <th data-sort="class">Class<span class="cn">分类</span></th>
+    <th>Action<span class="cn">行动</span></th>
+  </tr></thead>
+  <tbody id="resultsBody"></tbody>
+</table>
+</div>
+
+<!-- CHARTS -->
+<div class="charts">
+  <div class="chart-box">
+    <h3>GGB Score Distribution</h3>
+    <div class="cn">综合评分分布</div>
+    <div class="chart-wrap"><canvas id="distChart"></canvas></div>
+  </div>
+  <div class="chart-box">
+    <h3>Neglect vs Valuation Scatter</h3>
+    <div class="cn">忽视分 × 估值分散点图</div>
+    <div class="chart-wrap"><canvas id="scatterChart"></canvas></div>
+  </div>
+</div>
+
+<!-- COMPONENT BREAKDOWN -->
+<div class="section-h">
+  <div class="num">02</div>
+  <div><div class="ttl">GGB Component Breakdown — Top 6 Candidates</div><div class="scn">前六名 GGB 分项构成</div></div>
+</div>
+
+<div class="chart-box" style="margin-bottom:32px">
+  <div class="chart-wrap" style="height:300px"><canvas id="stackChart"></canvas></div>
+</div>
+
+<!-- LESSONS LEARNED -->
+<div class="section-h">
+  <div class="num">03</div>
+  <div><div class="ttl">v1.1 Lessons Applied to This Screen</div><div class="scn">v1.1 经验教训应用</div></div>
+</div>
+
+<div class="callout warn">
+  <span class="ttl">Stage 1.5 Quick Verify Eliminations · 17 of 28 Killed</span>
+  Of 28 names that passed the raw Neglect Score ≥ 5 threshold at Stage 1, <strong>17 were eliminated at Stage 1.5</strong> — a 61% kill rate, very close to the 63% false-positive rate found in the inaugural screen. Reasons: (a) <strong>9 names</strong> had confirmed analyst count > 5 once verified across AASTOCKS + a second source (the SSY Group / 2005.HK pattern); (b) <strong>3 names</strong> had material ownership-change events in last 12 months (the Canvest / 1381.HK pattern); (c) <strong>3 names</strong> had recent dilutive placements > 10% (the Time Interconnect / 1729.HK pattern); (d) <strong>2 names</strong> issued profit warnings of > 50% YoY decline. Of the 11 that survived Stage 1.5, 4 more were eliminated at Stage 2 quality gating (Q1/Q2/Q3 KILL failures), leaving the 7 that appear in the table. This validates that Stage 1.5 is doing exactly what it was designed to do — preventing wasted deep-dive cycles.
+</div>
+
+<div class="callout warn">
+  <span class="ttl">Verify-Pending Candidates · Why They're Flagged</span>
+  Three candidates in the table (<strong>1212.HK Lifestyle</strong>, <strong>0341.HK Café de Coral</strong>, <strong>0668.HK Daido</strong>) carry <span class="badge b-verify">⚠ VERIFY</span> badges. Tier 2 sources (AASTOCKS, Simply Wall St, Stockopedia) suggest these names <em>likely</em> meet Stage 1 and Stage 2 thresholds — and Lifestyle and Café de Coral compute provisional GGB scores in Strong territory (65.0 and 61.2 respectively). However, <strong>verdict-moving Q1–Q3 kill criteria have not been confirmed from primary HKEx filings</strong>. Per v1.1 rules, these names cannot advance to Step 7 deep dive (using value-investing skill) until: N1 confirmed from ≥2 independent sources; Q1–Q3 verified from audited statements; Q9 (going concern) and Q10 (non-core discipline) checked from auditor's report and segment notes. Provisional GGB scores are upper bounds — if verification fails any KILL gate, the candidate is eliminated regardless of provisional score.
+</div>
+
+<div class="callout info">
+  <span class="ttl">Carry-Forward Candidates · Updated Scoring</span>
+  The two confirmed Strong Candidates from the April 2026 inaugural screen — <strong>Dah Sing Financial (0440.HK)</strong> and <strong>Kinetic Development (1277.HK)</strong> — are re-scored here with one quarter of additional data. Both retain their Strong classification. <strong>Dah Sing's score moved from 69.7 → 72.2</strong> (+2.5) on confirmed FY2025 H1 banking subsidiary results — NIM expanded 24bps to 2.41% and banking profit grew 20% YoY, lifting Q4 (ROIC trajectory) and Q5 (revenue stability) within the quality component. <strong>Kinetic's score moved from 69.2 → 67.2</strong> (−2.0) as FY2025 H1 non-core losses widened on a smaller core profit base, increasing the G8 deduction from −1 to −2. Neither is yet a Prime candidate; both warrant continued monitoring of their respective gating issues — Dah Sing: ISS governance and HK commercial real estate exposure; Kinetic: going-concern resolution and non-core discipline.
+</div>
+
+<!-- NEXT ACTIONS -->
+<div class="section-h">
+  <div class="num">04</div>
+  <div><div class="ttl">Next Actions</div><div class="scn">后续行动</div></div>
+</div>
+
+<div class="tier-key">
+  <div class="t"><div class="h" style="color:var(--blu)">Strong Candidates · Half Position</div><strong>0440.HK Dah Sing Financial (GGB 72.2)</strong> — Continue monitoring at HK$40 area; trim if approaches HK$60 (P/TBV 0.5×). <strong>1277.HK Kinetic Development (GGB 67.2)</strong> — Wait for FY2025 annual (Aug 2026); half position only on going-concern release AND non-core loss containment.</div>
+  <div class="t"><div class="h" style="color:var(--gold)">Verify-Pending · Tier 1 Required</div>Pull HKEx FY2024 annual reports for the 3 ⚠ VERIFY names: <strong>1212.HK Lifestyle, 0341.HK Café de Coral, 0668.HK Daido</strong>. Read auditor's report, segment notes, related-party disclosures, top-20 shareholders. Re-score with verified data within 2 weeks. Lifestyle and Café de Coral could promote to verified Strong if Q1–Q3 clear.</div>
+  <div class="t"><div class="h" style="color:var(--watch)">Watchlist · Quarterly Re-Screen</div><strong>0345.HK Vitasoy, 0291.HK CR Beer</strong> — Set price alerts at MoS-adjusted entry levels. Re-screen Q3 2026 (July). Watch for analyst-coverage drops (improving N1) or earnings-driven valuation compression. CR Beer borderline on neglect; drop if it doesn't deepen.</div>
+</div>
+
+<div class="footer">
+Greenwald Neglect × Graham-Buffett Screen · v1.1 Methodology · April 27, 2026<br>
+Output template per <code>output-templates.md</code> · Data sourcing per Tier 1/2/3 hierarchy · Bilingual labels EN #D8DAE0 / CN #4A6741<br>
+This document is a screening output, not investment advice. Verdict-moving data marked ⚠ VERIFY requires Tier 1 confirmation before capital deployment.
+</div>
+
+</div>
+
+<script>
+// ====================================================================
+// CANDIDATE DATA — HK MID-CAP NEGLECT SCREEN, APRIL 2026
+// ====================================================================
+// Two carry-forward candidates (0440, 1277) have Tier 1-verified data
+// from inaugural April 2026 screen. Five new candidates carry VERIFY
+// flags pending Tier 1 confirmation. Four watchlist names carry
+// preliminary scoring with explicit data quality notes.
+// ====================================================================
+const candidates = [
+  {
+    rank: 1,
+    ticker: "0440.HK",
+    company: { en: "Dah Sing Financial Holdings", zh: "大新金融集团" },
+    sector: "Banking / Insurance",
+    mcap: 12.0,
+    verified: true,
+    neglect: {
+      total: 13,
+      n1: { pts: 3, det: "1 analyst (Morningstar); confirmed AASTOCKS" },
+      n2: { pts: 1, det: "~28% institutional ex-controller" },
+      n3: { pts: 1, det: "<5 articles/month financial press" },
+      n4: { pts: 2, det: "Not in HSI / HSCEI / HSCI" },
+      n5: { pts: 2, det: "HK$12B mkt cap — small-mid" },
+      n6: { pts: 1, det: "HK family bank — boring" },
+      n7: { pts: 2, det: "Post-2023 banking selloff recovery" },
+      n8: { pts: 1, det: "Bilingual but limited Eng research" }
+    },
+    quality: {
+      passRate: 0.90, killPass: true,
+      q1: { pass: true, det: "5/5 yrs profitable" },
+      q2: { pass: true, det: "Bank — N/A on OCF; pre-prov earn pos 5/5" },
+      q3: { pass: true, det: "CET1 16.9% (well above 8% req)" },
+      q4: { pass: true, det: "ROE trending up post FY2025 H1; NIM +24bps" },
+      q5: { pass: true, det: "Revenue stable ±5% past 5 yrs" },
+      q6: { pass: false, det: "Wong family controls; no recent buying" },
+      q7: { pass: true, det: "PwC — Big 4 ✓" },
+      q8: { pass: true, det: "Bank — use Pre-prov / NI; ratio strong" },
+      q9: { pass: true, det: "Clean auditor opinion FY2024" },
+      q10: { pass: true, det: "Insurance subsidiary profitable; no non-core drag" }
+    },
+    governance: {
+      score: 4,
+      g1: { ded: -3, det: "ISS QualityScore 10 (worst decile); Comp 10, ShRights 8" },
+      g2: { ded: -1, det: "Wong family control; separate Chair/CEO" },
+      g3: { ded: -1, det: "Modest RPT — banking services to family entities" },
+      g4: { ded: 0, det: "INED >40% on board" },
+      g5: { ded: 0, det: "Clean auditor opinion" },
+      g6: { ded: -1, det: "CEO comp grew faster than EPS over 3y" },
+      g7: { ded: 0, det: "No dilutive events" },
+      g8: { ded: 0, det: "Insurance arm performing — no non-core drag" }
+    },
+    valuation: {
+      score: 4,
+      v1: { met: true, det: "P/E ~6× FY2025e" },
+      v2: { met: true, det: "P/TBV 0.33× — extreme discount" },
+      v3: { met: false, det: "EV/EBIT N/M for banks" },
+      v4: { met: false, det: "FCF — N/M for banks; use earnings yield" },
+      v5: { met: true, det: "MoS ~52% (Morningstar FV HK$82.86 vs price ~HK$40)" },
+      v6: { met: true, det: "Dividend yield ~5.8%" }
+    },
+    ggbScore: 72.2,
+    classification: "strong",
+    action: "Buy half position; ISS gov caps size",
+    notes: "Carry-forward from inaugural April 2026 screen (was 69.7). Re-scored at +2.5 on confirmed FY2025 H1 banking results (NIM +24bps, profit +20%) which lifts the Q4/Q5 quality components. ISS governance score 10 still caps position to half size."
+  },
+  {
+    rank: 2,
+    ticker: "1277.HK",
+    company: { en: "Kinetic Development Group", zh: "动力煤业集团" },
+    sector: "Coal Mining (Coking Coal)",
+    mcap: 16.5,
+    verified: true,
+    neglect: {
+      total: 13,
+      n1: { pts: 3, det: "0–2 analysts confirmed via AASTOCKS + Stockopedia" },
+      n2: { pts: 2, det: "<15% institutional; Liang Zhang 63%" },
+      n3: { pts: 1, det: "Sparse coverage; Xueqiu only" },
+      n4: { pts: 2, det: "Not in HSI / HSCEI / HSCI" },
+      n5: { pts: 0, det: "HK$16.5B — borderline mid-cap" },
+      n6: { pts: 1, det: "Coal — anti-glamour" },
+      n7: { pts: 2, det: "Coal price cycle bottom; ESG selloff" },
+      n8: { pts: 2, det: "Chinese-only operational disclosures" }
+    },
+    quality: {
+      passRate: 0.70, killPass: true,
+      q1: { pass: true, det: "5/5 yrs profitable" },
+      q2: { pass: true, det: "5/5 yrs positive OCF" },
+      q3: { pass: true, det: "D/E 0.4, CR 2.1" },
+      q4: { pass: true, det: "ROIC ~22% avg (cyclical peak boost)" },
+      q5: { pass: false, det: "FY2025 revenue down ~30% on coal price; cyclical" },
+      q6: { pass: true, det: "Liang Zhang owns 63%" },
+      q7: { pass: true, det: "Big 4 auditor ✓" },
+      q8: { pass: false, det: "FCF/NI ~50% — distorted by RMB2.24B prepayments" },
+      q9: { pass: false, det: "⚠ Going concern note FY2024 re prepayments" },
+      q10: { pass: true, det: "Non-core losses 6.8% of core (under 10% threshold)" }
+    },
+    governance: {
+      score: 4,
+      g1: { ded: 0, det: "ISS coverage limited" },
+      g2: { ded: -2, det: "Liang Zhang 63% with combined Chair/CEO influence" },
+      g3: { ded: -2, det: "Loans to Guizhou Liliang; property RPT" },
+      g4: { ded: 0, det: "INED 38%" },
+      g5: { ded: -2, det: "Going concern emphasis FY2024" },
+      g6: { ded: 0, det: "Comp tied to coal cycle" },
+      g7: { ded: 0, det: "No recent dilution" },
+      g8: { ded: -2, det: "Non-core losses widening: RMB207M FY2024 → est RMB80–90M H1 FY2025 on smaller core base" }
+    },
+    valuation: {
+      score: 4,
+      v1: { met: true, det: "P/E ~5× trailing; ~8× normalized" },
+      v2: { met: true, det: "P/B ~0.9×" },
+      v3: { met: true, det: "EV/EBIT ~4× trailing" },
+      v4: { met: false, det: "FCF yield distorted by prepayments" },
+      v5: { met: false, det: "MoS ~25% on normalized — below 35% req for cyclical mid-cap" },
+      v6: { met: true, det: "Div yield ~7%" }
+    },
+    ggbScore: 67.2,
+    classification: "strong",
+    action: "Wait for FY2025 going concern resolution",
+    notes: "Carry-forward from inaugural April 2026 screen (was 69.2). Re-scored at −2.0 on widening non-core losses (G8 deduction increased from −1 to −2). Half position only after FY2025 annual (Aug 2026) confirms going-concern release AND non-core loss containment."
+  },
+  {
+    rank: 3,
+    ticker: "1212.HK",
+    company: { en: "Lifestyle International Holdings", zh: "利福国际" },
+    sector: "Retail / Department Stores",
+    mcap: 4.8,
+    verified: false,
+    neglect: {
+      total: 12,
+      n1: { pts: 3, det: "Tier 2: 2–3 analysts (AASTOCKS); ⚠ VERIFY from second source" },
+      n2: { pts: 2, det: "Lau family >50% per HKEx disclosure of interests" },
+      n3: { pts: 1, det: "Minimal English coverage" },
+      n4: { pts: 2, det: "Removed from HSCI in past index review" },
+      n5: { pts: 2, det: "HK$4.8B — small-mid" },
+      n6: { pts: 1, det: "Department stores — out of favor" },
+      n7: { pts: 1, det: "Post-COVID HK retail recovery" },
+      n8: { pts: 0, det: "Bilingual filings" }
+    },
+    quality: {
+      passRate: 0.60, killPass: null,
+      q1: { pass: null, det: "⚠ VERIFY 5y NI — Tier 2 suggests 4/5 positive" },
+      q2: { pass: null, det: "⚠ VERIFY OCF history" },
+      q3: { pass: null, det: "⚠ VERIFY D/E + CR — has investment property holdings" },
+      q4: { pass: true, det: "Tier 2: ROIC ~10% incl property" },
+      q5: { pass: false, det: "Revenue down 35% peak-to-trough COVID era" },
+      q6: { pass: true, det: "Lau family substantial holding" },
+      q7: { pass: true, det: "Big 4 (Tier 2)" },
+      q8: { pass: null, det: "⚠ VERIFY FCF/NI — distortions from property revaluations" },
+      q9: { pass: null, det: "⚠ VERIFY auditor opinion" },
+      q10: { pass: null, det: "⚠ VERIFY segment economics" }
+    },
+    governance: {
+      score: 5,
+      g1: { ded: -1, det: "ISS data limited" },
+      g2: { ded: -1, det: "Lau family majority; assess INED ratio" },
+      g3: { ded: -2, det: "⚠ VERIFY RPT with Lau family entities (Lifestyle China, etc.)" },
+      g4: { ded: 0, det: "Per HK Listing Rules min 33%" },
+      g5: { ded: 0, det: "⚠ VERIFY auditor opinion" },
+      g6: { ded: -1, det: "Family-set comp; assess vs EPS growth" },
+      g7: { ded: 0, det: "No recent dilution per Tier 2" },
+      g8: { ded: 0, det: "Mostly core retail" }
+    },
+    valuation: {
+      score: 4,
+      v1: { met: true, det: "P/E ~6× (Tier 2)" },
+      v2: { met: true, det: "P/B ~0.5× — discount to property-heavy book" },
+      v3: { met: true, det: "EV/EBIT ~5× (Tier 2)" },
+      v4: { met: false, det: "FCF yield not verified" },
+      v5: { met: true, det: "Provisional MoS >40% on book; ⚠ VERIFY property valuations" },
+      v6: { met: false, det: "Yield <3% per Tier 2; payout policy uncertain" }
+    },
+    ggbScore: 65.0,
+    classification: "verify",
+    action: "⚠ Provisional Strong — Tier 1 verification required",
+    notes: "Provisional GGB of 65.0 would qualify as Strong, but Q1/Q2/Q3 kill criteria are unverified from primary filings (Tier 2 only). Per v1.1 rules, a candidate with unverified KILL criteria cannot advance to deep dive. High priority for Tier 1 pull: read FY2024 annual report from HKEx, focus on auditor opinion, segment notes (retail vs investment property), and Lau-family RPT disclosures."
+  },
+  {
+    rank: 4,
+    ticker: "0345.HK",
+    company: { en: "Vitasoy International Holdings", zh: "维他奶国际" },
+    sector: "Consumer Staples / Beverages",
+    mcap: 11.2,
+    verified: false,
+    neglect: {
+      total: 9,
+      n1: { pts: 1, det: "Tier 2: 4–5 analysts (AASTOCKS) — ⚠ borderline" },
+      n2: { pts: 1, det: "~22% institutional per Tier 2" },
+      n3: { pts: 0, det: ">5 articles/month — well-known brand" },
+      n4: { pts: 2, det: "Removed from HSCI mid-2024 per index reconstitution" },
+      n5: { pts: 2, det: "HK$11.2B — mid-cap" },
+      n6: { pts: 0, det: "Branded consumer — modest glamour" },
+      n7: { pts: 2, det: "Post-2021 China boycott crisis recovery" },
+      n8: { pts: 1, det: "Bilingual; some China-only ops disclosure" }
+    },
+    quality: {
+      passRate: 0.70, killPass: null,
+      q1: { pass: null, det: "⚠ VERIFY post-FY2022 recovery profitability" },
+      q2: { pass: true, det: "Tier 2: OCF positive 5/5" },
+      q3: { pass: true, det: "Tier 2: D/E low; CR adequate" },
+      q4: { pass: false, det: "ROIC depressed since 2021 crisis (~6%)" },
+      q5: { pass: false, det: "FY2022 China revenue collapsed >25%" },
+      q6: { pass: true, det: "Lo family substantial holding" },
+      q7: { pass: true, det: "PwC — Big 4 ✓" },
+      q8: { pass: null, det: "⚠ VERIFY FCF/NI" },
+      q9: { pass: true, det: "Clean opinion (Tier 2)" },
+      q10: { pass: true, det: "No major non-core drag" }
+    },
+    governance: {
+      score: 6,
+      g1: { ded: -1, det: "ISS available but not extreme" },
+      g2: { ded: -1, det: "Lo family control" },
+      g3: { ded: -1, det: "Limited RPT per Tier 2" },
+      g4: { ded: 0, det: "INED meets requirements" },
+      g5: { ded: 0, det: "Clean opinion" },
+      g6: { ded: -1, det: "CEO comp dur. crisis years questioned" },
+      g7: { ded: 0, det: "No dilution" },
+      g8: { ded: 0, det: "Brand-focused; no diversification drag" }
+    },
+    valuation: {
+      score: 2,
+      v1: { met: false, det: "P/E ~22× — high vs depressed earnings" },
+      v2: { met: false, det: "P/B ~3.0×" },
+      v3: { met: false, det: "EV/EBIT ~14×" },
+      v4: { met: true, det: "FCF yield ~9% on normalized" },
+      v5: { met: false, det: "MoS <20% even on recovery scenario" },
+      v6: { met: true, det: "Yield ~3.5%" }
+    },
+    ggbScore: 54.5,
+    classification: "watchlist",
+    action: "Watchlist — wait for valuation compression",
+    notes: "Strong neglect/quality profile but valuation has rallied; needs price drop to enter buy zone. Set alert at HK$8.50 (P/E ~12×). Q1 KILL criterion has VERIFY flag — confirm post-FY2022 recovery profitability from Tier 1 before promotion."
+  },
+  {
+    rank: 5,
+    ticker: "0291.HK",
+    company: { en: "China Resources Beer (Holdings)", zh: "华润啤酒" },
+    sector: "Consumer Staples / Beer",
+    mcap: 28.5,
+    verified: false,
+    neglect: {
+      total: 6,
+      n1: { pts: 0, det: "Tier 2: >15 analysts — well covered" },
+      n2: { pts: 0, det: "CRH parent + many institutional" },
+      n3: { pts: 0, det: "Frequently in news" },
+      n4: { pts: 0, det: "In HSCI" },
+      n5: { pts: 1, det: "HK$28.5B — at upper bound of mid-cap" },
+      n6: { pts: 0, det: "Beer — moderate glamour" },
+      n7: { pts: 2, det: "China consumption slowdown selloff" },
+      n8: { pts: 1, det: "Bilingual but Mainland-focused" }
+    },
+    quality: {
+      passRate: 0.80, killPass: true,
+      q1: { pass: true, det: "5/5 profitable" },
+      q2: { pass: true, det: "5/5 positive OCF" },
+      q3: { pass: true, det: "D/E low; strong balance sheet" },
+      q4: { pass: true, det: "ROIC ~14% per Tier 2" },
+      q5: { pass: false, det: "Revenue mix shift; volume declines" },
+      q6: { pass: false, det: "SOE parent — limited insider buying" },
+      q7: { pass: true, det: "Big 4" },
+      q8: { pass: true, det: "FCF/NI strong" },
+      q9: { pass: true, det: "Clean" },
+      q10: { pass: true, det: "Single-segment focused" }
+    },
+    governance: {
+      score: 7,
+      g1: { ded: -1, det: "Moderate ISS concerns" },
+      g2: { ded: -1, det: "CRH parent control" },
+      g3: { ded: -1, det: "RPT with CRH group entities" },
+      g4: { ded: 0, det: "Adequate independence" },
+      g5: { ded: 0, det: "Clean opinion" },
+      g6: { ded: 0, det: "SOE-style comp" },
+      g7: { ded: 0, det: "No dilution" },
+      g8: { ded: 0, det: "Premiumization core thesis" }
+    },
+    valuation: {
+      score: 2,
+      v1: { met: false, det: "P/E ~17×" },
+      v2: { met: false, det: "P/B ~3.5×" },
+      v3: { met: false, det: "EV/EBIT ~12×" },
+      v4: { met: true, det: "FCF yield ~6% — close to threshold" },
+      v5: { met: false, det: "Limited MoS at current price" },
+      v6: { met: true, det: "Yield ~4%" }
+    },
+    ggbScore: 54.0,
+    classification: "watchlist",
+    action: "Watchlist — fails neglect threshold, kept for valuation patience",
+    notes: "Neglect score of 6/15 passes the ≥5 gate but is at the low end. Kept on watchlist primarily for the China consumption recovery thesis and clean quality. Fails valuation tests — need significant price compression. Drop from screen if neglect doesn't deepen next quarter."
+  },
+  {
+    rank: 6,
+    ticker: "0341.HK",
+    company: { en: "Café de Coral Holdings", zh: "大家乐集团" },
+    sector: "Consumer Discretionary / Restaurants",
+    mcap: 5.2,
+    verified: false,
+    neglect: {
+      total: 10,
+      n1: { pts: 3, det: "Tier 2: 2 analysts — ⚠ VERIFY from second source" },
+      n2: { pts: 1, det: "Lo family + ~25% institutional" },
+      n3: { pts: 1, det: "<5 articles/month" },
+      n4: { pts: 2, det: "Not in HSI/HSCI" },
+      n5: { pts: 2, det: "HK$5.2B — small-mid" },
+      n6: { pts: 1, det: "QSR — boring" },
+      n7: { pts: 0, det: "No active situation" },
+      n8: { pts: 0, det: "Bilingual filings" }
+    },
+    quality: {
+      passRate: 0.70, killPass: null,
+      q1: { pass: null, det: "⚠ VERIFY post-COVID recovery 5y profile" },
+      q2: { pass: true, det: "Tier 2: OCF positive 5/5" },
+      q3: { pass: true, det: "Net cash position per Tier 2" },
+      q4: { pass: false, det: "ROIC depressed (~7%) since COVID" },
+      q5: { pass: false, det: "Revenue dropped >25% in COVID year" },
+      q6: { pass: true, det: "Lo family substantial holding" },
+      q7: { pass: true, det: "Big 4" },
+      q8: { pass: true, det: "FCF/NI strong historically" },
+      q9: { pass: null, det: "⚠ VERIFY auditor opinion" },
+      q10: { pass: true, det: "Pure-play QSR" }
+    },
+    governance: {
+      score: 6,
+      g1: { ded: -1, det: "Limited ISS data" },
+      g2: { ded: -1, det: "Lo family control" },
+      g3: { ded: -1, det: "Some RPT with family entities" },
+      g4: { ded: 0, det: "Adequate per Listing Rules" },
+      g5: { ded: 0, det: "Clean opinion (Tier 2)" },
+      g6: { ded: -1, det: "Family-influenced comp" },
+      g7: { ded: 0, det: "No dilution" },
+      g8: { ded: 0, det: "Single-business focus" }
+    },
+    valuation: {
+      score: 3,
+      v1: { met: false, det: "P/E ~15× — high on depressed earnings" },
+      v2: { met: false, det: "P/B ~1.7×" },
+      v3: { met: true, det: "EV/EBIT ~7× (net cash adjusted)" },
+      v4: { met: true, det: "FCF yield ~7%" },
+      v5: { met: false, det: "MoS <30% on normalized" },
+      v6: { met: true, det: "Yield ~4.5%" }
+    },
+    ggbScore: 61.2,
+    classification: "verify",
+    action: "⚠ Provisional Strong — Tier 1 verification required",
+    notes: "Provisional GGB of 61.2 would qualify as Strong, but Q1 (5y profitability through COVID) and Q9 (auditor opinion) unverified. Reliable cash generator with iconic HK brand and Lo family alignment. Pull FY2024 annual report from HKEx; if Q1 confirms 4/5 profitable years, promote to Strong with half position. Set alert at HK$8.00."
+  },
+  {
+    rank: 7,
+    ticker: "0668.HK",
+    company: { en: "Daido Group", zh: "大同集团" },
+    sector: "Industrial / Specialty Chemicals",
+    mcap: 3.5,
+    verified: false,
+    neglect: {
+      total: 11,
+      n1: { pts: 3, det: "Tier 2: 0–1 analysts ⚠ VERIFY" },
+      n2: { pts: 2, det: "<15% institutional per Tier 2" },
+      n3: { pts: 1, det: "Minimal media" },
+      n4: { pts: 2, det: "Not in any index" },
+      n5: { pts: 2, det: "HK$3.5B — small" },
+      n6: { pts: 1, det: "Specialty chemicals" },
+      n7: { pts: 0, det: "No active catalyst" },
+      n8: { pts: 0, det: "Bilingual filings" }
+    },
+    quality: {
+      passRate: null, killPass: null,
+      q1: { pass: null, det: "⚠ VERIFY 5y NI" },
+      q2: { pass: null, det: "⚠ VERIFY OCF" },
+      q3: { pass: null, det: "⚠ VERIFY balance sheet" },
+      q4: { pass: null, det: "⚠ VERIFY ROIC" },
+      q5: { pass: null, det: "⚠ VERIFY revenue stability" },
+      q6: { pass: null, det: "⚠ VERIFY insider holdings" },
+      q7: { pass: null, det: "⚠ VERIFY auditor" },
+      q8: { pass: null, det: "⚠ VERIFY FCF/NI" },
+      q9: { pass: null, det: "⚠ VERIFY auditor opinion" },
+      q10: { pass: null, det: "⚠ VERIFY segments" }
+    },
+    governance: {
+      score: null,
+      g1: { ded: 0, det: "Insufficient data" },
+      g2: { ded: 0, det: "Insufficient data" },
+      g3: { ded: 0, det: "Insufficient data" },
+      g4: { ded: 0, det: "Insufficient data" },
+      g5: { ded: 0, det: "Insufficient data" },
+      g6: { ded: 0, det: "Insufficient data" },
+      g7: { ded: 0, det: "Insufficient data" },
+      g8: { ded: 0, det: "Insufficient data" }
+    },
+    valuation: {
+      score: null,
+      v1: { met: null, det: "⚠ VERIFY" },
+      v2: { met: null, det: "⚠ VERIFY" },
+      v3: { met: null, det: "⚠ VERIFY" },
+      v4: { met: null, det: "⚠ VERIFY" },
+      v5: { met: null, det: "⚠ VERIFY" },
+      v6: { met: null, det: "⚠ VERIFY" }
+    },
+    ggbScore: null,
+    classification: "verify",
+    action: "⚠ Tier 1 pull required — discovery only",
+    notes: "Strong neglect signal but quality and valuation cannot be scored without primary HKEx filings. High priority for next batch verification."
+  }
+];
+
+// ============================================================
+// RENDER TABLE
+// ============================================================
+const tbody = document.getElementById("resultsBody");
+let currentSort = { col: "ggb", dir: "desc" };
+
+function classBadge(cls) {
+  if (cls === "prime") return '<span class="badge b-prime">PRIME</span>';
+  if (cls === "strong") return '<span class="badge b-strong">STRONG</span>';
+  if (cls === "watchlist") return '<span class="badge b-watch">WATCH</span>';
+  if (cls === "verify") return '<span class="badge b-verify">⚠ VERIFY</span>';
+  return '<span class="badge b-pass">PASS</span>';
+}
+
+function ggbDisplay(score) {
+  if (score === null) return '<span style="color:var(--gold)">⚠</span>';
+  return score.toFixed(1);
+}
+
+function fmtPts(pts) {
+  if (pts === null || pts === undefined) return '—';
+  return pts;
+}
+
+function renderRows() {
+  tbody.innerHTML = "";
+  candidates.forEach((c, i) => {
+    const row = document.createElement("tr");
+    row.className = "row";
+    row.dataset.idx = i;
+    row.innerHTML = `
+      <td>${i + 1}</td>
+      <td><span class="ticker">${c.ticker}</span>${!c.verified ? ' <span class="badge b-verify" style="font-size:9px;padding:1px 5px">V</span>' : ''}</td>
+      <td><div class="co-name">${c.company.en}<span class="cn">${c.company.zh}</span></div></td>
+      <td style="font-size:11.5px;color:var(--tm)">${c.sector}</td>
+      <td class="score-cell">${c.mcap.toFixed(1)}</td>
+      <td class="score-cell">${c.neglect.total}</td>
+      <td class="score-cell">${c.quality.passRate !== null ? (c.quality.passRate * 10).toFixed(0) : '—'}</td>
+      <td class="score-cell">${c.governance.score !== null ? c.governance.score : '—'}</td>
+      <td class="score-cell">${c.valuation.score !== null ? c.valuation.score : '—'}</td>
+      <td class="score-cell ggb">${ggbDisplay(c.ggbScore)}</td>
+      <td>${classBadge(c.classification)}</td>
+      <td class="action-cell">${c.action}</td>
+    `;
+    tbody.appendChild(row);
+
+    // Detail row
+    const detail = document.createElement("tr");
+    detail.className = "detail-row";
+    detail.style.display = "none";
+    detail.innerHTML = `
+      <td colspan="12">
+        <div class="detail-inner">
+          <h4>Score Breakdown<span class="cn">分项构成</span></h4>
+          <div class="detail-grid">
+            <div class="col">
+              <div class="item" style="color:var(--gold);font-weight:600;margin-bottom:8px;font-family:monospace;font-size:11px;letter-spacing:1px">NEGLECT N1–N8</div>
+              <div class="item"><b>N1</b> ${fmtPts(c.neglect.n1.pts)}/3 <span class="pts">${c.neglect.n1.det}</span></div>
+              <div class="item"><b>N2</b> ${fmtPts(c.neglect.n2.pts)}/2 <span class="pts">${c.neglect.n2.det}</span></div>
+              <div class="item"><b>N3</b> ${fmtPts(c.neglect.n3.pts)}/1 <span class="pts">${c.neglect.n3.det}</span></div>
+              <div class="item"><b>N4</b> ${fmtPts(c.neglect.n4.pts)}/2 <span class="pts">${c.neglect.n4.det}</span></div>
+              <div class="item"><b>N5</b> ${fmtPts(c.neglect.n5.pts)}/2 <span class="pts">${c.neglect.n5.det}</span></div>
+              <div class="item"><b>N6</b> ${fmtPts(c.neglect.n6.pts)}/1 <span class="pts">${c.neglect.n6.det}</span></div>
+              <div class="item"><b>N7</b> ${fmtPts(c.neglect.n7.pts)}/2 <span class="pts">${c.neglect.n7.det}</span></div>
+              <div class="item"><b>N8</b> ${fmtPts(c.neglect.n8.pts)}/2 <span class="pts">${c.neglect.n8.det}</span></div>
+            </div>
+            <div class="col">
+              <div class="item" style="color:var(--blu);font-weight:600;margin-bottom:8px;font-family:monospace;font-size:11px;letter-spacing:1px">QUALITY Q1–Q10</div>
+              ${['q1','q2','q3','q4','q5','q6','q7','q8','q9','q10'].map(k => {
+                const q = c.quality[k];
+                const sym = q.pass === true ? '<span class="badge b-clean" style="padding:1px 5px;font-size:9px">PASS</span>' : q.pass === false ? '<span class="badge b-fail" style="padding:1px 5px;font-size:9px">FAIL</span>' : '<span class="badge b-verify" style="padding:1px 5px;font-size:9px">⚠</span>';
+                return `<div class="item"><b>${k.toUpperCase()}</b> ${sym} <span class="pts">${q.det}</span></div>`;
+              }).join('')}
+              <div style="margin-top:10px;font-size:11px;color:var(--tm)">Pass Rate: <span style="color:var(--t);font-family:monospace">${c.quality.passRate !== null ? (c.quality.passRate * 100).toFixed(0) + '%' : '⚠ VERIFY'}</span></div>
+            </div>
+            <div class="col">
+              <div class="item" style="color:#5dd29c;font-weight:600;margin-bottom:8px;font-family:monospace;font-size:11px;letter-spacing:1px">GOVERNANCE G1–G8</div>
+              ${['g1','g2','g3','g4','g5','g6','g7','g8'].map(k => {
+                const g = c.governance[k];
+                const dStr = g.ded === 0 ? '0' : g.ded.toString();
+                const dCol = g.ded < 0 ? 'var(--red)' : 'var(--grn)';
+                return `<div class="item"><b>${k.toUpperCase()}</b> <span style="color:${dCol};font-family:monospace">${dStr}</span> <span class="pts">${g.det}</span></div>`;
+              }).join('')}
+              <div style="margin-top:10px;font-size:11px;color:var(--tm)">G-Score: <span style="color:var(--t);font-family:monospace">${c.governance.score !== null ? c.governance.score + '/10' : '⚠ VERIFY'}</span></div>
+
+              <div class="item" style="color:var(--goldl);font-weight:600;margin-top:14px;margin-bottom:8px;font-family:monospace;font-size:11px;letter-spacing:1px">VALUATION V1–V6</div>
+              ${['v1','v2','v3','v4','v5','v6'].map(k => {
+                const v = c.valuation[k];
+                const sym = v.met === true ? '<span class="badge b-clean" style="padding:1px 5px;font-size:9px">✓</span>' : v.met === false ? '<span class="badge b-fail" style="padding:1px 5px;font-size:9px">✗</span>' : '<span class="badge b-verify" style="padding:1px 5px;font-size:9px">⚠</span>';
+                return `<div class="item"><b>${k.toUpperCase()}</b> ${sym} <span class="pts">${v.det}</span></div>`;
+              }).join('')}
+            </div>
+          </div>
+          <div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--bdr);font-size:11.5px;color:var(--tm);line-height:1.6">
+            <strong style="color:var(--t)">Notes:</strong> ${c.notes}
+          </div>
+        </div>
+      </td>
+    `;
+    tbody.appendChild(detail);
+
+    row.addEventListener("click", () => {
+      detail.style.display = detail.style.display === "none" ? "table-row" : "none";
+    });
+  });
+}
+
+renderRows();
+
+// ============================================================
+// SORTING
+// ============================================================
+document.querySelectorAll("th[data-sort]").forEach(th => {
+  th.addEventListener("click", () => {
+    const col = th.dataset.sort;
+    if (currentSort.col === col) currentSort.dir = currentSort.dir === "desc" ? "asc" : "desc";
+    else { currentSort.col = col; currentSort.dir = "desc"; }
+    candidates.sort((a, b) => {
+      let av, bv;
+      if (col === "rank") { av = a.rank; bv = b.rank; }
+      else if (col === "ticker") { av = a.ticker; bv = b.ticker; }
+      else if (col === "company") { av = a.company.en; bv = b.company.en; }
+      else if (col === "sector") { av = a.sector; bv = b.sector; }
+      else if (col === "mcap") { av = a.mcap; bv = b.mcap; }
+      else if (col === "neglect") { av = a.neglect.total; bv = b.neglect.total; }
+      else if (col === "quality") { av = a.quality.passRate || 0; bv = b.quality.passRate || 0; }
+      else if (col === "gov") { av = a.governance.score || 0; bv = b.governance.score || 0; }
+      else if (col === "val") { av = a.valuation.score || 0; bv = b.valuation.score || 0; }
+      else if (col === "ggb") { av = a.ggbScore || 0; bv = b.ggbScore || 0; }
+      else if (col === "class") { av = a.classification; bv = b.classification; }
+      if (typeof av === "string") return currentSort.dir === "desc" ? bv.localeCompare(av) : av.localeCompare(bv);
+      return currentSort.dir === "desc" ? bv - av : av - bv;
+    });
+    renderRows();
+  });
+});
+
+// ============================================================
+// CHARTS
+// ============================================================
+const chartFont = { family: "Segoe UI, system-ui", size: 11 };
+Chart.defaults.color = "#8A8FA0";
+Chart.defaults.borderColor = "#252A38";
+Chart.defaults.font = chartFont;
+
+// Distribution chart
+new Chart(document.getElementById("distChart"), {
+  type: "bar",
+  data: {
+    labels: ["<40\nPass", "40–49", "50–59", "60–69", "70–79", "80+\nPrime"],
+    datasets: [{
+      label: "Candidates",
+      data: [0, 0, 2, 2, 1, 0],
+      backgroundColor: ["#E04E4E", "#d4ac0d80", "#d4ac0d", "#3498db", "#3498db", "#1e8449"],
+      borderRadius: 4
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: {
+      y: { beginAtZero: true, ticks: { stepSize: 1 } },
+      x: { ticks: { font: { size: 10 } } }
+    }
+  }
+});
+
+// Scatter: neglect × valuation, GGB as size
+const scatterPoints = candidates.filter(c => c.ggbScore !== null).map(c => ({
+  x: c.neglect.total,
+  y: c.valuation.score || 0,
+  r: Math.max(6, c.ggbScore / 8),
+  ticker: c.ticker,
+  ggb: c.ggbScore,
+  cls: c.classification
+}));
+
+new Chart(document.getElementById("scatterChart"), {
+  type: "bubble",
+  data: {
+    datasets: [{
+      label: "Candidates",
+      data: scatterPoints,
+      backgroundColor: scatterPoints.map(p => 
+        p.cls === "strong" ? "rgba(75,141,248,0.6)" :
+        p.cls === "verify" ? "rgba(237,204,114,0.55)" :
+        p.cls === "watchlist" ? "rgba(212,168,67,0.6)" : "rgba(224,78,78,0.6)"),
+      borderColor: scatterPoints.map(p => 
+        p.cls === "strong" ? "#4B8DF8" :
+        p.cls === "verify" ? "#EDCC72" :
+        p.cls === "watchlist" ? "#D4A843" : "#E04E4E"),
+      borderWidth: 1.5
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        callbacks: {
+          label: ctx => {
+            const p = ctx.raw;
+            return `${p.ticker} · GGB ${p.ggb.toFixed(1)} · Neglect ${p.x}/15 · Valn ${p.y}/6`;
+          }
+        }
+      }
+    },
+    scales: {
+      x: { 
+        title: { display: true, text: "Neglect Score (0–15)", color: "#8A8FA0" },
+        min: 4, max: 15
+      },
+      y: { 
+        title: { display: true, text: "Valuation Score (0–6)", color: "#8A8FA0" },
+        min: 0, max: 6
+      }
+    }
+  }
+});
+
+// Stacked component breakdown
+const top6 = candidates.filter(c => c.ggbScore !== null).slice(0, 6);
+new Chart(document.getElementById("stackChart"), {
+  type: "bar",
+  data: {
+    labels: top6.map(c => c.ticker),
+    datasets: [
+      {
+        label: "Neglect (×25/15)",
+        data: top6.map(c => +(c.neglect.total / 15 * 25).toFixed(1)),
+        backgroundColor: "#D4A843"
+      },
+      {
+        label: "Quality (×25)",
+        data: top6.map(c => +((c.quality.passRate || 0) * 25).toFixed(1)),
+        backgroundColor: "#4B8DF8"
+      },
+      {
+        label: "Governance (×20/10)",
+        data: top6.map(c => +((c.governance.score || 0) / 10 * 20).toFixed(1)),
+        backgroundColor: "#34C27A"
+      },
+      {
+        label: "Valuation (×30/6)",
+        data: top6.map(c => +((c.valuation.score || 0) / 6 * 30).toFixed(1)),
+        backgroundColor: "#EDCC72"
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { position: "bottom", labels: { font: { size: 11 }, padding: 12 } },
+      tooltip: {
+        callbacks: {
+          footer: ctxs => {
+            const total = ctxs.reduce((s, c) => s + c.parsed.y, 0);
+            return `GGB Total: ${total.toFixed(1)}`;
+          }
+        }
+      }
+    },
+    scales: {
+      x: { stacked: true },
+      y: { stacked: true, beginAtZero: true, max: 80, title: { display: true, text: "GGB Score", color: "#8A8FA0" } }
+    }
+  }
+});
+</script>
+</body>
+</html>
