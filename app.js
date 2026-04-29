@@ -145,6 +145,8 @@ var CATEGORIES = {
           { id: "dahsing-2356", label: "Dah Sing Banking (2356.HK)", url: "./dahsing-2356-deep-analysis.html", icon: "doc" },
           { id: "leeman-2314", label: "Lee & Man Paper (2314.HK)", url: "./leeman-2314-deep-analysis-v2.html", icon: "doc" },
           { id: "hbb-deep", label: "Hamilton Beach (HBB)", url: "./hbb-deep-analysis.html", icon: "doc" },
+          { id: "frme-deep", label: "First Merchants (FRME)", url: "./frme-deep-analysis.html", icon: "doc" },
+          { id: "ori-deep", label: "Old Republic (ORI)", url: "./ori-deep-analysis.html", icon: "doc" },
         ],
       },
     ],
